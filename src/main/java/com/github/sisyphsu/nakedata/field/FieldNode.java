@@ -1,5 +1,7 @@
 package com.github.sisyphsu.nakedata.field;
 
+import com.github.sisyphsu.nakedata.meta.TypeMeta;
+
 /**
  * @author sulin
  * @since 2019-04-24 21:06:59
@@ -18,6 +20,6 @@ public class FieldNode {
     /**
      * Object Metadata
      */
-    private Object metadata;
+    private TypeMeta metadata;
 
 }
