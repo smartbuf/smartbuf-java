@@ -15,19 +15,21 @@ import com.github.sisyphsu.nakedata.utils.JSONUtils;
 public class NDataSerializer {
 
     public void serialize(Object obj) {
+        DataTrunk trunk = new DataTrunk();
         JsonNode node = JSONUtils.toJsonNode(obj);
-        if (node == null) {
-            return;
-        }
-        switch (node.getNodeType()) {
-            case NULL:
-            case BOOLEAN:
-            case NUMBER:
-            case BINARY:
-            case STRING:
-            case ARRAY:
-            case OBJECT:
-            default:
+        if (node != null) {
+            switch (node.getNodeType()) {
+                case NULL:
+                case BOOLEAN:
+                case NUMBER:
+                case BINARY:
+                case STRING:
+                case ARRAY:
+                case OBJECT:
+                default:
+            }
+        } else {
+
         }
     }
 

@@ -13,3 +13,6 @@
 2. Better scalability, based on standard JSON.
 3. More lightweight, ProtoBuf may need several KB/MB.
 
+# UnionType
+
+Use varint present DataType, low 4-bit represent primary type, higher bits represent referenced type.

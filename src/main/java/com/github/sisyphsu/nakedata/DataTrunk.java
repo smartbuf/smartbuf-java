@@ -1,6 +1,7 @@
 package com.github.sisyphsu.nakedata;
 
 import com.github.sisyphsu.nakedata.meta.TypeMeta;
+import lombok.Data;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ import java.util.List;
  * @author sulin
  * @since 2019-04-24 21:58:32
  */
+@Data
 public class DataTrunk {
 
     /**
