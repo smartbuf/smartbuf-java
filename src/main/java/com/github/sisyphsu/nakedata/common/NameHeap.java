@@ -1,5 +1,6 @@
-package com.github.sisyphsu.nakedata.context;
+package com.github.sisyphsu.nakedata.common;
 
+import com.github.sisyphsu.nakedata.context.ContextName;
 import lombok.Getter;
 
 /**

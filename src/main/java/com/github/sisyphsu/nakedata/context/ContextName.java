@@ -38,7 +38,6 @@ public class ContextName {
     public ContextName(int id, String name) {
         this.id = id;
         this.name = name;
-        this.flushRTime();
     }
 
     /**
