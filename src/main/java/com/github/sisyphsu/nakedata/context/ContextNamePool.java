@@ -32,21 +32,28 @@ public class ContextNamePool {
     public void addNames(ContextVersion version, Set<String> names) {
         // if reach limit, expire some low priority name.
         if (names.size() + nameIdMap.size() > limit) {
-            // todo release some unactive
-            ContextName[] dead = new ContextName[limit - keep];
+            NameHeap heap = new NameHeap(limit - keep);
             for (ContextName name : nameIdMap.values()) {
-                if (names.contains(name.getName())){
+                if (names.contains(name.getName())) {
                     continue;
                 }
-
+                heap.filter(name);
+            }
+            for (ContextName unactiveName : heap.getHeap()) {
+                nameIdMap.remove(unactiveName.getName());
+                pool.release(unactiveName.getId());
+                version.getNameExpired().add(unactiveName.getId());
             }
         }
         // only add the name which didn't exists.
-
-    }
-
-    private void doRelease() {
-
+        for (String name : names) {
+            if (nameIdMap.containsKey(name)) {
+                continue;
+            }
+            ContextName newName = new ContextName(pool.acquire(), name);
+            nameIdMap.put(name, newName);
+            version.getNameAdded().add(name);
+        }
     }
 
 }

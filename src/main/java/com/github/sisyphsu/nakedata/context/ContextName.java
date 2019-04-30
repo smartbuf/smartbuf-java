@@ -12,24 +12,40 @@ public class ContextName {
     private static final long INIT_TIME = System.currentTimeMillis();
 
     /**
-     * Real name stored in global.
-     */
-    private String name;
-    /**
      * The unique id of name in context.
      */
-    private int id;
+    private final int id;
+    /**
+     * Real name stored in global.
+     */
+    private final String name;
+
     /**
      * Reference count, used for ranking.
      */
-    private int rcount;
-    /**
-     * score
-     */
-    private int score;
+    private short rcount;
     /**
      * Relative time, used for ranking.
      */
-    private final int rtime = (int) (System.currentTimeMillis() - INIT_TIME / 1000);
+    private int rtime;
+
+    /**
+     * Initialize ContextName
+     *
+     * @param id   Unique id
+     * @param name Real name
+     */
+    public ContextName(int id, String name) {
+        this.id = id;
+        this.name = name;
+        this.flushRTime();
+    }
+
+    /**
+     * flush relative time
+     */
+    public void flushRTime() {
+        this.rtime = (int) (System.currentTimeMillis() - INIT_TIME / 1000);
+    }
 
 }

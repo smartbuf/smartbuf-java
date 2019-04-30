@@ -1,11 +1,14 @@
 package com.github.sisyphsu.nakedata.context;
 
+import lombok.Getter;
+
 /**
  * Use max heap to collect unactived name.
  *
  * @author sulin
  * @since 2019-04-29 20:22:38
  */
+@Getter
 public class NameHeap {
 
     /**
@@ -15,7 +18,7 @@ public class NameHeap {
     /**
      * unactive ContextName heap
      */
-    private ContextName[] heap;
+    private final ContextName[] heap;
 
     /**
      * Initialize NameHeap
@@ -39,7 +42,7 @@ public class NameHeap {
                     this.headAdjust(i, heap.length); // adjuest all
                 }
             }
-        } else if (this.heap[0].getScore() > name.getScore()) {
+        } else if (culScore(this.heap[0]) > culScore(name)) {
             this.heap[0] = name;
             this.headAdjust(0, heap.length); // adjust once
         }
@@ -51,11 +54,11 @@ public class NameHeap {
         int child = 2 * parent + 1;
         for (; child < len; parent = child, child = 2 * parent + 1) {
             // select the bigger child
-            if (child + 1 < len && heap[child].getScore() < heap[child + 1].getScore()) {
+            if (child + 1 < len && culScore(heap[child]) < culScore(heap[child + 1])) {
                 child = child + 1;
             }
             // break on stable heap
-            if (heap[parent].getScore() >= heap[child].getScore()) {
+            if (culScore(heap[parent]) >= culScore(heap[child])) {
                 break;
             }
             // exchange father and child
@@ -63,6 +66,11 @@ public class NameHeap {
             heap[child] = heap[parent];
             heap[parent] = tmp;
         }
+    }
+
+    // calculate ranking score of the specified ContextName
+    private double culScore(ContextName name) {
+        return name.getRcount() + name.getRtime() / 86400.0;
     }
 
 }
