@@ -1,7 +1,9 @@
-package com.github.sisyphsu.nakedata.context;
+package com.github.sisyphsu.nakedata.context.output;
 
 import com.github.sisyphsu.nakedata.common.IDPool;
 import com.github.sisyphsu.nakedata.common.NameHeap;
+import com.github.sisyphsu.nakedata.context.ContextName;
+import com.github.sisyphsu.nakedata.context.ContextVersion;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +13,7 @@ import java.util.Set;
  * @author sulin
  * @since 2019-04-29 13:39:46
  */
-public class ContextNamePool {
+public class OutputNamePool {
 
     private static final double FACTOR_KEEP = 0.9;
 
@@ -28,10 +30,6 @@ public class ContextNamePool {
      */
     private IDPool pool;
     /**
-     * Maintain the relationship between id and ContextName.
-     */
-    private Map<Integer, ContextName> idMap = new HashMap<>();
-    /**
      * Maintain the relationship between name and ContextName.
      */
     private Map<String, ContextName> nameMap = new HashMap<>();
@@ -41,20 +39,21 @@ public class ContextNamePool {
      *
      * @param limit Name's count limit.
      */
-    public ContextNamePool(int limit) {
+    public OutputNamePool(int limit) {
         this.limit = limit;
         this.keep = (int) (limit * FACTOR_KEEP);
         this.pool = new IDPool(limit);
     }
 
     /**
-     * Query real name of the specified id.
+     * Get the unique id of the specified name.
      *
-     * @param id Name's id
-     * @return ContextName
+     * @param name name's value
+     * @return unique id
      */
-    public ContextName getName(int id) {
-        return idMap.get(id);
+    public int getNameID(String name) {
+        ContextName cxtName = nameMap.get(name);
+        return cxtName.getId();
     }
 
     /**
@@ -74,7 +73,6 @@ public class ContextNamePool {
                 heap.filter(name);
             }
             for (ContextName unactiveName : heap.getHeap()) {
-                idMap.remove(unactiveName.getId());
                 nameMap.remove(unactiveName.getName());
                 pool.release(unactiveName.getId());
                 version.getNameExpired().add(unactiveName.getId());
@@ -85,7 +83,6 @@ public class ContextNamePool {
             ContextName cxtName = nameMap.get(name);
             if (cxtName == null) {
                 cxtName = new ContextName(pool.acquire(), name);
-                idMap.put(cxtName.getId(), cxtName);
                 nameMap.put(cxtName.getName(), cxtName);
                 version.getNameAdded().add(name);
             }
