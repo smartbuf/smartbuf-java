@@ -2,11 +2,11 @@ package com.github.sisyphsu.nakedata.context.output;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * 输出上下文
@@ -16,9 +16,64 @@ import java.util.Map;
  */
 public class OutputContext {
 
-    private List<String> names;
+    private static final Pattern NAME = Pattern.compile("^[A-Za-z_$][\\w$]{0,63}$");
 
-    private List<TypeRef> types;
+    /**
+     * 扫描到的持久变量名, 元数据扫描阶段使用, 支持复用以提高性能
+     */
+    private Set<String> cxtNames = new HashSet<>();
+    /**
+     * 扫描到的临时变量名
+     */
+    private Set<String> tmpNames = new HashSet<>();
+    /**
+     * 扫描到的持久数据类型
+     */
+    private Set<ObjectNode> cxtTypes = new HashSet<>();
+    /**
+     * 扫描到的临时数据类型
+     */
+    private Set<ObjectNode> tmpTypes = new HashSet<>();
+
+    private OutputNamePool namePool;
+
+    /**
+     * 预扫描元数据. 数据序列化之前扫描收集"变量名"的增量变化, 用于预处理NamePool以及甄别map与object。
+     *
+     * @param node 原始数据
+     */
+    public void preScan(JsonNode node) {
+        if (node == null) {
+            return;
+        }
+        if (node.getNodeType() == JsonNodeType.ARRAY) {
+            ArrayNode arrayNode = (ArrayNode) node;
+            for (Iterator<JsonNode> it = arrayNode.elements(); it.hasNext(); ) {
+                this.preScan(it.next());
+            }
+        } else if (node.getNodeType() == JsonNodeType.OBJECT) {
+            ObjectNode objectNode = (ObjectNode) node;
+            boolean isTmp = false;
+            List<String> names = new ArrayList<>();
+            for (Iterator<Map.Entry<String, JsonNode>> it = objectNode.fields(); it.hasNext(); ) {
+                Map.Entry<String, JsonNode> entry = it.next();
+                isTmp = isTmp || NAME.matcher(entry.getKey()).matches();
+                names.add(entry.getKey());
+                // 继续扫描子元素
+                this.preScan(entry.getValue());
+            }
+            if (isTmp) {
+                // 标记为临时类型
+                this.tmpNames.addAll(names);
+                this.tmpTypes.add(objectNode);
+            } else {
+                // 标记为持久类型
+                this.cxtNames.addAll(names);
+                this.tmpTypes.add(objectNode);
+            }
+        }
+    }
+
 
     /**
      * Create new TypeRef or fetch old TypeRef by the original json data.
@@ -76,11 +131,11 @@ public class OutputContext {
                     JsonNode val = entry.getValue();
                     TypeRef type = this.doCollect(val);
                     // collect name
-                    names.add(name);
+                    cxtNames.add(name);
                     // collect fields
                     ref.getFields().add(new TypeRef.Field(name, 0));
                 }
-                types.add(ref);
+//                types.add(ref);
 
                 return ref; // object
             default:

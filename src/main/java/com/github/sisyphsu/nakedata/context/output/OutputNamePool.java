@@ -57,11 +57,49 @@ public class OutputNamePool {
     }
 
     /**
+     * 向名称池中增加元素, 如果重复操作则激活它
+     *
+     * @param name 属性名
+     * @return 处理结果
+     */
+    public ContextName addName(String name) {
+        ContextName cxtName = nameMap.get(name);
+        if (cxtName == null) {
+            int id = pool.acquire();
+            cxtName = new ContextName(id, name);
+            nameMap.put(name, cxtName);
+            // TODO 增加clog
+        }
+        cxtName.active(); // 激活一次
+
+        return cxtName;
+    }
+
+    /**
+     * 尝试释放一些失去活性的属性名, 避免其无限制膨胀
+     */
+    public void tryRelease() {
+        if (nameMap.size() < limit) {
+            return;
+        }
+        NameHeap heap = new NameHeap(limit - keep);
+        for (ContextName value : nameMap.values()) {
+            heap.filter(value);
+        }
+        for (ContextName unactiveName : heap.getHeap()) {
+            nameMap.remove(unactiveName.getName());
+            pool.release(unactiveName.getId());
+            // TODO 增加clog
+        }
+    }
+
+    /**
      * Add new names into the current pool, if name's count reach limit, auto-release some unactive ids.
      *
      * @param version TODO should use Context's reference, not argument.
      * @param names   Could be new names, or old names.
      */
+    @Deprecated
     public void addNames(ContextVersion version, Set<String> names) {
         // if reach limit, expire some low priority name.
         if (names.size() + nameMap.size() > limit) {

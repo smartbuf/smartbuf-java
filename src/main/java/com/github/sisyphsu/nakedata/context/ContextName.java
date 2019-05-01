@@ -41,6 +41,14 @@ public class ContextName {
     }
 
     /**
+     * 激活属性名
+     */
+    public void active() {
+        this.rtime = (int) (System.currentTimeMillis() - INIT_TIME / 1000);
+        this.rcount++;
+    }
+
+    /**
      * flush relative time
      */
     public void flushRTime() {
