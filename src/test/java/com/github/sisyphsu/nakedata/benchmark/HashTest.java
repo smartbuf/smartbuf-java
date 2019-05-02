@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.benchmark;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.openjdk.jmh.annotations.*;
 
 import java.util.HashMap;
@@ -9,11 +10,29 @@ import java.util.concurrent.TimeUnit;
 /**
  * 测试Integer与String作为Map的key时的性能表现，预期后者的hash运算可能会有额外的性能损耗。
  * <p>
+ * 执行put操作然后remove
  * Benchmark             Mode  Cnt  Score    Error  Units
  * HashTest.testInt      avgt    6  0.011 ±  0.001  us/op
  * HashTest.testInteger  avgt    6  0.011 ±  0.001  us/op
  * HashTest.testString   avgt    6  0.010 ±  0.001  us/op
  * <p>
+ * 执行重复put操作
+ * Benchmark             Mode  Cnt  Score    Error  Units
+ * HashTest.testInt      avgt    6  0.007 ±  0.002  us/op
+ * HashTest.testInteger  avgt    6  0.006 ±  0.001  us/op
+ * HashTest.testString   avgt    6  0.004 ±  0.001  us/op
+ * <p>
+ * 怀疑是String常量存在编译器优化，采用运行期随机字符串进行重复put操作
+ * Benchmark             Mode  Cnt  Score    Error  Units
+ * HashTest.testInt      avgt    6  0.002 ±  0.001  us/op
+ * HashTest.testInteger  avgt    6  0.002 ±  0.001  us/op
+ * HashTest.testString   avgt    6  0.004 ±  0.001  us/op
+ * <p>
+ * 随机常量，重复put然后delete
+ * Benchmark             Mode  Cnt  Score    Error  Units
+ * HashTest.testInt      avgt    6  0.010 ±  0.001  us/op
+ * HashTest.testInteger  avgt    6  0.010 ±  0.001  us/op
+ * HashTest.testString   avgt    6  0.011 ±  0.001  us/op
  * 字符串的hash函数好像并没有影响到Map性能。
  *
  * @author sulin
@@ -29,23 +48,26 @@ public class HashTest {
     private static final Map<Integer, Object> intMap = new HashMap<>();
     private static final Map<String, Object> strMap = new HashMap<>();
 
+    private static String strKey = RandomStringUtils.randomNumeric(6);
+    private static Integer intKey = Integer.parseInt(strKey);
+
     @Benchmark
     public void testInt() {
-        intMap.put(123456, null);
-        intMap.remove(123456);
+        intMap.put(intKey, null);
+        intMap.remove(intKey);
     }
 
     @Benchmark
     public void testInteger() {
-        Integer i = 123456;
+        Integer i = intKey;
         intMap.put(i, null);
         intMap.remove(i);
     }
 
     @Benchmark
     public void testString() {
-        strMap.put("123456", null);
-        strMap.remove("123456");
+        strMap.put(strKey, null);
+        strMap.remove(strKey);
     }
 
 }
