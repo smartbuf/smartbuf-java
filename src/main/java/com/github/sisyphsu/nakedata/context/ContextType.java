@@ -7,6 +7,8 @@ import lombok.Getter;
 import java.util.List;
 
 /**
+ * 上下文自定义数据类型
+ *
  * @author sulin
  * @since 2019-04-29 13:10:56
  */
@@ -14,9 +16,17 @@ import java.util.List;
 public class ContextType {
 
     /**
-     * Type's id in context.
+     * 类型ID
      */
     private int id;
+    /**
+     * 属性名称列表, 输入端使用
+     */
+    private int[] names;
+    /**
+     * 属性类型列表, 输入端使用
+     */
+    private int[] types;
     /**
      * Whether is temperary type or not
      */

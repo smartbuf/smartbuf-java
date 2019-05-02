@@ -24,33 +24,45 @@ public class ContextVersion {
     private static final byte TMP_TYPE = 1 << 6;
 
     /**
-     * The new version's number
+     * 版本号ID
      */
     private int version;
     /**
-     * The expired name's context ids.
+     * 已过期的变量名
      */
     private List<Integer> nameExpired = new ArrayList<>();
     /**
-     * The expired type's context ids.
-     */
-    private List<Integer> typeExpired = new ArrayList<>();
-    /**
-     * The new added names.
+     * 新增的变量名
      */
     private List<String> nameAdded = new ArrayList<>();
     /**
-     * The new added types.
+     * 临时使用的变量名
+     */
+    private List<String> nameTemp = new ArrayList<>();
+    /**
+     * 已过期的数据框架
+     */
+    private List<Integer> frameExpired = new ArrayList<>();
+    /**
+     * 新增的数据框架
+     */
+    private List<Object> frameAdded = new ArrayList<>();
+    /**
+     * 临时使用的数据框架
+     */
+    private List<Object> frameTemp = new ArrayList<>();
+    /**
+     * 已过期的数据类型
+     */
+    private List<Integer> typeExpired = new ArrayList<>();
+    /**
+     * 新增的数据类型
      */
     private List<ContextType> typeAdded = new ArrayList<>();
     /**
-     * 临时变量名
+     * 临时使用的数据类型
      */
-    private List<String> tmpNames = new ArrayList<>();
-    /**
-     * 临时类型
-     */
-    private List<ContextType> tmpTypes = new ArrayList<>();
+    private List<ContextType> typeTemp = new ArrayList<>();
 
     /**
      * 上下文增量版本输出
@@ -65,8 +77,8 @@ public class ContextVersion {
         byte typeExpiredFlag = typeExpired.isEmpty() ? 0 : TYPE_EXPIRED;
         byte nameAddedFlag = nameAdded.isEmpty() ? 0 : NAME_ADDED;
         byte typeAddedFlag = typeAdded.isEmpty() ? 0 : TYPE_ADDED;
-        byte tmpNameFlag = tmpNames.isEmpty() ? 0 : TMP_NAME;
-        byte tmpTypeFlag = tmpTypes.isEmpty() ? 0 : TMP_TYPE;
+        byte tmpNameFlag = nameTemp.isEmpty() ? 0 : TMP_NAME;
+        byte tmpTypeFlag = typeTemp.isEmpty() ? 0 : TMP_TYPE;
         byte flag = (byte) (nameExpiredFlag | typeExpiredFlag | nameAddedFlag | typeAddedFlag | tmpNameFlag | tmpTypeFlag);
         writer.writeByte(flag);
         // 输出已废弃变量名
@@ -90,14 +102,14 @@ public class ContextVersion {
             typeAdded.forEach(type -> type.doWrite(writer));
         }
         // 输出临时变量名
-        if (!tmpNames.isEmpty()) {
-            writer.writeUint(tmpNames.size());
-            tmpNames.forEach(writer::writeString);
+        if (!nameTemp.isEmpty()) {
+            writer.writeUint(nameTemp.size());
+            nameTemp.forEach(writer::writeString);
         }
         // 输出临时类型
-        if (!tmpTypes.isEmpty()) {
-            writer.writeUint(tmpTypes.size());
-            tmpTypes.forEach(type -> type.doWrite(writer));
+        if (!typeTemp.isEmpty()) {
+            writer.writeUint(typeTemp.size());
+            typeTemp.forEach(type -> type.doWrite(writer));
         }
     }
 
@@ -151,7 +163,7 @@ public class ContextVersion {
         if (tmpNameFlag) {
             int size = (int) reader.readUint();
             for (int i = 0; i < size; i++) {
-                this.tmpNames.add(reader.readString());
+                this.nameTemp.add(reader.readString());
             }
         }
         // 读取临时类型
@@ -160,7 +172,7 @@ public class ContextVersion {
             for (int i = 0; i < size; i++) {
                 ContextType type = new ContextType();
                 type.doRead(reader);
-                this.tmpTypes.add(type);
+                this.typeTemp.add(type);
             }
         }
     }
