@@ -33,6 +33,13 @@ import java.util.concurrent.TimeUnit;
  * HashTest.testInt      avgt    6  0.010 ±  0.001  us/op
  * HashTest.testInteger  avgt    6  0.010 ±  0.001  us/op
  * HashTest.testString   avgt    6  0.011 ±  0.001  us/op
+ * <p>
+ * 随机常量，扩容后重复put、get、remove
+ * Benchmark             Mode  Cnt  Score    Error  Units
+ * HashTest.testInt      avgt    6  0.012 ±  0.003  us/op
+ * HashTest.testInteger  avgt    6  0.012 ±  0.004  us/op
+ * HashTest.testString   avgt    6  0.012 ±  0.001  us/op
+ * <p>
  * 字符串的hash函数好像并没有影响到Map性能。
  *
  * @author sulin
@@ -51,9 +58,17 @@ public class HashTest {
     private static String strKey = RandomStringUtils.randomNumeric(6);
     private static Integer intKey = Integer.parseInt(strKey);
 
+    static {
+        for (int i = 0; i < 15; i++) {
+            intMap.put(i, i);
+            strMap.put(String.valueOf(i), i);
+        }
+    }
+
     @Benchmark
     public void testInt() {
         intMap.put(intKey, null);
+        intMap.get(intKey);
         intMap.remove(intKey);
     }
 
@@ -61,12 +76,14 @@ public class HashTest {
     public void testInteger() {
         Integer i = intKey;
         intMap.put(i, null);
+        intMap.get(i);
         intMap.remove(i);
     }
 
     @Benchmark
     public void testString() {
         strMap.put(strKey, null);
+        strMap.get(strKey);
         strMap.remove(strKey);
     }
 
