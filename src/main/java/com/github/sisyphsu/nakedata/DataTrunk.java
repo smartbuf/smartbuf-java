@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata;
 
-import com.github.sisyphsu.nakedata.meta.TypeMeta;
+import com.github.sisyphsu.nakedata.field.TypeMeta;
 import lombok.Data;
 
 import java.util.List;

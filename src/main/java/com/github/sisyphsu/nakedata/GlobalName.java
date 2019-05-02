@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.global;
+package com.github.sisyphsu.nakedata;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.context;
 
+import com.github.sisyphsu.nakedata.io.OutputWriter;
 import lombok.Getter;
 
 /**
@@ -17,5 +18,9 @@ public class ContextField {
      * Field's type
      */
     private ContextType type;
+
+    public void doWrite(OutputWriter writer) {
+
+    }
 
 }

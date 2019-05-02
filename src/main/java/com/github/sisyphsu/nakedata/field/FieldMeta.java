@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.meta;
+package com.github.sisyphsu.nakedata.field;
 
 /**
  * @author sulin

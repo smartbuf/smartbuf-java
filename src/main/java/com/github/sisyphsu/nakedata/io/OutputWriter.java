@@ -19,6 +19,16 @@ public class OutputWriter {
         return this.writeUint(n);
     }
 
+    public int writeBoolean(boolean b) {
+        this.output.write((byte) (b ? 1 : 0));
+        return 1;
+    }
+
+    public int writeByte(byte b) {
+        this.output.write(b);
+        return 1;
+    }
+
     public int writeUint(long n) {
         int count = 0;
         do {

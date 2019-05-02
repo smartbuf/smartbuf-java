@@ -19,6 +19,10 @@ public class InputReader {
         return NumberUtils.uintToInt(l);
     }
 
+    public byte readByte() {
+        return input.read();
+    }
+
     public long readUint() {
         long l = 0;
         long b;

@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.protocol;
+package com.github.sisyphsu.nakedata;
 
 /**
  * JSON's primary type

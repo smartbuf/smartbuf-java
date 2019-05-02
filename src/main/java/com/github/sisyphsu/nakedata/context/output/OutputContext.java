@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.sisyphsu.nakedata.context.ContextVersion;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -41,10 +42,11 @@ public class OutputContext {
      * 预扫描元数据. 数据序列化之前扫描收集"变量名"的增量变化, 用于预处理NamePool以及甄别map与object。
      *
      * @param node 原始数据
+     * @return 返回上下文元数据增量版本数据
      */
-    public void preScan(JsonNode node) {
+    public ContextVersion preScan(JsonNode node) {
         if (node == null) {
-            return;
+            return null;
         }
         if (node.getNodeType() == JsonNodeType.ARRAY) {
             ArrayNode arrayNode = (ArrayNode) node;
@@ -69,11 +71,11 @@ public class OutputContext {
             } else {
                 // 标记为持久类型
                 this.cxtNames.addAll(names);
-                this.tmpTypes.add(objectNode);
+                this.cxtTypes.add(objectNode);
             }
         }
+        return null;
     }
-
 
     /**
      * Create new TypeRef or fetch old TypeRef by the original json data.
@@ -86,6 +88,16 @@ public class OutputContext {
     public TypeRef getType(JsonNode node) {
 
         return null;
+    }
+
+    /**
+     * 获取指定JsonNode的type-id
+     *
+     * @param node 原始JsonNode
+     * @return 类型ID
+     */
+    public int getTypeId(JsonNode node) {
+        return 0;
     }
 
     /**
