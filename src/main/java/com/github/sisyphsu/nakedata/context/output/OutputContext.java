@@ -107,6 +107,7 @@ public class OutputContext {
                     ContextStruct struct = structPool.buildStruct(log, names);
                     ContextType type = typePool.buildType(log, struct, types);
 
+                    // TODO 设置类型ID
                     // TODO 应该在扫描元数据时，就把type与JsonNode绑定起来, 避免输出Body时再次检索所带来的性能损耗。
                 }
                 return DataType.OBJECT;

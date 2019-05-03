@@ -10,8 +10,6 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-
 /**
  * @author sulin
  * @since 2019-04-25 11:52:09
@@ -43,4 +41,5 @@ public class JSONUtilsTest {
         private int age;
         private Map<String, String> props;
     }
+    
 }

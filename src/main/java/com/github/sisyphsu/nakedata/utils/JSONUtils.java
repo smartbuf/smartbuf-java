@@ -2,6 +2,7 @@ package com.github.sisyphsu.nakedata.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.sisyphsu.nakedata.jackson.JsonNodeFactory;
 
 /**
  * JSON utils based on Jackson
@@ -12,6 +13,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class JSONUtils {
 
     public static ObjectMapper MAPPER = new ObjectMapper();
+
+    static {
+        MAPPER.setNodeFactory(new JsonNodeFactory());
+    }
 
     /**
      * Parse Object to JsonNode
