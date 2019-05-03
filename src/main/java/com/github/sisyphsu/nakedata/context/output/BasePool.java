@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.context.output;
 
-import com.github.sisyphsu.nakedata.common.IDPool;
+import com.github.sisyphsu.nakedata.common.IDAllocator;
 
 /**
  * @author sulin
@@ -17,7 +17,7 @@ public class BasePool {
     /**
      * ID池, 用于分配递增的ID
      */
-    protected IDPool pool;
+    protected IDAllocator pool;
     /**
      * 执行release操作的时间戳
      */
@@ -30,7 +30,7 @@ public class BasePool {
      */
     public BasePool(int limit) {
         this.limit = limit;
-        this.pool = new IDPool(Integer.MAX_VALUE);
+        this.pool = new IDAllocator(Integer.MAX_VALUE);
     }
 
     /**

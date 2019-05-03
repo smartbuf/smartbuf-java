@@ -2,9 +2,9 @@ package com.github.sisyphsu.nakedata.context.output;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.sisyphsu.nakedata.DataType;
 import com.github.sisyphsu.nakedata.context.*;
+import com.github.sisyphsu.nakedata.jackson.ObjectNode;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -107,8 +107,8 @@ public class OutputContext {
                     ContextStruct struct = structPool.buildStruct(log, names);
                     ContextType type = typePool.buildType(log, struct, types);
 
-                    // TODO 设置类型ID
-                    // TODO 应该在扫描元数据时，就把type与JsonNode绑定起来, 避免输出Body时再次检索所带来的性能损耗。
+                    // 绑定类型ID, 避免输出Body时再次检索所带来的性能损耗
+                    objectNode.setType(type);
                 }
                 return DataType.OBJECT;
             default:

@@ -8,7 +8,7 @@ import com.github.sisyphsu.nakedata.utils.ArrayUtils;
  * @author sulin
  * @since 2019-04-29 17:37:20
  */
-public class IDPool {
+public class IDAllocator {
 
     /**
      * The max value of id, exclusion.
@@ -32,7 +32,7 @@ public class IDPool {
      *
      * @param max The max number of id, exclusive.
      */
-    public IDPool(int max) {
+    public IDAllocator(int max) {
         this.max = max;
     }
 

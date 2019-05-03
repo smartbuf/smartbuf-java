@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.context.input;
 
-import com.github.sisyphsu.nakedata.common.IDPool;
+import com.github.sisyphsu.nakedata.common.IDAllocator;
 import com.github.sisyphsu.nakedata.context.ContextField;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class InputTypePool {
     /**
      * The IDPool which used for id allocation, it should work exactly same with output-side.
      */
-    private IDPool pool;
+    private IDAllocator pool;
     /**
      * The types received from output-side.
      */
@@ -33,7 +33,7 @@ public class InputTypePool {
      */
     public InputTypePool(int limit) {
         this.limit = limit;
-        this.pool = new IDPool(limit);
+        this.pool = new IDAllocator(limit);
         this.table = new CType[64];
     }
 

@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.context.input;
 
-import com.github.sisyphsu.nakedata.common.IDPool;
+import com.github.sisyphsu.nakedata.common.IDAllocator;
 
 /**
  * Context's name pool for input side.
@@ -17,7 +17,7 @@ public class InputNamePool {
     /**
      * The IDPool which used for id allocation, it should work exactly same with output-side.
      */
-    private IDPool pool;
+    private IDAllocator pool;
     /**
      * The real name
      */
@@ -25,7 +25,7 @@ public class InputNamePool {
 
     public InputNamePool(int limit) {
         this.limit = limit;
-        this.pool = new IDPool(limit);
+        this.pool = new IDAllocator(limit);
         this.table = new String[64];
     }
 
