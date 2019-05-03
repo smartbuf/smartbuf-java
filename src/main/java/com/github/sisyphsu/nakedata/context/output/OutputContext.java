@@ -21,10 +21,11 @@ public class OutputContext {
 
     private static final Pattern NAME = Pattern.compile("^[A-Za-z_$][\\w$]{0,63}$");
 
+    private ContextLog log;
+
     private OutputNamePool namePool;
     private OutputStructPool structPool;
     private OutputTypePool typePool;
-    private ContextLog log;
 
     public OutputContext() {
         this.namePool = new OutputNamePool(1 << 16);
@@ -90,7 +91,7 @@ public class OutputContext {
                     fields.put(entry.getKey(), type);
                 }
                 if (isTmp) {
-                    // 处理临时类型, TODO 应该放入TMP中
+                    // TODO 临时类型直接放入临时数组中即可, 但是也需要支持ID复用
 //                this.structPool.buildStruct()
 //                this.tmpTypes.add(objectNode);
                 } else {
@@ -105,6 +106,8 @@ public class OutputContext {
                     }
                     ContextStruct struct = structPool.buildStruct(log, names);
                     ContextType type = typePool.buildType(log, struct, types);
+
+                    // TODO 应该在扫描元数据时，就把type与JsonNode绑定起来, 避免输出Body时再次检索所带来的性能损耗。
                 }
                 return DataType.OBJECT;
             default:
@@ -121,60 +124,5 @@ public class OutputContext {
     public int getTypeId(JsonNode node) {
         return 0;
     }
-
-//    /**
-//     * 根据待序列化数据刷新上下文, 主要更新元数据
-//     *
-//     * @param data 待序列化的数据
-//     */
-//    public void flush(JsonNode data) {
-//        // null是默认数据类型, 不需要处理
-//        if (data == null) {
-//            return;
-//        }
-//        this.doCollect(data);
-//    }
-
-//    private TypeRef doCollect(JsonNode node) {
-//        if (node == null) {
-//            return null; // NULL
-//        }
-//        switch (node.getNodeType()) {
-//            case NULL:
-//                return null; // null
-//            case BOOLEAN:
-//                return null; // boolean
-//            case NUMBER:
-//                return null; // varint or double
-//            case BINARY:
-//                return null; // binary
-//            case STRING:
-//                return null; // string
-//            case ARRAY:
-//                ArrayNode arrayNode = (ArrayNode) node;
-//                for (Iterator<JsonNode> it = arrayNode.elements(); it.hasNext(); ) {
-//                    this.doCollect(it.next());
-//                }
-//                return null; // array
-//            case OBJECT:
-//                ObjectNode objectNode = (ObjectNode) node;
-//                TypeRef ref = new TypeRef();
-//                for (Iterator<Map.Entry<String, JsonNode>> it = objectNode.fields(); it.hasNext(); ) {
-//                    Map.Entry<String, JsonNode> entry = it.next();
-//                    String name = entry.getKey();
-//                    JsonNode val = entry.getValue();
-//                    TypeRef type = this.doCollect(val);
-//                    // collect name
-//                    cxtNames.add(name);
-//                    // collect fields
-//                    ref.getFields().add(new TypeRef.Field(name, 0));
-//                }
-////                types.add(ref);
-//
-//                return ref; // object
-//            default:
-//                throw new IllegalStateException("unsupport data: " + node.getNodeType());
-//        }
-//    }
 
 }
