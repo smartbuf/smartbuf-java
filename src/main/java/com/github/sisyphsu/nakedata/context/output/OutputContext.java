@@ -85,7 +85,7 @@ public class OutputContext {
      * @param node the original json data
      * @return TypeRef
      */
-    public ActiveRef getType(JsonNode node) {
+    public ActiveRecord getType(JsonNode node) {
 
         return null;
     }

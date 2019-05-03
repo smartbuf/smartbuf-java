@@ -9,7 +9,7 @@ import lombok.Getter;
  * @since 2019-05-01 15:17:22
  */
 @Getter
-public class ActiveRef<T> {
+public class ActiveRecord<T> implements ActiveHeap.Score {
 
     private static final long INIT_TIME = System.currentTimeMillis();
 
@@ -26,7 +26,7 @@ public class ActiveRef<T> {
      */
     private T data;
 
-    public ActiveRef(T data) {
+    public ActiveRecord(T data) {
         this.data = data;
     }
 
@@ -38,4 +38,8 @@ public class ActiveRef<T> {
         this.rcount++;
     }
 
+    @Override
+    public double getScore() {
+        return this.rcount + this.rtime / 86400.0;
+    }
 }

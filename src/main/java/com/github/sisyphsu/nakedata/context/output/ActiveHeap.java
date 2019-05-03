@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  * @since 2019-04-29 20:22:38
  */
 @Getter
-public class ActiveHeap<T> {
+public class ActiveHeap<T extends ActiveHeap.Score> {
 
     /**
      * final number
@@ -20,7 +20,7 @@ public class ActiveHeap<T> {
     /**
      * unactive ContextName heap
      */
-    private final ActiveRef[] heap;
+    private final Score[] heap;
 
     /**
      * Initialize NameHeap
@@ -28,24 +28,24 @@ public class ActiveHeap<T> {
      * @param num final number
      */
     public ActiveHeap(int num) {
-        this.heap = new ActiveRef[num];
+        this.heap = new Score[num];
     }
 
     /**
      * Filter the specified ContextName, decide whether to collect it or not.
      *
-     * @param name ContextName
+     * @param t ContextName
      */
-    public void filter(ActiveRef<T> name) {
+    public void filter(T t) {
         if (count < heap.length) {
-            this.heap[count++] = name;
+            this.heap[count++] = t;
             if (count == heap.length) {
                 for (int i = heap.length / 2; i >= 0; i--) {
                     this.headAdjust(i, heap.length); // adjuest all
                 }
             }
-        } else if (culScore(this.heap[0]) > culScore(name)) {
-            this.heap[0] = name;
+        } else if (this.heap[0].getScore() > t.getScore()) {
+            this.heap[0] = t;
             this.headAdjust(0, heap.length); // adjust once
         }
     }
@@ -58,8 +58,8 @@ public class ActiveHeap<T> {
     @SuppressWarnings("unchecked")
     public void forEach(Consumer<T> consumer) {
         for (int i = 0; i < count; i++) {
-            ActiveRef ref = heap[i];
-            consumer.accept((T) ref.getData());
+            Score item = heap[i];
+            consumer.accept((T) item);
         }
     }
 
@@ -69,23 +69,28 @@ public class ActiveHeap<T> {
         int child = 2 * parent + 1;
         for (; child < len; parent = child, child = 2 * parent + 1) {
             // select the bigger child
-            if (child + 1 < len && culScore(heap[child]) < culScore(heap[child + 1])) {
+            if (child + 1 < len && heap[child].getScore() < heap[child + 1].getScore()) {
                 child = child + 1;
             }
             // break on stable heap
-            if (culScore(heap[parent]) >= culScore(heap[child])) {
+            if (heap[parent].getScore() >= heap[child].getScore()) {
                 break;
             }
             // exchange father and child
-            ActiveRef tmp = heap[child];
+            Score tmp = heap[child];
             heap[child] = heap[parent];
             heap[parent] = tmp;
         }
     }
 
-    // calculate ranking score of the specified ContextName
-    private double culScore(ActiveRef name) {
-        return name.getRcount() + name.getRtime() / 86400.0;
+    @FunctionalInterface
+    public interface Score {
+        /**
+         * 获取当前实例的分数
+         *
+         * @return 最终分数
+         */
+        double getScore();
     }
 
 }

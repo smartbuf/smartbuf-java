@@ -24,7 +24,7 @@ public class OutputStructPool {
     /**
      * 池子
      */
-    private Map<ContextStruct, ActiveRef<ContextStruct>> poolMap;
+    private Map<ContextStruct, ActiveRecord<ContextStruct>> poolMap;
 
     /**
      * 初始化结构池
@@ -45,11 +45,11 @@ public class OutputStructPool {
      */
     public ContextStruct buildStruct(Collection<ContextName> names) {
         ContextName[] arr = names.toArray(new ContextName[0]);
-        ActiveRef<ContextStruct> ref = poolMap.get(new ContextStruct(arr));
+        ActiveRecord<ContextStruct> ref = poolMap.get(new ContextStruct(arr));
         if (ref == null) {
             int id = pool.acquire();
             ContextStruct struct = new ContextStruct(id, arr);
-            ref = new ActiveRef<>(struct);
+            ref = new ActiveRecord<>(struct);
             poolMap.put(struct, ref);
         }
         ref.active();

@@ -31,7 +31,7 @@ public class OutputNamePool {
     /**
      * Maintain the relationship between name and ContextName.
      */
-    private Map<String, ActiveRef<ContextName>> nameMap = new HashMap<>();
+    private Map<String, ActiveRecord<ContextName>> nameMap = new HashMap<>();
 
     /**
      * Initialize pool
@@ -51,7 +51,7 @@ public class OutputNamePool {
      * @return unique id
      */
     public int getNameID(String name) {
-        ActiveRef<ContextName> cxtName = nameMap.get(name);
+        ActiveRecord<ContextName> cxtName = nameMap.get(name);
         return cxtName.getData().getId();
     }
 
@@ -62,10 +62,10 @@ public class OutputNamePool {
      * @return 处理结果
      */
     public ContextName addName(String name) {
-        ActiveRef<ContextName> ref = nameMap.get(name);
+        ActiveRecord<ContextName> ref = nameMap.get(name);
         if (ref == null) {
             int id = pool.acquire();
-            ref = new ActiveRef<>(new ContextName(id, name));
+            ref = new ActiveRecord<>(new ContextName(id, name));
             nameMap.put(name, ref);
             // TODO 增加clog
         }
@@ -81,15 +81,25 @@ public class OutputNamePool {
         if (nameMap.size() < limit) {
             return;
         }
-        ActiveHeap<ContextName> heap = new ActiveHeap<>(limit - keep);
-        for (ActiveRef<ContextName> value : nameMap.values()) {
-            heap.filter(value);
+//        ActiveHeap<ContextName> heap = new ActiveHeap<>(limit - keep);
+//        for (ActiveRef<ContextName> value : nameMap.values()) {
+//            heap.filter(value);
+//        }
+//        heap.forEach(cxtName -> {
+//            nameMap.remove(cxtName.getName());
+//            pool.release(cxtName.getId());
+//            // TODO 增加clog
+//        });
+    }
+
+    public static class OutputName extends ContextName {
+
+        private ActiveRecord record;
+
+        public OutputName(int id, String name) {
+            super(id, name);
         }
-        heap.forEach(cxtName -> {
-            nameMap.remove(cxtName.getName());
-            pool.release(cxtName.getId());
-            // TODO 增加clog
-        });
+
     }
 
 }

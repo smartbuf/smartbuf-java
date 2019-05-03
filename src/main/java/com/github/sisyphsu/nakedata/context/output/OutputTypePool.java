@@ -26,7 +26,7 @@ public class OutputTypePool {
     /**
      * 类型表, 当前已分配的全部数据类型
      */
-    private Map<ContextType, ActiveRef<ContextType>> typeMap;
+    private Map<ContextType, ActiveRecord<ContextType>> typeMap;
 
     public OutputTypePool(int max) {
         this.max = max;
@@ -43,12 +43,12 @@ public class OutputTypePool {
      */
     public ContextType buildType(ContextStruct struct, int[] types) {
         ContextType type = new ContextType(types, struct);
-        ActiveRef<ContextType> result = typeMap.get(type);
+        ActiveRecord<ContextType> result = typeMap.get(type);
         if (result == null) {
             type = new ContextType(pool.acquire());
             type.setTypes(types);
             type.setStruct(struct);
-            result = new ActiveRef<>(type);
+            result = new ActiveRecord<>(type);
         }
         result.active();
 
