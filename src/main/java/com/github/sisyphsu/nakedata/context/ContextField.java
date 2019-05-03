@@ -8,6 +8,7 @@ import lombok.Getter;
  * @since 2019-04-29 13:14:20
  */
 @Getter
+@Deprecated
 public class ContextField {
 
     /**

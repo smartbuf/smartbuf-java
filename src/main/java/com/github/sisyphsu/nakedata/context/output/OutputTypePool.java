@@ -3,6 +3,7 @@ package com.github.sisyphsu.nakedata.context.output;
 import com.github.sisyphsu.nakedata.context.ContextStruct;
 import com.github.sisyphsu.nakedata.context.ContextType;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ public class OutputTypePool extends AbstractPool {
     /**
      * 类型表, 当前已分配的全部数据类型
      */
-    private Map<ContextType, OutputType> typeMap;
+    private Map<TypeKey, OutputType> typeMap;
 
     public OutputTypePool(int limit) {
         super(limit);
@@ -32,16 +33,15 @@ public class OutputTypePool extends AbstractPool {
      * @return 自定义数据类型
      */
     public ContextType buildType(ContextStruct struct, int[] types) {
-        ContextType type = new ContextType(types, struct);
-        OutputType result = typeMap.get(type);
+        TypeKey key = new TypeKey(types, struct);
+        OutputType result = typeMap.get(key);
         if (result == null) {
             int id = pool.acquire();
-            type.setTypes(types);
-            type.setStruct(struct);
             result = new OutputType(id, types, struct);
+            typeMap.put(key, result);
+            // TODO 记录typeAdded
         }
         result.active();
-
         return result;
     }
 
@@ -59,12 +59,44 @@ public class OutputTypePool extends AbstractPool {
             }
             heap.filter(type);
         }
-        // TODO 废弃不活跃, 记录structExpired
+        // TODO 废弃不活跃, 记录typeExpired
         heap.forEach(type -> {
-            typeMap.remove(null); // TypeKey
+            typeMap.remove(new TypeKey(type.getTypes(), type.getStruct())); // IT's OK
             pool.release(type.getId());
         });
         this.releaseTime = time();
+    }
+
+    public class TypeKey {
+
+        private final int[] types;
+        private final ContextStruct struct;
+
+        public TypeKey(int[] types, ContextStruct struct) {
+            this.types = types;
+            this.struct = struct;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 31 + struct.getId();
+            for (int type : types) {
+                result = 31 * result + type;
+            }
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof TypeKey) {
+                TypeKey other = (TypeKey) obj;
+                if (this.struct.getId() != other.struct.getId()) {
+                    return false;
+                }
+                return Arrays.equals(this.types, other.types);
+            }
+            return false;
+        }
     }
 
     public class OutputType extends ContextType implements ActiveHeap.Score {
@@ -73,8 +105,7 @@ public class OutputTypePool extends AbstractPool {
         private int time;
 
         public OutputType(int id, int[] types, ContextStruct struct) {
-            super(types, struct);
-            super.setId(id);
+            super(id, types, struct);
         }
 
         public void active() {

@@ -68,7 +68,7 @@ public class OutputStructPool extends AbstractPool {
         }
         // TODO 废弃不活跃, 记录structExpired
         heap.forEach(struct -> {
-            map.remove(new StructKey(struct.getNames()));
+            map.remove(new StructKey(struct.getNames())); // IT'S OK
             pool.release(struct.getId());
         });
         this.releaseTime = time();
