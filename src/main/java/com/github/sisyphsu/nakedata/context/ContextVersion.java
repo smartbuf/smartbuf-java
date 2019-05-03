@@ -32,33 +32,33 @@ public class ContextVersion {
      */
     private List<Integer> nameExpired = new ArrayList<>();
     /**
-     * 新增的变量名
-     */
-    private List<String> nameAdded = new ArrayList<>();
-    /**
-     * 临时使用的变量名
-     */
-    private List<String> nameTemp = new ArrayList<>();
-    /**
      * 已过期的数据框架
      */
-    private List<Integer> frameExpired = new ArrayList<>();
-    /**
-     * 新增的数据框架
-     */
-    private List<Object> frameAdded = new ArrayList<>();
-    /**
-     * 临时使用的数据框架
-     */
-    private List<Object> frameTemp = new ArrayList<>();
+    private List<Integer> structExpired = new ArrayList<>();
     /**
      * 已过期的数据类型
      */
     private List<Integer> typeExpired = new ArrayList<>();
     /**
+     * 新增的变量名
+     */
+    private List<String> nameAdded = new ArrayList<>();
+    /**
+     * 新增的数据框架
+     */
+    private List<Object> structAdded = new ArrayList<>();
+    /**
      * 新增的数据类型
      */
     private List<ContextType> typeAdded = new ArrayList<>();
+    /**
+     * 临时使用的变量名
+     */
+    private List<String> nameTemp = new ArrayList<>();
+    /**
+     * 临时使用的数据框架
+     */
+    private List<Object> frameTemp = new ArrayList<>();
     /**
      * 临时使用的数据类型
      */
@@ -154,9 +154,9 @@ public class ContextVersion {
         if (typeAddedFlag) {
             int size = (int) reader.readUint();
             for (int i = 0; i < size; i++) {
-                ContextType type = new ContextType();
-                type.doRead(reader);
-                this.typeAdded.add(type);
+//                ContextType type = new ContextType();
+//                type.doRead(reader);
+//                this.typeAdded.add(type);
             }
         }
         // 读取临时变量名
@@ -170,9 +170,9 @@ public class ContextVersion {
         if (tmpTypeFlag) {
             int size = (int) reader.readUint();
             for (int i = 0; i < size; i++) {
-                ContextType type = new ContextType();
-                type.doRead(reader);
-                this.typeTemp.add(type);
+//                ContextType type = new ContextType();
+//                type.doRead(reader);
+//                this.typeTemp.add(type);
             }
         }
     }

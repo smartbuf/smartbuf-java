@@ -1,10 +1,10 @@
 package com.github.sisyphsu.nakedata.context.output;
 
+import com.github.sisyphsu.nakedata.context.ContextLog;
 import com.github.sisyphsu.nakedata.context.ContextName;
 import com.github.sisyphsu.nakedata.context.ContextStruct;
 import lombok.Getter;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +14,7 @@ import java.util.Map;
  * @author sulin
  * @since 2019-05-02 20:32:10
  */
-public class OutputStructPool extends AbstractPool {
+public class OutputStructPool extends BasePool {
 
     /**
      * 池子
@@ -37,14 +37,15 @@ public class OutputStructPool extends AbstractPool {
      * @param names 变量名列表
      * @return 数据结构实例
      */
-    public ContextStruct buildStruct(Collection<ContextName> names) {
-        StructKey key = new StructKey(names.toArray(new ContextName[0]));
+    public ContextStruct buildStruct(ContextLog log, ContextName[] names) {
+        StructKey key = new StructKey(names);
         OutputStruct struct = map.get(key);
         if (struct == null) {
             int id = pool.acquire();
             struct = new OutputStruct(id, key.getNames());
             map.put(key, struct);
-            // TODO 记录structAdded
+            // 记录struct-added
+            log.getStructAdded().add(struct);
         }
 
         struct.active();
@@ -55,11 +56,11 @@ public class OutputStructPool extends AbstractPool {
     /**
      * 尝试释放一些
      */
-    public void checkRelease() {
+    public void tryRelease(ContextLog log) {
         if (map.size() < limit) {
             return;
         }
-        ActiveHeap<OutputStruct> heap = new ActiveHeap<>(limit / 10);
+        GCHeap<OutputStruct> heap = new GCHeap<>(limit / 10);
         for (OutputStruct struct : map.values()) {
             if (struct.time >= this.releaseTime) {
                 continue;
@@ -70,6 +71,7 @@ public class OutputStructPool extends AbstractPool {
         heap.forEach(struct -> {
             map.remove(new StructKey(struct.getNames())); // IT'S OK
             pool.release(struct.getId());
+            log.getStructExpired().add(struct.getId());
         });
         this.releaseTime = time();
     }
@@ -119,7 +121,7 @@ public class OutputStructPool extends AbstractPool {
     /**
      * 输出端拓展的ContextStruct, 额外增加了活跃度监控功能
      */
-    public class OutputStruct extends ContextStruct implements ActiveHeap.Score {
+    public class OutputStruct extends ContextStruct implements GCHeap.Score {
 
         private short count;
         private int time;

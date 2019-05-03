@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  * @since 2019-04-29 20:22:38
  */
 @Getter
-public class ActiveHeap<T extends ActiveHeap.Score> {
+public class GCHeap<T extends GCHeap.Score> {
 
     /**
      * final number
@@ -27,7 +27,7 @@ public class ActiveHeap<T extends ActiveHeap.Score> {
      *
      * @param num final number
      */
-    public ActiveHeap(int num) {
+    public GCHeap(int num) {
         this.heap = new Score[num];
     }
 

@@ -6,7 +6,7 @@ import com.github.sisyphsu.nakedata.common.IDPool;
  * @author sulin
  * @since 2019-05-03 16:51:32
  */
-public class AbstractPool {
+public class BasePool {
 
     private static final long INIT_TIME = System.currentTimeMillis();
 
@@ -28,7 +28,7 @@ public class AbstractPool {
      *
      * @param limit 最大容量
      */
-    public AbstractPool(int limit) {
+    public BasePool(int limit) {
         this.limit = limit;
         this.pool = new IDPool(Integer.MAX_VALUE);
     }

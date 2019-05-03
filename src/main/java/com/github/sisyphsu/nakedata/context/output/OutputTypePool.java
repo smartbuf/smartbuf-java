@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.context.output;
 
+import com.github.sisyphsu.nakedata.context.ContextLog;
 import com.github.sisyphsu.nakedata.context.ContextStruct;
 import com.github.sisyphsu.nakedata.context.ContextType;
 
@@ -13,7 +14,7 @@ import java.util.Map;
  * @author sulin
  * @since 2019-04-30 18:06:44
  */
-public class OutputTypePool extends AbstractPool {
+public class OutputTypePool extends BasePool {
 
     /**
      * 类型表, 当前已分配的全部数据类型
@@ -32,14 +33,15 @@ public class OutputTypePool extends AbstractPool {
      * @param types  数据结构对应的成员类型
      * @return 自定义数据类型
      */
-    public ContextType buildType(ContextStruct struct, int[] types) {
+    public ContextType buildType(ContextLog log, ContextStruct struct, int[] types) {
         TypeKey key = new TypeKey(types, struct);
         OutputType result = typeMap.get(key);
         if (result == null) {
             int id = pool.acquire();
             result = new OutputType(id, types, struct);
             typeMap.put(key, result);
-            // TODO 记录typeAdded
+            // 记录type-added
+            log.getTypeAdded().add(result);
         }
         result.active();
         return result;
@@ -48,11 +50,11 @@ public class OutputTypePool extends AbstractPool {
     /**
      * 尝试执行数据类型回收, 如果池满了的话
      */
-    public void tryRelease() {
+    public void tryRelease(ContextLog log) {
         if (typeMap.size() < limit) {
             return;
         }
-        ActiveHeap<OutputType> heap = new ActiveHeap<>(limit / 10);
+        GCHeap<OutputType> heap = new GCHeap<>(limit / 10);
         for (OutputType type : typeMap.values()) {
             if (type.time >= this.releaseTime) {
                 continue;
@@ -63,6 +65,7 @@ public class OutputTypePool extends AbstractPool {
         heap.forEach(type -> {
             typeMap.remove(new TypeKey(type.getTypes(), type.getStruct())); // IT's OK
             pool.release(type.getId());
+            log.getTypeExpired().add(type.getId());
         });
         this.releaseTime = time();
     }
@@ -99,7 +102,7 @@ public class OutputTypePool extends AbstractPool {
         }
     }
 
-    public class OutputType extends ContextType implements ActiveHeap.Score {
+    public class OutputType extends ContextType implements GCHeap.Score {
 
         private short count;
         private int time;
