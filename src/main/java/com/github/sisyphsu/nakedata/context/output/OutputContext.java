@@ -83,11 +83,9 @@ public class OutputContext {
      * TODO: Use TypeRef serialize json data to binary.
      *
      * @param node the original json data
-     * @return TypeRef
      */
-    public ActiveRecord getType(JsonNode node) {
+    public void getType(JsonNode node) {
 
-        return null;
     }
 
     /**

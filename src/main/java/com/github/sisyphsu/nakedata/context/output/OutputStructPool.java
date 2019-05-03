@@ -1,8 +1,8 @@
 package com.github.sisyphsu.nakedata.context.output;
 
-import com.github.sisyphsu.nakedata.common.IDPool;
 import com.github.sisyphsu.nakedata.context.ContextName;
 import com.github.sisyphsu.nakedata.context.ContextStruct;
+import lombok.Getter;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,27 +14,21 @@ import java.util.Map;
  * @author sulin
  * @since 2019-05-02 20:32:10
  */
-public class OutputStructPool {
+public class OutputStructPool extends AbstractPool {
 
-    private final int max;
-    /**
-     * ID池
-     */
-    private IDPool pool;
     /**
      * 池子
      */
-    private Map<ContextStruct, ActiveRecord<ContextStruct>> poolMap;
+    private Map<StructKey, OutputStruct> map;
 
     /**
      * 初始化结构池
      *
-     * @param max 触发回收的最大容量
+     * @param limit 触发回收的最大容量
      */
-    public OutputStructPool(int max) {
-        this.max = max;
-        this.pool = new IDPool(max);
-        this.poolMap = new HashMap<>();
+    public OutputStructPool(int limit) {
+        super(limit);
+        this.map = new HashMap<>();
     }
 
     /**
@@ -44,23 +38,105 @@ public class OutputStructPool {
      * @return 数据结构实例
      */
     public ContextStruct buildStruct(Collection<ContextName> names) {
-        ContextName[] arr = names.toArray(new ContextName[0]);
-        ActiveRecord<ContextStruct> ref = poolMap.get(new ContextStruct(arr));
-        if (ref == null) {
+        StructKey key = new StructKey(names.toArray(new ContextName[0]));
+        OutputStruct struct = map.get(key);
+        if (struct == null) {
             int id = pool.acquire();
-            ContextStruct struct = new ContextStruct(id, arr);
-            ref = new ActiveRecord<>(struct);
-            poolMap.put(struct, ref);
+            struct = new OutputStruct(id, key.getNames());
+            map.put(key, struct);
+            // TODO 记录structAdded
         }
-        ref.active();
 
-        return ref.getData();
+        struct.active();
+
+        return struct;
     }
 
     /**
      * 尝试释放一些
      */
-    public void release() {
+    public void checkRelease() {
+        if (map.size() < limit) {
+            return;
+        }
+        ActiveHeap<OutputStruct> heap = new ActiveHeap<>(limit / 10);
+        for (OutputStruct struct : map.values()) {
+            if (struct.time >= this.releaseTime) {
+                continue;
+            }
+            heap.filter(struct);
+        }
+        // TODO 废弃不活跃, 记录structExpired
+        heap.forEach(struct -> {
+            map.remove(new StructKey(struct.getNames()));
+            pool.release(struct.getId());
+        });
+        this.releaseTime = time();
+    }
+
+    /**
+     * 类型Key
+     */
+    @Getter
+    public static class StructKey {
+
+        private final ContextName[] names;
+
+        private StructKey(ContextName[] names) {
+            this.names = names;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 1;
+            for (ContextName name : names) {
+                result = 31 * result + name.getId();
+            }
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof StructKey)) {
+                return false;
+            }
+            StructKey other = (StructKey) obj;
+            if (this.names.length != other.names.length) {
+                return false;
+            }
+            for (int i = 0; i < names.length; i++) {
+                ContextName left = names[i];
+                ContextName right = other.names[i];
+                if (left.getId() != right.getId()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+    }
+
+    /**
+     * 输出端拓展的ContextStruct, 额外增加了活跃度监控功能
+     */
+    public class OutputStruct extends ContextStruct implements ActiveHeap.Score {
+
+        private short count;
+        private int time;
+
+        public void active() {
+            this.time = time();
+            this.count++;
+        }
+
+        public OutputStruct(int id, ContextName[] names) {
+            super(id, names);
+        }
+
+        @Override
+        public double getScore() {
+            return this.count + this.time / 86400.0;
+        }
 
     }
 

@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.context.output;
 
-import com.github.sisyphsu.nakedata.common.IDPool;
 import com.github.sisyphsu.nakedata.context.ContextName;
 
 import java.util.HashMap;
@@ -12,26 +11,12 @@ import java.util.Map;
  * @author sulin
  * @since 2019-04-29 13:39:46
  */
-public class OutputNamePool {
+public class OutputNamePool extends AbstractPool {
 
-    private static final double FACTOR_KEEP = 0.9;
-
-    /**
-     * When reach limit, keep some more active names.
-     */
-    private int keep;
-    /**
-     * Max count of name cached in Context.
-     */
-    private int limit;
-    /**
-     * Provide incremental id acquire and release features.
-     */
-    private IDPool pool;
     /**
      * Maintain the relationship between name and ContextName.
      */
-    private Map<String, ActiveRecord<ContextName>> nameMap = new HashMap<>();
+    private Map<String, OutputName> nameMap = new HashMap<>();
 
     /**
      * Initialize pool
@@ -39,39 +24,26 @@ public class OutputNamePool {
      * @param limit Name's count limit.
      */
     public OutputNamePool(int limit) {
-        this.limit = limit;
-        this.keep = (int) (limit * FACTOR_KEEP);
-        this.pool = new IDPool(limit);
+        super(limit);
     }
 
     /**
-     * Get the unique id of the specified name.
+     * 根据名称字符串构建ContextName实例, 如果已有则直接获取旧实例。
      *
      * @param name name's value
      * @return unique id
      */
-    public int getNameID(String name) {
-        ActiveRecord<ContextName> cxtName = nameMap.get(name);
-        return cxtName.getData().getId();
-    }
-
-    /**
-     * 向名称池中增加元素, 如果重复操作则激活它
-     *
-     * @param name 属性名
-     * @return 处理结果
-     */
-    public ContextName addName(String name) {
-        ActiveRecord<ContextName> ref = nameMap.get(name);
-        if (ref == null) {
+    public ContextName buildName(String name) {
+        OutputName cxtName = nameMap.get(name);
+        if (cxtName == null) {
             int id = pool.acquire();
-            ref = new ActiveRecord<>(new ContextName(id, name));
-            nameMap.put(name, ref);
-            // TODO 增加clog
+            cxtName = new OutputName(id, name);
+            nameMap.put(name, cxtName);
+            // TODO 增加nameAdded
         }
-        ref.active(); // 激活一次
+        cxtName.active(); // 激活一次
 
-        return ref.getData();
+        return cxtName;
     }
 
     /**
@@ -81,23 +53,42 @@ public class OutputNamePool {
         if (nameMap.size() < limit) {
             return;
         }
-//        ActiveHeap<ContextName> heap = new ActiveHeap<>(limit - keep);
-//        for (ActiveRef<ContextName> value : nameMap.values()) {
-//            heap.filter(value);
-//        }
-//        heap.forEach(cxtName -> {
-//            nameMap.remove(cxtName.getName());
-//            pool.release(cxtName.getId());
-//            // TODO 增加clog
-//        });
+        ActiveHeap<OutputName> heap = new ActiveHeap<>(limit / 10);
+        for (OutputName name : nameMap.values()) {
+            if (name.time >= this.releaseTime) {
+                continue;
+            }
+            heap.filter(name);
+        }
+        // TODO 废弃不活跃active, 记录nameExpired
+        heap.forEach(cxtName -> {
+            nameMap.remove(cxtName.getName());
+            pool.release(cxtName.getId());
+        });
+        // 更新释放时间
+        this.releaseTime = time();
     }
 
-    public static class OutputName extends ContextName {
+    /**
+     * 输出端适配的ContextName对象, 拓展活跃度监控等
+     */
+    public class OutputName extends ContextName implements ActiveHeap.Score {
 
-        private ActiveRecord record;
+        private short count;
+        private int time;
+
+        public void active() {
+            this.time = time();
+            this.count++;
+        }
 
         public OutputName(int id, String name) {
             super(id, name);
+        }
+
+        @Override
+        public double getScore() {
+            return this.count + this.time / 86400.0;
         }
 
     }
