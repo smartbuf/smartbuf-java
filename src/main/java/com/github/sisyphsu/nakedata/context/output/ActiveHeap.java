@@ -1,7 +1,8 @@
-package com.github.sisyphsu.nakedata.common;
+package com.github.sisyphsu.nakedata.context.output;
 
-import com.github.sisyphsu.nakedata.context.ContextName;
 import lombok.Getter;
+
+import java.util.function.Consumer;
 
 /**
  * Use max heap to collect unactived name.
@@ -10,7 +11,7 @@ import lombok.Getter;
  * @since 2019-04-29 20:22:38
  */
 @Getter
-public class NameHeap {
+public class ActiveHeap<T> {
 
     /**
      * final number
@@ -19,15 +20,15 @@ public class NameHeap {
     /**
      * unactive ContextName heap
      */
-    private final ContextName[] heap;
+    private final ActiveRef[] heap;
 
     /**
      * Initialize NameHeap
      *
      * @param num final number
      */
-    public NameHeap(int num) {
-        this.heap = new ContextName[num];
+    public ActiveHeap(int num) {
+        this.heap = new ActiveRef[num];
     }
 
     /**
@@ -35,7 +36,7 @@ public class NameHeap {
      *
      * @param name ContextName
      */
-    public void filter(ContextName name) {
+    public void filter(ActiveRef<T> name) {
         if (count < heap.length) {
             this.heap[count++] = name;
             if (count == heap.length) {
@@ -46,6 +47,19 @@ public class NameHeap {
         } else if (culScore(this.heap[0]) > culScore(name)) {
             this.heap[0] = name;
             this.headAdjust(0, heap.length); // adjust once
+        }
+    }
+
+    /**
+     * 循环迭代
+     *
+     * @param consumer 循环函数
+     */
+    @SuppressWarnings("unchecked")
+    public void forEach(Consumer<T> consumer) {
+        for (int i = 0; i < count; i++) {
+            ActiveRef ref = heap[i];
+            consumer.accept((T) ref.getData());
         }
     }
 
@@ -63,14 +77,14 @@ public class NameHeap {
                 break;
             }
             // exchange father and child
-            ContextName tmp = heap[child];
+            ActiveRef tmp = heap[child];
             heap[child] = heap[parent];
             heap[parent] = tmp;
         }
     }
 
     // calculate ranking score of the specified ContextName
-    private double culScore(ContextName name) {
+    private double culScore(ActiveRef name) {
         return name.getRcount() + name.getRtime() / 86400.0;
     }
 

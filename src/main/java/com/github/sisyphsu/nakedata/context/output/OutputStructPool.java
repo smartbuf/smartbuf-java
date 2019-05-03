@@ -1,6 +1,7 @@
 package com.github.sisyphsu.nakedata.context.output;
 
 import com.github.sisyphsu.nakedata.common.IDPool;
+import com.github.sisyphsu.nakedata.context.ContextStruct;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,6 +18,8 @@ public class OutputStructPool {
      */
     private IDPool pool;
 
+    private Map<String, ActiveRef<ContextStruct>> nameMap = new HashMap<>();
+
     private Node root;
 
     /**
@@ -29,11 +32,12 @@ public class OutputStructPool {
         return 0;
     }
 
+    
     public static class Node {
         /**
          * 变量名
          */
-        private String name;
+        private ContextStruct struct;
         /**
          * 下一级变量名
          */

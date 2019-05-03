@@ -4,8 +4,6 @@ import com.github.sisyphsu.nakedata.io.InputReader;
 import com.github.sisyphsu.nakedata.io.OutputWriter;
 import lombok.Getter;
 
-import java.util.List;
-
 /**
  * 上下文自定义数据类型
  *
@@ -20,32 +18,19 @@ public class ContextType {
      */
     private int id;
     /**
-     * 属性名称列表, 输入端使用
-     */
-    private int[] names;
-    /**
-     * 属性类型列表, 输入端使用
+     * 数据类型的类型列表, 必须与struct对应
      */
     private int[] types;
     /**
-     * Whether is temperary type or not
+     * 数据类型的内部结构
      */
-    private boolean temp;
-    /**
-     * The fields of this Type, ordered and nullable.
-     */
-    private List<ContextField> fields;
+    private ContextStruct struct;
 
     public ContextType() {
     }
 
-    public ContextType(int id, List<ContextField> fields) {
-        this.id = id;
-        this.fields = fields;
-    }
-
     public void doWrite(OutputWriter writer) {
-        writer.writeUint(fields.size());
+
     }
 
     public void doRead(InputReader reader) {

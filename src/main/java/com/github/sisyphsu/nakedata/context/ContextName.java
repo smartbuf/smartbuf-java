@@ -1,15 +1,17 @@
 package com.github.sisyphsu.nakedata.context;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
+ * 上下文中名称元数据
+ *
  * @author sulin
  * @since 2019-04-29 13:17:31
  */
 @Data
+@AllArgsConstructor
 public class ContextName {
-
-    private static final long INIT_TIME = System.currentTimeMillis();
 
     /**
      * The unique id of name in context.
@@ -19,40 +21,5 @@ public class ContextName {
      * Real name stored in global.
      */
     private final String name;
-
-    /**
-     * Reference count, used for ranking.
-     */
-    private short rcount;
-    /**
-     * Relative time, used for ranking.
-     */
-    private int rtime;
-
-    /**
-     * Initialize ContextName
-     *
-     * @param id   Unique id
-     * @param name Real name
-     */
-    public ContextName(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    /**
-     * 激活属性名
-     */
-    public void active() {
-        this.rtime = (int) (System.currentTimeMillis() - INIT_TIME / 1000);
-        this.rcount++;
-    }
-
-    /**
-     * flush relative time
-     */
-    public void flushRTime() {
-        this.rtime = (int) (System.currentTimeMillis() - INIT_TIME / 1000);
-    }
 
 }

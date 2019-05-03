@@ -2,6 +2,7 @@ package com.github.sisyphsu.nakedata.context.output;
 
 import com.github.sisyphsu.nakedata.common.IDPool;
 import com.github.sisyphsu.nakedata.context.ContextField;
+import com.github.sisyphsu.nakedata.context.ContextStruct;
 import com.github.sisyphsu.nakedata.context.ContextType;
 
 import java.util.HashMap;
@@ -26,6 +27,15 @@ public class OutputTypePool {
     private TreeNode root = new TreeNode();
 
     /**
+     * 类型表, KEY为[struct-id > types]
+     */
+    private Map<int[], ContextType> typeMap = new HashMap<>();
+
+    public int getType(ContextStruct struct, int[] types) {
+        return 0;
+    }
+
+    /**
      * Get the unique type-id for the specified fields.
      *
      * @param fields Fields of one customized type.
@@ -42,7 +52,7 @@ public class OutputTypePool {
         }
         if (node.type == null) {
             // TODO Create new context-type, may need to release some unactive.
-            node.type = new ContextType(pool.acquire(), fields);
+//            node.type = new ContextType(pool.acquire(), fields);
         }
         return node.type.getId();
     }

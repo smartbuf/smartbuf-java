@@ -1,7 +1,6 @@
 package com.github.sisyphsu.nakedata.context.output;
 
 import com.github.sisyphsu.nakedata.common.IDPool;
-import com.github.sisyphsu.nakedata.common.NameHeap;
 import com.github.sisyphsu.nakedata.context.ContextName;
 import com.github.sisyphsu.nakedata.context.ContextVersion;
 
@@ -10,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * 输出上下文的变量名池
+ *
  * @author sulin
  * @since 2019-04-29 13:39:46
  */
@@ -32,7 +33,7 @@ public class OutputNamePool {
     /**
      * Maintain the relationship between name and ContextName.
      */
-    private Map<String, ContextName> nameMap = new HashMap<>();
+    private Map<String, ActiveRef<ContextName>> nameMap = new HashMap<>();
 
     /**
      * Initialize pool
@@ -52,8 +53,8 @@ public class OutputNamePool {
      * @return unique id
      */
     public int getNameID(String name) {
-        ContextName cxtName = nameMap.get(name);
-        return cxtName.getId();
+        ActiveRef<ContextName> cxtName = nameMap.get(name);
+        return cxtName.getData().getId();
     }
 
     /**
@@ -63,16 +64,16 @@ public class OutputNamePool {
      * @return 处理结果
      */
     public ContextName addName(String name) {
-        ContextName cxtName = nameMap.get(name);
-        if (cxtName == null) {
+        ActiveRef<ContextName> ref = nameMap.get(name);
+        if (ref == null) {
             int id = pool.acquire();
-            cxtName = new ContextName(id, name);
-            nameMap.put(name, cxtName);
+            ref = new ActiveRef<>(new ContextName(id, name));
+            nameMap.put(name, ref);
             // TODO 增加clog
         }
-        cxtName.active(); // 激活一次
+        ref.active(); // 激活一次
 
-        return cxtName;
+        return ref.getData();
     }
 
     /**
@@ -82,15 +83,15 @@ public class OutputNamePool {
         if (nameMap.size() < limit) {
             return;
         }
-        NameHeap heap = new NameHeap(limit - keep);
-        for (ContextName value : nameMap.values()) {
+        ActiveHeap<ContextName> heap = new ActiveHeap<>(limit - keep);
+        for (ActiveRef<ContextName> value : nameMap.values()) {
             heap.filter(value);
         }
-        for (ContextName unactiveName : heap.getHeap()) {
-            nameMap.remove(unactiveName.getName());
-            pool.release(unactiveName.getId());
+        heap.forEach(cxtName -> {
+            nameMap.remove(cxtName.getName());
+            pool.release(cxtName.getId());
             // TODO 增加clog
-        }
+        });
     }
 
     /**
@@ -103,28 +104,28 @@ public class OutputNamePool {
     public void addNames(ContextVersion version, Set<String> names) {
         // if reach limit, expire some low priority name.
         if (names.size() + nameMap.size() > limit) {
-            NameHeap heap = new NameHeap(limit - keep);
-            for (ContextName name : nameMap.values()) {
-                if (names.contains(name.getName())) {
+            ActiveHeap<ContextName> heap = new ActiveHeap<>(limit - keep);
+            for (ActiveRef<ContextName> name : nameMap.values()) {
+                if (names.contains(name.getData().getName())) {
                     continue;
                 }
                 heap.filter(name);
             }
-            for (ContextName unactiveName : heap.getHeap()) {
-                nameMap.remove(unactiveName.getName());
-                pool.release(unactiveName.getId());
-                version.getNameExpired().add(unactiveName.getId());
-            }
+            heap.forEach(cxtName -> {
+                nameMap.remove(cxtName.getName());
+                pool.release(cxtName.getId());
+                version.getNameExpired().add(cxtName.getId());
+            });
         }
         // only add the name which didn't exists.
         for (String name : names) {
-            ContextName cxtName = nameMap.get(name);
+            ActiveRef<ContextName> cxtName = nameMap.get(name);
             if (cxtName == null) {
-                cxtName = new ContextName(pool.acquire(), name);
-                nameMap.put(cxtName.getName(), cxtName);
+                cxtName = new ActiveRef<>(new ContextName(pool.acquire(), name));
+                nameMap.put(cxtName.getData().getName(), cxtName);
                 version.getNameAdded().add(name);
             }
-            cxtName.flushRTime();
+            cxtName.active();
         }
     }
 
