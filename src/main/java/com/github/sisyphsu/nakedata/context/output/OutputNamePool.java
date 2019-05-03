@@ -2,11 +2,9 @@ package com.github.sisyphsu.nakedata.context.output;
 
 import com.github.sisyphsu.nakedata.common.IDPool;
 import com.github.sisyphsu.nakedata.context.ContextName;
-import com.github.sisyphsu.nakedata.context.ContextVersion;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 输出上下文的变量名池
@@ -92,41 +90,6 @@ public class OutputNamePool {
             pool.release(cxtName.getId());
             // TODO 增加clog
         });
-    }
-
-    /**
-     * Add new names into the current pool, if name's count reach limit, auto-release some unactive ids.
-     *
-     * @param version TODO should use Context's reference, not argument.
-     * @param names   Could be new names, or old names.
-     */
-    @Deprecated
-    public void addNames(ContextVersion version, Set<String> names) {
-        // if reach limit, expire some low priority name.
-        if (names.size() + nameMap.size() > limit) {
-            ActiveHeap<ContextName> heap = new ActiveHeap<>(limit - keep);
-            for (ActiveRef<ContextName> name : nameMap.values()) {
-                if (names.contains(name.getData().getName())) {
-                    continue;
-                }
-                heap.filter(name);
-            }
-            heap.forEach(cxtName -> {
-                nameMap.remove(cxtName.getName());
-                pool.release(cxtName.getId());
-                version.getNameExpired().add(cxtName.getId());
-            });
-        }
-        // only add the name which didn't exists.
-        for (String name : names) {
-            ActiveRef<ContextName> cxtName = nameMap.get(name);
-            if (cxtName == null) {
-                cxtName = new ActiveRef<>(new ContextName(pool.acquire(), name));
-                nameMap.put(cxtName.getData().getName(), cxtName);
-                version.getNameAdded().add(name);
-            }
-            cxtName.active();
-        }
     }
 
 }

@@ -1,7 +1,6 @@
 package com.github.sisyphsu.nakedata.context;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 
 /**
  * 上下文中名称元数据
@@ -9,8 +8,7 @@ import lombok.Data;
  * @author sulin
  * @since 2019-04-29 13:17:31
  */
-@Data
-@AllArgsConstructor
+@Getter
 public class ContextName {
 
     /**
@@ -21,5 +19,23 @@ public class ContextName {
      * Real name stored in global.
      */
     private final String name;
+
+    public ContextName(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ContextName) {
+            return this.name.equals(((ContextName) obj).name);
+        }
+        return false;
+    }
 
 }

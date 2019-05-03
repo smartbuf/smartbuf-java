@@ -1,12 +1,10 @@
 package com.github.sisyphsu.nakedata.context.output;
 
 import com.github.sisyphsu.nakedata.common.IDPool;
-import com.github.sisyphsu.nakedata.context.ContextField;
 import com.github.sisyphsu.nakedata.context.ContextStruct;
 import com.github.sisyphsu.nakedata.context.ContextType;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,73 +16,49 @@ import java.util.Map;
 public class OutputTypePool {
 
     /**
-     * IDPool, which used for id allocation.
+     * 类型池最大容量, 超过后需要执行垃圾回收
      */
-    private IDPool pool = new IDPool(1000);
+    private final int max;
     /**
-     * Root node of type-tree.
+     * ID池, 用于分配递增的ID
      */
-    private TreeNode root = new TreeNode();
-
+    private IDPool pool;
     /**
-     * 类型表, KEY为[struct-id > types]
+     * 类型表, 当前已分配的全部数据类型
      */
-    private Map<int[], ContextType> typeMap = new HashMap<>();
+    private Map<ContextType, ActiveRef<ContextType>> typeMap;
 
-    public int getType(ContextStruct struct, int[] types) {
-        return 0;
+    public OutputTypePool(int max) {
+        this.max = max;
+        this.pool = new IDPool(max);
+        this.typeMap = new HashMap<>();
     }
 
     /**
-     * Get the unique type-id for the specified fields.
+     * 根据struct和types构建上下文数据类型, 如果已存在则直接用旧数据
      *
-     * @param fields Fields of one customized type.
-     * @return type-id
+     * @param struct 数据结构
+     * @param types  数据结构对应的成员类型
+     * @return 自定义数据类型
      */
-    public int getTypeID(List<ContextField> fields) {
-        if (fields == null || fields.size() == 0) {
-            throw new IllegalArgumentException("fields can't be empty");
+    public ContextType buildType(ContextStruct struct, int[] types) {
+        ContextType type = new ContextType(types, struct);
+        ActiveRef<ContextType> result = typeMap.get(type);
+        if (result == null) {
+            type = new ContextType(pool.acquire());
+            type.setTypes(types);
+            type.setStruct(struct);
+            result = new ActiveRef<>(type);
         }
-        TreeNode node = root;
-        for (ContextField field : fields) {
-            node = node.getSubNode(field.getName().getId());
-            node = node.getSubNode(field.getType().getId());
-        }
-        if (node.type == null) {
-            // TODO Create new context-type, may need to release some unactive.
-//            node.type = new ContextType(pool.acquire(), fields);
-        }
-        return node.type.getId();
+        result.active();
+
+        return result.getData();
     }
 
     /**
-     * Represent one node of type-tree.
+     * 尝试执行数据类型回收, 如果池满了的话
      */
-    public static class TreeNode {
-
-        /**
-         * Current cached type, could be null.
-         */
-        private ContextType type;
-        /**
-         * Next level node's Map, Key may be field name's ID or field type's ID.
-         */
-        private Map<Integer, TreeNode> subNodeMap = new HashMap<>();
-
-        /**
-         * Get the specified sub node.
-         *
-         * @param id Field name's ID or field type's ID.
-         * @return The result node in Type-Tree
-         */
-        public TreeNode getSubNode(int id) {
-            TreeNode node = subNodeMap.get(id);
-            if (node == null) {
-                node = new TreeNode();
-                subNodeMap.put(id, node);
-            }
-            return node;
-        }
+    public void release() {
 
     }
 
