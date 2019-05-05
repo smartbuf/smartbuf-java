@@ -1,5 +1,7 @@
 package com.github.sisyphsu.nakedata;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 /**
  * JSON's primary type
  *
@@ -46,5 +48,30 @@ public interface DataType {
      * Represent object, Should be UnionType.
      */
     byte OBJECT = 0x09;
+
+    static byte parseType(JsonNode node) {
+        switch (node.getNodeType()) {
+            case NULL:
+                return NULL;
+            case BOOLEAN:
+                return node.booleanValue() ? TRUE : FALSE;
+            case NUMBER:
+                if (node.isFloat())
+                    return FLOAT;
+                if (node.isDouble())
+                    return DOUBLE;
+                return NUMBER;
+            case STRING:
+                return STRING;
+            case BINARY:
+                return BINARY;
+            case ARRAY:
+                return ARRAY;
+            case OBJECT:
+                return OBJECT;
+            default:
+                throw new IllegalArgumentException("Unsupported JsonNode: " + node);
+        }
+    }
 
 }
