@@ -40,8 +40,8 @@ public class OutputNamePool extends BasePool {
             int id = pool.acquire();
             result = new OutputName(id, name);
             cxtNameMap.put(name, result);
-            // 记录元数据变化
-            version.getNameAdded().add(result);
+            
+            version.getNameAdded().add(name);
         }
         result.active(); // 激活一次
 
@@ -62,7 +62,7 @@ public class OutputNamePool extends BasePool {
             result = new ContextName(id, name);
             tmpNameMap.put(name, result);
 
-            version.getNameTemp().add(result);
+            version.getNameTemp().add(name);
         }
         return result;
     }

@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.context.output;
 
-import com.github.sisyphsu.nakedata.context.model.ContextName;
 import com.github.sisyphsu.nakedata.context.model.ContextStruct;
 import com.github.sisyphsu.nakedata.context.model.ContextVersion;
 import lombok.Getter;
@@ -36,11 +35,11 @@ public class OutputStructPool extends BasePool {
      * 创建数据结构
      *
      * @param version 上下文版本
-     * @param names   结构成员
+     * @param nameIds 结构成员
      * @return 数据结构实例
      */
-    public ContextStruct buildCxtStruct(ContextVersion version, ContextName[] names) {
-        OutputStruct temp = new OutputStruct(names);
+    public ContextStruct buildCxtStruct(ContextVersion version, int[] nameIds) {
+        OutputStruct temp = new OutputStruct(nameIds);
         OutputStruct result = cxtStructMap.get(temp);
         if (result == null) {
             temp.setId(pool.acquire());
@@ -58,11 +57,11 @@ public class OutputStructPool extends BasePool {
      * 创建临时的上下文数据结构
      *
      * @param version 上下文版本
-     * @param names   结构成员
+     * @param nameIds 结构成员
      * @return 数据结构实例
      */
-    public ContextStruct buildTmpStruct(ContextVersion version, ContextName[] names) {
-        ContextStruct temp = new ContextStruct(names);
+    public ContextStruct buildTmpStruct(ContextVersion version, int[] nameIds) {
+        ContextStruct temp = new ContextStruct(nameIds);
         ContextStruct result = tmpStructMap.get(temp);
         if (result == null) {
             int id = -1 - tmpStructMap.size();
@@ -80,7 +79,7 @@ public class OutputStructPool extends BasePool {
      */
     public void release(ContextVersion log) {
         tmpStructMap.clear();
-        
+
         if (cxtStructMap.size() < limit) {
             return;
         }
@@ -109,8 +108,8 @@ public class OutputStructPool extends BasePool {
         private int count;
         private int time;
 
-        public OutputStruct(ContextName[] names) {
-            super(names);
+        public OutputStruct(int[] nameIds) {
+            super(nameIds);
         }
 
         public void active() {

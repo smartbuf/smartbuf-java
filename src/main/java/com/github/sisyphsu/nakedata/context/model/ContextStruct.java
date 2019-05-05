@@ -3,6 +3,8 @@ package com.github.sisyphsu.nakedata.context.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Arrays;
+
 /**
  * 上下文复用的类型结构, 封装变量名列表
  *
@@ -20,22 +22,22 @@ public class ContextStruct {
     /**
      * 结构内变量名列表, 应该是字母排序的
      */
-    private final ContextName[] names;
+    private final int[] nameIds;
 
-    public ContextStruct(ContextName[] names) {
-        this(-1, names);
+    public ContextStruct(int[] nameIds) {
+        this(-1, nameIds);
     }
 
-    public ContextStruct(int id, ContextName[] names) {
+    public ContextStruct(int id, int[] nameIds) {
         this.id = id;
-        this.names = names;
+        this.nameIds = nameIds;
     }
 
     @Override
     public int hashCode() {
         int result = 1;
-        for (ContextName name : names) {
-            result = 31 * result + name.getId();
+        for (int nameId : nameIds) {
+            result = 31 * result + nameId;
         }
         return result;
     }
@@ -45,18 +47,7 @@ public class ContextStruct {
         if (!(obj instanceof ContextStruct)) {
             return false;
         }
-        ContextStruct other = (ContextStruct) obj;
-        if (this.names.length != other.names.length) {
-            return false;
-        }
-        for (int i = 0; i < names.length; i++) {
-            ContextName left = names[i];
-            ContextName right = other.names[i];
-            if (left.getId() != right.getId()) {
-                return false;
-            }
-        }
-        return true;
+        return Arrays.equals(this.nameIds, ((ContextStruct) obj).nameIds);
     }
 
 }

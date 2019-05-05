@@ -3,7 +3,6 @@ package com.github.sisyphsu.nakedata.context.output;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.github.sisyphsu.nakedata.DataType;
-import com.github.sisyphsu.nakedata.context.model.ContextName;
 import com.github.sisyphsu.nakedata.context.model.ContextStruct;
 import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.context.model.ContextVersion;
@@ -107,29 +106,29 @@ public class OutputContext {
             int type = this.doScan(entry.getValue());// 继续扫描子元素
             fields.put(entry.getKey(), type);
         }
-        ContextName[] names = new ContextName[fields.size()];
+        int[] nameIds = new int[fields.size()];
         int[] types = new int[fields.size()];
         ContextType type;
         if (isTmp) {
             // 处理临时元数据
             int offset = 0;
             for (Map.Entry<String, Integer> entry : fields.entrySet()) {
-                names[offset] = namePool.buildTmpName(versionCache, entry.getKey());
+                nameIds[offset] = namePool.buildTmpName(versionCache, entry.getKey()).getId();
                 types[offset] = entry.getValue();
                 offset++;
             }
-            ContextStruct struct = structPool.buildTmpStruct(versionCache, names);
-            type = typePool.buildTmpType(versionCache, struct, types);
+            ContextStruct struct = structPool.buildTmpStruct(versionCache, nameIds);
+            type = typePool.buildTmpType(versionCache, struct.getId(), types);
         } else {
             // 处理上下文元数据
             int offset = 0;
             for (Map.Entry<String, Integer> entry : fields.entrySet()) {
-                names[offset] = namePool.buildCxtName(versionCache, entry.getKey());
+                nameIds[offset] = namePool.buildCxtName(versionCache, entry.getKey()).getId();
                 types[offset] = entry.getValue();
                 offset++;
             }
-            ContextStruct struct = structPool.buildCxtStruct(versionCache, names);
-            type = typePool.buildCxtType(versionCache, struct, types);
+            ContextStruct struct = structPool.buildCxtStruct(versionCache, nameIds);
+            type = typePool.buildCxtType(versionCache, struct.getId(), types);
         }
         node.setType(type); // 绑定类型ID, 避免输出Body时再次检索所带来的性能损耗
     }

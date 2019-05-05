@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.context.output;
 
-import com.github.sisyphsu.nakedata.context.model.ContextStruct;
 import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.context.model.ContextVersion;
 import lombok.Getter;
@@ -30,12 +29,12 @@ public class OutputTypePool extends BasePool {
     /**
      * 根据struct和types构建上下文数据类型, 如果已存在则直接用旧数据
      *
-     * @param struct 数据结构
-     * @param types  成员类型
+     * @param structId 数据结构
+     * @param types    成员类型
      * @return 自定义的数据类型
      */
-    public ContextType buildCxtType(ContextVersion version, ContextStruct struct, int[] types) {
-        OutputType temp = new OutputType(types, struct);
+    public ContextType buildCxtType(ContextVersion version, int structId, int[] types) {
+        OutputType temp = new OutputType(structId, types);
         OutputType result = cxtTypeMap.get(temp);
         if (result == null) {
             temp.setId(pool.acquire());
@@ -51,13 +50,13 @@ public class OutputTypePool extends BasePool {
     /**
      * 根据数据结构即成员类型获取临时的自定义数据类型
      *
-     * @param version 上下文版本
-     * @param struct  数据结构
-     * @param types   成员类型
+     * @param version  上下文版本
+     * @param structId 数据结构
+     * @param types    成员类型
      * @return 自定义的临时数据类型
      */
-    public ContextType buildTmpType(ContextVersion version, ContextStruct struct, int[] types) {
-        ContextType temp = new ContextType(types, struct);
+    public ContextType buildTmpType(ContextVersion version, int structId, int[] types) {
+        ContextType temp = new ContextType(structId, types);
         ContextType result = tmpTypeMap.get(temp);
         if (result == null) {
             int id = -1 - tmpTypeMap.size();
@@ -101,8 +100,8 @@ public class OutputTypePool extends BasePool {
         private int count;
         private int time;
 
-        public OutputType(int[] types, ContextStruct struct) {
-            super(types, struct);
+        public OutputType(int structId, int[] types) {
+            super(structId, types);
         }
 
         public void active() {

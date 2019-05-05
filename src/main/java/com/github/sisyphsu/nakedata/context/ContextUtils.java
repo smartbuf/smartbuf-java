@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.context;
 
-import com.github.sisyphsu.nakedata.context.model.ContextName;
 import com.github.sisyphsu.nakedata.context.model.ContextStruct;
 import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.context.model.ContextVersion;
@@ -66,11 +65,11 @@ public class ContextUtils {
         }
         if (!ver.getStructAdded().isEmpty()) {
             writer.writeVarUint(ver.getStructAdded().size());
-            ver.getStructAdded().forEach(struct -> writeStruct(writer, struct));
+            ver.getStructAdded().forEach(struct -> doWriteStruct(writer, struct));
         }
         if (!ver.getStructTemp().isEmpty()) {
             writer.writeVarUint(ver.getStructTemp().size());
-            ver.getStructTemp().forEach(struct -> writeStruct(writer, struct));
+            ver.getStructTemp().forEach(struct -> doWriteStruct(writer, struct));
         }
         // 数据类型
         if (!ver.getTypeExpired().isEmpty()) {
@@ -166,15 +165,24 @@ public class ContextUtils {
         return version;
     }
 
-    private static void writeStruct(OutputWriter writer, ContextStruct struct) {
-        writer.writeVarUint(struct.getNames().length);
-        for (ContextName name : struct.getNames()) {
-            writer.writeString(name.getName());
+    private static void doWriteStruct(OutputWriter writer, ContextStruct struct) {
+        writer.writeVarUint(struct.getNameIds().length);
+        for (int nameId : struct.getNameIds()) {
+            writer.writeVarInt(nameId); // 可能是负数
         }
     }
 
+    private static ContextStruct doReadStruct(InputReader reader) {
+        int size = (int) reader.readVarUint();
+        int[] nameIds = new int[size];
+        for (int i = 0; i < size; i++) {
+            nameIds[i] = (int) reader.readVarInt();
+        }
+        return new ContextStruct(nameIds);
+    }
+
     private static void doWriteType(OutputWriter writer, ContextType type) {
-        writer.writeVarInt(type.getStruct().getId());
+        writer.writeVarInt(type.getStructId());
         writer.writeVarUint(type.getTypes().length);
         byte b = 0;
         for (int i = 0; i < type.getTypes().length; i++) {
@@ -189,15 +197,6 @@ public class ContextUtils {
         }
     }
 
-    private static ContextStruct doReadStruct(InputReader reader) {
-        int size = (int) reader.readVarUint();
-        ContextName[] names = new ContextName[size];
-        for (int i = 0; i < size; i++) {
-            names[i] = new ContextName(reader.readString());
-        }
-        return new ContextStruct(names);
-    }
-
     private static ContextType doReadType(InputReader reader) {
         int structId = (int) reader.readVarInt();
         int size = (int) reader.readVarUint();
@@ -207,7 +206,7 @@ public class ContextUtils {
             types[i * 2] = b & 0xF;
             types[i * 2 + 1] = b & 0xF;
         }
-        return new ContextType(types, new ContextStruct(null));
+        return new ContextType(structId, types);
     }
 
 }
