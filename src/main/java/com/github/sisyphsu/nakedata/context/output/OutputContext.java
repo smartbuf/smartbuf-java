@@ -21,6 +21,7 @@ public class OutputContext {
 
     private static final Pattern NAME = Pattern.compile("^[A-Za-z_$][\\w$]{0,63}$");
 
+    private long version;
     private ContextLog log;
 
     private OutputNamePool namePool;
@@ -28,19 +29,19 @@ public class OutputContext {
     private OutputTypePool typePool;
 
     public OutputContext() {
+        this.log = new ContextLog();
         this.namePool = new OutputNamePool(1 << 16);
         this.structPool = new OutputStructPool(1 << 16);
         this.typePool = new OutputTypePool(1 << 16);
-        this.log = new ContextLog();
     }
 
     /**
-     * 预扫描元数据. 数据序列化之前扫描收集"变量名"的增量变化, 用于预处理NamePool以及甄别map与object。
+     * 扫描元数据. 数据序列化之前扫描收集"变量名"的增量变化, 用于预处理NamePool以及甄别map与object。
      *
      * @param node 原始数据
      * @return 返回上下文元数据增量版本数据
      */
-    public ContextVersion preScan(JsonNode node) {
+    public ContextVersion scan(JsonNode node) {
         if (node == null) {
             throw new IllegalStateException("node can't be null");
         }
@@ -52,10 +53,12 @@ public class OutputContext {
         this.namePool.tryRelease(log);
         this.structPool.tryRelease(log);
         this.typePool.tryRelease(log);
-
+        // 刷新版本号
+        log.setVersion((int) ((version++) % Integer.MAX_VALUE));
         return null;
     }
 
+    // 扫描元数据
     private int doScan(JsonNode node) {
         switch (node.getNodeType()) {
             case NULL:
@@ -77,7 +80,7 @@ public class OutputContext {
             case ARRAY:
                 ArrayNode arrayNode = (ArrayNode) node;
                 for (Iterator<JsonNode> it = arrayNode.elements(); it.hasNext(); ) {
-                    this.preScan(it.next());
+                    this.scan(it.next());
                 }
                 return DataType.ARRAY;
             case OBJECT:

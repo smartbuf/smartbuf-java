@@ -4,7 +4,6 @@ import com.github.sisyphsu.nakedata.context.ContextLog;
 import com.github.sisyphsu.nakedata.context.ContextStruct;
 import com.github.sisyphsu.nakedata.context.ContextType;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +18,7 @@ public class OutputTypePool extends BasePool {
     /**
      * 类型表, 当前已分配的全部数据类型
      */
-    private Map<TypeKey, OutputType> typeMap;
+    private Map<OutputTypeKey, OutputType> typeMap;
 
     public OutputTypePool(int limit) {
         super(limit);
@@ -34,7 +33,7 @@ public class OutputTypePool extends BasePool {
      * @return 自定义数据类型
      */
     public ContextType buildType(ContextLog log, ContextStruct struct, int[] types) {
-        TypeKey key = new TypeKey(types, struct);
+        OutputTypeKey key = new OutputTypeKey(types, struct);
         OutputType result = typeMap.get(key);
         if (result == null) {
             int id = pool.acquire();
@@ -63,43 +62,11 @@ public class OutputTypePool extends BasePool {
         }
         // TODO 废弃不活跃, 记录typeExpired
         heap.forEach(type -> {
-            typeMap.remove(new TypeKey(type.getTypes(), type.getStruct())); // IT's OK
+            typeMap.remove(new OutputTypeKey(type.getTypes(), type.getStruct())); // IT's OK
             pool.release(type.getId());
             log.getTypeExpired().add(type.getId());
         });
         this.releaseTime = time();
-    }
-
-    public class TypeKey {
-
-        private final int[] types;
-        private final ContextStruct struct;
-
-        public TypeKey(int[] types, ContextStruct struct) {
-            this.types = types;
-            this.struct = struct;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 31 + struct.getId();
-            for (int type : types) {
-                result = 31 * result + type;
-            }
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof TypeKey) {
-                TypeKey other = (TypeKey) obj;
-                if (this.struct.getId() != other.struct.getId()) {
-                    return false;
-                }
-                return Arrays.equals(this.types, other.types);
-            }
-            return false;
-        }
     }
 
     public class OutputType extends ContextType implements GCHeap.Score {

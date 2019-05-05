@@ -28,7 +28,7 @@ public class NDataSerializer {
     public void serialize(Object obj) {
         JsonNode node = JSONUtils.toJsonNode(obj);
         // step1. 预扫描上下文元数据变化
-        ContextVersion version = context.preScan(node);
+        ContextVersion version = context.scan(node);
         byte dataType = this.parseType(node);
         // step2. 输出头信息, 包括head、version
         if (version == null) {

@@ -3,7 +3,6 @@ package com.github.sisyphsu.nakedata.context.output;
 import com.github.sisyphsu.nakedata.context.ContextLog;
 import com.github.sisyphsu.nakedata.context.ContextName;
 import com.github.sisyphsu.nakedata.context.ContextStruct;
-import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +18,7 @@ public class OutputStructPool extends BasePool {
     /**
      * 池子
      */
-    private Map<StructKey, OutputStruct> map;
+    private Map<OutputStructKey, OutputStruct> map;
 
     /**
      * 初始化结构池
@@ -38,7 +37,7 @@ public class OutputStructPool extends BasePool {
      * @return 数据结构实例
      */
     public ContextStruct buildStruct(ContextLog log, ContextName[] names) {
-        StructKey key = new StructKey(names);
+        OutputStructKey key = new OutputStructKey(names);
         OutputStruct struct = map.get(key);
         if (struct == null) {
             int id = pool.acquire();
@@ -69,53 +68,11 @@ public class OutputStructPool extends BasePool {
         }
         // TODO 废弃不活跃, 记录structExpired
         heap.forEach(struct -> {
-            map.remove(new StructKey(struct.getNames())); // IT'S OK
+            map.remove(new OutputStructKey(struct.getNames())); // IT'S OK
             pool.release(struct.getId());
             log.getStructExpired().add(struct.getId());
         });
         this.releaseTime = time();
-    }
-
-    /**
-     * 类型Key
-     */
-    @Getter
-    public static class StructKey {
-
-        private final ContextName[] names;
-
-        private StructKey(ContextName[] names) {
-            this.names = names;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 1;
-            for (ContextName name : names) {
-                result = 31 * result + name.getId();
-            }
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (!(obj instanceof StructKey)) {
-                return false;
-            }
-            StructKey other = (StructKey) obj;
-            if (this.names.length != other.names.length) {
-                return false;
-            }
-            for (int i = 0; i < names.length; i++) {
-                ContextName left = names[i];
-                ContextName right = other.names[i];
-                if (left.getId() != right.getId()) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
     }
 
     /**
