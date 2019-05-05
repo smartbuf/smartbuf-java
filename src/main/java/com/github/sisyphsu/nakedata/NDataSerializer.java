@@ -35,7 +35,7 @@ public class NDataSerializer {
             writer.writeByte(dataType);
         } else {
             writer.writeByte((byte) (dataType | VERSION));
-            version.doWrite(writer);
+//            version.doWrite(writer);
         }
         // step3. 输出数据体
     }
@@ -61,7 +61,7 @@ public class NDataSerializer {
                 } else if (node.isDouble()) {
                     writer.writeDouble(node.doubleValue());
                 } else {
-                    writer.writeInt(node.asLong());
+                    writer.writeVarInt(node.asLong());
                 }
                 break;
             case BINARY:
@@ -72,7 +72,7 @@ public class NDataSerializer {
                 break;
             case OBJECT:
                 // 对象需要前缀类型
-                int id = context.getTypeId(node);
+//                int id = context.getTypeId(node);
                 // 按照封装好的ContextType执行输出
                 // step1. 输出type-id
                 // step2. 输出null-table —— 不需要输出null-table, 元数据需要改造, 变量表与类型表兼容的模式。

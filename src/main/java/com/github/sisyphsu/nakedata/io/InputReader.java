@@ -14,16 +14,31 @@ public class InputReader {
         this.input = input;
     }
 
-    public long readInt() {
-        long l = this.readUint();
-        return NumberUtils.uintToInt(l);
-    }
-
     public byte readByte() {
         return input.read();
     }
 
-    public long readUint() {
+    public int readInt24() {
+        int i = input.read();
+        i |= input.read() << 8;
+        i |= input.read() << 16;
+        return i;
+    }
+
+    public int readInt32() {
+        int i = input.read();
+        i |= input.read() << 8;
+        i |= input.read() << 16;
+        i |= input.read() << 24;
+        return i;
+    }
+
+    public long readVarInt() {
+        long l = this.readVarUint();
+        return NumberUtils.uintToInt(l);
+    }
+
+    public long readVarUint() {
         long l = 0;
         long b;
         for (int i = 0; i < 10; i++) {
@@ -57,7 +72,7 @@ public class InputReader {
     }
 
     public byte[] readBinary() {
-        int len = (int) this.readUint();
+        int len = (int) this.readVarUint();
         byte[] arr = new byte[len];
         input.read(arr);
         return arr;

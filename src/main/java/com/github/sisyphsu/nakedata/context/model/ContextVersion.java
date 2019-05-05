@@ -33,7 +33,7 @@ public class ContextVersion {
     /**
      * 新增的变量名
      */
-    private List<ContextName> nameAdded = new ArrayList<>();
+    private List<String> nameAdded = new ArrayList<>();
     /**
      * 新增的数据框架
      */
@@ -45,7 +45,7 @@ public class ContextVersion {
     /**
      * 临时使用的变量名
      */
-    private List<ContextName> nameTemp = new ArrayList<>();
+    private List<String> nameTemp = new ArrayList<>();
     /**
      * 临时使用的数据框架
      */

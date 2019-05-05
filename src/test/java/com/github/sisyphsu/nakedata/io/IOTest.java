@@ -15,30 +15,30 @@ public class IOTest {
         OutputWriter output = new OutputWriter(new ByteArrayOutput(data));
         InputReader input = new InputReader(new ByteArrayInput(data));
 
-        output.writeInt(0L);
+        output.writeVarInt(0L);
         output.writeInt(Byte.MAX_VALUE);
         output.writeInt(Byte.MIN_VALUE);
         output.writeInt(Short.MAX_VALUE);
         output.writeInt(Short.MIN_VALUE);
         output.writeInt(Integer.MAX_VALUE);
         output.writeInt(Integer.MIN_VALUE);
-        output.writeInt(Long.MAX_VALUE);
-        output.writeInt(Long.MIN_VALUE);
+        output.writeVarInt(Long.MAX_VALUE);
+        output.writeVarInt(Long.MIN_VALUE);
 
         output.writeFloat(0.123f);
         output.writeDouble(0.123456);
 
         output.writeString("hello world");
 
-        AssetUtils.assetEqual(input.readInt(), 0L);
-        AssetUtils.assetEqual(input.readInt(), (long) Byte.MAX_VALUE);
-        AssetUtils.assetEqual(input.readInt(), (long) Byte.MIN_VALUE);
-        AssetUtils.assetEqual(input.readInt(), (long) Short.MAX_VALUE);
-        AssetUtils.assetEqual(input.readInt(), (long) Short.MIN_VALUE);
-        AssetUtils.assetEqual(input.readInt(), (long) Integer.MAX_VALUE);
-        AssetUtils.assetEqual(input.readInt(), (long) Integer.MIN_VALUE);
-        AssetUtils.assetEqual(input.readInt(), Long.MAX_VALUE);
-        AssetUtils.assetEqual(input.readInt(), Long.MIN_VALUE);
+        AssetUtils.assetEqual(input.readVarInt(), 0L);
+        AssetUtils.assetEqual(input.readVarInt(), (long) Byte.MAX_VALUE);
+        AssetUtils.assetEqual(input.readVarInt(), (long) Byte.MIN_VALUE);
+        AssetUtils.assetEqual(input.readVarInt(), (long) Short.MAX_VALUE);
+        AssetUtils.assetEqual(input.readVarInt(), (long) Short.MIN_VALUE);
+        AssetUtils.assetEqual(input.readVarInt(), (long) Integer.MAX_VALUE);
+        AssetUtils.assetEqual(input.readVarInt(), (long) Integer.MIN_VALUE);
+        AssetUtils.assetEqual(input.readVarInt(), Long.MAX_VALUE);
+        AssetUtils.assetEqual(input.readVarInt(), Long.MIN_VALUE);
 
         AssetUtils.assetEqual(input.readFloat(), 0.123f);
         AssetUtils.assetEqual(input.readDouble(), 0.123456);

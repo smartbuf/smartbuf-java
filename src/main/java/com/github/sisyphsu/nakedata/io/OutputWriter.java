@@ -14,9 +14,9 @@ public class OutputWriter {
         this.output = output;
     }
 
-    public int writeInt(long n) {
+    public int writeVarInt(long n) {
         n = NumberUtils.intToUint(n);
-        return this.writeUint(n);
+        return this.writeVarUint(n);
     }
 
     public int writeBoolean(boolean b) {
@@ -29,7 +29,15 @@ public class OutputWriter {
         return 1;
     }
 
-    public int writeUint(long n) {
+    public int writeInt(int i) {
+        output.write((byte) (i & 0xFF));
+        output.write((byte) (i >>> 8 & 0xFF));
+        output.write((byte) (i >>> 16 & 0xFF));
+        output.write((byte) (i >>> 24 & 0xFF));
+        return 4;
+    }
+
+    public int writeVarUint(long n) {
         int count = 0;
         do {
             if (n <= 0x7F) {
@@ -62,7 +70,7 @@ public class OutputWriter {
     }
 
     public int writeBinary(byte[] data) {
-        int len = this.writeUint(data.length);
+        int len = this.writeVarUint(data.length);
         output.write(data);
         return len + data.length;
     }
