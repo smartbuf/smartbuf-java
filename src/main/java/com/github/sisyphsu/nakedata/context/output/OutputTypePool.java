@@ -19,11 +19,12 @@ public class OutputTypePool extends BasePool {
     /**
      * 类型表, 当前已分配的全部数据类型
      */
-    private Map<OutputType, OutputType> typeMap;
+    private Map<OutputType, OutputType> cxtTypeMap = new HashMap<>();
+
+    private Map<ContextType, ContextType> tmpTypeMap = new HashMap<>();
 
     public OutputTypePool(int limit) {
         super(limit);
-        this.typeMap = new HashMap<>();
     }
 
     /**
@@ -33,13 +34,13 @@ public class OutputTypePool extends BasePool {
      * @param types  数据结构对应的成员类型
      * @return 自定义数据类型
      */
-    public ContextType buildType(ContextVersion version, ContextStruct struct, int[] types) {
+    public ContextType buildCxtType(ContextVersion version, ContextStruct struct, int[] types) {
         OutputType temp = new OutputType(types, struct);
-        OutputType result = typeMap.get(temp);
+        OutputType result = cxtTypeMap.get(temp);
         if (result == null) {
             temp.setId(pool.acquire());
             result = temp;
-            typeMap.put(result, result);
+            cxtTypeMap.put(result, result);
             version.getTypeAdded().add(result); // 记录type-added
         }
         result.active();
@@ -47,14 +48,36 @@ public class OutputTypePool extends BasePool {
     }
 
     /**
+     * 根据数据结构即成员类型获取临时的自定义数据类型
+     *
+     * @param version 上下文版本
+     * @param struct  数据结构
+     * @param types   成员类型
+     * @return 自定义数据类型
+     */
+    public ContextType buildTmpType(ContextVersion version, ContextStruct struct, int[] types) {
+        ContextType temp = new ContextType(types, struct);
+        ContextType result = tmpTypeMap.get(temp);
+        if (result == null) {
+            int id = -1 - tmpTypeMap.size();
+            result = temp;
+            result.setId(id);
+            tmpTypeMap.put(result, result);
+
+            version.getTypeTemp().add(result);
+        }
+        return result;
+    }
+
+    /**
      * 尝试执行数据类型回收, 如果池满了的话
      */
-    public void tryRelease(ContextVersion log) {
-        if (typeMap.size() < limit) {
+    public void tryRelease(ContextVersion version) {
+        if (cxtTypeMap.size() < limit) {
             return;
         }
         GCHeap<OutputType> heap = new GCHeap<>(limit / 10);
-        for (OutputType type : typeMap.values()) {
+        for (OutputType type : cxtTypeMap.values()) {
             if (type.time >= this.releaseTime) {
                 continue;
             }
@@ -62,9 +85,9 @@ public class OutputTypePool extends BasePool {
         }
         // 废弃不活跃, 记录typeExpired
         heap.forEach(type -> {
-            typeMap.remove(type);
+            cxtTypeMap.remove(type);
             pool.release(type.getId());
-            log.getTypeExpired().add(type.getId());
+            version.getTypeExpired().add(type.getId());
         });
         this.releaseTime = time();
     }

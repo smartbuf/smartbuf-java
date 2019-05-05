@@ -19,7 +19,9 @@ public class OutputStructPool extends BasePool {
     /**
      * 池子
      */
-    private Map<ContextStruct, OutputStruct> map;
+    private Map<OutputStruct, OutputStruct> cxtStructMap = new HashMap<>();
+
+    private Map<ContextStruct, ContextStruct> tmpStructMap = new HashMap<>();
 
     /**
      * 初始化结构池
@@ -28,7 +30,6 @@ public class OutputStructPool extends BasePool {
      */
     public OutputStructPool(int limit) {
         super(limit);
-        this.map = new HashMap<>();
     }
 
     /**
@@ -37,14 +38,15 @@ public class OutputStructPool extends BasePool {
      * @param names 变量名列表
      * @return 数据结构实例
      */
-    public ContextStruct buildStruct(ContextVersion log, ContextName[] names) {
+    public ContextStruct buildCxtStruct(ContextVersion version, ContextName[] names) {
         OutputStruct temp = new OutputStruct(names);
-        OutputStruct result = map.get(temp);
+        OutputStruct result = cxtStructMap.get(temp);
         if (result == null) {
             temp.setId(pool.acquire());
-            map.put(temp, temp);
-            log.getStructAdded().add(temp); // 记录struct-added
+            cxtStructMap.put(temp, temp);
             result = temp;
+
+            version.getStructAdded().add(temp); // 记录struct-added
         }
         result.active();
 
@@ -52,14 +54,35 @@ public class OutputStructPool extends BasePool {
     }
 
     /**
+     * 创建临时的上下文数据结构
+     *
+     * @param version 上下文版本
+     * @param names   结构成员
+     * @return ContextStruct
+     */
+    public ContextStruct buildTmpStruct(ContextVersion version, ContextName[] names) {
+        ContextStruct temp = new ContextStruct(names);
+        ContextStruct result = tmpStructMap.get(temp);
+        if (result == null) {
+            int id = -1 - tmpStructMap.size();
+            result = temp;
+            result.setId(id);
+            tmpStructMap.put(result, result);
+
+            version.getStructTemp().add(result);
+        }
+        return result;
+    }
+
+    /**
      * 尝试释放一些
      */
     public void tryRelease(ContextVersion log) {
-        if (map.size() < limit) {
+        if (cxtStructMap.size() < limit) {
             return;
         }
         GCHeap<OutputStruct> heap = new GCHeap<>(limit / 10);
-        for (OutputStruct struct : map.values()) {
+        for (OutputStruct struct : cxtStructMap.values()) {
             if (struct.time >= this.releaseTime) {
                 continue;
             }
@@ -67,7 +90,7 @@ public class OutputStructPool extends BasePool {
         }
         // 废弃不活跃, 记录structExpired
         heap.forEach(struct -> {
-            map.remove(struct);
+            cxtStructMap.remove(struct);
             pool.release(struct.getId());
             log.getStructExpired().add(struct.getId());
         });

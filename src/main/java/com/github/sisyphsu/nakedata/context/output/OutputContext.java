@@ -3,10 +3,10 @@ package com.github.sisyphsu.nakedata.context.output;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.github.sisyphsu.nakedata.DataType;
-import com.github.sisyphsu.nakedata.context.model.ContextVersion;
 import com.github.sisyphsu.nakedata.context.model.ContextName;
 import com.github.sisyphsu.nakedata.context.model.ContextStruct;
 import com.github.sisyphsu.nakedata.context.model.ContextType;
+import com.github.sisyphsu.nakedata.context.model.ContextVersion;
 import com.github.sisyphsu.nakedata.jackson.ObjectNode;
 
 import java.util.Iterator;
@@ -25,14 +25,14 @@ public class OutputContext {
     private static final Pattern NAME = Pattern.compile("^[A-Za-z_$][\\w$]{0,63}$");
 
     private long version;
-    private ContextVersion log;
+    private ContextVersion ver;
 
     private OutputNamePool namePool;
     private OutputStructPool structPool;
     private OutputTypePool typePool;
 
     public OutputContext() {
-        this.log = new ContextVersion();
+        this.ver = new ContextVersion();
         this.namePool = new OutputNamePool(1 << 16);
         this.structPool = new OutputStructPool(1 << 16);
         this.typePool = new OutputTypePool(1 << 16);
@@ -49,15 +49,15 @@ public class OutputContext {
             throw new IllegalStateException("node can't be null");
         }
         // 重置log
-        this.log.reset();
+        this.ver.reset();
         // 开始扫描
         this.doScan(node);
         // 执行垃圾回收
-        this.namePool.tryRelease(log);
-        this.structPool.tryRelease(log);
-        this.typePool.tryRelease(log);
+        this.namePool.tryRelease(ver);
+        this.structPool.tryRelease(ver);
+        this.typePool.tryRelease(ver);
         // 刷新版本号
-        log.setVersion((int) ((version++) % Integer.MAX_VALUE));
+        ver.setVersion((int) ((version++) % Integer.MAX_VALUE));
         return null;
     }
 
@@ -96,22 +96,30 @@ public class OutputContext {
                     int type = this.doScan(entry.getValue());// 继续扫描子元素
                     fields.put(entry.getKey(), type);
                 }
+                ContextName[] names = new ContextName[fields.size()];
+                int[] types = new int[fields.size()];
+                int index = 0;
                 if (isTmp) {
                     // TODO 临时类型直接放入临时数组中即可, 但是也需要支持ID复用
-//                this.structPool.buildStruct()
-//                this.tmpTypes.add(objectNode);
-                } else {
-                    // 处理上下文类型
-                    ContextName[] names = new ContextName[fields.size()];
-                    int[] types = new int[fields.size()];
-                    int index = 0;
                     for (Map.Entry<String, Integer> entry : fields.entrySet()) {
-                        names[index] = namePool.buildName(log, entry.getKey());
+                        names[index] = namePool.buildTmpName(ver, entry.getKey());
                         types[index] = entry.getValue();
                         index++;
                     }
-                    ContextStruct struct = structPool.buildStruct(log, names);
-                    ContextType type = typePool.buildType(log, struct, types);
+                    ContextStruct struct = structPool.buildTmpStruct(ver, names);
+                    ContextType type = typePool.buildTmpType(ver, struct, types);
+
+                    objectNode.setType(type);
+                } else {
+                    // 处理上下文类型
+
+                    for (Map.Entry<String, Integer> entry : fields.entrySet()) {
+                        names[index] = namePool.buildCxtName(ver, entry.getKey());
+                        types[index] = entry.getValue();
+                        index++;
+                    }
+                    ContextStruct struct = structPool.buildCxtStruct(ver, names);
+                    ContextType type = typePool.buildCxtType(ver, struct, types);
 
                     // 绑定类型ID, 避免输出Body时再次检索所带来的性能损耗
                     objectNode.setType(type);
