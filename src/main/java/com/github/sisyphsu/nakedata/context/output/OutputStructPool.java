@@ -35,7 +35,8 @@ public class OutputStructPool extends BasePool {
     /**
      * 创建数据结构
      *
-     * @param names 变量名列表
+     * @param version 上下文版本
+     * @param names   结构成员
      * @return 数据结构实例
      */
     public ContextStruct buildCxtStruct(ContextVersion version, ContextName[] names) {
@@ -58,7 +59,7 @@ public class OutputStructPool extends BasePool {
      *
      * @param version 上下文版本
      * @param names   结构成员
-     * @return ContextStruct
+     * @return 数据结构实例
      */
     public ContextStruct buildTmpStruct(ContextVersion version, ContextName[] names) {
         ContextStruct temp = new ContextStruct(names);
@@ -77,7 +78,9 @@ public class OutputStructPool extends BasePool {
     /**
      * 尝试释放一些
      */
-    public void tryRelease(ContextVersion log) {
+    public void release(ContextVersion log) {
+        tmpStructMap.clear();
+        
         if (cxtStructMap.size() < limit) {
             return;
         }

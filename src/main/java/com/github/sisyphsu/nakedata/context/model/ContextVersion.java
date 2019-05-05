@@ -58,7 +58,7 @@ public class ContextVersion {
     /**
      * 重置Log, 用于支持复用
      */
-    public void reset() {
+    public ContextVersion reset() {
         this.version = 0;
         this.nameExpired.clear();
         this.structExpired.clear();
@@ -69,6 +69,44 @@ public class ContextVersion {
         this.nameTemp.clear();
         this.structTemp.clear();
         this.typeTemp.clear();
+        return this;
+    }
+
+    /**
+     * 是否为空
+     *
+     * @return true表示空
+     */
+    public boolean isEmpty() {
+        if (!nameExpired.isEmpty()) {
+            return false;
+        }
+        if (!structExpired.isEmpty()) {
+            return false;
+        }
+        if (!typeExpired.isEmpty()) {
+            return false;
+        }
+        if (!nameAdded.isEmpty()) {
+            return false;
+        }
+        if (!structAdded.isEmpty()) {
+            return false;
+        }
+        if (!typeAdded.isEmpty()) {
+            return false;
+        }
+        if (!nameTemp.isEmpty()) {
+            return false;
+        }
+        if (!structTemp.isEmpty()) {
+            return false;
+        }
+        if (!typeTemp.isEmpty()) {
+            return false;
+        }
+
+        return true;
     }
 
 }

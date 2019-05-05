@@ -31,8 +31,8 @@ public class OutputTypePool extends BasePool {
      * 根据struct和types构建上下文数据类型, 如果已存在则直接用旧数据
      *
      * @param struct 数据结构
-     * @param types  数据结构对应的成员类型
-     * @return 自定义数据类型
+     * @param types  成员类型
+     * @return 自定义的数据类型
      */
     public ContextType buildCxtType(ContextVersion version, ContextStruct struct, int[] types) {
         OutputType temp = new OutputType(types, struct);
@@ -41,6 +41,7 @@ public class OutputTypePool extends BasePool {
             temp.setId(pool.acquire());
             result = temp;
             cxtTypeMap.put(result, result);
+
             version.getTypeAdded().add(result); // 记录type-added
         }
         result.active();
@@ -53,7 +54,7 @@ public class OutputTypePool extends BasePool {
      * @param version 上下文版本
      * @param struct  数据结构
      * @param types   成员类型
-     * @return 自定义数据类型
+     * @return 自定义的临时数据类型
      */
     public ContextType buildTmpType(ContextVersion version, ContextStruct struct, int[] types) {
         ContextType temp = new ContextType(types, struct);
@@ -72,7 +73,9 @@ public class OutputTypePool extends BasePool {
     /**
      * 尝试执行数据类型回收, 如果池满了的话
      */
-    public void tryRelease(ContextVersion version) {
+    public void release(ContextVersion version) {
+        tmpTypeMap.clear();
+
         if (cxtTypeMap.size() < limit) {
             return;
         }

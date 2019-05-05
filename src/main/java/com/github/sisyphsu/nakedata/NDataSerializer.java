@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.sisyphsu.nakedata.context.ContextVersion;
+import com.github.sisyphsu.nakedata.context.model.ContextVersion;
 import com.github.sisyphsu.nakedata.context.output.OutputContext;
 import com.github.sisyphsu.nakedata.io.OutputWriter;
 import com.github.sisyphsu.nakedata.utils.JSONUtils;

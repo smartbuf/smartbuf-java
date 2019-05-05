@@ -25,14 +25,14 @@ public class OutputContext {
     private static final Pattern NAME = Pattern.compile("^[A-Za-z_$][\\w$]{0,63}$");
 
     private long version;
-    private ContextVersion ver;
+    private ContextVersion versionCache;
 
     private OutputNamePool namePool;
     private OutputStructPool structPool;
     private OutputTypePool typePool;
 
     public OutputContext() {
-        this.ver = new ContextVersion();
+        this.versionCache = new ContextVersion();
         this.namePool = new OutputNamePool(1 << 16);
         this.structPool = new OutputStructPool(1 << 16);
         this.typePool = new OutputTypePool(1 << 16);
@@ -44,21 +44,24 @@ public class OutputContext {
      * @param node 原始数据
      * @return 返回上下文元数据增量版本数据
      */
-    public com.github.sisyphsu.nakedata.context.ContextVersion scan(JsonNode node) {
+    public ContextVersion scan(JsonNode node) {
         if (node == null) {
             throw new IllegalStateException("node can't be null");
         }
-        // 重置log
-        this.ver.reset();
-        // 开始扫描
+        ContextVersion version = this.versionCache.reset();
+        // 执行扫描
         this.doScan(node);
         // 执行垃圾回收
-        this.namePool.tryRelease(ver);
-        this.structPool.tryRelease(ver);
-        this.typePool.tryRelease(ver);
-        // 刷新版本号
-        ver.setVersion((int) ((version++) % Integer.MAX_VALUE));
-        return null;
+        this.namePool.release(version);
+        this.structPool.release(version);
+        this.typePool.release(version);
+        // 处理版本
+        if (version.isEmpty()) {
+            version = null;
+        } else {
+            version.setVersion((int) ((this.version++) % Integer.MAX_VALUE));
+        }
+        return version;
     }
 
     // 扫描元数据
@@ -87,57 +90,48 @@ public class OutputContext {
                 }
                 return DataType.ARRAY;
             case OBJECT:
-                ObjectNode objectNode = (ObjectNode) node;
-                boolean isTmp = false;
-                Map<String, Integer> fields = new TreeMap<>();
-                for (Iterator<Map.Entry<String, JsonNode>> it = objectNode.fields(); it.hasNext(); ) {
-                    Map.Entry<String, JsonNode> entry = it.next();
-                    isTmp = isTmp || NAME.matcher(entry.getKey()).matches();
-                    int type = this.doScan(entry.getValue());// 继续扫描子元素
-                    fields.put(entry.getKey(), type);
-                }
-                ContextName[] names = new ContextName[fields.size()];
-                int[] types = new int[fields.size()];
-                int index = 0;
-                if (isTmp) {
-                    // TODO 临时类型直接放入临时数组中即可, 但是也需要支持ID复用
-                    for (Map.Entry<String, Integer> entry : fields.entrySet()) {
-                        names[index] = namePool.buildTmpName(ver, entry.getKey());
-                        types[index] = entry.getValue();
-                        index++;
-                    }
-                    ContextStruct struct = structPool.buildTmpStruct(ver, names);
-                    ContextType type = typePool.buildTmpType(ver, struct, types);
-
-                    objectNode.setType(type);
-                } else {
-                    // 处理上下文类型
-
-                    for (Map.Entry<String, Integer> entry : fields.entrySet()) {
-                        names[index] = namePool.buildCxtName(ver, entry.getKey());
-                        types[index] = entry.getValue();
-                        index++;
-                    }
-                    ContextStruct struct = structPool.buildCxtStruct(ver, names);
-                    ContextType type = typePool.buildCxtType(ver, struct, types);
-
-                    // 绑定类型ID, 避免输出Body时再次检索所带来的性能损耗
-                    objectNode.setType(type);
-                }
+                this.doScanObjectNode((ObjectNode) node);
                 return DataType.OBJECT;
             default:
                 throw new IllegalArgumentException("Unsupport data: " + node.getNodeType());
         }
     }
 
-    /**
-     * 获取指定JsonNode的type-id
-     *
-     * @param node 原始JsonNode
-     * @return 类型ID
-     */
-    public int getTypeId(JsonNode node) {
-        return 0;
+    // 扫描并整理Object节点的元数据
+    private void doScanObjectNode(ObjectNode node) {
+        boolean isTmp = false;
+        Map<String, Integer> fields = new TreeMap<>();
+        for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
+            Map.Entry<String, JsonNode> entry = it.next();
+            isTmp = isTmp || NAME.matcher(entry.getKey()).matches();
+            int type = this.doScan(entry.getValue());// 继续扫描子元素
+            fields.put(entry.getKey(), type);
+        }
+        ContextName[] names = new ContextName[fields.size()];
+        int[] types = new int[fields.size()];
+        ContextType type;
+        if (isTmp) {
+            // 处理临时元数据
+            int offset = 0;
+            for (Map.Entry<String, Integer> entry : fields.entrySet()) {
+                names[offset] = namePool.buildTmpName(versionCache, entry.getKey());
+                types[offset] = entry.getValue();
+                offset++;
+            }
+            ContextStruct struct = structPool.buildTmpStruct(versionCache, names);
+            type = typePool.buildTmpType(versionCache, struct, types);
+        } else {
+            // 处理上下文元数据
+            int offset = 0;
+            for (Map.Entry<String, Integer> entry : fields.entrySet()) {
+                names[offset] = namePool.buildCxtName(versionCache, entry.getKey());
+                types[offset] = entry.getValue();
+                offset++;
+            }
+            ContextStruct struct = structPool.buildCxtStruct(versionCache, names);
+            type = typePool.buildCxtType(versionCache, struct, types);
+        }
+        node.setType(type); // 绑定类型ID, 避免输出Body时再次检索所带来的性能损耗
     }
 
 }

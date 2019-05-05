@@ -15,6 +15,7 @@ import java.util.List;
  * @since 2019-04-29 13:47:26
  */
 @Data
+@Deprecated
 public class ContextVersion {
 
     private static final byte NAME_EXPIRED = 1 << 1;
