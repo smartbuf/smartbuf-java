@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.context.input;
 
 import com.github.sisyphsu.nakedata.common.IDAllocator;
-import com.github.sisyphsu.nakedata.context.ContextField;
+import com.github.sisyphsu.nakedata.context.model.ContextField;
 
 import java.util.List;
 

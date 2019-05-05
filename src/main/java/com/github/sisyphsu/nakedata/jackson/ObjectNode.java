@@ -2,7 +2,7 @@ package com.github.sisyphsu.nakedata.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.github.sisyphsu.nakedata.context.ContextType;
+import com.github.sisyphsu.nakedata.context.model.ContextType;
 import lombok.Getter;
 import lombok.Setter;
 

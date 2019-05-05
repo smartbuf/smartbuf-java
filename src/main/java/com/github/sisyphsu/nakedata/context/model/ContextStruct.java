@@ -1,20 +1,35 @@
-package com.github.sisyphsu.nakedata.context.output;
+package com.github.sisyphsu.nakedata.context.model;
 
-import com.github.sisyphsu.nakedata.context.ContextName;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
- * 输出端通用的StructKey
+ * 上下文复用的类型结构, 封装变量名列表
  *
  * @author sulin
- * @since 2019-05-05 11:12:11
+ * @since 2019-05-03 12:28:54
  */
 @Getter
-@AllArgsConstructor
-public class OutputStructKey {
+@Setter
+public class ContextStruct {
 
+    /**
+     * 结构ID
+     */
+    private int id;
+    /**
+     * 结构内变量名列表, 应该是字母排序的
+     */
     private final ContextName[] names;
+
+    public ContextStruct(ContextName[] names) {
+        this(-1, names);
+    }
+
+    public ContextStruct(int id, ContextName[] names) {
+        this.id = id;
+        this.names = names;
+    }
 
     @Override
     public int hashCode() {
@@ -27,10 +42,10 @@ public class OutputStructKey {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof OutputStructKey)) {
+        if (!(obj instanceof ContextStruct)) {
             return false;
         }
-        OutputStructKey other = (OutputStructKey) obj;
+        ContextStruct other = (ContextStruct) obj;
         if (this.names.length != other.names.length) {
             return false;
         }

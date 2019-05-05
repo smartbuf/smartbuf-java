@@ -1,5 +1,8 @@
 package com.github.sisyphsu.nakedata.context;
 
+import com.github.sisyphsu.nakedata.context.model.ContextName;
+import com.github.sisyphsu.nakedata.context.model.ContextType;
+
 import java.util.List;
 
 /**

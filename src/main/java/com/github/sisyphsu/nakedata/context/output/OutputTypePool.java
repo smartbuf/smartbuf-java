@@ -1,8 +1,9 @@
 package com.github.sisyphsu.nakedata.context.output;
 
-import com.github.sisyphsu.nakedata.context.ContextLog;
-import com.github.sisyphsu.nakedata.context.ContextStruct;
-import com.github.sisyphsu.nakedata.context.ContextType;
+import com.github.sisyphsu.nakedata.context.model.ContextStruct;
+import com.github.sisyphsu.nakedata.context.model.ContextType;
+import com.github.sisyphsu.nakedata.context.model.ContextVersion;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class OutputTypePool extends BasePool {
     /**
      * 类型表, 当前已分配的全部数据类型
      */
-    private Map<OutputTypeKey, OutputType> typeMap;
+    private Map<OutputType, OutputType> typeMap;
 
     public OutputTypePool(int limit) {
         super(limit);
@@ -32,15 +33,14 @@ public class OutputTypePool extends BasePool {
      * @param types  数据结构对应的成员类型
      * @return 自定义数据类型
      */
-    public ContextType buildType(ContextLog log, ContextStruct struct, int[] types) {
-        OutputTypeKey key = new OutputTypeKey(types, struct);
-        OutputType result = typeMap.get(key);
+    public ContextType buildType(ContextVersion version, ContextStruct struct, int[] types) {
+        OutputType temp = new OutputType(types, struct);
+        OutputType result = typeMap.get(temp);
         if (result == null) {
-            int id = pool.acquire();
-            result = new OutputType(id, types, struct);
-            typeMap.put(key, result);
-            // 记录type-added
-            log.getTypeAdded().add(result);
+            temp.setId(pool.acquire());
+            result = temp;
+            typeMap.put(result, result);
+            version.getTypeAdded().add(result); // 记录type-added
         }
         result.active();
         return result;
@@ -49,7 +49,7 @@ public class OutputTypePool extends BasePool {
     /**
      * 尝试执行数据类型回收, 如果池满了的话
      */
-    public void tryRelease(ContextLog log) {
+    public void tryRelease(ContextVersion log) {
         if (typeMap.size() < limit) {
             return;
         }
@@ -60,33 +60,28 @@ public class OutputTypePool extends BasePool {
             }
             heap.filter(type);
         }
-        // TODO 废弃不活跃, 记录typeExpired
+        // 废弃不活跃, 记录typeExpired
         heap.forEach(type -> {
-            typeMap.remove(new OutputTypeKey(type.getTypes(), type.getStruct())); // IT's OK
+            typeMap.remove(type);
             pool.release(type.getId());
             log.getTypeExpired().add(type.getId());
         });
         this.releaseTime = time();
     }
 
+    @Getter
     public class OutputType extends ContextType implements GCHeap.Score {
 
-        private short count;
+        private int count;
         private int time;
 
-        public OutputType(int id, int[] types, ContextStruct struct) {
-            super(id, types, struct);
+        public OutputType(int[] types, ContextStruct struct) {
+            super(types, struct);
         }
 
         public void active() {
             this.time = time();
             this.count++;
-        }
-
-
-        @Override
-        public double getScore() {
-            return this.count + this.time / 86400.0;
         }
 
     }

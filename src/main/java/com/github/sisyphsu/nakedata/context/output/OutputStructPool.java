@@ -1,8 +1,9 @@
 package com.github.sisyphsu.nakedata.context.output;
 
-import com.github.sisyphsu.nakedata.context.ContextLog;
-import com.github.sisyphsu.nakedata.context.ContextName;
-import com.github.sisyphsu.nakedata.context.ContextStruct;
+import com.github.sisyphsu.nakedata.context.model.ContextName;
+import com.github.sisyphsu.nakedata.context.model.ContextStruct;
+import com.github.sisyphsu.nakedata.context.model.ContextVersion;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class OutputStructPool extends BasePool {
     /**
      * 池子
      */
-    private Map<OutputStructKey, OutputStruct> map;
+    private Map<ContextStruct, OutputStruct> map;
 
     /**
      * 初始化结构池
@@ -36,26 +37,24 @@ public class OutputStructPool extends BasePool {
      * @param names 变量名列表
      * @return 数据结构实例
      */
-    public ContextStruct buildStruct(ContextLog log, ContextName[] names) {
-        OutputStructKey key = new OutputStructKey(names);
-        OutputStruct struct = map.get(key);
-        if (struct == null) {
-            int id = pool.acquire();
-            struct = new OutputStruct(id, key.getNames());
-            map.put(key, struct);
-            // 记录struct-added
-            log.getStructAdded().add(struct);
+    public ContextStruct buildStruct(ContextVersion log, ContextName[] names) {
+        OutputStruct temp = new OutputStruct(names);
+        OutputStruct result = map.get(temp);
+        if (result == null) {
+            temp.setId(pool.acquire());
+            map.put(temp, temp);
+            log.getStructAdded().add(temp); // 记录struct-added
+            result = temp;
         }
+        result.active();
 
-        struct.active();
-
-        return struct;
+        return result;
     }
 
     /**
      * 尝试释放一些
      */
-    public void tryRelease(ContextLog log) {
+    public void tryRelease(ContextVersion log) {
         if (map.size() < limit) {
             return;
         }
@@ -66,9 +65,9 @@ public class OutputStructPool extends BasePool {
             }
             heap.filter(struct);
         }
-        // TODO 废弃不活跃, 记录structExpired
+        // 废弃不活跃, 记录structExpired
         heap.forEach(struct -> {
-            map.remove(new OutputStructKey(struct.getNames())); // IT'S OK
+            map.remove(struct);
             pool.release(struct.getId());
             log.getStructExpired().add(struct.getId());
         });
@@ -78,23 +77,19 @@ public class OutputStructPool extends BasePool {
     /**
      * 输出端拓展的ContextStruct, 额外增加了活跃度监控功能
      */
+    @Getter
     public class OutputStruct extends ContextStruct implements GCHeap.Score {
 
-        private short count;
+        private int count;
         private int time;
+
+        public OutputStruct(ContextName[] names) {
+            super(names);
+        }
 
         public void active() {
             this.time = time();
             this.count++;
-        }
-
-        public OutputStruct(int id, ContextName[] names) {
-            super(id, names);
-        }
-
-        @Override
-        public double getScore() {
-            return this.count + this.time / 86400.0;
         }
 
     }

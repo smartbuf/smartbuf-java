@@ -3,7 +3,10 @@ package com.github.sisyphsu.nakedata.context.output;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.github.sisyphsu.nakedata.DataType;
-import com.github.sisyphsu.nakedata.context.*;
+import com.github.sisyphsu.nakedata.context.model.ContextVersion;
+import com.github.sisyphsu.nakedata.context.model.ContextName;
+import com.github.sisyphsu.nakedata.context.model.ContextStruct;
+import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.jackson.ObjectNode;
 
 import java.util.Iterator;
@@ -22,14 +25,14 @@ public class OutputContext {
     private static final Pattern NAME = Pattern.compile("^[A-Za-z_$][\\w$]{0,63}$");
 
     private long version;
-    private ContextLog log;
+    private ContextVersion log;
 
     private OutputNamePool namePool;
     private OutputStructPool structPool;
     private OutputTypePool typePool;
 
     public OutputContext() {
-        this.log = new ContextLog();
+        this.log = new ContextVersion();
         this.namePool = new OutputNamePool(1 << 16);
         this.structPool = new OutputStructPool(1 << 16);
         this.typePool = new OutputTypePool(1 << 16);
@@ -41,7 +44,7 @@ public class OutputContext {
      * @param node 原始数据
      * @return 返回上下文元数据增量版本数据
      */
-    public ContextVersion scan(JsonNode node) {
+    public com.github.sisyphsu.nakedata.context.ContextVersion scan(JsonNode node) {
         if (node == null) {
             throw new IllegalStateException("node can't be null");
         }

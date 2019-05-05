@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.context;
+package com.github.sisyphsu.nakedata.context.model;
 
 import com.github.sisyphsu.nakedata.io.OutputWriter;
 import lombok.Getter;

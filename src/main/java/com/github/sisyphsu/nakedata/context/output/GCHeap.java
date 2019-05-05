@@ -83,14 +83,16 @@ public class GCHeap<T extends GCHeap.Score> {
         }
     }
 
-    @FunctionalInterface
     public interface Score {
-        /**
-         * 获取当前实例的分数
-         *
-         * @return 最终分数
-         */
-        double getScore();
+
+        int getCount();
+
+        int getTime();
+
+        default double getScore() {
+            return this.getCount() + this.getTime() / 86400.0;
+        }
+
     }
 
 }

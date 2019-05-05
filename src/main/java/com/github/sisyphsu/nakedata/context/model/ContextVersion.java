@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.context;
+package com.github.sisyphsu.nakedata.context.model;
 
 import lombok.Data;
 
@@ -12,7 +12,7 @@ import java.util.List;
  * @since 2019-05-03 17:43:58
  */
 @Data
-public class ContextLog {
+public class ContextVersion {
 
     /**
      * 版本号ID
