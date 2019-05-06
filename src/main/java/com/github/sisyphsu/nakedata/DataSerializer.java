@@ -103,6 +103,7 @@ public class DataSerializer {
             // step1. 输出[count | typecode | isEnd]
             writer.writeVarUint((group.getCount() << 5) | (group.getTypeCode() << 1) | (group.isEnd() ? 0 : 1));
             // step2. 输出type-id
+            // issue: null的特殊处理, 可能会导致数组内相同对象的分组不同
             if (group.getType() != null) {
                 writer.writeVarInt(group.getType().getId());
             }
