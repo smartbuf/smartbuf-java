@@ -13,11 +13,11 @@ import java.math.BigInteger;
  * @author sulin
  * @since 2019-05-03 18:43:58
  */
-public class JsonNodeFactory extends com.fasterxml.jackson.databind.node.JsonNodeFactory {
+public class NJsonNodeFactory extends com.fasterxml.jackson.databind.node.JsonNodeFactory {
 
     @Override
     public NullNode nullNode() {
-        // FIXME: unable extend NullNode
+        // FIXME: how to extend NullNode
         return super.nullNode();
     }
 
