@@ -6,7 +6,7 @@ import com.github.sisyphsu.nakedata.DataType;
 import com.github.sisyphsu.nakedata.context.model.ContextStruct;
 import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.context.model.ContextVersion;
-import com.github.sisyphsu.nakedata.jackson.ObjectNode;
+import com.github.sisyphsu.nakedata.jackson.node.NObjectNode;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -89,7 +89,7 @@ public class OutputContext {
                 }
                 return DataType.ARRAY;
             case OBJECT:
-                this.doScanObjectNode((ObjectNode) node);
+                this.doScanObjectNode((NObjectNode) node);
                 return DataType.OBJECT;
             default:
                 throw new IllegalArgumentException("Unsupport data: " + node.getNodeType());
@@ -97,7 +97,7 @@ public class OutputContext {
     }
 
     // 扫描并整理Object节点的元数据
-    private void doScanObjectNode(ObjectNode node) {
+    private void doScanObjectNode(NObjectNode node) {
         boolean isTmp = false;
         Map<String, Integer> fields = new TreeMap<>();
         for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {

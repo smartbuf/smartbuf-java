@@ -1,8 +1,8 @@
 package com.github.sisyphsu.nakedata.jackson;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.*;
 import com.fasterxml.jackson.databind.util.RawValue;
+import com.github.sisyphsu.nakedata.jackson.node.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -17,112 +17,113 @@ public class JsonNodeFactory extends com.fasterxml.jackson.databind.node.JsonNod
 
     @Override
     public NullNode nullNode() {
+        // FIXME: unable extend NullNode
         return super.nullNode();
     }
 
     @Override
     public BooleanNode booleanNode(boolean v) {
-        return super.booleanNode(v);
+        return v ? NBooleanNode.TRUE : NBooleanNode.FALSE;
     }
 
     @Override
     public NumericNode numberNode(byte v) {
-        return super.numberNode(v);
+        return NVarintNode.valueOf(v);
     }
 
     @Override
     public ValueNode numberNode(Byte value) {
-        return super.numberNode(value);
+        return (value == null) ? nullNode() : numberNode(value.byteValue());
     }
 
     @Override
     public NumericNode numberNode(short v) {
-        return super.numberNode(v);
+        return NVarintNode.valueOf(v);
     }
 
     @Override
     public ValueNode numberNode(Short value) {
-        return super.numberNode(value);
+        return value == null ? nullNode() : numberNode(value.shortValue());
     }
 
     @Override
     public NumericNode numberNode(int v) {
-        return super.numberNode(v);
+        return NVarintNode.valueOf(v);
     }
 
     @Override
     public ValueNode numberNode(Integer value) {
-        return super.numberNode(value);
+        return value == null ? nullNode() : numberNode(value.intValue());
     }
 
     @Override
     public NumericNode numberNode(long v) {
-        return super.numberNode(v);
+        return NVarintNode.valueOf(v);
     }
 
     @Override
-    public ValueNode numberNode(Long v) {
-        return super.numberNode(v);
+    public ValueNode numberNode(Long value) {
+        return value == null ? nullNode() : numberNode(value.longValue());
     }
 
     @Override
     public ValueNode numberNode(BigInteger v) {
-        return super.numberNode(v);
+        return v == null ? nullNode() : textNode(v.toString());
     }
 
     @Override
     public NumericNode numberNode(float v) {
-        return super.numberNode(v);
+        return NFloatNode.valueOf(v);
     }
 
     @Override
     public ValueNode numberNode(Float value) {
-        return super.numberNode(value);
+        return value == null ? nullNode() : numberNode(value.floatValue());
     }
 
     @Override
     public NumericNode numberNode(double v) {
-        return super.numberNode(v);
+        return NDoubleNode.valueOf(v);
     }
 
     @Override
     public ValueNode numberNode(Double value) {
-        return super.numberNode(value);
+        return value == null ? nullNode() : numberNode(value.doubleValue());
     }
 
     @Override
     public ValueNode numberNode(BigDecimal v) {
-        return super.numberNode(v);
+        return v == null ? nullNode() : textNode(v.toString());
     }
 
     @Override
     public TextNode textNode(String text) {
-        return super.textNode(text);
+        return NTextNode.valueOf(text);
     }
 
     @Override
     public BinaryNode binaryNode(byte[] data) {
-        return super.binaryNode(data);
+        return NBinaryNode.valueOf(data);
     }
 
     @Override
     public BinaryNode binaryNode(byte[] data, int offset, int length) {
-        return super.binaryNode(data, offset, length);
+        return NBinaryNode.valueOf(data, offset, length);
     }
 
     @Override
     public ArrayNode arrayNode() {
-        return super.arrayNode();
+        return new NArrayNode(this);
     }
 
     @Override
     public ArrayNode arrayNode(int capacity) {
-        return super.arrayNode(capacity);
+        return new NArrayNode(this, capacity);
     }
 
     @Override
     public ObjectNode objectNode() {
-        return new com.github.sisyphsu.nakedata.jackson.ObjectNode(this);
+        return new NObjectNode(this);
     }
 
     @Override

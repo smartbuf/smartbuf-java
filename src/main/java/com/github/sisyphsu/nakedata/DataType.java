@@ -74,4 +74,6 @@ public interface DataType {
         }
     }
 
+    byte getTypeCode();
+
 }

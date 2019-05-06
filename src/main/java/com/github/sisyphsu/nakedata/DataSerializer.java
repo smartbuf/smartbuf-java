@@ -6,7 +6,7 @@ import com.github.sisyphsu.nakedata.context.ContextUtils;
 import com.github.sisyphsu.nakedata.context.model.ContextVersion;
 import com.github.sisyphsu.nakedata.context.output.OutputContext;
 import com.github.sisyphsu.nakedata.io.OutputWriter;
-import com.github.sisyphsu.nakedata.jackson.ObjectNode;
+import com.github.sisyphsu.nakedata.jackson.node.NObjectNode;
 import com.github.sisyphsu.nakedata.utils.JSONUtils;
 
 import java.io.IOException;
@@ -75,7 +75,7 @@ public class DataSerializer {
                 writer.writeString(node.textValue());
                 break;
             case OBJECT:
-                this.writeObject((ObjectNode) node);
+                this.writeObject((NObjectNode) node);
                 break;
             case ARRAY:
                 this.writeArray((ArrayNode) node);
@@ -86,7 +86,7 @@ public class DataSerializer {
     }
 
     // TODO
-    private void writeObject(ObjectNode node) {
+    private void writeObject(NObjectNode node) {
         // step1. 输出类型ID
         writer.writeVarInt(node.getType().getId());
         // step2. 输出fields的值, 跳过null、true、false
