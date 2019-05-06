@@ -98,7 +98,7 @@ public class OutputContext {
             int offset = 0;
             for (Map.Entry<String, JsonNode> entry : node.getFields().entrySet()) {
                 nameIds[offset] = namePool.buildTmpName(versionCache, entry.getKey()).getId();
-                types[offset] = getTypeCode(entry.getValue());
+                types[offset] = DataType.parseType(entry.getValue());
                 offset++;
             }
             ContextStruct struct = structPool.buildTmpStruct(versionCache, nameIds);
@@ -108,7 +108,7 @@ public class OutputContext {
             int offset = 0;
             for (Map.Entry<String, JsonNode> entry : node.getFields().entrySet()) {
                 nameIds[offset] = namePool.buildCxtName(versionCache, entry.getKey()).getId();
-                types[offset] = getTypeCode(entry.getValue());
+                types[offset] = DataType.parseType(entry.getValue());
                 offset++;
             }
             ContextStruct struct = structPool.buildCxtStruct(versionCache, nameIds);
@@ -121,7 +121,7 @@ public class OutputContext {
         for (Iterator<JsonNode> it = array.elements(); it.hasNext(); ) {
             JsonNode node = it.next();
             this.scan(node);
-            byte typeCode = getTypeCode(node);
+            byte typeCode = DataType.parseType(node);
             ContextType type = (node instanceof NObjectNode) ? ((NObjectNode) node).getType() : null;
             if (group != null && group.getType() != type && group.getTypeCode() != typeCode) {
                 group.setEnd(false);
@@ -136,15 +136,6 @@ public class OutputContext {
                 array.getGroups().add(group);
             }
             group.setCount(group.getCount() + 1);
-        }
-    }
-
-    // 获取指定node的标准类型代码
-    private byte getTypeCode(JsonNode node) {
-        if (node instanceof DataType) {
-            return ((DataType) node).getTypeCode();
-        } else {
-            return DataType.NULL;
         }
     }
 
