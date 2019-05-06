@@ -13,7 +13,7 @@ import java.math.BigInteger;
  * @author sulin
  * @since 2019-05-03 18:43:58
  */
-public class NJsonNodeFactory extends com.fasterxml.jackson.databind.node.JsonNodeFactory {
+public class NJsonNodeFactory extends JsonNodeFactory {
 
     @Override
     public NullNode nullNode() {

@@ -1,10 +1,14 @@
 package com.github.sisyphsu.nakedata.jackson.node;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.sisyphsu.nakedata.DataType;
 import com.github.sisyphsu.nakedata.context.model.ContextType;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -13,6 +17,8 @@ import java.util.TreeMap;
  * @author sulin
  * @since 2019-05-03 18:42:10
  */
+@Getter
+@Setter
 public class NObjectNode extends ObjectNode implements DataType {
 
     private ContextType type;
@@ -26,8 +32,8 @@ public class NObjectNode extends ObjectNode implements DataType {
         return OBJECT;
     }
 
-    public ContextType getType() {
-        return type;
+    public Map<String, JsonNode> getFields() {
+        return super._children;
     }
 
 }

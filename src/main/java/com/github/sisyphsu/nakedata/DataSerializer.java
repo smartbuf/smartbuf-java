@@ -1,11 +1,11 @@
 package com.github.sisyphsu.nakedata;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.github.sisyphsu.nakedata.context.ContextUtils;
 import com.github.sisyphsu.nakedata.context.model.ContextVersion;
 import com.github.sisyphsu.nakedata.context.output.OutputContext;
 import com.github.sisyphsu.nakedata.io.OutputWriter;
+import com.github.sisyphsu.nakedata.jackson.node.NArrayNode;
 import com.github.sisyphsu.nakedata.jackson.node.NObjectNode;
 import com.github.sisyphsu.nakedata.utils.JSONUtils;
 
@@ -78,28 +78,40 @@ public class DataSerializer {
                 this.writeObject((NObjectNode) node);
                 break;
             case ARRAY:
-                this.writeArray((ArrayNode) node);
+                this.writeArray((NArrayNode) node);
                 break;
             default:
-                throw new IllegalArgumentException("invalid JsonNode: " + node.getNodeType());
+                // 其他类型不需要输出
         }
     }
 
-    // TODO
-    private void writeObject(NObjectNode node) {
+    // 序列化对象节点
+    private void writeObject(NObjectNode node) throws IOException {
         // step1. 输出类型ID
         writer.writeVarInt(node.getType().getId());
-        // step2. 输出fields的值, 跳过null、true、false
+        // step2. 输出fields的值
+        for (JsonNode field : node.getFields().values()) {
+            this.writeNode(field);
+        }
     }
 
-    // TODO
-    private void writeArray(ArrayNode node) {
-        // 数组需要特殊处理
+    // 序列化数组节点
+    private void writeArray(NArrayNode arr) throws IOException {
         // 需要考虑数组内成员类型的不兼容，输出成员之前，需要先输出[type-id + count], 再输出子类型
-        // step1. 输出[type + count + isEnd] = (3+x)bit
-        // step2. 如果type为object, 则输出其type-id
-        // step3. 循环输出items
-        // 循环处理, 先扫描类型共享等。
+        int offset = 0;
+        for (NArrayNode.Group group : arr.getGroups()) {
+            // step1. 输出[count | typecode | isEnd]
+            writer.writeVarUint((group.getCount() << 5) | (group.getTypeCode() << 1) | (group.isEnd() ? 0 : 1));
+            // step2. 输出type-id
+            if (group.getType() != null) {
+                writer.writeVarInt(group.getType().getId());
+            }
+            // step3. 循环输出items
+            for (int i = 0; i < group.getCount(); i++) {
+                this.writeNode(arr.get(offset + i));
+            }
+            offset += group.getCount();
+        }
     }
 
 }

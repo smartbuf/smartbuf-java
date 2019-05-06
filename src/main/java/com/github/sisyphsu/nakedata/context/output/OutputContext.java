@@ -1,16 +1,15 @@
 package com.github.sisyphsu.nakedata.context.output;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.github.sisyphsu.nakedata.DataType;
 import com.github.sisyphsu.nakedata.context.model.ContextStruct;
 import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.context.model.ContextVersion;
+import com.github.sisyphsu.nakedata.jackson.node.NArrayNode;
 import com.github.sisyphsu.nakedata.jackson.node.NObjectNode;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 /**
@@ -64,33 +63,20 @@ public class OutputContext {
     }
 
     // 扫描元数据
-    private int doScan(JsonNode node) {
+    private void doScan(JsonNode node) {
         switch (node.getNodeType()) {
-            case NULL:
-                return DataType.NULL;
-            case BOOLEAN:
-                return node.booleanValue() ? DataType.TRUE : DataType.FALSE;
-            case STRING:
-                return DataType.STRING;
-            case BINARY:
-                return DataType.BINARY;
-            case NUMBER:
-                if (node.isFloat()) {
-                    return DataType.FLOAT;
-                } else if (node.isDouble()) {
-                    return DataType.DOUBLE;
-                } else {
-                    return DataType.NUMBER;
-                }
             case ARRAY:
-                ArrayNode arrayNode = (ArrayNode) node;
-                for (Iterator<JsonNode> it = arrayNode.elements(); it.hasNext(); ) {
-                    this.scan(it.next());
-                }
-                return DataType.ARRAY;
+                this.doScanArrayNode((NArrayNode) node);
+                break;
             case OBJECT:
                 this.doScanObjectNode((NObjectNode) node);
-                return DataType.OBJECT;
+                break;
+            case NULL:
+            case BOOLEAN:
+            case STRING:
+            case BINARY:
+            case NUMBER:
+                break;
             default:
                 throw new IllegalArgumentException("Unsupport data: " + node.getNodeType());
         }
@@ -99,38 +85,67 @@ public class OutputContext {
     // 扫描并整理Object节点的元数据
     private void doScanObjectNode(NObjectNode node) {
         boolean isTmp = false;
-        Map<String, Integer> fields = new TreeMap<>();
-        for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
-            Map.Entry<String, JsonNode> entry = it.next();
+        // 预扫描
+        for (Map.Entry<String, JsonNode> entry : node.getFields().entrySet()) {
             isTmp = isTmp || NAME.matcher(entry.getKey()).matches();
-            int type = this.doScan(entry.getValue());// 继续扫描子元素
-            fields.put(entry.getKey(), type);
+            this.doScan(entry.getValue());// 继续扫描子元素
         }
-        int[] nameIds = new int[fields.size()];
-        int[] types = new int[fields.size()];
-        ContextType type;
+        // 整理元数据
+        int[] nameIds = new int[node.size()];
+        int[] types = new int[node.size()];
         if (isTmp) {
             // 处理临时元数据
             int offset = 0;
-            for (Map.Entry<String, Integer> entry : fields.entrySet()) {
+            for (Map.Entry<String, JsonNode> entry : node.getFields().entrySet()) {
                 nameIds[offset] = namePool.buildTmpName(versionCache, entry.getKey()).getId();
-                types[offset] = entry.getValue();
+                types[offset] = getTypeCode(entry.getValue());
                 offset++;
             }
             ContextStruct struct = structPool.buildTmpStruct(versionCache, nameIds);
-            type = typePool.buildTmpType(versionCache, struct.getId(), types);
+            node.setType(typePool.buildTmpType(versionCache, struct.getId(), types));
         } else {
             // 处理上下文元数据
             int offset = 0;
-            for (Map.Entry<String, Integer> entry : fields.entrySet()) {
+            for (Map.Entry<String, JsonNode> entry : node.getFields().entrySet()) {
                 nameIds[offset] = namePool.buildCxtName(versionCache, entry.getKey()).getId();
-                types[offset] = entry.getValue();
+                types[offset] = getTypeCode(entry.getValue());
                 offset++;
             }
             ContextStruct struct = structPool.buildCxtStruct(versionCache, nameIds);
-            type = typePool.buildCxtType(versionCache, struct.getId(), types);
+            node.setType(typePool.buildCxtType(versionCache, struct.getId(), types));
         }
-        node.setType(type); // 绑定类型ID, 避免输出Body时再次检索所带来的性能损耗
+    }
+
+    private void doScanArrayNode(NArrayNode array) {
+        NArrayNode.Group group = null;
+        for (Iterator<JsonNode> it = array.elements(); it.hasNext(); ) {
+            JsonNode node = it.next();
+            this.scan(node);
+            byte typeCode = getTypeCode(node);
+            ContextType type = (node instanceof NObjectNode) ? ((NObjectNode) node).getType() : null;
+            if (group != null && group.getType() != type && group.getTypeCode() != typeCode) {
+                group.setEnd(false);
+                group.setCount(group.getCount() + 1);
+                group = null;
+            }
+            if (group == null) {
+                group = new NArrayNode.Group();
+                group.setType(type);
+                group.setTypeCode(typeCode);
+                group.setEnd(true);
+                array.getGroups().add(group);
+            }
+            group.setCount(group.getCount() + 1);
+        }
+    }
+
+    // 获取指定node的标准类型代码
+    private byte getTypeCode(JsonNode node) {
+        if (node instanceof DataType) {
+            return ((DataType) node).getTypeCode();
+        } else {
+            return DataType.NULL;
+        }
     }
 
 }
