@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 @Fork(2)
 @Measurement(iterations = 3, time = 5)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
-public class HashArrayReadTest {
+public class HashArrayReadBenchmark {
 
     private static final Map<Integer, Integer> map = new HashMap<>();
     private static final int[] arr = new int[16];

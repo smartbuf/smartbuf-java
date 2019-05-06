@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
 @Fork(3)
 @Measurement(iterations = 3, time = 5)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
-public class SerializeTest {
+public class SerializeBenchmark {
 
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final Gson gson = new Gson();

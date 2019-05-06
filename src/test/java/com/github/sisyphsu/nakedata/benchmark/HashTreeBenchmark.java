@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 @Fork(2)
 @Measurement(iterations = 3, time = 5)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
-public class HashTreeTest {
+public class HashTreeBenchmark {
 
     private static final Map<Key, Object> complexMap = new HashMap<>();
     private static final Node root = new Node();

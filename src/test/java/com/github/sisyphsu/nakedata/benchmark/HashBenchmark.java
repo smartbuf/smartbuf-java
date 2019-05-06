@@ -50,7 +50,7 @@ import java.util.concurrent.TimeUnit;
 @Fork(2)
 @Measurement(iterations = 3, time = 5)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
-public class HashTest {
+public class HashBenchmark {
 
     private static final Map<Integer, Object> intMap = new HashMap<>();
     private static final Map<String, Object> strMap = new HashMap<>();

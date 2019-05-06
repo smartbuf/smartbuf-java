@@ -28,6 +28,12 @@ public class DataSerializer {
 
     private OutputContext context;
 
+    /**
+     * 执行序列化
+     *
+     * @param obj 待序列化的对象
+     * @throws IOException IO异常
+     */
     public void serialize(Object obj) throws IOException {
         JsonNode node = JSONUtils.toJsonNode(obj);
         // step1. 扫描元数据变化
@@ -81,12 +87,9 @@ public class DataSerializer {
 
     // TODO
     private void writeObject(ObjectNode node) {
-        // 对象需要前缀类型
-        // int id = context.getTypeId(node);
-        // 按照封装好的ContextType执行输出
-        // step1. 输出type-id
-        // step2. 输出null-table —— 不需要输出null-table, 元数据需要改造, 变量表与类型表兼容的模式。
-        // step3. 输出fields的值
+        // step1. 输出类型ID
+        writer.writeVarInt(node.getType().getId());
+        // step2. 输出fields的值, 跳过null、true、false
     }
 
     // TODO
@@ -96,6 +99,7 @@ public class DataSerializer {
         // step1. 输出[type + count + isEnd] = (3+x)bit
         // step2. 如果type为object, 则输出其type-id
         // step3. 循环输出items
+        // 循环处理, 先扫描类型共享等。
     }
 
 }
