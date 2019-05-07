@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sisyphsu.nakedata.jackson.NJsonNodeFactory;
 
+import java.util.Map;
+
 /**
  * JSON utils based on Jackson
  *
@@ -27,6 +29,10 @@ public class JSONUtils {
      */
     public static <T extends JsonNode> T toJsonNode(Object obj) {
         return MAPPER.valueToTree(obj);
+    }
+
+    public static Map convertMap(Object obj) {
+        return MAPPER.convertValue(obj, Map.class);
     }
 
 }
