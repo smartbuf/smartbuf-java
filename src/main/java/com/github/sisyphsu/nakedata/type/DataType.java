@@ -6,7 +6,7 @@ package com.github.sisyphsu.nakedata.type;
  */
 public enum DataType {
 
-    MISSING,
+    NULL,
     BOOL,
     FLOAT,
     DOUBLE,
@@ -16,6 +16,6 @@ public enum DataType {
     ARRAY,
     OBJECT,
     BIGINTEGER,
-    BIGDECIMAL;
+    BIGDECIMAL
 
 }

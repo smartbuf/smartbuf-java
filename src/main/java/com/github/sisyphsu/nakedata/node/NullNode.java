@@ -15,11 +15,12 @@ public class NullNode extends AbstractNode {
 
     @Override
     public DataType getType() {
-        return DataType.MISSING; // TODO
+        return DataType.NULL;
     }
 
     @Override
     public boolean isNull() {
         return true;
     }
+
 }
