@@ -14,11 +14,11 @@ public abstract class AbstractNode {
     private transient DataType type;
 
     // 序列化
-    public abstract void serialize();
+    public void serialize() {
+    }
 
     // 反序列化
-    public abstract void deserialize();
-
-
+    public void deserialize() {
+    }
 
 }
