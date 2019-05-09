@@ -10,9 +10,6 @@ import com.github.sisyphsu.nakedata.type.DataType;
  */
 public abstract class AbstractNode {
 
-    // 标准类型
-    private transient DataType type;
-
     // 序列化
     public void serialize() {
     }
@@ -20,5 +17,19 @@ public abstract class AbstractNode {
     // 反序列化
     public void deserialize() {
     }
+
+    /**
+     * 节点的数据类型
+     *
+     * @return 类型枚举
+     */
+    public abstract DataType getType();
+
+    /**
+     * 是否是null值
+     *
+     * @return true表示null值
+     */
+    public abstract boolean isNull();
 
 }

@@ -1,24 +1,19 @@
 package com.github.sisyphsu.nakedata.node;
 
+import com.github.sisyphsu.nakedata.type.DataType;
+
 /**
  * @author sulin
  * @since 2019-05-08 21:00:21
  */
 public class FloatNode extends AbstractNode {
 
-    public final static FloatNode NULL = new FloatNode();
+    public final static FloatNode NULL = new FloatNode(0);
     public final static FloatNode ZERO = new FloatNode(0);
 
-    private final boolean nil;
     private final float value;
 
-    private FloatNode() {
-        this.nil = true;
-        this.value = 0;
-    }
-
     private FloatNode(float value) {
-        this.nil = false;
         this.value = value;
     }
 
@@ -34,6 +29,16 @@ public class FloatNode extends AbstractNode {
             return NULL;
         }
         return valueOf(f.floatValue());
+    }
+
+    @Override
+    public DataType getType() {
+        return DataType.FLOAT;
+    }
+
+    @Override
+    public boolean isNull() {
+        return this == NULL;
     }
 
 }

@@ -1,24 +1,19 @@
 package com.github.sisyphsu.nakedata.node;
 
+import com.github.sisyphsu.nakedata.type.DataType;
+
 /**
  * @author sulin
  * @since 2019-05-08 21:00:27
  */
 public class DoubleNode extends AbstractNode {
 
-    public final static DoubleNode NULL = new DoubleNode();
+    public final static DoubleNode NULL = new DoubleNode(0);
     public final static DoubleNode ZERO = new DoubleNode(0);
 
-    private final boolean nil;
     private final double value;
 
-    private DoubleNode() {
-        this.nil = true;
-        this.value = 0;
-    }
-
     private DoubleNode(double value) {
-        this.nil = false;
         this.value = value;
     }
 
@@ -36,4 +31,13 @@ public class DoubleNode extends AbstractNode {
         return valueOf(d.doubleValue());
     }
 
+    @Override
+    public DataType getType() {
+        return DataType.DOUBLE;
+    }
+
+    @Override
+    public boolean isNull() {
+        return this == NULL;
+    }
 }

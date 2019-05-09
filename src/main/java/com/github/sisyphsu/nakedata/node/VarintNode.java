@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.node;
 
+import com.github.sisyphsu.nakedata.type.DataType;
 import com.github.sisyphsu.nakedata.utils.NumberUtils;
 
 /**
@@ -8,7 +9,7 @@ import com.github.sisyphsu.nakedata.utils.NumberUtils;
  */
 public class VarintNode extends AbstractNode {
 
-    public final static VarintNode NULL = new VarintNode();
+    public final static VarintNode NULL = new VarintNode(0);
 
     private final static VarintNode[] TABLE = new VarintNode[256];
 
@@ -18,16 +19,9 @@ public class VarintNode extends AbstractNode {
         }
     }
 
-    private final boolean nil;
     private final long value;
 
-    private VarintNode() {
-        this.nil = true;
-        this.value = 0;
-    }
-
     private VarintNode(long value) {
-        this.nil = false;
         this.value = value;
     }
 
@@ -69,4 +63,14 @@ public class VarintNode extends AbstractNode {
         return valueOf(l.longValue());
     }
 
+    @Override
+    public DataType getType() {
+        return DataType.VARINT;
+    }
+
+    @Override
+    public boolean isNull() {
+        return this == NULL;
+    }
+    
 }

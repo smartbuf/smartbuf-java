@@ -1,5 +1,7 @@
 package com.github.sisyphsu.nakedata.node;
 
+import com.github.sisyphsu.nakedata.type.DataType;
+
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -9,18 +11,11 @@ import java.util.TreeMap;
  */
 public class ObjectNode extends AbstractNode {
 
-    public final static ObjectNode NULL = new ObjectNode();
+    public final static ObjectNode NULL = new ObjectNode(null);
 
-    private final boolean nil;
     private final TreeMap<String, AbstractNode> children;
 
-    private ObjectNode() {
-        this.nil = true;
-        this.children = null;
-    }
-
     private ObjectNode(TreeMap<String, AbstractNode> children) {
-        this.nil = false;
         this.children = children;
     }
 
@@ -32,6 +27,16 @@ public class ObjectNode extends AbstractNode {
             return new ObjectNode((TreeMap<String, AbstractNode>) children);
         }
         return new ObjectNode(new TreeMap<>(children));
+    }
+
+    @Override
+    public DataType getType() {
+        return DataType.OBJECT;
+    }
+
+    @Override
+    public boolean isNull() {
+        return this == NULL;
     }
 
 }

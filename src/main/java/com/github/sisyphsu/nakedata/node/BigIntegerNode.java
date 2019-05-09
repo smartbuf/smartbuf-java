@@ -1,5 +1,7 @@
 package com.github.sisyphsu.nakedata.node;
 
+import com.github.sisyphsu.nakedata.type.DataType;
+
 import java.math.BigInteger;
 
 /**
@@ -8,19 +10,12 @@ import java.math.BigInteger;
  */
 public class BigIntegerNode extends AbstractNode {
 
-    public final static BigIntegerNode NULL = new BigIntegerNode();
+    public final static BigIntegerNode NULL = new BigIntegerNode(null);
     public final static BigIntegerNode ZERO = new BigIntegerNode(BigInteger.ZERO);
 
-    private final boolean nil;
     private final BigInteger value;
 
-    private BigIntegerNode() {
-        this.nil = true;
-        this.value = null;
-    }
-
     private BigIntegerNode(BigInteger value) {
-        this.nil = false;
         this.value = value;
     }
 
@@ -31,6 +26,16 @@ public class BigIntegerNode extends AbstractNode {
             return ZERO;
         }
         return new BigIntegerNode(value);
+    }
+
+    @Override
+    public DataType getType() {
+        return DataType.BIGINTEGER;
+    }
+
+    @Override
+    public boolean isNull() {
+        return this == NULL;
     }
 
 }

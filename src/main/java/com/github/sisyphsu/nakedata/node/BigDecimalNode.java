@@ -1,5 +1,7 @@
 package com.github.sisyphsu.nakedata.node;
 
+import com.github.sisyphsu.nakedata.type.DataType;
+
 import java.math.BigDecimal;
 
 /**
@@ -8,19 +10,12 @@ import java.math.BigDecimal;
  */
 public class BigDecimalNode extends AbstractNode {
 
-    public final static BigDecimalNode NULL = new BigDecimalNode();
+    public final static BigDecimalNode NULL = new BigDecimalNode(null);
     public final static BigDecimalNode ZERO = new BigDecimalNode(BigDecimal.ZERO);
 
-    private final boolean nil;
     private final BigDecimal value;
 
-    private BigDecimalNode() {
-        this.nil = true;
-        this.value = null;
-    }
-
     private BigDecimalNode(BigDecimal value) {
-        this.nil = false;
         this.value = value;
     }
 
@@ -31,6 +26,16 @@ public class BigDecimalNode extends AbstractNode {
             return ZERO;
         }
         return new BigDecimalNode(value);
+    }
+
+    @Override
+    public DataType getType() {
+        return DataType.BIGDECIMAL;
+    }
+
+    @Override
+    public boolean isNull() {
+        return this == NULL;
     }
 
 }

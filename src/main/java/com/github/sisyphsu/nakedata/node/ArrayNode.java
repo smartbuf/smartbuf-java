@@ -1,5 +1,7 @@
 package com.github.sisyphsu.nakedata.node;
 
+import com.github.sisyphsu.nakedata.type.DataType;
+
 import java.util.List;
 
 /**
@@ -8,18 +10,11 @@ import java.util.List;
  */
 public class ArrayNode extends AbstractNode {
 
-    public final static ArrayNode NULL = new ArrayNode();
+    public final static ArrayNode NULL = new ArrayNode(null);
 
-    private final boolean nil;
     private final List<AbstractNode> children;
 
-    private ArrayNode() {
-        this.nil = true;
-        this.children = null;
-    }
-
     private ArrayNode(List<AbstractNode> children) {
-        this.nil = false;
         this.children = children;
     }
 
@@ -27,6 +22,16 @@ public class ArrayNode extends AbstractNode {
         if (nodes == null)
             return NULL;
         return new ArrayNode(nodes);
+    }
+
+    @Override
+    public DataType getType() {
+        return DataType.ARRAY;
+    }
+
+    @Override
+    public boolean isNull() {
+        return this == NULL;
     }
 
 }
