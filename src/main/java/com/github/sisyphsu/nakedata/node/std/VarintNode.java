@@ -1,13 +1,18 @@
-package com.github.sisyphsu.nakedata.node;
+package com.github.sisyphsu.nakedata.node.std;
 
+import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.type.DataType;
 import com.github.sisyphsu.nakedata.utils.NumberUtils;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author sulin
  * @since 2019-05-08 21:00:46
  */
-public class VarintNode extends AbstractNode {
+@Getter
+@Setter
+public class VarintNode extends Node {
 
     public final static VarintNode NULL = new VarintNode(0);
 
@@ -64,7 +69,7 @@ public class VarintNode extends AbstractNode {
     }
 
     @Override
-    public DataType getType() {
+    public DataType getDataType() {
         return DataType.VARINT;
     }
 
@@ -72,5 +77,5 @@ public class VarintNode extends AbstractNode {
     public boolean isNull() {
         return this == NULL;
     }
-    
+
 }

@@ -1,14 +1,12 @@
 package com.github.sisyphsu.nakedata.context.output;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.sisyphsu.nakedata.DataType;
 import com.github.sisyphsu.nakedata.context.model.ContextStruct;
 import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.context.model.ContextVersion;
-import com.github.sisyphsu.nakedata.jackson.node.NArrayNode;
-import com.github.sisyphsu.nakedata.jackson.node.NObjectNode;
+import com.github.sisyphsu.nakedata.node.Node;
+import com.github.sisyphsu.nakedata.node.std.ArrayNode;
+import com.github.sisyphsu.nakedata.node.std.ObjectNode;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -42,7 +40,7 @@ public class OutputContext {
      * @param node 原始数据
      * @return 返回上下文元数据增量版本数据
      */
-    public ContextVersion scan(JsonNode node) {
+    public ContextVersion scan(Node node) {
         if (node == null) {
             throw new IllegalStateException("node can't be null");
         }
@@ -63,30 +61,30 @@ public class OutputContext {
     }
 
     // 扫描元数据
-    private void doScan(JsonNode node) {
-        switch (node.getNodeType()) {
+    private void doScan(Node node) {
+        switch (node.getDataType()) {
             case ARRAY:
-                this.doScanArrayNode((NArrayNode) node);
+                this.doScanArrayNode((ArrayNode) node);
                 break;
             case OBJECT:
-                this.doScanObjectNode((NObjectNode) node);
+                this.doScanObjectNode((ObjectNode) node);
                 break;
             case NULL:
-            case BOOLEAN:
+            case BOOL:
             case STRING:
             case BINARY:
-            case NUMBER:
+            case VARINT:
                 break;
             default:
-                throw new IllegalArgumentException("Unsupport data: " + node.getNodeType());
+                throw new IllegalArgumentException("Unsupport data: " + node);
         }
     }
 
     // 扫描并整理Object节点的元数据
-    private void doScanObjectNode(NObjectNode node) {
+    private void doScanObjectNode(ObjectNode node) {
         boolean isTmp = false;
         // 预扫描
-        for (Map.Entry<String, JsonNode> entry : node.getFields().entrySet()) {
+        for (Map.Entry<String, Node> entry : node.getFields().entrySet()) {
             isTmp = isTmp || NAME.matcher(entry.getKey()).matches();
             this.doScan(entry.getValue());// 继续扫描子元素
         }
@@ -96,40 +94,39 @@ public class OutputContext {
         if (isTmp) {
             // 处理临时元数据
             int offset = 0;
-            for (Map.Entry<String, JsonNode> entry : node.getFields().entrySet()) {
+            for (Map.Entry<String, Node> entry : node.getFields().entrySet()) {
                 nameIds[offset] = namePool.buildTmpName(versionCache, entry.getKey()).getId();
-                types[offset] = DataType.parseType(entry.getValue());
+                types[offset] = entry.getValue().getDataType().getCode();
                 offset++;
             }
             ContextStruct struct = structPool.buildTmpStruct(versionCache, nameIds);
-            node.setType(typePool.buildTmpType(versionCache, struct.getId(), types));
+            node.setContextType(typePool.buildTmpType(versionCache, struct.getId(), types));
         } else {
             // 处理上下文元数据
             int offset = 0;
-            for (Map.Entry<String, JsonNode> entry : node.getFields().entrySet()) {
+            for (Map.Entry<String, Node> entry : node.getFields().entrySet()) {
                 nameIds[offset] = namePool.buildCxtName(versionCache, entry.getKey()).getId();
-                types[offset] = DataType.parseType(entry.getValue());
+                types[offset] = entry.getValue().getDataType().getCode();
                 offset++;
             }
             ContextStruct struct = structPool.buildCxtStruct(versionCache, nameIds);
-            node.setType(typePool.buildCxtType(versionCache, struct.getId(), types));
+            node.setContextType(typePool.buildCxtType(versionCache, struct.getId(), types));
         }
     }
 
-    private void doScanArrayNode(NArrayNode array) {
-        NArrayNode.Group group = null;
-        for (Iterator<JsonNode> it = array.elements(); it.hasNext(); ) {
-            JsonNode node = it.next();
+    private void doScanArrayNode(ArrayNode array) {
+        ArrayNode.Group group = null;
+        for (Node node : array.getItems()) {
             this.scan(node);
-            byte typeCode = DataType.parseType(node);
-            ContextType type = (node instanceof NObjectNode) ? ((NObjectNode) node).getType() : null;
+            byte typeCode = node.getDataType().getCode();
+            ContextType type = node.getContextType();
             if (group != null && group.getType() != type && group.getTypeCode() != typeCode) {
                 group.setEnd(false);
                 group.setCount(group.getCount() + 1);
                 group = null;
             }
             if (group == null) {
-                group = new NArrayNode.Group();
+                group = new ArrayNode.Group();
                 group.setType(type);
                 group.setTypeCode(typeCode);
                 group.setEnd(true);

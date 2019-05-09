@@ -1,13 +1,13 @@
 package com.github.sisyphsu.nakedata;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.github.sisyphsu.nakedata.context.ContextUtils;
 import com.github.sisyphsu.nakedata.context.model.ContextVersion;
 import com.github.sisyphsu.nakedata.context.output.OutputContext;
 import com.github.sisyphsu.nakedata.io.OutputWriter;
-import com.github.sisyphsu.nakedata.jackson.node.NArrayNode;
-import com.github.sisyphsu.nakedata.jackson.node.NObjectNode;
-import com.github.sisyphsu.nakedata.utils.JSONUtils;
+import com.github.sisyphsu.nakedata.node.Node;
+import com.github.sisyphsu.nakedata.node.NodeMapper;
+import com.github.sisyphsu.nakedata.node.std.ArrayNode;
+import com.github.sisyphsu.nakedata.node.std.ObjectNode;
 
 import java.io.IOException;
 
@@ -35,10 +35,10 @@ public class DataSerializer {
      * @throws IOException IO异常
      */
     public void serialize(Object obj) throws IOException {
-        JsonNode node = JSONUtils.toJsonNode(obj);
+        Node root = NodeMapper.convertNodeTree(obj);
         // step1. 扫描元数据变化
-        ContextVersion version = context.scan(node);
-        byte dataType = DataType.parseType(node);
+        ContextVersion version = context.scan(root);
+        byte dataType = root.getDataType().getCode();
         // step2. 输出头信息, 包括head、version
         if (version == null) {
             writer.writeByte(dataType);
@@ -47,7 +47,7 @@ public class DataSerializer {
             ContextUtils.doWrite(writer, version);
         }
         // step3. 输出数据体
-        this.writeNode(node);
+        this.writeNode(root);
     }
 
     /**
@@ -57,28 +57,28 @@ public class DataSerializer {
      *
      * @param node 待输出的节点
      */
-    private void writeNode(JsonNode node) throws IOException {
-        switch (node.getNodeType()) {
-            case NUMBER:
-                if (node.isFloat()) {
-                    writer.writeFloat(node.floatValue());
-                } else if (node.isDouble()) {
-                    writer.writeDouble(node.doubleValue());
-                } else {
-                    writer.writeVarInt(node.asLong());
-                }
+    private void writeNode(Node node) throws IOException {
+        switch (node.getDataType()) {
+            case VARINT:
+//                if (node.isFloat()) {
+//                    writer.writeFloat(node.floatValue());
+//                } else if (node.isDouble()) {
+//                    writer.writeDouble(node.doubleValue());
+//                } else {
+//                }
+//                writer.writeVarInt(node.g);
                 break;
             case BINARY:
-                writer.writeBinary(node.binaryValue());
+//                writer.writeBinary(node.binaryValue());
                 break;
             case STRING:
-                writer.writeString(node.textValue());
+//                writer.writeString(node.textValue());
                 break;
             case OBJECT:
-                this.writeObject((NObjectNode) node);
+                this.writeObject((ObjectNode) node);
                 break;
             case ARRAY:
-                this.writeArray((NArrayNode) node);
+                this.writeArray((ArrayNode) node);
                 break;
             default:
                 // 其他类型不需要输出
@@ -86,20 +86,20 @@ public class DataSerializer {
     }
 
     // 序列化对象节点
-    private void writeObject(NObjectNode node) throws IOException {
+    private void writeObject(ObjectNode node) throws IOException {
         // step1. 输出类型ID
-        writer.writeVarInt(node.getType().getId());
+        writer.writeVarInt(node.getContextType().getId());
         // step2. 输出fields的值
-        for (JsonNode field : node.getFields().values()) {
+        for (Node field : node.getFields().values()) {
             this.writeNode(field);
         }
     }
 
     // 序列化数组节点
-    private void writeArray(NArrayNode arr) throws IOException {
+    private void writeArray(ArrayNode arr) throws IOException {
         // 需要考虑数组内成员类型的不兼容，输出成员之前，需要先输出[type-id + count], 再输出子类型
         int offset = 0;
-        for (NArrayNode.Group group : arr.getGroups()) {
+        for (ArrayNode.Group group : arr.getGroups()) {
             // step1. 输出[count | typecode | isEnd]
             writer.writeVarUint((group.getCount() << 5) | (group.getTypeCode() << 1) | (group.isEnd() ? 0 : 1));
             // step2. 输出type-id
@@ -109,7 +109,7 @@ public class DataSerializer {
             }
             // step3. 循环输出items
             for (int i = 0; i < group.getCount(); i++) {
-                this.writeNode(arr.get(offset + i));
+                this.writeNode(arr.getItems().get(offset + i));
             }
             offset += group.getCount();
         }

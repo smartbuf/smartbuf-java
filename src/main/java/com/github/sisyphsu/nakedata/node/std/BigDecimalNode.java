@@ -1,6 +1,9 @@
-package com.github.sisyphsu.nakedata.node;
+package com.github.sisyphsu.nakedata.node.std;
 
+import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.type.DataType;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
@@ -8,7 +11,9 @@ import java.math.BigDecimal;
  * @author sulin
  * @since 2019-05-08 21:01:56
  */
-public class BigDecimalNode extends AbstractNode {
+@Getter
+@Setter
+public class BigDecimalNode extends Node {
 
     public final static BigDecimalNode NULL = new BigDecimalNode(null);
     public final static BigDecimalNode ZERO = new BigDecimalNode(BigDecimal.ZERO);
@@ -29,7 +34,7 @@ public class BigDecimalNode extends AbstractNode {
     }
 
     @Override
-    public DataType getType() {
+    public DataType getDataType() {
         return DataType.BIGDECIMAL;
     }
 

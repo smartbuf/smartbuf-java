@@ -1,12 +1,17 @@
-package com.github.sisyphsu.nakedata.node;
+package com.github.sisyphsu.nakedata.node.std;
 
+import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.type.DataType;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author sulin
  * @since 2019-05-08 21:00:34
  */
-public class StringNode extends AbstractNode {
+@Getter
+@Setter
+public class StringNode extends Node {
 
     public final static StringNode NULL = new StringNode(null);
     public final static StringNode EMPTY = new StringNode("");
@@ -28,7 +33,7 @@ public class StringNode extends AbstractNode {
     }
 
     @Override
-    public DataType getType() {
+    public DataType getDataType() {
         return DataType.STRING;
     }
 

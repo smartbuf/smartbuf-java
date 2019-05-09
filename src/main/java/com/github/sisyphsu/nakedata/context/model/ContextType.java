@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Arrays;
+import java.util.BitSet;
 
 /**
  * 上下文自定义数据类型
@@ -23,6 +24,8 @@ public class ContextType {
      * 数据类型的内部结构
      */
     private final int structId;
+
+    private final BitSet nullflag = new BitSet();
     /**
      * 数据类型的类型列表, 必须与struct对应
      */
