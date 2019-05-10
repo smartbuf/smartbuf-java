@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.node.std;
+package com.github.sisyphsu.nakedata.node.container;
 
 import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.node.Node;

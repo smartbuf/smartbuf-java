@@ -4,8 +4,8 @@ import com.github.sisyphsu.nakedata.context.model.ContextStruct;
 import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.context.model.ContextVersion;
 import com.github.sisyphsu.nakedata.node.Node;
-import com.github.sisyphsu.nakedata.node.std.ArrayNode;
-import com.github.sisyphsu.nakedata.node.std.ObjectNode;
+import com.github.sisyphsu.nakedata.node.container.ArrayNode;
+import com.github.sisyphsu.nakedata.node.container.ObjectNode;
 
 import java.util.Map;
 import java.util.regex.Pattern;

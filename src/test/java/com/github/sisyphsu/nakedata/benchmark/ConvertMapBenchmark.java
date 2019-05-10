@@ -3,12 +3,14 @@ package com.github.sisyphsu.nakedata.benchmark;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import net.sf.cglib.beans.BeanMap;
+import net.sf.cglib.core.ReflectUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Test;
 import org.openjdk.jmh.annotations.*;
 
+import java.beans.PropertyDescriptor;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +31,13 @@ import java.util.concurrent.TimeUnit;
  * ConvertMapBenchmark.cglibBenchmark          avgt    6  0.060 ± 0.001  us/op
  * ConvertMapBenchmark.jacksonBenchmark        avgt    6  0.255 ± 0.007  us/op
  * ConvertMapBenchmark.jacksonToTreeBenchmark  avgt    6  0.243 ± 0.001  us/op
+ * <p>
+ * 针对cglib额外进行Map复制
+ * Benchmark                                   Mode  Cnt  Score   Error  Units
+ * ConvertMapBenchmark.beanutilsBenchmark      avgt    6  0.894 ± 0.024  us/op
+ * ConvertMapBenchmark.cglibBenchmark          avgt    6  0.142 ± 0.012  us/op
+ * ConvertMapBenchmark.jacksonBenchmark        avgt    6  0.260 ± 0.022  us/op
+ * ConvertMapBenchmark.jacksonToTreeBenchmark  avgt    6  0.245 ± 0.009  us/op
  * <p>
  * Jackson转换map过程中直接copy数组、哈希表等可能会造成性能损耗
  * Beanutils执行结果类似于Cglib, 但是额外增加了class属性，估计底层直接使用了Java反射机制，不过它额外引入了commons-logging特别恶心
@@ -83,7 +92,16 @@ public class ConvertMapBenchmark {
 
     @Benchmark
     public void cglibBenchmark() {
-        BeanMap.create(bean.egg);
+        Map<String, Object> tmp = new TreeMap<>();
+        for (PropertyDescriptor getter : ReflectUtils.getBeanGetters(bean.egg.getClass())) {
+        }
+        for (PropertyDescriptor property : ReflectUtils.getBeanProperties(bean.egg.getClass())) {
+        }
+
+        BeanMap map = BeanMap.create(bean.egg);
+        for (Object key : map.keySet()) {
+            tmp.put(key.toString(), map.get(key));
+        }
     }
 
     @Benchmark
