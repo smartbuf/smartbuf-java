@@ -9,7 +9,7 @@ import lombok.Getter;
  * @since 2019-05-09 21:20:56
  */
 @Getter
-public class NodeAdapter<T> {
+public abstract class NodeAdapter<T> {
 
     protected final Class<T> type;
     protected final NodeMapper mapper;
@@ -18,5 +18,7 @@ public class NodeAdapter<T> {
         this.type = type;
         this.mapper = mapper;
     }
+
+    public abstract Node toNode(Object obj);
 
 }
