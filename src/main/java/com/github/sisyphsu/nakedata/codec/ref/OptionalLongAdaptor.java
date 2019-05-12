@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.node.adaptor.ref;
+package com.github.sisyphsu.nakedata.codec.ref;
 
 /**
  * @author sulin

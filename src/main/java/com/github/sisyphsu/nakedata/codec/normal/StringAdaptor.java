@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.node.adaptor.normal;
+package com.github.sisyphsu.nakedata.codec.normal;
 
 /**
  * @author sulin
