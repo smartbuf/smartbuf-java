@@ -20,7 +20,7 @@ public abstract class VarintCodec<T> extends Codec<T> {
         if (obj == null) {
             return VarintNode.NULL;
         }
-        return VarintNode.valueOf(this.doEncode(obj));
+        return VarintNode.valueOf(doEncode(obj));
     }
 
     @Override
@@ -41,7 +41,7 @@ public abstract class VarintCodec<T> extends Codec<T> {
         if (l == null) {
             throw new IllegalArgumentException("Cant convert to number: " + node);
         }
-        return this.doDecode(l);
+        return doDecode(l);
     }
 
     public abstract Long doEncode(T obj);
