@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.adaptor;
 
-import com.github.sisyphsu.nakedata.convertor.adaptor.time.DurationAdaptor;
+import com.github.sisyphsu.nakedata.convertor.adaptor.time.java8.DurationAdaptor;
 import org.junit.Test;
 
 /**

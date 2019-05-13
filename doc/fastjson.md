@@ -1,6 +1,16 @@
 # serializer
 
 ```
+org.w3c.dom.Node
+javax.money.Monetary;
+org.javamoney.moneta.Money;
+java.lang.reflect.GenericArrayType;
+```
+
+# 已处理
+```
+XMLGregorianCalendar
+
 java.time.Duration
 java.time.Instant
 java.time.LocalDate
@@ -11,200 +21,145 @@ java.time.OffsetTime
 java.time.Period
 java.time.ZoneId
 java.time.ZonedDateTime
-import org.joda.time.*; // 与java8的time一样
+org.joda.time.*; // 与java8的time一样
 
-import java.util.Optional;
-import java.util.OptionalDouble;
-import java.util.OptionalInt;
-import java.util.OptionalLong;
-
-import java.util.concurrent.atomic.DoubleAdder;
-import java.util.concurrent.atomic.LongAdder;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicIntegerArray;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicLongArray;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Point;
-import java.awt.Rectangle;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
-import java.nio.ByteBuffer;
-
-import java.util.Calendar;
-XMLGregorianCalendar
-
-java.lang.Character;
-java.lang.String;
-
-import java.sql.Clob;
-
-Collection
-AbstractCollection
-HashSet
-LinkedHashSet
-TreeSet
-ArrayList
-List
-EnumSet
-Queue
-
-java.sql.Date
 java.sql.Time
-Date
-Calendar
-Double
-Float
-Enum
-Integer
-Long
-
-import java.util.Enumeration;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-
-JavaBean
-
-import com.alibaba.fastjson.JSONAware; // ?
-
-Map
-JSONObject
-SortedMap
-LinkedHashMap
-ConcurrentMap
-ConcurrentHashMap
-TreeMap
-Hashtable
-Properties
-IdentityHashMap
-
-MapEntry
-SimpleDateFormat
-Class
-Charset
-InetSocketAddress
-InetAddress
-Inet4Address
-Inet6Address
-File
-TimeZone
-Currency
-JSONStreamAware
-Iterator
-Iterable
-org.w3c.dom.Node
-Locale
-Pattern
-URL
-URI
-UUID
-
-Object[]
-int[]
-short[]
-long[]
-boolean[]
-float[]
-double[]
-byte[]
-char[]
+java.sql.Date
+java.sql.Timestamp
 
 boolean, byte, short, int, long, float, double, string, char.
+int[], short[], long[], boolean[], float[], double[], byte[], char[], Object[], String[]
+java.lang.Class
+java.lang.Boolean
+java.lang.Byte
+java.lang.Character
+java.lang.Short
+java.lang.Integer
+java.lang.Long
+java.lang.Float
+java.lang.Double
+java.lang.Number
+java.lang.String
+java.lang.StringBuffer
+java.lang.StringBuilder
+java.lang.Iterable
+java.lang.Enum
+java.lang.Cloneable
 
-bitset
+java.lang.ref.Reference;
+java.lang.ref.SoftReference;
+java.lang.ref.WeakReference;
 
-import java.lang.ref.Reference;
-import java.lang.ref.SoftReference;
-import java.lang.ref.WeakReference;
-import java.util.concurrent.atomic.AtomicReference;
+java.math.BigDecimal
+java.math.BigInteger
 
-StringBuffer
-StringBuilder
+java.util.Optional;
+java.util.OptionalDouble;
+java.util.OptionalInt;
+java.util.OptionalLong;
+java.util.BitSet
+java.util.Calendar
+java.util.Date
+java.util.Locale
+java.util.UUID
+java.util.Enumeration
+java.util.Iterator
+java.util.Currency
+java.util.TimeZone
+java.util.regex.Pattern
+java.util.concurrent.TimeUnit
 
-import org.javamoney.moneta.Money;
-import javax.money.Monetary;
+java.util.concurrent.atomic.DoubleAdder;
+java.util.concurrent.atomic.LongAdder;
+java.util.concurrent.atomic.AtomicBoolean;
+java.util.concurrent.atomic.AtomicInteger;
+java.util.concurrent.atomic.AtomicIntegerArray;
+java.util.concurrent.atomic.AtomicLong;
+java.util.concurrent.atomic.AtomicLongArray;
+java.util.concurrent.atomic.AtomicReference;s
 
-StackTraceElement
-Throwable
-Exception
+java.awt.Color;
+java.awt.Font;
+java.awt.Point;
+java.awt.Rectangle;
 
-GenericArrayType
+java.io.File
+java.io.InputStream
+java.io.OutputStream
+java.nio.ByteBuffer
+java.nio.charset.Charset
 
-java.lang.Cloneable.class,
-loadClass("java.lang.AutoCloseable"),
-java.lang.Exception.class,
-java.lang.RuntimeException.class,
-java.lang.IllegalAccessError.class,
-java.lang.IllegalAccessException.class,
-java.lang.IllegalArgumentException.class,
-java.lang.IllegalMonitorStateException.class,
-java.lang.IllegalStateException.class,
-java.lang.IllegalThreadStateException.class,
-java.lang.IndexOutOfBoundsException.class,
-java.lang.InstantiationError.class,
-java.lang.InstantiationException.class,
-java.lang.InternalError.class,
-java.lang.InterruptedException.class,
-java.lang.LinkageError.class,
-java.lang.NegativeArraySizeException.class,
-java.lang.NoClassDefFoundError.class,
-java.lang.NoSuchFieldError.class,
-java.lang.NoSuchFieldException.class,
-java.lang.NoSuchMethodError.class,
-java.lang.NoSuchMethodException.class,
-java.lang.NullPointerException.class,
-java.lang.NumberFormatException.class,
-java.lang.OutOfMemoryError.class,
-java.lang.SecurityException.class,
-java.lang.StackOverflowError.class,
-java.lang.StringIndexOutOfBoundsException.class,
-java.lang.TypeNotPresentException.class,
-java.lang.VerifyError.class,
-java.lang.StackTraceElement.class,
-java.util.HashMap.class,
-java.util.Hashtable.class,
-java.util.TreeMap.class,
-java.util.IdentityHashMap.class,
-java.util.WeakHashMap.class,
-java.util.LinkedHashMap.class,
-java.util.HashSet.class,
-java.util.LinkedHashSet.class,
-java.util.TreeSet.class,
-java.util.ArrayList.class,
-java.util.concurrent.TimeUnit.class,
-java.util.concurrent.ConcurrentHashMap.class,
-loadClass("java.util.concurrent.ConcurrentSkipListMap"),
-loadClass("java.util.concurrent.ConcurrentSkipListSet"),
-java.util.concurrent.atomic.AtomicInteger.class,
-java.util.concurrent.atomic.AtomicLong.class,
-java.util.Collections.EMPTY_MAP.getClass(),
-java.lang.Boolean.class,
-java.lang.Character.class,
-java.lang.Byte.class,
-java.lang.Short.class,
-java.lang.Integer.class,
-java.lang.Long.class,
-java.lang.Float.class,
-java.lang.Double.class,
-java.lang.Number.class,
-java.lang.String.class,
-java.math.BigDecimal.class,
-java.math.BigInteger.class,
-java.util.BitSet.class,
-java.util.Calendar.class,
-java.util.Date.class,
-java.util.Locale.class,
-java.util.UUID.class,
-java.sql.Time.class,
-java.sql.Date.class,
-java.sql.Timestamp.class,
-java.text.SimpleDateFormat.class,
-```
+java.text.SimpleDateFormat
+
+java.util.Map
+java.util.Map.Entry
+java.util.HashMap
+java.util.Hashtable
+java.util.TreeMap
+java.util.SortedMap
+java.util.IdentityHashMap
+java.util.WeakHashMap
+java.util.LinkedHashMap
+java.util.LinkedTreeMap
+java.util.Properties
+java.util.IdentityHashMap
+java.util.concurrent.ConcurrentHashMap
+java.util.concurrent.ConcurrentSkipListMap
+
+java.util.Collection
+java.util.AbstractCollection
+java.util.List
+java.util.ArrayList
+java.util.LinkedList
+java.util.Set
+java.util.HashSet
+java.util.TreeSet
+java.util.LinkedHashSet
+java.util.EnumSet
+java.util.concurrent.ConcurrentSkipListSet
+
+java.util.Queue
+java.util.AbstractQueue
+......
+
+java.net.URL
+java.net.URI
+java.net.InetSocketAddress
+java.net.InetAddress
+java.net.Inet4Address
+java.net.Inet6Address
+
+com.google.common.collect.ArrayListMultimap;
+com.google.common.collect.Multimap;
+
+java.lang.Throwable
+java.lang.Exception
+java.lang.RuntimeException
+java.lang.IllegalAccessError
+java.lang.IllegalAccessException
+java.lang.IllegalArgumentException
+java.lang.IllegalMonitorStateException
+java.lang.IllegalStateException
+java.lang.IllegalThreadStateException
+java.lang.IndexOutOfBoundsException
+java.lang.InstantiationError
+java.lang.InstantiationException
+java.lang.InternalError
+java.lang.InterruptedException
+java.lang.LinkageError
+java.lang.NegativeArraySizeException
+java.lang.NoClassDefFoundError
+java.lang.NoSuchFieldError
+java.lang.NoSuchFieldException
+java.lang.NoSuchMethodError
+java.lang.NoSuchMethodException
+java.lang.NullPointerException
+java.lang.NumberFormatException
+java.lang.OutOfMemoryError
+java.lang.SecurityException
+java.lang.StackOverflowError
+java.lang.StringIndexOutOfBoundsException
+java.lang.TypeNotPresentException
+java.lang.VerifyError
+java.lang.StackTraceElement
+s```
