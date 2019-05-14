@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.adaptor;
 
-import com.github.sisyphsu.nakedata.convertor.adaptor.time.java8.DurationAdaptor;
+import com.github.sisyphsu.nakedata.convertor.adaptor.time.java8.DurationCodec;
 import org.junit.Test;
 
 /**
@@ -11,9 +11,8 @@ public class AdaptorTest {
 
     @Test
     public void testType() {
-        Adaptor adaptor = new DurationAdaptor();
-        System.out.println(adaptor.getSrcType());
-        System.out.println(adaptor.getTgtType());
+        Codec adaptor = new DurationCodec();
+        System.out.println(adaptor.getType());
     }
 
 }
