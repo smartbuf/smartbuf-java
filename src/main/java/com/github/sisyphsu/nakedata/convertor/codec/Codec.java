@@ -124,4 +124,8 @@ public abstract class Codec<T> {
         throw new UnsupportedOperationException();
     }
 
+    public T fromNode(Node node) {
+        throw new UnsupportedOperationException();
+    }
+
 }
