@@ -12,7 +12,7 @@ public class AdaptorTest {
     @Test
     public void testType() {
         Codec adaptor = new DurationCodec();
-        System.out.println(adaptor.getType());
+//        System.out.println(adaptor.getType());
     }
 
 }
