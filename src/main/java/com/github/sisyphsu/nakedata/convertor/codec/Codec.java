@@ -4,8 +4,6 @@ import com.github.sisyphsu.nakedata.convertor.Convertor;
 import com.github.sisyphsu.nakedata.node.Node;
 
 import java.lang.reflect.ParameterizedType;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Map;
 
@@ -78,26 +76,6 @@ public abstract class Codec<T> {
      * @return 转换结果
      */
     public Double toDouble(T t) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * 将T实例转换为BigInteger类型，支持BigInteger等类型
-     *
-     * @param t T实例
-     * @return 转换结果
-     */
-    public BigInteger toBigInteger(T t) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * 将T实例转换为BigDecimal类型，支持BigDecimal等类型
-     *
-     * @param t T实例
-     * @return 转换结果
-     */
-    public BigDecimal toBigDecimal(T t) {
         throw new UnsupportedOperationException();
     }
 
@@ -184,19 +162,11 @@ public abstract class Codec<T> {
         throw new UnsupportedOperationException();
     }
 
-    public T fromBigInteger(BigInteger val) {
-        throw new UnsupportedOperationException();
-    }
-
     public T fromFloat(Float val) {
         throw new UnsupportedOperationException();
     }
 
     public T fromDouble(Double val) {
-        throw new UnsupportedOperationException();
-    }
-
-    public T fromBigDecimal(BigDecimal val) {
         throw new UnsupportedOperationException();
     }
 
