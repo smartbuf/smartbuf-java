@@ -9,6 +9,7 @@ import java.util.Map;
 
 /**
  * 数据转换适配器
+ * 枚举怎么办？？？搞一个StringRef类型？？？
  *
  * @author sulin
  * @since 2019-05-12 16:01:19
@@ -49,17 +50,6 @@ public abstract class Codec<T> {
     }
 
     /**
-     * 将T实例转换为Long类型，支持byte、short、int、long和它们的装箱类型，以及AtomicInteger等类型
-     * 部分枚举值如时区也需要转换为Code
-     *
-     * @param t T实例
-     * @return 转换结果
-     */
-    public Long toVarint(T t) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
      * 将T实例转换为Float类型，支持float、Float等类型，以及相关的封装类型
      *
      * @param t T实例
@@ -76,6 +66,17 @@ public abstract class Codec<T> {
      * @return 转换结果
      */
     public Double toDouble(T t) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * 将T实例转换为Long类型，支持byte、short、int、long和它们的装箱类型，以及AtomicInteger等类型
+     * 部分枚举值如时区也需要转换为Code
+     *
+     * @param t T实例
+     * @return 转换结果
+     */
+    public Long toVarint(T t) {
         throw new UnsupportedOperationException();
     }
 
@@ -110,8 +111,7 @@ public abstract class Codec<T> {
     }
 
     /**
-     * 将T实例转换为集合、数组类型
-     * TODO: 感觉没有必要，直接优化ArrayNode即可
+     * 将T实例转换为集合、数组类型，如Object[]等可以封装为Collection统一处理。
      *
      * @param t T实例
      * @return 转换结果
@@ -131,7 +131,7 @@ public abstract class Codec<T> {
     }
 
     /**
-     * 将T实例编码为Node类型
+     * 将T实例编码为Node类型，所有可以直接输出为Node的数据类型
      *
      * @param t T实例
      * @return 编码结果
@@ -140,10 +140,10 @@ public abstract class Codec<T> {
         throw new UnsupportedOperationException();
     }
 
-    /******************************************************************/
+    /*********************************** Decode方法 *******************************/
 
     /**
-     * 将Boolean数据转换为当前类型实例
+     * 将Boolean数据解析为当前类型实例
      *
      * @param val Boolean数据
      * @return 泛型实例
@@ -153,39 +153,81 @@ public abstract class Codec<T> {
     }
 
     /**
-     * 将Long数据转换为当前类型实例
+     * 将Float数据解析为当前类型实例，支持Float以及相关封装类型
+     *
+     * @param val Float数据
+     * @return 泛型实例
+     */
+    public T fromFloat(Float val) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * 将Double数据解析为当前类型实例，支持Double以及相关封装类型
+     *
+     * @param val Double数据
+     * @return 泛型实例
+     */
+    public T fromDouble(Double val) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * 将Long数据解析为当前类型实例，支持byte、short、int、long等，以及AtomicLong、AtomicInteger等封装类型？
      *
      * @param val Long数据
-     * @return 泛型数据
+     * @return 泛型实例
      */
     public T fromVarint(Long val) {
         throw new UnsupportedOperationException();
     }
 
-    public T fromFloat(Float val) {
-        throw new UnsupportedOperationException();
-    }
-
-    public T fromDouble(Double val) {
-        throw new UnsupportedOperationException();
-    }
-
+    /**
+     * 将二进制数据解析为当前类型实例，支持所有提供了反序列化的数据类型，比如Date等
+     *
+     * @param val 二进制数据
+     * @return 泛型实例
+     */
     public T fromBinary(byte[] val) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * 将字符串解析为当前类型实例，可以用于支持如POJO等JSON解析等
+     *
+     * @param val 字符串
+     * @return 泛型实例
+     */
     public T fromString(String val) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * 将数组解析为当前类型实例，支持Object[]等转换为指定类型的Collection等。
+     *
+     * @param val 数组
+     * @return 泛型实例
+     */
     public T fromArray(Collection val) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * 将map解析为当前类型实例，支持对象序列化为POJO等。
+     *
+     * @param map Map数据
+     * @return 泛型实例
+     */
     public T fromMap(Map map) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * 将Node解析为当前类型实例，对Node进行脱壳
+     *
+     * @param node Node数据
+     * @return 泛型实例
+     */
     public T fromNode(Node node) {
         throw new UnsupportedOperationException();
     }
