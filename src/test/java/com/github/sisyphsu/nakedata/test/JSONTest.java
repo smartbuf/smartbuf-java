@@ -35,6 +35,8 @@ public class JSONTest {
         System.out.println(JSON.toJSONString(tmp));
         System.out.println(mapper.writeValueAsString(tmp));
         System.out.println(gson.toJson(tmp));
+
+//        JSON.parseArray()
     }
 
     public static class User {
