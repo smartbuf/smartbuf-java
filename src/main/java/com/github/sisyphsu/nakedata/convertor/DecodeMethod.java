@@ -9,10 +9,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 /**
+ * Codec的解码(反序列化)方法封装，即Codec的[from*]方法
+ *
  * @author sulin
- * @since 2019-05-20 15:20:45
+ * @since 2019-05-12 15:41:15
  */
-public class EncodeStep {
+public class DecodeMethod {
 
     private final Codec codec;
     private final Class srcClass;
@@ -20,12 +22,12 @@ public class EncodeStep {
     private final MethodAccessor accessor;
 
     /**
-     * 封装指定Codec的encode方法
+     * 根据Codec及其encode或decode方法构建Step
      *
      * @param codec  编码解码器
      * @param method 编码or解码方法
      */
-    public EncodeStep(Codec codec, Method method) {
+    public DecodeMethod(Codec codec, Method method) {
         Class<?>[] argTypes = method.getParameterTypes();
         if (argTypes.length != 2 || argTypes[0] != Type.class) {
             throw new IllegalArgumentException("invalid codec method: " + method);
@@ -37,14 +39,15 @@ public class EncodeStep {
     }
 
     /**
-     * 数据转换函数, 表示编码or解码环节的两种数据类型的转换规则
+     * 数据Decode函数, 将data还原为指定类型的数据
      *
-     * @param src 原始数据
+     * @param type 操作相关的数据类型
+     * @param data 原始数据
      * @return 目标类型
      */
-    public Object encode(Object src) {
+    public Object decode(Type type, Object data) {
         try {
-            return accessor.invoke(codec, new Object[]{src});
+            return accessor.invoke(codec, new Object[]{type, data});
         } catch (InvocationTargetException e) {
             throw new IllegalStateException("invoke codec failed.", e);
         }
