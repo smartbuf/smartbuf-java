@@ -8,7 +8,7 @@ import java.lang.reflect.Type;
  * @author sulin
  * @since 2019-05-19 17:23:23
  */
-public class Processor {
+public class EncodePipeline {
 
     private Class srcType;
     private Class tgtType;
@@ -24,7 +24,7 @@ public class Processor {
     public Object convert(Type type, Object src) {
         // TODO type传递挺麻烦的啊
         for (DecodeStep step : steps) {
-            step.convert(type, src);
+//            step.convert(type, src);
         }
         return null;
     }

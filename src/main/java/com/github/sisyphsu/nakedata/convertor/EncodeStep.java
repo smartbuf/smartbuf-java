@@ -9,14 +9,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 /**
- * 编码解码过程中的单个类型转换步骤
- * <p>
- * codec初始化之后，扫描其支持的from/to规则，根据方法的From和To类型构建Step实例
- *
  * @author sulin
- * @since 2019-05-12 15:41:15
+ * @since 2019-05-20 15:20:45
  */
-public class DecodeStep {
+public class EncodeStep {
 
     private final Codec codec;
     private final Class srcClass;
@@ -24,12 +20,12 @@ public class DecodeStep {
     private final MethodAccessor accessor;
 
     /**
-     * 根据Codec及其encode或decode方法构建Step
+     * 封装指定Codec的encode方法
      *
      * @param codec  编码解码器
      * @param method 编码or解码方法
      */
-    public DecodeStep(Codec codec, Method method) {
+    public EncodeStep(Codec codec, Method method) {
         Class<?>[] argTypes = method.getParameterTypes();
         if (argTypes.length != 2 || argTypes[0] != Type.class) {
             throw new IllegalArgumentException("invalid codec method: " + method);
@@ -41,15 +37,14 @@ public class DecodeStep {
     }
 
     /**
-     * 数据Decode函数, 将data还原为指定类型的数据
+     * 数据转换函数, 表示编码or解码环节的两种数据类型的转换规则
      *
-     * @param type 操作相关的数据类型
-     * @param data 原始数据
+     * @param src 原始数据
      * @return 目标类型
      */
-    public Object decode(Type type, Object data) {
+    public Object encode(Object src) {
         try {
-            return accessor.invoke(codec, new Object[]{type, data});
+            return accessor.invoke(codec, new Object[]{src});
         } catch (InvocationTargetException e) {
             throw new IllegalStateException("invoke codec failed.", e);
         }
