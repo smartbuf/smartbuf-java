@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
  * @author sulin
  * @since 2019-05-20 15:20:45
  */
-public class EncodeMethod {
+public class EncodeMethod implements CodecMethod {
 
     private final Codec codec;
     private final Class srcClass;
@@ -52,20 +52,10 @@ public class EncodeMethod {
         }
     }
 
-    /**
-     * 获取输入数据类型, 即编码解码的输入端
-     *
-     * @return 数据类型
-     */
     public Class getSrcClass() {
         return srcClass;
     }
 
-    /**
-     * 获取输出数据类型, 即编码解码的输出端
-     *
-     * @return 数据类型
-     */
     public Class getTgtClass() {
         return tgtClass;
     }
