@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.convertor;
+package com.github.sisyphsu.nakedata.convertor.pipeline;
 
 /**
  * 编排Codec的数据转换处理器, 如以下规则:

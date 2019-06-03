@@ -1,13 +1,11 @@
 package com.github.sisyphsu.nakedata.convertor;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
+import com.github.sisyphsu.nakedata.convertor.pipeline.*;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -22,13 +20,11 @@ public class CodecFactory {
 
     private Set<Codec> codecs;
 
-    private Map<Class, DecodeMethod> decodeSrcMap = new ConcurrentHashMap<>();
-    private Map<Class, DecodeMethod> decodeTgtMap = new ConcurrentHashMap<>();
-    private Map<Class, EncodeMethod> encodeSrcMap = new ConcurrentHashMap<>();
-    private Map<Class, EncodeMethod> encodeTgtMap = new ConcurrentHashMap<>();
+    private CodecMap<DecodeMethod> decodeMap = new CodecMap<>();
+    private CodecMap<EncodeMethod> encodeMap = new CodecMap<>();
 
-    private Map<PKey, DecodePipeline> decodePipelineMap = new ConcurrentHashMap<>();
-    private Map<PKey, EncodePipeline> encodePipelineMap = new ConcurrentHashMap<>();
+    private Map<PipelineKey, DecodePipeline> decodePipelineMap = new ConcurrentHashMap<>();
+    private Map<PipelineKey, EncodePipeline> encodePipelineMap = new ConcurrentHashMap<>();
 
     /**
      * Initialize CodecFactory with the specified Codec type.
@@ -89,15 +85,11 @@ public class CodecFactory {
                 Class[] paramTypes = method.getParameterTypes();
                 // collect EncodeMethod
                 if (paramTypes.length == 1 && paramTypes[0] == codec.support()) {
-                    EncodeMethod em = new EncodeMethod(codec, method);
-                    encodeSrcMap.put(em.getSrcClass(), em);
-                    encodeTgtMap.put(em.getTgtClass(), em);
+                    encodeMap.put(new EncodeMethod(codec, method));
                 }
                 // collect DecodeMethod
                 if (paramTypes.length == 2 && paramTypes[1] == Type.class && method.getReturnType() == codec.support()) {
-                    DecodeMethod dm = new DecodeMethod(codec, method);
-                    decodeSrcMap.put(dm.getSrcClass(), dm);
-                    decodeTgtMap.put(dm.getTgtClass(), dm);
+                    decodeMap.put(new DecodeMethod(codec, method));
                 }
             }
         }
@@ -114,12 +106,14 @@ public class CodecFactory {
      * @return DecodePipeline, null means noway.
      */
     public DecodePipeline getDecodePipeline(Class src, Class tgt) {
-        PKey key = new PKey(src, tgt);
-        DecodePipeline result = decodePipelineMap.get(key);
-        if (result == null) {
-            // TODO BFS find the shortest way
-        }
-        return result;
+        PipelineKey key = new PipelineKey(src, tgt);
+        return decodePipelineMap.computeIfAbsent(key, (k) -> {
+            List<DecodeMethod> methods = this.dfs(src, tgt, decodeMap);
+            if (methods == null || methods.size() == 0) {
+                return null;
+            }
+            return new DecodePipeline(methods.toArray(new DecodeMethod[0]));
+        });
     }
 
     /**
@@ -130,40 +124,54 @@ public class CodecFactory {
      * @return EncodePipeline, null means noway
      */
     public EncodePipeline getEncodePipeline(Class src, Class tgt) {
-        PKey key = new PKey(src, tgt);
-        EncodePipeline result = encodePipelineMap.get(key);
-        if (result == null) {
-            // TODO BFS find the shortest way
-        }
-        return null;
+        PipelineKey key = new PipelineKey(src, tgt);
+        return encodePipelineMap.computeIfAbsent(key, (k) -> {
+            List<EncodeMethod> methods = this.dfs(src, tgt, encodeMap);
+            if (methods == null || methods.isEmpty()) {
+                return null;
+            }
+            return new EncodePipeline(methods.toArray(new EncodeMethod[0]));
+        });
     }
 
-    /**
-     * Data convert pipeline's key
-     */
-    public static class PKey {
+    // 深度优先算法搜索Pipeline
+    private <T extends CodecMethod> List<T> dfs(Class src, Class tgt, CodecMap<T> map) {
+        T t = map.get(src, tgt);
+        if (t != null) {
+            return Collections.singletonList(t); // directly
+        }
+        List<T> result = new ArrayList<>();
+        Collection<T> ts = map.get(src);
+        if (ts == null || ts.isEmpty()) {
+            return result; // noway
+        }
+        // TODO find shortest way
+        return result;
+    }
 
-        private final Class src;
-        private final Class tgt;
+    public static class CodecMap<T extends CodecMethod> {
 
-        public PKey(Class src, Class tgt) {
-            this.src = src;
-            this.tgt = tgt;
+        private Map<Class, Map<Class, T>> map = new ConcurrentHashMap<>();
+
+        public void put(T t) {
+            Map<Class, T> tgtMap = map.computeIfAbsent(t.getSrcClass(), (c) -> new ConcurrentHashMap<>());
+            tgtMap.put(t.getTgtClass(), t);
         }
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-            PKey that = (PKey) o;
-            return src.equals(that.src) && tgt.equals(that.tgt);
+        public Collection<T> get(Class srcClass) {
+            Map<Class, T> tgtMap = map.get(srcClass);
+            if (tgtMap == null) {
+                return null;
+            }
+            return tgtMap.values();
         }
 
-        @Override
-        public int hashCode() {
-            return Objects.hash(src, tgt);
+        public T get(Class srcClass, Class tgtClass) {
+            Map<Class, T> tgtMap = map.get(srcClass);
+            if (tgtMap == null) {
+                return null;
+            }
+            return tgtMap.get(tgtClass);
         }
 
     }

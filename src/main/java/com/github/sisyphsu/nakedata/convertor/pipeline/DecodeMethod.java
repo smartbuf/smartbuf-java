@@ -1,5 +1,6 @@
-package com.github.sisyphsu.nakedata.convertor;
+package com.github.sisyphsu.nakedata.convertor.pipeline;
 
+import com.github.sisyphsu.nakedata.convertor.CodecMethod;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 import sun.reflect.MethodAccessor;
 import sun.reflect.ReflectionFactory;
