@@ -15,4 +15,8 @@ public class ByteArrayCodec extends Codec<byte[]> {
         return BinaryNode.valueOf(bytes);
     }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

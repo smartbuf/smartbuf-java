@@ -29,12 +29,13 @@ public class DecodeMethod implements CodecMethod {
      */
     public DecodeMethod(Codec codec, Method method) {
         Class<?>[] argTypes = method.getParameterTypes();
-        if (argTypes.length != 2 || argTypes[0] != Type.class) {
+        Class rtType = method.getReturnType();
+        if (argTypes.length != 2 || argTypes[1] != Type.class || rtType != codec.support()) {
             throw new IllegalArgumentException("invalid codec method: " + method);
         }
         this.codec = codec;
-        this.srcClass = argTypes[1];
-        this.tgtClass = method.getReturnType();
+        this.srcClass = argTypes[0];
+        this.tgtClass = codec.support();
         this.accessor = ReflectionFactory.getReflectionFactory().getMethodAccessor(method);
     }
 

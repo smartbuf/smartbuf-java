@@ -2,7 +2,12 @@ package com.github.sisyphsu.nakedata.convertor;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
-import java.util.*;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -70,10 +75,31 @@ public class CodecFactory {
             return;
         }
         for (Codec codec : codecs) {
-            if (!this.codecs.add(codec)) {
+            if (codec == null || !this.codecs.add(codec)) {
                 continue;
             }
-            // TODO find and cache all encode and decode methods
+            // collect all encode and decode methods
+            for (Method method : codec.getClass().getDeclaredMethods()) {
+                if (method.isBridge() || method.isVarArgs() || method.isDefault() || method.isSynthetic()) {
+                    continue; // ignore flags
+                }
+                if (method.getReturnType() == Void.class) {
+                    continue; // ignore void return
+                }
+                Class[] paramTypes = method.getParameterTypes();
+                // collect EncodeMethod
+                if (paramTypes.length == 1 && paramTypes[0] == codec.support()) {
+                    EncodeMethod em = new EncodeMethod(codec, method);
+                    encodeSrcMap.put(em.getSrcClass(), em);
+                    encodeTgtMap.put(em.getTgtClass(), em);
+                }
+                // collect DecodeMethod
+                if (paramTypes.length == 2 && paramTypes[1] == Type.class && method.getReturnType() == codec.support()) {
+                    DecodeMethod dm = new DecodeMethod(codec, method);
+                    decodeSrcMap.put(dm.getSrcClass(), dm);
+                    decodeTgtMap.put(dm.getTgtClass(), dm);
+                }
+            }
         }
         // reset all pipeline
         this.decodePipelineMap.clear();

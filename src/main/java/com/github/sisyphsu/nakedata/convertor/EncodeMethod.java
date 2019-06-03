@@ -6,7 +6,6 @@ import sun.reflect.ReflectionFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 
 /**
  * Codec编码(序列化)方法封装, 即Codec的[to*]方法
@@ -29,11 +28,11 @@ public class EncodeMethod implements CodecMethod {
      */
     public EncodeMethod(Codec codec, Method method) {
         Class<?>[] argTypes = method.getParameterTypes();
-        if (argTypes.length != 2 || argTypes[0] != Type.class) {
+        if (argTypes.length != 1 || argTypes[0] != codec.support() || method.getReturnType() == Void.class) {
             throw new IllegalArgumentException("invalid codec method: " + method);
         }
         this.codec = codec;
-        this.srcClass = argTypes[1];
+        this.srcClass = codec.support();
         this.tgtClass = method.getReturnType();
         this.accessor = ReflectionFactory.getReflectionFactory().getMethodAccessor(method);
     }

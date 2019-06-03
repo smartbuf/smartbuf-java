@@ -153,99 +153,99 @@ public abstract class Codec<T> {
     /**
      * 将Boolean数据解析为当前类型实例
      *
-     * @param type T真实类型, 用于额外兼容Array、Collection、Map、POJO等类型
-     * @param val  Boolean数据
+     * @param val   Boolean数据
+     * @param tType T真实类型, 用于额外兼容Array、Collection、Map、POJO等类型
      * @return 泛型实例
      */
-    public T fromBoolean(Type type, Boolean val) {
+    public T fromBoolean(Boolean val, Type tType) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * 将Float数据解析为当前类型实例，支持Float以及相关封装类型
      *
-     * @param type T类型, 用于额外兼容泛型
-     * @param val  Float数据
+     * @param val   Float数据
+     * @param tType T类型, 用于额外兼容泛型
      * @return 泛型实例
      */
-    public T fromFloat(Type type, Float val) {
+    public T fromFloat(Float val, Type tType) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * 将Double数据解析为当前类型实例，支持Double以及相关封装类型
      *
-     * @param type T类型, 用于额外兼容泛型
-     * @param val  Double数据
+     * @param val   Double数据
+     * @param tType T类型, 用于额外兼容泛型
      * @return 泛型实例
      */
-    public T fromDouble(Type type, Double val) {
+    public T fromDouble(Double val, Type tType) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * 将Long数据解析为当前类型实例，支持byte、short、int、long等，以及AtomicLong、AtomicInteger等封装类型？
      *
-     * @param type T类型, 用于额外兼容泛型
-     * @param val  Long数据
+     * @param val   Long数据
+     * @param tType T类型, 用于额外兼容泛型
      * @return 泛型实例
      */
-    public T fromVarint(Type type, Long val) {
+    public T fromVarint(Long val, Type tType) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * 将二进制数据解析为当前类型实例，支持所有提供了反序列化的数据类型，比如Date等
      *
-     * @param type T类型, 用于额外兼容泛型
-     * @param val  二进制数据
+     * @param val   二进制数据
+     * @param tType T类型, 用于额外兼容泛型
      * @return 泛型实例
      */
-    public T fromBinary(Type type, byte[] val) {
+    public T fromBinary(byte[] val, Type tType) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * 将字符串解析为当前类型实例，可以用于支持如POJO等JSON解析等
      *
-     * @param type T类型, 用于额外兼容泛型
-     * @param val  字符串
+     * @param val   字符串
+     * @param tType T类型, 用于额外兼容泛型
      * @return 泛型实例
      */
-    public T fromString(Type type, String val) {
+    public T fromString(String val, Type tType) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * 将数组解析为当前类型实例，支持Object[]等转换为指定类型的Collection等。
      *
-     * @param type T类型, 用于额外兼容泛型
-     * @param val  数组
+     * @param val   数组
+     * @param tType T类型, 用于额外兼容泛型
      * @return 泛型实例
      */
-    public T fromArray(Type type, Collection val) {
+    public T fromArray(Collection val, Type tType) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * 将map解析为当前类型实例，支持对象序列化为POJO等。
      *
-     * @param type T类型, 用于额外兼容泛型
-     * @param map  Map数据
+     * @param map   Map数据
+     * @param tType T类型, 用于额外兼容泛型
      * @return 泛型实例
      */
-    public T fromMap(Type type, Map map) {
+    public T fromMap(Map map, Type tType) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * 将Node解析为当前类型实例，对Node进行脱壳
      *
-     * @param type T类型, 用于额外兼容泛型
-     * @param node Node数据
+     * @param tType T类型, 用于额外兼容泛型
+     * @param node  Node数据
      * @return 泛型实例
      */
-    public T fromNode(Type type, Node node) {
+    public T fromNode(Node node, Type tType) {
         throw new UnsupportedOperationException();
     }
 
