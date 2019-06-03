@@ -25,7 +25,7 @@ public class CodecScanner {
      */
     @SuppressWarnings("unchecked")
     public static Set<Class<? extends Codec>> scanAllCodecs() {
-        Class<?>[] classes = scanAllClasses(CodecScanner.class.getPackage().getName());
+        Class<?>[] classes = scanAllClasses(Codec.class.getPackage().getName());
         Set<Class<? extends Codec>> result = new HashSet<>();
         for (Class<?> clz : classes) {
             if (clz == Codec.class || clz.isInterface() || Modifier.isAbstract(clz.getModifiers())) {
