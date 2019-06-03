@@ -34,14 +34,14 @@ public class DecodePipeline {
     /**
      * 将指定数据解码(反序列化)为指定类型实例
      *
-     * @param type 目标类型, 如POJO类、携带泛型类型的集合类等
-     * @param data 待解码的数据
+     * @param data    待解码的数据
+     * @param tgtType 目标类型, 如POJO类、携带泛型类型的集合类等
      * @return 解码结果
      */
-    public Object decode(Type type, Object data) {
+    public Object decode(Object data, Type tgtType) {
         Object result = data;
         for (DecodeMethod method : chain) {
-            result = method.decode(type, result);
+            result = method.decode(result, tgtType);
         }
         return result;
     }
@@ -53,4 +53,5 @@ public class DecodePipeline {
     public Class getTgtClass() {
         return tgtClass;
     }
+
 }

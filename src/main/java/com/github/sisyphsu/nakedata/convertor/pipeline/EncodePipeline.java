@@ -36,7 +36,7 @@ public class EncodePipeline {
      * @param src 源数据, 可以是null
      * @return 编码结果, 可能是null
      */
-    public Object convert(Object src) {
+    public Object encode(Object src) {
         Object result = src;
         for (EncodeMethod method : chain) {
             result = method.encode(result);

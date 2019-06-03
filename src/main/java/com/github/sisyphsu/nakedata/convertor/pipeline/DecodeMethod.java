@@ -43,13 +43,13 @@ public class DecodeMethod implements CodecMethod {
     /**
      * 数据Decode函数, 将data还原为指定类型的数据
      *
-     * @param type 操作相关的数据类型
-     * @param data 原始数据
+     * @param data    原始数据
+     * @param tgtType 操作相关的数据类型
      * @return 目标类型
      */
-    public Object decode(Type type, Object data) {
+    public Object decode(Object data, Type tgtType) {
         try {
-            return accessor.invoke(codec, new Object[]{type, data});
+            return accessor.invoke(codec, new Object[]{tgtType, data});
         } catch (InvocationTargetException e) {
             throw new IllegalStateException("invoke codec failed.", e);
         }

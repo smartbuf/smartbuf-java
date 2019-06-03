@@ -18,12 +18,6 @@ public class CodecFactory {
 
     public static final CodecFactory Instance = new CodecFactory(null);
 
-    static {
-        for (Class<? extends Codec> codecCls : CodecScanner.scanAllCodecs()) {
-            Instance.installCodec(codecCls);
-        }
-    }
-
     private Set<Codec> codecs = new HashSet<>();
 
     private CodecMap<DecodeMethod> decodeMap = new CodecMap<>();
@@ -38,6 +32,9 @@ public class CodecFactory {
      * @param codecs Codec type
      */
     public CodecFactory(Set<Codec> codecs) {
+        for (Class<? extends Codec> codecCls : CodecScanner.scanAllCodecs()) {
+            this.installCodec(codecCls);
+        }
         if (codecs != null) {
             this.installCodec(codecs); // init index
         }
