@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * CodecFactory, meantains CodecMethod and Pipeline.
@@ -17,7 +16,15 @@ import java.util.concurrent.ConcurrentSkipListSet;
  */
 public class CodecFactory {
 
-    private Set<Codec> codecs;
+    public static final CodecFactory Instance = new CodecFactory(null);
+
+    static {
+        for (Class<? extends Codec> codecCls : CodecScanner.scanAllCodecs()) {
+            Instance.installCodec(codecCls);
+        }
+    }
+
+    private Set<Codec> codecs = new HashSet<>();
 
     private CodecMap<DecodeMethod> decodeMap = new CodecMap<>();
     private CodecMap<EncodeMethod> encodeMap = new CodecMap<>();
@@ -31,9 +38,9 @@ public class CodecFactory {
      * @param codecs Codec type
      */
     public CodecFactory(Set<Codec> codecs) {
-        this.codecs = new ConcurrentSkipListSet<>(codecs);
-        // init index
-        this.installCodec(codecs);
+        if (codecs != null) {
+            this.installCodec(codecs); // init index
+        }
     }
 
     /**
@@ -41,7 +48,7 @@ public class CodecFactory {
      *
      * @param codecClass new codec's class
      */
-    public void installCodec(Class<Codec> codecClass) {
+    public void installCodec(Class<? extends Codec> codecClass) {
         Codec codec;
         try {
             codec = codecClass.newInstance();
