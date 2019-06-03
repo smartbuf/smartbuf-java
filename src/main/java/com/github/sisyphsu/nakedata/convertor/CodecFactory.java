@@ -10,8 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * Codec工程
- * 广度优先算法，扫描CodecPipeline
+ * CodecFactory, meantains CodecMethod and Pipeline.
  *
  * @author sulin
  * @since 2019-05-20 16:14:54
@@ -134,21 +133,45 @@ public class CodecFactory {
         });
     }
 
-    // 深度优先算法搜索Pipeline
+    /**
+     * Search the shortest codec path
+     */
     private <T extends CodecMethod> List<T> dfs(Class src, Class tgt, CodecMap<T> map) {
-        T t = map.get(src, tgt);
-        if (t != null) {
-            return Collections.singletonList(t); // directly
+        T direct = map.get(src, tgt);
+        if (direct != null) {
+            return Collections.singletonList(direct); // directly
         }
-        List<T> result = new ArrayList<>();
         Collection<T> ts = map.get(src);
         if (ts == null || ts.isEmpty()) {
-            return result; // noway
+            return null; // noway
         }
-        // TODO find shortest way
+        // find shortest way
+        T router = null;
+        List<T> subResult = null;
+        for (T t : ts) {
+            List<T> tmp = this.dfs(t.getTgtClass(), tgt, map);
+            if (tmp == null || tmp.isEmpty()) {
+                continue;
+            }
+            if (subResult == null || subResult.size() > tmp.size()) {
+                subResult = tmp;
+                router = t;
+            }
+        }
+        if (subResult == null) {
+            return null; // noway
+        }
+        List<T> result = new ArrayList<>();
+        result.add(router);
+        result.addAll(subResult);
         return result;
     }
 
+    /**
+     * CodecMap, like MultiKeyMap, meantains codec tree.
+     *
+     * @param <T> DecodeMethod or EncodeMethod
+     */
     public static class CodecMap<T extends CodecMethod> {
 
         private Map<Class, Map<Class, T>> map = new ConcurrentHashMap<>();
