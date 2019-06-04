@@ -2,7 +2,7 @@ package com.github.sisyphsu.nakedata.convertor.codec.array;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 import com.github.sisyphsu.nakedata.node.Node;
-import com.github.sisyphsu.nakedata.node.std.BinaryNode;
+import com.github.sisyphsu.nakedata.node.array.ByteArrayNode;
 
 /**
  * @author sulin
@@ -12,7 +12,7 @@ public class ByteArrayCodec extends Codec<byte[]> {
 
     @Override
     public Node toNode(byte[] bytes) {
-        return BinaryNode.valueOf(bytes);
+        return ByteArrayNode.valueOf(bytes);
     }
 
     @Override

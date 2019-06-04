@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.node.std;
+package com.github.sisyphsu.nakedata.node.array;
 
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.type.DataType;
@@ -11,23 +11,23 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class BinaryNode extends Node {
+public class ByteArrayNode extends Node {
 
-    public final static BinaryNode NULL = new BinaryNode(null);
-    public final static BinaryNode EMPTY = new BinaryNode(new byte[0]);
+    public final static ByteArrayNode NULL = new ByteArrayNode(null);
+    public final static ByteArrayNode EMPTY = new ByteArrayNode(new byte[0]);
 
     private final byte[] value;
 
-    private BinaryNode(byte[] value) {
+    private ByteArrayNode(byte[] value) {
         this.value = value;
     }
 
-    public static BinaryNode valueOf(byte[] bytes) {
+    public static ByteArrayNode valueOf(byte[] bytes) {
         if (bytes == null)
             return NULL;
         if (bytes.length == 0)
             return EMPTY;
-        return new BinaryNode(bytes);
+        return new ByteArrayNode(bytes);
     }
 
     @Override

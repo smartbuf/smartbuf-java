@@ -25,7 +25,7 @@ public class ArrayNode extends Node {
     /**
      * 数组内部按类型分组
      */
-    private List<Group> groups = new ArrayList<>();
+    private transient List<Group> groups = new ArrayList<>();
 
     private ArrayNode(List<Node> items) {
         this.items = items;
