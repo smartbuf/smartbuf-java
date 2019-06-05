@@ -9,6 +9,8 @@ import com.github.sisyphsu.nakedata.type.DataType;
  */
 public class DoubleSlice extends Node {
 
+    private double[] data;
+
     @Override
     public DataType getDataType() {
         return DataType.ARRAY;

@@ -6,11 +6,11 @@ import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
  * @author sulin
- * @since 2019-06-04 19:53:42
+ * @since 2019-06-05 16:07:43
  */
-public class BooleanSlice extends Slice {
+public class NullSlice extends Slice {
 
-    private boolean[] data;
+    private int count;
 
     @Override
     public int size() {
