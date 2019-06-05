@@ -1,8 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.array.primary;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
-import com.github.sisyphsu.nakedata.node.Node;
-import com.github.sisyphsu.nakedata.node.array.BooleanArrayNode;
 
 /**
  * Codec for boolean[]
@@ -12,10 +10,4 @@ import com.github.sisyphsu.nakedata.node.array.BooleanArrayNode;
  */
 public class BooleanArrayCodec extends Codec<boolean[]> {
 
-    @Override
-    public Node toNode(boolean[] booleans) {
-        return BooleanArrayNode.valueOf(booleans);
-    }
-
 }
-
