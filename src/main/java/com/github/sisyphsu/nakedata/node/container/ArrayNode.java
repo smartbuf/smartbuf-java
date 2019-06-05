@@ -18,29 +18,29 @@ public class ArrayNode extends Node {
 
     public final static ArrayNode NULL = new ArrayNode(null);
 
-    private final List<Slice> items;
+    private final List<SliceNode> items;
 
-    private ArrayNode(List<Slice> slices) {
+    private ArrayNode(List<SliceNode> slices) {
         this.items = slices;
     }
 
-    public static ArrayNode valueOf(List<Slice> items) {
+    public static ArrayNode valueOf(List<SliceNode> items) {
         if (items == null)
             return NULL;
         return new ArrayNode(items);
     }
 
-    public static ArrayNode valueOf(Slice slice) {
+    public static ArrayNode valueOf(SliceNode slice) {
         if (slice == null) {
             return NULL;
         }
-        List<Slice> slices = new ArrayList<>();
+        List<SliceNode> slices = new ArrayList<>();
         slices.add(slice);
         return valueOf(slices);
     }
 
     @Override
-    public DataType getDataType() {
+    public DataType dataType() {
         return DataType.ARRAY;
     }
 

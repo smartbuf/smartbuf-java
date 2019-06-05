@@ -1,20 +1,20 @@
 package com.github.sisyphsu.nakedata.node.container.slice;
 
 import com.github.sisyphsu.nakedata.context.model.ContextType;
-import com.github.sisyphsu.nakedata.node.container.Slice;
+import com.github.sisyphsu.nakedata.node.container.SliceNode;
 import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
- * string[] slice, can't contains null
+ * byte[] slice
  *
  * @author sulin
- * @since 2019-06-04 16:52:57
+ * @since 2019-05-08 21:01:31
  */
-public class StringSlice extends Slice {
+public class ByteSliceNode extends SliceNode {
 
-    private String[] items;
+    private byte[] items;
 
-    public StringSlice(String[] items) {
+    public ByteSliceNode(byte[] items) {
         if (items == null) {
             throw new IllegalArgumentException("items can't be null");
         }
@@ -28,7 +28,7 @@ public class StringSlice extends Slice {
 
     @Override
     public DataType dataType() {
-        return DataType.STRING;
+        return DataType.BYTE;
     }
 
     @Override

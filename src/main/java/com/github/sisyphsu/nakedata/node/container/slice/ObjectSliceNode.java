@@ -2,7 +2,7 @@ package com.github.sisyphsu.nakedata.node.container.slice;
 
 import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.node.container.ObjectNode;
-import com.github.sisyphsu.nakedata.node.container.Slice;
+import com.github.sisyphsu.nakedata.node.container.SliceNode;
 import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
@@ -11,11 +11,11 @@ import com.github.sisyphsu.nakedata.type.DataType;
  * @author sulin
  * @since 2019-06-05 16:06:44
  */
-public class ObjectSlice extends Slice {
+public class ObjectSliceNode extends SliceNode {
 
     private ObjectNode[] items;
 
-    public ObjectSlice(ObjectNode[] items) {
+    public ObjectSliceNode(ObjectNode[] items) {
         if (items == null || items.length == 0) {
             throw new IllegalArgumentException("items can't be null or empty");
         }

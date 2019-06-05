@@ -10,3 +10,7 @@
 ## Slice
 
 Split all array into slices, make sure that every slice is totally clean.
+
+Slice makes array have two level structure, it's a little complex.
+
+## StdArray and ComArray 

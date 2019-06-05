@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.node.container.slice;
 
 import com.github.sisyphsu.nakedata.context.model.ContextType;
-import com.github.sisyphsu.nakedata.node.container.Slice;
+import com.github.sisyphsu.nakedata.node.container.SliceNode;
 import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
@@ -10,11 +10,11 @@ import com.github.sisyphsu.nakedata.type.DataType;
  * @author sulin
  * @since 2019-06-05 16:07:43
  */
-public class NullSlice extends Slice {
+public class NullSliceNode extends SliceNode {
 
     private int count;
 
-    public NullSlice(int count) {
+    public NullSliceNode(int count) {
         this.count = count;
     }
 

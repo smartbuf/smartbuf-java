@@ -41,7 +41,7 @@ public class ObjectNode extends Node {
     }
 
     @Override
-    public DataType getDataType() {
+    public DataType dataType() {
         return DataType.OBJECT;
     }
 
