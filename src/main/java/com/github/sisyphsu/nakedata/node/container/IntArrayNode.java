@@ -1,20 +1,20 @@
-package com.github.sisyphsu.nakedata.node.container.array;
+package com.github.sisyphsu.nakedata.node.container;
 
 import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.node.container.ArrayNode;
 import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
- * byte[] array
+ * int[] array
  *
  * @author sulin
- * @since 2019-05-08 21:01:31
+ * @since 2019-06-05 15:54:27
  */
-public class ByteSliceNode extends ArrayNode {
+public class IntArrayNode extends ArrayNode {
 
-    private byte[] items;
+    private int[] items;
 
-    public ByteSliceNode(byte[] items) {
+    public IntArrayNode(int[] items) {
         if (items == null) {
             throw new IllegalArgumentException("items can't be null");
         }
@@ -28,7 +28,7 @@ public class ByteSliceNode extends ArrayNode {
 
     @Override
     public DataType dataType() {
-        return DataType.BYTE;
+        return null;
     }
 
     @Override

@@ -1,20 +1,20 @@
-package com.github.sisyphsu.nakedata.node.container.array;
+package com.github.sisyphsu.nakedata.node.container;
 
 import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.node.container.ArrayNode;
 import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
- * int[] array
+ * float[] array
  *
  * @author sulin
- * @since 2019-06-05 15:54:27
+ * @since 2019-06-04 16:34:25
  */
-public class IntArrayNode extends ArrayNode {
+public class FloatArrayNode extends ArrayNode {
 
-    private int[] items;
+    private float[] items;
 
-    public IntArrayNode(int[] items) {
+    public FloatArrayNode(float[] items) {
         if (items == null) {
             throw new IllegalArgumentException("items can't be null");
         }
@@ -28,12 +28,11 @@ public class IntArrayNode extends ArrayNode {
 
     @Override
     public DataType dataType() {
-        return null;
+        return DataType.FLOAT;
     }
 
     @Override
     public ContextType contextType() {
         return null;
     }
-
 }

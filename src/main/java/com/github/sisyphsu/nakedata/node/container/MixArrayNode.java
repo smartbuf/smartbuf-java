@@ -1,7 +1,6 @@
 package com.github.sisyphsu.nakedata.node.container;
 
-import com.github.sisyphsu.nakedata.node.Node;
-import com.github.sisyphsu.nakedata.type.DataType;
+import com.github.sisyphsu.nakedata.context.model.ContextType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +13,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class MixArrayNode extends Node {
+public class MixArrayNode extends ArrayNode {
 
     public final static MixArrayNode NULL = new MixArrayNode(null);
 
@@ -40,13 +39,17 @@ public class MixArrayNode extends Node {
     }
 
     @Override
-    public DataType dataType() {
-        return DataType.ARRAY;
+    public int size() {
+        int result = 0;
+        for (ArrayNode item : items) {
+            result += item.size();
+        }
+        return result;
     }
 
     @Override
-    public boolean isNull() {
-        return this == NULL;
+    public ContextType contextType() {
+        return null;
     }
 
 }

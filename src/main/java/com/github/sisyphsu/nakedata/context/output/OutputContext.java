@@ -5,7 +5,7 @@ import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.context.model.ContextVersion;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.container.MixArrayNode;
-import com.github.sisyphsu.nakedata.node.container.ObjectNode;
+import com.github.sisyphsu.nakedata.node.std.ObjectNode;
 
 import java.util.Map;
 import java.util.regex.Pattern;
