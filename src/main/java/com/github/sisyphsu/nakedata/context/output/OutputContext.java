@@ -4,7 +4,7 @@ import com.github.sisyphsu.nakedata.context.model.ContextStruct;
 import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.context.model.ContextVersion;
 import com.github.sisyphsu.nakedata.node.Node;
-import com.github.sisyphsu.nakedata.node.container.ArrayNode;
+import com.github.sisyphsu.nakedata.node.container.MixArrayNode;
 import com.github.sisyphsu.nakedata.node.container.ObjectNode;
 
 import java.util.Map;
@@ -64,7 +64,7 @@ public class OutputContext {
     private void doScan(Node node) {
         switch (node.getDataType()) {
             case ARRAY:
-                this.doScanArrayNode((ArrayNode) node);
+                this.doScanArrayNode((MixArrayNode) node);
                 break;
             case OBJECT:
                 this.doScanObjectNode((ObjectNode) node);
@@ -114,8 +114,8 @@ public class OutputContext {
         }
     }
 
-    private void doScanArrayNode(ArrayNode array) {
-        ArrayNode.Group group = null;
+    private void doScanArrayNode(MixArrayNode array) {
+        MixArrayNode.Group group = null;
         for (Node node : array.getItems()) {
             this.scan(node);
             byte typeCode = node.getDataType().getCode();
@@ -126,7 +126,7 @@ public class OutputContext {
                 group = null;
             }
             if (group == null) {
-                group = new ArrayNode.Group();
+                group = new MixArrayNode.Group();
                 group.setType(type);
                 group.setTypeCode(typeCode);
                 group.setEnd(true);

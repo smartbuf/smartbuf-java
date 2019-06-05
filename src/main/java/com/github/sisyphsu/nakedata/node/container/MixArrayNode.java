@@ -14,23 +14,23 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class ArrayNode extends Node {
+public class MixArrayNode extends Node {
 
-    public final static ArrayNode NULL = new ArrayNode(null);
+    public final static MixArrayNode NULL = new MixArrayNode(null);
 
     private final List<SliceNode> items;
 
-    private ArrayNode(List<SliceNode> slices) {
+    private MixArrayNode(List<SliceNode> slices) {
         this.items = slices;
     }
 
-    public static ArrayNode valueOf(List<SliceNode> items) {
+    public static MixArrayNode valueOf(List<SliceNode> items) {
         if (items == null)
             return NULL;
-        return new ArrayNode(items);
+        return new MixArrayNode(items);
     }
 
-    public static ArrayNode valueOf(SliceNode slice) {
+    public static MixArrayNode valueOf(SliceNode slice) {
         if (slice == null) {
             return NULL;
         }

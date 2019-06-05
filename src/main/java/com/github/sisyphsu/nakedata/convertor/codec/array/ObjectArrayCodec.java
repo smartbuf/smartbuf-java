@@ -2,7 +2,7 @@ package com.github.sisyphsu.nakedata.convertor.codec.array;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 import com.github.sisyphsu.nakedata.node.Node;
-import com.github.sisyphsu.nakedata.node.container.ArrayNode;
+import com.github.sisyphsu.nakedata.node.container.MixArrayNode;
 
 /**
  * Codec for Object[]
@@ -14,9 +14,9 @@ public class ObjectArrayCodec extends Codec<Object[]> {
 
     @Override
     public Node toNode(Object[] objects) {
-        ArrayNode arrayNode = ArrayNode.valueOf(null);
+//        MixArrayNode arrayNode = MixArrayNode.valueOf(null);
         // TODO ARRAY handle
-        return arrayNode;
+        return null;
     }
 
 }
