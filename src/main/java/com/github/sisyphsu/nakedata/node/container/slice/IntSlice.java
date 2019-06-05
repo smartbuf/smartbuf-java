@@ -5,6 +5,8 @@ import com.github.sisyphsu.nakedata.node.container.Slice;
 import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
+ * int[] slice
+ *
  * @author sulin
  * @since 2019-06-05 15:54:27
  */
@@ -12,9 +14,16 @@ public class IntSlice extends Slice {
 
     private int[] items;
 
+    public IntSlice(int[] items) {
+        if (items == null) {
+            throw new IllegalArgumentException("items can't be null");
+        }
+        this.items = items;
+    }
+
     @Override
     public int size() {
-        return 0;
+        return items.length;
     }
 
     @Override

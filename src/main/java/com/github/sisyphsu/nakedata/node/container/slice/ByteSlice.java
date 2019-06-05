@@ -3,27 +3,32 @@ package com.github.sisyphsu.nakedata.node.container.slice;
 import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.node.container.Slice;
 import com.github.sisyphsu.nakedata.type.DataType;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
+ * byte[] slice
+ *
  * @author sulin
  * @since 2019-05-08 21:01:31
  */
-@Getter
-@Setter
 public class ByteSlice extends Slice {
 
     private byte[] items;
 
+    public ByteSlice(byte[] items) {
+        if (items == null) {
+            throw new IllegalArgumentException("items can't be null");
+        }
+        this.items = items;
+    }
+
     @Override
     public int size() {
-        return 0;
+        return items.length;
     }
 
     @Override
     public DataType dataType() {
-        return null;
+        return DataType.BYTE;
     }
 
     @Override

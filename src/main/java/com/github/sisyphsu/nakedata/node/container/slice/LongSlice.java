@@ -5,6 +5,8 @@ import com.github.sisyphsu.nakedata.node.container.Slice;
 import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
+ * long[] slice
+ *
  * @author sulin
  * @since 2019-06-05 15:54:35
  */
@@ -12,9 +14,16 @@ public class LongSlice extends Slice {
 
     private long[] items;
 
+    public LongSlice(long[] items) {
+        if (items == null) {
+            throw new IllegalArgumentException("items can't be null");
+        }
+        this.items = items;
+    }
+
     @Override
     public int size() {
-        return 0;
+        return items.length;
     }
 
     @Override

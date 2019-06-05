@@ -5,12 +5,21 @@ import com.github.sisyphsu.nakedata.node.container.Slice;
 import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
+ * short[] slice
+ *
  * @author sulin
  * @since 2019-06-05 15:54:42
  */
 public class ShortSlice extends Slice {
 
     private short[] items;
+
+    public ShortSlice(short[] items) {
+        if (items == null) {
+            throw new IllegalArgumentException("items can't be null");
+        }
+        this.items = items;
+    }
 
     @Override
     public int size() {
