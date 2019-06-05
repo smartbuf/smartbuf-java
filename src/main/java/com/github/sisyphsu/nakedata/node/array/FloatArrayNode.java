@@ -11,13 +11,23 @@ import com.github.sisyphsu.nakedata.type.DataType;
  */
 public class FloatArrayNode extends ArrayNode {
 
+    public static final FloatArrayNode NULL = new FloatArrayNode(null);
+    public static final FloatArrayNode EMPTY = new FloatArrayNode(new float[0]);
+
     private float[] items;
 
-    public FloatArrayNode(float[] items) {
-        if (items == null) {
-            throw new IllegalArgumentException("items can't be null");
-        }
+    private FloatArrayNode(float[] items) {
         this.items = items;
+    }
+
+    public static FloatArrayNode valueOf(float[] data) {
+        if (data == null) {
+            return NULL;
+        }
+        if (data.length == 0) {
+            return EMPTY;
+        }
+        return new FloatArrayNode(data);
     }
 
     @Override

@@ -14,9 +14,7 @@ public class BooleanArrayCodec extends Codec<boolean[]> {
 
     @Override
     public Node toNode(boolean[] booleans) {
-        BooleanArrayNode node = null;
-        //
-        return node;
+        return BooleanArrayNode.valueOf(booleans);
     }
 
 }

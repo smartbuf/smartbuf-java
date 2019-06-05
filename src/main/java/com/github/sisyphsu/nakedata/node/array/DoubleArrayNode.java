@@ -11,13 +11,23 @@ import com.github.sisyphsu.nakedata.type.DataType;
  */
 public class DoubleArrayNode extends ArrayNode {
 
+    public static final DoubleArrayNode NULL = new DoubleArrayNode(null);
+    public static final DoubleArrayNode EMPTY = new DoubleArrayNode(new double[0]);
+
     private double[] items;
 
-    public DoubleArrayNode(double[] items) {
-        if (items == null) {
-            throw new IllegalArgumentException("items can't be null");
-        }
+    private DoubleArrayNode(double[] items) {
         this.items = items;
+    }
+
+    public static DoubleArrayNode valueOf(double[] items) {
+        if (items == null) {
+            return NULL;
+        }
+        if (items.length == 0) {
+            return EMPTY;
+        }
+        return new DoubleArrayNode(items);
     }
 
     @Override

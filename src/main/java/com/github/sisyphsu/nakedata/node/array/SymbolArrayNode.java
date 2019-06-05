@@ -11,13 +11,23 @@ import com.github.sisyphsu.nakedata.type.DataType;
  */
 public class SymbolArrayNode extends ArrayNode {
 
+    public static final SymbolArrayNode NULL = new SymbolArrayNode(null);
+    public static final SymbolArrayNode EMPTY = new SymbolArrayNode(new String[0]);
+
     private String[] items;
 
-    public SymbolArrayNode(String[] items) {
-        if (items == null) {
-            throw new IllegalArgumentException("items can't be null");
-        }
+    private SymbolArrayNode(String[] items) {
         this.items = items;
+    }
+
+    public static SymbolArrayNode valueOf(String[] items) {
+        if (items == null) {
+            return NULL;
+        }
+        if (items.length == 0) {
+            return EMPTY;
+        }
+        return new SymbolArrayNode(items);
     }
 
     @Override

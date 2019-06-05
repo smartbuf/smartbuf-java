@@ -12,19 +12,19 @@ import com.github.sisyphsu.nakedata.type.DataType;
  */
 public class ObjectArrayNode extends ArrayNode {
 
+    public static final ObjectArrayNode NULL = new ObjectArrayNode(null);
+
     private ObjectNode[] items;
 
-    public ObjectArrayNode(ObjectNode[] items) {
-        if (items == null || items.length == 0) {
-            throw new IllegalArgumentException("items can't be null or empty");
-        }
-        ContextType type = items[0].getContextType();
-        for (int i = 1; i < items.length; i++) {
-            if (type != items[i].getContextType()) {
-                throw new IllegalArgumentException("items ContextType must be the same");
-            }
-        }
+    private ObjectArrayNode(ObjectNode[] items) {
         this.items = items;
+    }
+
+    public static ObjectArrayNode valueOf(ObjectNode[] items) {
+        if (items == null) {
+            return NULL;
+        }
+        return new ObjectArrayNode(items);
     }
 
     @Override

@@ -9,15 +9,25 @@ import com.github.sisyphsu.nakedata.type.DataType;
  * @author sulin
  * @since 2019-06-04 19:53:42
  */
-public class BoolArrayNode extends ArrayNode {
+public class BooleanArrayNode extends ArrayNode {
+
+    public static final BooleanArrayNode NULL = new BooleanArrayNode(null);
+    public static final BooleanArrayNode EMPTY = new BooleanArrayNode(new boolean[0]);
 
     private boolean[] items;
 
-    public BoolArrayNode(boolean[] items) {
-        if (items == null) {
-            throw new IllegalArgumentException("items can't be null");
-        }
+    private BooleanArrayNode(boolean[] items) {
         this.items = items;
+    }
+
+    public static BooleanArrayNode valueOf(boolean[] items) {
+        if (items == null) {
+            return NULL;
+        }
+        if (items.length == 0) {
+            return EMPTY;
+        }
+        return new BooleanArrayNode(items);
     }
 
     @Override

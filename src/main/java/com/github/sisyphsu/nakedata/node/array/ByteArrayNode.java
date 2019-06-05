@@ -9,15 +9,25 @@ import com.github.sisyphsu.nakedata.type.DataType;
  * @author sulin
  * @since 2019-05-08 21:01:31
  */
-public class ByteSliceNode extends ArrayNode {
+public class ByteArrayNode extends ArrayNode {
+
+    public static final ByteArrayNode NULL = new ByteArrayNode(null);
+    public static final ByteArrayNode EMPTY = new ByteArrayNode(new byte[0]);
 
     private byte[] items;
 
-    public ByteSliceNode(byte[] items) {
-        if (items == null) {
-            throw new IllegalArgumentException("items can't be null");
-        }
+    private ByteArrayNode(byte[] items) {
         this.items = items;
+    }
+
+    public static ByteArrayNode valueOf(byte[] items) {
+        if (items == null) {
+            return NULL;
+        }
+        if (items.length == 0) {
+            return EMPTY;
+        }
+        return new ByteArrayNode(items);
     }
 
     @Override

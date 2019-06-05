@@ -11,13 +11,23 @@ import com.github.sisyphsu.nakedata.type.DataType;
  */
 public class ShortArrayNode extends ArrayNode {
 
+    public static final ShortArrayNode NULL = new ShortArrayNode(null);
+    public static final ShortArrayNode EMPTY = new ShortArrayNode(new short[0]);
+
     private short[] items;
 
-    public ShortArrayNode(short[] items) {
-        if (items == null) {
-            throw new IllegalArgumentException("items can't be null");
-        }
+    private ShortArrayNode(short[] items) {
         this.items = items;
+    }
+
+    public static ShortArrayNode valueOf(short[] items) {
+        if (items == null) {
+            return NULL;
+        }
+        if (items.length == 0) {
+            return EMPTY;
+        }
+        return new ShortArrayNode(items);
     }
 
     @Override

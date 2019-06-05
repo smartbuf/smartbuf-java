@@ -11,13 +11,23 @@ import com.github.sisyphsu.nakedata.type.DataType;
  */
 public class LongArrayNode extends ArrayNode {
 
+    public static final LongArrayNode NULL = new LongArrayNode(null);
+    public static final LongArrayNode EMPTY = new LongArrayNode(new long[0]);
+
     private long[] items;
 
-    public LongArrayNode(long[] items) {
-        if (items == null) {
-            throw new IllegalArgumentException("items can't be null");
-        }
+    private LongArrayNode(long[] items) {
         this.items = items;
+    }
+
+    public static LongArrayNode valueOf(long[] data) {
+        if (data == null) {
+            return NULL;
+        }
+        if (data.length == 0) {
+            return EMPTY;
+        }
+        return new LongArrayNode(data);
     }
 
     @Override

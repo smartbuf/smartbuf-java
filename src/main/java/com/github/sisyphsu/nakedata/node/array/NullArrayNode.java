@@ -11,10 +11,25 @@ import com.github.sisyphsu.nakedata.type.DataType;
  */
 public class NullArrayNode extends ArrayNode {
 
+    private static final NullArrayNode[] TABLE = new NullArrayNode[16];
+
+    static {
+        for (int i = 0; i < TABLE.length; i++) {
+            TABLE[i] = new NullArrayNode(i);
+        }
+    }
+
     private int count;
 
-    public NullArrayNode(int count) {
+    private NullArrayNode(int count) {
         this.count = count;
+    }
+
+    public static NullArrayNode valueOf(int count) {
+        if (count < TABLE.length) {
+            return TABLE[count];
+        }
+        return new NullArrayNode(count);
     }
 
     @Override
