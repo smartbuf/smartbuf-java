@@ -1,20 +1,20 @@
-package com.github.sisyphsu.nakedata.node.container.slice;
+package com.github.sisyphsu.nakedata.node.container.array;
 
 import com.github.sisyphsu.nakedata.context.model.ContextType;
-import com.github.sisyphsu.nakedata.node.container.SliceNode;
+import com.github.sisyphsu.nakedata.node.container.ArrayNode;
 import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
- * long[] slice
+ * long[] array
  *
  * @author sulin
  * @since 2019-06-05 15:54:35
  */
-public class LongSliceNode extends SliceNode {
+public class LongArrayNode extends ArrayNode {
 
     private long[] items;
 
-    public LongSliceNode(long[] items) {
+    public LongArrayNode(long[] items) {
         if (items == null) {
             throw new IllegalArgumentException("items can't be null");
         }

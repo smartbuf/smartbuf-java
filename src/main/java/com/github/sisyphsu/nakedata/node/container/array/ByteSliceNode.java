@@ -1,16 +1,16 @@
-package com.github.sisyphsu.nakedata.node.container.slice;
+package com.github.sisyphsu.nakedata.node.container.array;
 
 import com.github.sisyphsu.nakedata.context.model.ContextType;
-import com.github.sisyphsu.nakedata.node.container.SliceNode;
+import com.github.sisyphsu.nakedata.node.container.ArrayNode;
 import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
- * byte[] slice
+ * byte[] array
  *
  * @author sulin
  * @since 2019-05-08 21:01:31
  */
-public class ByteSliceNode extends SliceNode {
+public class ByteSliceNode extends ArrayNode {
 
     private byte[] items;
 

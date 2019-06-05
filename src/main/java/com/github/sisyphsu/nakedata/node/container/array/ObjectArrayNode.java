@@ -1,21 +1,21 @@
-package com.github.sisyphsu.nakedata.node.container.slice;
+package com.github.sisyphsu.nakedata.node.container.array;
 
 import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.node.container.ObjectNode;
-import com.github.sisyphsu.nakedata.node.container.SliceNode;
+import com.github.sisyphsu.nakedata.node.container.ArrayNode;
 import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
- * object[] slice, every item's ContextType must be the same
+ * object[] array, every item's ContextType must be the same
  *
  * @author sulin
  * @since 2019-06-05 16:06:44
  */
-public class ObjectSliceNode extends SliceNode {
+public class ObjectArrayNode extends ArrayNode {
 
     private ObjectNode[] items;
 
-    public ObjectSliceNode(ObjectNode[] items) {
+    public ObjectArrayNode(ObjectNode[] items) {
         if (items == null || items.length == 0) {
             throw new IllegalArgumentException("items can't be null or empty");
         }

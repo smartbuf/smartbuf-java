@@ -1,20 +1,20 @@
-package com.github.sisyphsu.nakedata.node.container.slice;
+package com.github.sisyphsu.nakedata.node.container.array;
 
 import com.github.sisyphsu.nakedata.context.model.ContextType;
-import com.github.sisyphsu.nakedata.node.container.SliceNode;
+import com.github.sisyphsu.nakedata.node.container.ArrayNode;
 import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
- * null slice, only record count.
+ * null array, only record count.
  *
  * @author sulin
  * @since 2019-06-05 16:07:43
  */
-public class NullSliceNode extends SliceNode {
+public class NullArrayNode extends ArrayNode {
 
     private int count;
 
-    public NullSliceNode(int count) {
+    public NullArrayNode(int count) {
         this.count = count;
     }
 

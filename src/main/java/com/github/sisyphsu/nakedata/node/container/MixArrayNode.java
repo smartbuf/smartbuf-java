@@ -18,23 +18,23 @@ public class MixArrayNode extends Node {
 
     public final static MixArrayNode NULL = new MixArrayNode(null);
 
-    private final List<SliceNode> items;
+    private final List<ArrayNode> items;
 
-    private MixArrayNode(List<SliceNode> slices) {
+    private MixArrayNode(List<ArrayNode> slices) {
         this.items = slices;
     }
 
-    public static MixArrayNode valueOf(List<SliceNode> items) {
+    public static MixArrayNode valueOf(List<ArrayNode> items) {
         if (items == null)
             return NULL;
         return new MixArrayNode(items);
     }
 
-    public static MixArrayNode valueOf(SliceNode slice) {
+    public static MixArrayNode valueOf(ArrayNode slice) {
         if (slice == null) {
             return NULL;
         }
-        List<SliceNode> slices = new ArrayList<>();
+        List<ArrayNode> slices = new ArrayList<>();
         slices.add(slice);
         return valueOf(slices);
     }

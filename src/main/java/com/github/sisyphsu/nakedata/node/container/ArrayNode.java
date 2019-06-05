@@ -10,10 +10,10 @@ import com.github.sisyphsu.nakedata.type.DataType;
  * @author sulin
  * @since 2019-06-05 11:39:47
  */
-public abstract class SliceNode extends Node {
+public abstract class ArrayNode extends Node {
 
     /**
-     * Get slice's size
+     * Get array's size
      *
      * @return real size
      */
@@ -22,7 +22,7 @@ public abstract class SliceNode extends Node {
     /**
      * Get the real ContextType of items, only exists when dataType == Object
      *
-     * @return slice's ContextType
+     * @return array's ContextType
      */
     public abstract ContextType contextType();
 

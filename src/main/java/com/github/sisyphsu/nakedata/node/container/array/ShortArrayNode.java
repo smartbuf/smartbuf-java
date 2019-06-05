@@ -1,20 +1,20 @@
-package com.github.sisyphsu.nakedata.node.container.slice;
+package com.github.sisyphsu.nakedata.node.container.array;
 
 import com.github.sisyphsu.nakedata.context.model.ContextType;
-import com.github.sisyphsu.nakedata.node.container.SliceNode;
+import com.github.sisyphsu.nakedata.node.container.ArrayNode;
 import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
- * double[] slice
+ * short[] array
  *
  * @author sulin
- * @since 2019-06-04 16:51:04
+ * @since 2019-06-05 15:54:42
  */
-public class DoubleSliceNode extends SliceNode {
+public class ShortArrayNode extends ArrayNode {
 
-    private double[] items;
+    private short[] items;
 
-    public DoubleSliceNode(double[] items) {
+    public ShortArrayNode(short[] items) {
         if (items == null) {
             throw new IllegalArgumentException("items can't be null");
         }
@@ -23,16 +23,17 @@ public class DoubleSliceNode extends SliceNode {
 
     @Override
     public int size() {
-        return items.length;
+        return 0;
     }
 
     @Override
     public DataType dataType() {
-        return DataType.DOUBLE;
+        return null;
     }
 
     @Override
     public ContextType contextType() {
         return null;
     }
+
 }
