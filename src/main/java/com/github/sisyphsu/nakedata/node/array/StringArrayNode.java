@@ -1,20 +1,19 @@
-package com.github.sisyphsu.nakedata.node.container;
+package com.github.sisyphsu.nakedata.node.array;
 
 import com.github.sisyphsu.nakedata.context.model.ContextType;
-import com.github.sisyphsu.nakedata.node.container.ArrayNode;
 import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
- * boolean[] array
+ * string[] array, can't contains null
  *
  * @author sulin
- * @since 2019-06-04 19:53:42
+ * @since 2019-06-04 16:52:57
  */
-public class BoolArrayNode extends ArrayNode {
+public class StringArrayNode extends ArrayNode {
 
-    private boolean[] items;
+    private String[] items;
 
-    public BoolArrayNode(boolean[] items) {
+    public StringArrayNode(String[] items) {
         if (items == null) {
             throw new IllegalArgumentException("items can't be null");
         }
@@ -28,7 +27,7 @@ public class BoolArrayNode extends ArrayNode {
 
     @Override
     public DataType dataType() {
-        return DataType.BOOL;
+        return DataType.STRING;
     }
 
     @Override

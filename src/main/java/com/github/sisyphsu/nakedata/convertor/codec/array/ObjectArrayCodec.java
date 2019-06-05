@@ -2,7 +2,6 @@ package com.github.sisyphsu.nakedata.convertor.codec.array;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 import com.github.sisyphsu.nakedata.node.Node;
-import com.github.sisyphsu.nakedata.node.container.MixArrayNode;
 
 /**
  * Codec for Object[]

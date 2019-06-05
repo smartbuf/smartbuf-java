@@ -6,7 +6,7 @@ import com.github.sisyphsu.nakedata.context.output.OutputContext;
 import com.github.sisyphsu.nakedata.io.OutputWriter;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.NodeMapper;
-import com.github.sisyphsu.nakedata.node.container.MixArrayNode;
+import com.github.sisyphsu.nakedata.node.array.MixArrayNode;
 import com.github.sisyphsu.nakedata.node.std.ObjectNode;
 
 import java.io.IOException;
