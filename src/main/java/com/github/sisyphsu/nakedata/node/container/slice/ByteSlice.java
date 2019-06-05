@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.node.array;
+package com.github.sisyphsu.nakedata.node.container.slice;
 
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.type.DataType;
@@ -11,14 +11,14 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class ByteArrayNode extends Node {
+public class ByteSlice extends Node {
 
-    public final static ByteArrayNode NULL = new ByteArrayNode(null);
-    public final static ByteArrayNode EMPTY = new ByteArrayNode(new byte[0]);
+    public final static ByteArrayNode NULL = new ByteSlice(null);
+    public final static ByteArrayNode EMPTY = new ByteSlice(new byte[0]);
 
     private final byte[] value;
 
-    private ByteArrayNode(byte[] value) {
+    private ByteSlice(byte[] value) {
         this.value = value;
     }
 
@@ -27,12 +27,12 @@ public class ByteArrayNode extends Node {
             return NULL;
         if (bytes.length == 0)
             return EMPTY;
-        return new ByteArrayNode(bytes);
+        return new ByteSlice(bytes);
     }
 
     @Override
     public DataType getDataType() {
-        return DataType.BINARY;
+        return DataType.ARRAY;
     }
 
     @Override

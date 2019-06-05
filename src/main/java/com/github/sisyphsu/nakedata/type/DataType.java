@@ -11,14 +11,15 @@ public enum DataType {
 
     NULL(0x00),
     BOOL(0x01),
-    ENUM(0x02),
-    FLOAT(0x03),
-    DOUBLE(0x04),
-    VARINT(0x05),
-    STRING(0x06),
+    FLOAT(0x02),
+    DOUBLE(0x03),
+    VARINT(0x04),
+    STRING(0x05),
+    SYMBOL(0x06),
+    ARRAY(0x07),
+    OBJECT(0x08),
+
     BINARY(0x07),
-    ARRAY(0x08),
-    OBJECT(0x09),
     BIGINTEGER(0x10),
     BIGDECIMAL(0x11);
 

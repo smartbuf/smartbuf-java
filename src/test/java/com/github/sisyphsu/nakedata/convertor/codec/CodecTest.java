@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
-import com.github.sisyphsu.nakedata.convertor.codec.array.ByteArrayCodec;
+import com.github.sisyphsu.nakedata.convertor.codec.array.primary.ByteArrayCodec;
 import org.junit.Test;
 
 import java.lang.reflect.Method;

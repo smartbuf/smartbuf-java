@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.test;
 
+import com.github.sisyphsu.nakedata.node.array.BooleanArrayNode;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -20,10 +21,19 @@ public class TypeTest {
         Class cls1 = Boolean[].class;
         System.out.println(cls1.isArray());
         System.out.println(cls1.getComponentType());
+        System.out.println(cls1.getSuperclass());
 
         Class cls2 = boolean[].class;
         System.out.println(cls2.isArray());
         System.out.println(cls2.getComponentType());
+    }
+
+    @Test
+    public void testArray() {
+        Boolean[] arr = new Boolean[0];
+        Object[] os = arr;
+        System.out.println(arr.getClass());
+        System.out.println(arr.getClass());
     }
 
     @Test

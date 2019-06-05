@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.convertor.codec.array;
+package com.github.sisyphsu.nakedata.convertor.codec.array.primary;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 import com.github.sisyphsu.nakedata.node.Node;
@@ -19,4 +19,5 @@ public class ByteArrayCodec extends Codec<byte[]> {
     public int hashCode() {
         return super.hashCode();
     }
+
 }
