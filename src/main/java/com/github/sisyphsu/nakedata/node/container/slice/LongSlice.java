@@ -10,7 +10,7 @@ import com.github.sisyphsu.nakedata.type.DataType;
  */
 public class LongSlice extends Slice {
 
-    private long[] data;
+    private long[] items;
 
     @Override
     public int size() {

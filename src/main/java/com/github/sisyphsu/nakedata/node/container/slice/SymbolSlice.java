@@ -3,18 +3,14 @@ package com.github.sisyphsu.nakedata.node.container.slice;
 import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.node.container.Slice;
 import com.github.sisyphsu.nakedata.type.DataType;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * @author sulin
- * @since 2019-05-08 21:01:31
+ * @since 2019-06-05 16:09:58
  */
-@Getter
-@Setter
-public class ByteSlice extends Slice {
+public class SymbolSlice extends Slice {
 
-    private byte[] items;
+    private String[] items;
 
     @Override
     public int size() {

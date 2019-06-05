@@ -9,7 +9,7 @@ import com.github.sisyphsu.nakedata.type.DataType;
  */
 public class StringSlice extends Node {
 
-    private String[] data;
+    private String[] items;
 
     @Override
     public DataType getDataType() {

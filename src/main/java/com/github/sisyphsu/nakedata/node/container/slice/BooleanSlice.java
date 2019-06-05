@@ -10,7 +10,7 @@ import com.github.sisyphsu.nakedata.type.DataType;
  */
 public class BooleanSlice extends Slice {
 
-    private boolean[] data;
+    private boolean[] items;
 
     @Override
     public int size() {

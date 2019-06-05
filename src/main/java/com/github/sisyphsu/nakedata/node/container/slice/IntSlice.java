@@ -10,7 +10,7 @@ import com.github.sisyphsu.nakedata.type.DataType;
  */
 public class IntSlice extends Slice {
 
-    private int[] data;
+    private int[] items;
 
     @Override
     public int size() {

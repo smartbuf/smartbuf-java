@@ -9,7 +9,7 @@ import com.github.sisyphsu.nakedata.type.DataType;
  */
 public class FloatSlice extends Node {
 
-    private float[] data;
+    private float[] items;
 
     @Override
     public DataType getDataType() {

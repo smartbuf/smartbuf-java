@@ -1,9 +1,7 @@
 package com.github.sisyphsu.nakedata.node.container;
 
-import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.type.DataType;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,21 +18,25 @@ public class ArrayNode extends Node {
 
     public final static ArrayNode NULL = new ArrayNode(null);
 
-    private final List<Node> items;
+    private final List<Slice> items;
 
-    /**
-     * 数组内部按类型分组
-     */
-    private transient List<Group> groups = new ArrayList<>();
-
-    private ArrayNode(List<Node> items) {
-        this.items = items;
+    private ArrayNode(List<Slice> slices) {
+        this.items = slices;
     }
 
-    public static ArrayNode valueOf(List<Node> items) {
+    public static ArrayNode valueOf(List<Slice> items) {
         if (items == null)
             return NULL;
         return new ArrayNode(items);
+    }
+
+    public static ArrayNode valueOf(Slice slice) {
+        if (slice == null) {
+            return NULL;
+        }
+        List<Slice> slices = new ArrayList<>();
+        slices.add(slice);
+        return valueOf(slices);
     }
 
     @Override
@@ -45,14 +47,6 @@ public class ArrayNode extends Node {
     @Override
     public boolean isNull() {
         return this == NULL;
-    }
-
-    @Data
-    public static class Group {
-        private byte typeCode;
-        private ContextType type;
-        private int count;
-        private boolean end;
     }
 
 }

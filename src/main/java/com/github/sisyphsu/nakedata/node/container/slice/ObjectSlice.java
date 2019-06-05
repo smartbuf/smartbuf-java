@@ -5,15 +5,13 @@ import com.github.sisyphsu.nakedata.node.container.ObjectNode;
 import com.github.sisyphsu.nakedata.node.container.Slice;
 import com.github.sisyphsu.nakedata.type.DataType;
 
-import java.util.List;
-
 /**
  * @author sulin
  * @since 2019-06-05 16:06:44
  */
 public class ObjectSlice extends Slice {
 
-    private List<ObjectNode> items;
+    private ObjectNode[] items;
 
     @Override
     public int size() {
