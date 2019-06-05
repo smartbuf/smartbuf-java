@@ -1,22 +1,27 @@
 package com.github.sisyphsu.nakedata.node.container.slice;
 
-import com.github.sisyphsu.nakedata.node.Node;
+import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
  * @author sulin
  * @since 2019-06-04 19:53:42
  */
-public class BooleanSlice extends Node {
+public class BooleanSlice extends Slice {
 
     @Override
-    public DataType getDataType() {
-        return DataType.ARRAY;
+    public int size() {
+        return 0;
     }
 
     @Override
-    public boolean isNull() {
-        return false;
+    public DataType dataType() {
+        return null;
+    }
+
+    @Override
+    public ContextType contextType() {
+        return null;
     }
 
 }
