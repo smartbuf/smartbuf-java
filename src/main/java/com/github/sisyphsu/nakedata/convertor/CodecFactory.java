@@ -95,10 +95,41 @@ public class CodecFactory {
                     decodeMap.put(new DecodeMethod(codec, method));
                 }
             }
+            codec.setFactory(this);
         }
         // reset all pipeline
         this.decodePipelineMap.clear();
         this.encodePipelineMap.clear();
+    }
+
+    public <S, T> T encode(S src, Class<T> tgtClass) {
+        PipelineKey key = PipelineKey.valueOf(src.getClass(), tgtClass);
+        EncodePipeline pipeline = encodePipelineMap.computeIfAbsent(key, (k) -> {
+            List<EncodeMethod> methods = this.dfs(key.getSrc(), key.getTgt(), encodeMap);
+            if (methods == null || methods.size() == 0) {
+                return null;
+            }
+            return new EncodePipeline(methods.toArray(new EncodeMethod[0]));
+        });
+        if (pipeline == null) {
+            throw new IllegalStateException("Can't encode " + src.getClass() + " to " + tgtClass);
+        }
+        return (T) pipeline.encode(src);
+    }
+
+    public <S, T> T decode(S src, Class<T> tgtClass) {
+        PipelineKey key = PipelineKey.valueOf(src.getClass(), tgtClass);
+        DecodePipeline pipeline = decodePipelineMap.computeIfAbsent(key, (k) -> {
+            List<DecodeMethod> methods = this.dfs(key.getSrc(), key.getTgt(), decodeMap);
+            if (methods == null || methods.size() == 0) {
+                return null;
+            }
+            return new DecodePipeline(methods.toArray(new DecodeMethod[0]));
+        });
+        if (pipeline == null) {
+            throw new IllegalStateException("Can't encode " + src.getClass() + " to " + tgtClass);
+        }
+        return (T) pipeline.decode(src, tgtClass);
     }
 
     /**
@@ -109,7 +140,7 @@ public class CodecFactory {
      * @return DecodePipeline, null means noway.
      */
     public DecodePipeline getDecodePipeline(Class src, Class tgt) {
-        PipelineKey key = new PipelineKey(src, tgt);
+        PipelineKey key = PipelineKey.valueOf(src, tgt);
         return decodePipelineMap.computeIfAbsent(key, (k) -> {
             List<DecodeMethod> methods = this.dfs(src, tgt, decodeMap);
             if (methods == null || methods.size() == 0) {
@@ -127,7 +158,7 @@ public class CodecFactory {
      * @return EncodePipeline, null means noway
      */
     public EncodePipeline getEncodePipeline(Class src, Class tgt) {
-        PipelineKey key = new PipelineKey(src, tgt);
+        PipelineKey key = PipelineKey.valueOf(src, tgt);
         return encodePipelineMap.computeIfAbsent(key, (k) -> {
             List<EncodeMethod> methods = this.dfs(src, tgt, encodeMap);
             if (methods == null || methods.isEmpty()) {

@@ -6,7 +6,6 @@ import com.github.sisyphsu.nakedata.type.DataType;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -26,18 +25,12 @@ public class ObjectNode extends Node {
      */
     private ContextType contextType;
 
-    private ObjectNode(TreeMap<String, Node> fields) {
-        this.fields = fields;
+    public ObjectNode() {
+        this(new TreeMap<>());
     }
 
-    public static ObjectNode newInstance(Map<String, Node> fields) {
-        if (fields == null) {
-            return NULL;
-        }
-        if (fields instanceof TreeMap) {
-            return new ObjectNode((TreeMap<String, Node>) fields);
-        }
-        return new ObjectNode(new TreeMap<>(fields));
+    public ObjectNode(TreeMap<String, Node> fields) {
+        this.fields = fields;
     }
 
     @Override

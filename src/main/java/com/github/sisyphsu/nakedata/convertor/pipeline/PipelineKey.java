@@ -13,9 +13,21 @@ public class PipelineKey {
     private final Class src;
     private final Class tgt;
 
-    public PipelineKey(Class src, Class tgt) {
+    private PipelineKey(Class src, Class tgt) {
         this.src = src;
         this.tgt = tgt;
+    }
+
+    public static PipelineKey valueOf(Class src, Class tgt) {
+        return new PipelineKey(src, tgt);
+    }
+
+    public Class getSrc() {
+        return src;
+    }
+
+    public Class getTgt() {
+        return tgt;
     }
 
     @Override

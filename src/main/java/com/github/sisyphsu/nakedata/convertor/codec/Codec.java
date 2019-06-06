@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
-import com.github.sisyphsu.nakedata.convertor.Convertor;
+import com.github.sisyphsu.nakedata.convertor.CodecFactory;
 import com.github.sisyphsu.nakedata.node.Node;
 
 import java.lang.reflect.ParameterizedType;
@@ -25,14 +25,10 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public abstract class Codec<T> {
 
-    private Convertor root;
+    private CodecFactory factory;
 
-    public Convertor getRoot() {
-        return root;
-    }
-
-    public void setRoot(Convertor root) {
-        this.root = root;
+    public void setFactory(CodecFactory factory) {
+        this.factory = factory;
     }
 
     /**
