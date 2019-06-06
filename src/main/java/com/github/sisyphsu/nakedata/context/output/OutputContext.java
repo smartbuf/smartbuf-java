@@ -62,7 +62,7 @@ public class OutputContext {
 
     // 扫描元数据
     private void doScan(Node node) {
-        switch (node.getDataType()) {
+        switch (node.dataType()) {
             case ARRAY:
                 this.doScanArrayNode((MixArrayNode) node);
                 break;
@@ -96,7 +96,7 @@ public class OutputContext {
             int offset = 0;
             for (Map.Entry<String, Node> entry : node.getFields().entrySet()) {
                 nameIds[offset] = namePool.buildTmpName(versionCache, entry.getKey()).getId();
-                types[offset] = entry.getValue().getDataType().getCode();
+                types[offset] = entry.getValue().dataType().getCode();
                 offset++;
             }
             ContextStruct struct = structPool.buildTmpStruct(versionCache, nameIds);
@@ -106,7 +106,7 @@ public class OutputContext {
             int offset = 0;
             for (Map.Entry<String, Node> entry : node.getFields().entrySet()) {
                 nameIds[offset] = namePool.buildCxtName(versionCache, entry.getKey()).getId();
-                types[offset] = entry.getValue().getDataType().getCode();
+                types[offset] = entry.getValue().dataType().getCode();
                 offset++;
             }
             ContextStruct struct = structPool.buildCxtStruct(versionCache, nameIds);
@@ -115,25 +115,25 @@ public class OutputContext {
     }
 
     private void doScanArrayNode(MixArrayNode array) {
-        MixArrayNode.Group group = null;
-        for (Node node : array.getItems()) {
-            this.scan(node);
-            byte typeCode = node.getDataType().getCode();
-            ContextType type = node.getContextType();
-            if (group != null && group.getType() != type && group.getTypeCode() != typeCode) {
-                group.setEnd(false);
-                group.setCount(group.getCount() + 1);
-                group = null;
-            }
-            if (group == null) {
-                group = new MixArrayNode.Group();
-                group.setType(type);
-                group.setTypeCode(typeCode);
-                group.setEnd(true);
-                array.getGroups().add(group);
-            }
-            group.setCount(group.getCount() + 1);
-        }
+//        MixArrayNode.Group group = null;
+//        for (Node node : array.getItems()) {
+//            this.scan(node);
+//            byte typeCode = node.getDataType().getCode();
+//            ContextType type = node.getContextType();
+//            if (group != null && group.getType() != type && group.getTypeCode() != typeCode) {
+//                group.setEnd(false);
+//                group.setCount(group.getCount() + 1);
+//                group = null;
+//            }
+//            if (group == null) {
+//                group = new MixArrayNode.Group();
+//                group.setType(type);
+//                group.setTypeCode(typeCode);
+//                group.setEnd(true);
+//                array.getGroups().add(group);
+//            }
+//            group.setCount(group.getCount() + 1);
+//        }
     }
 
 }

@@ -38,7 +38,7 @@ public class DataSerializer {
         Node root = NodeMapper.convertNodeTree(obj);
         // step1. 扫描元数据变化
         ContextVersion version = context.scan(root);
-        byte dataType = root.getDataType().getCode();
+        byte dataType = root.dataType().getCode();
         // step2. 输出头信息, 包括head、version
         if (version == null) {
             writer.writeByte(dataType);
@@ -58,7 +58,7 @@ public class DataSerializer {
      * @param node 待输出的节点
      */
     private void writeNode(Node node) throws IOException {
-        switch (node.getDataType()) {
+        switch (node.dataType()) {
             case VARINT:
 //                if (node.isFloat()) {
 //                    writer.writeFloat(node.floatValue());
@@ -99,20 +99,20 @@ public class DataSerializer {
     private void writeArray(MixArrayNode arr) throws IOException {
         // 需要考虑数组内成员类型的不兼容，输出成员之前，需要先输出[type-id + count], 再输出子类型
         int offset = 0;
-        for (MixArrayNode.Group group : arr.getGroups()) {
-            // step1. 输出[count | typecode | isEnd]
-            writer.writeVarUint((group.getCount() << 5) | (group.getTypeCode() << 1) | (group.isEnd() ? 0 : 1));
-            // step2. 输出type-id
-            // issue: null的特殊处理, 可能会导致数组内相同对象的分组不同
-            if (group.getType() != null) {
-                writer.writeVarInt(group.getType().getId());
-            }
-            // step3. 循环输出items
-            for (int i = 0; i < group.getCount(); i++) {
-                this.writeNode(arr.getItems().get(offset + i));
-            }
-            offset += group.getCount();
-        }
+//        for (MixArrayNode.Group group : arr.getGroups()) {
+//            // step1. 输出[count | typecode | isEnd]
+//            writer.writeVarUint((group.getCount() << 5) | (group.getTypeCode() << 1) | (group.isEnd() ? 0 : 1));
+//            // step2. 输出type-id
+//            // issue: null的特殊处理, 可能会导致数组内相同对象的分组不同
+//            if (group.getType() != null) {
+//                writer.writeVarInt(group.getType().getId());
+//            }
+//            // step3. 循环输出items
+//            for (int i = 0; i < group.getCount(); i++) {
+//                this.writeNode(arr.getItems().get(offset + i));
+//            }
+//            offset += group.getCount();
+//        }
     }
 
 }

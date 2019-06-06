@@ -19,13 +19,13 @@ public class NullNode extends Node {
     }
 
     @Override
-    public DataType getDataType() {
-        return DataType.NULL;
+    public boolean isNull() {
+        return true;
     }
 
     @Override
-    public boolean isNull() {
-        return true;
+    public DataType dataType() {
+        return DataType.NULL;
     }
 
 }

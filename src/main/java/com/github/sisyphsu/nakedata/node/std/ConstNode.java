@@ -10,7 +10,7 @@ import com.github.sisyphsu.nakedata.type.DataType;
 public class ConstNode extends Node {
 
     @Override
-    public DataType getDataType() {
+    public DataType dataType() {
         return null;
     }
 

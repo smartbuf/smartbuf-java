@@ -41,6 +41,17 @@ public abstract class Codec<T> {
         return (Class<T>) type.getActualTypeArguments()[0];
     }
 
+    /**
+     * 将
+     * @param t
+     * @param clz
+     * @param <S>
+     * @return
+     */
+    public <S> S convert(T t, Class<S> clz) {
+        throw new UnsupportedOperationException();
+    }
+
     /****************************** Encode方法 **********************************/
 
     /**

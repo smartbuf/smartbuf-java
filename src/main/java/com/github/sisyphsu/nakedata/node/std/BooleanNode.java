@@ -35,7 +35,7 @@ public class BooleanNode extends Node {
     }
 
     @Override
-    public DataType getDataType() {
+    public DataType dataType() {
         return DataType.BOOL;
     }
 

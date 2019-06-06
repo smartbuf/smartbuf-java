@@ -33,7 +33,7 @@ public class StringNode extends Node {
     }
 
     @Override
-    public DataType getDataType() {
+    public DataType dataType() {
         return DataType.STRING;
     }
 

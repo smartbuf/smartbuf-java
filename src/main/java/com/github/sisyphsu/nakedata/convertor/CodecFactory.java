@@ -1,10 +1,8 @@
 package com.github.sisyphsu.nakedata.convertor;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
-import com.github.sisyphsu.nakedata.convertor.pipeline.*;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,12 +17,8 @@ public class CodecFactory {
     public static final CodecFactory Instance = new CodecFactory(null);
 
     private Set<Codec> codecs = new HashSet<>();
-
-    private CodecMap<DecodeMethod> decodeMap = new CodecMap<>();
-    private CodecMap<EncodeMethod> encodeMap = new CodecMap<>();
-
-    private Map<PipelineKey, DecodePipeline> decodePipelineMap = new ConcurrentHashMap<>();
-    private Map<PipelineKey, EncodePipeline> encodePipelineMap = new ConcurrentHashMap<>();
+    private CodecMap methodTree = new CodecMap();
+    private Map<ConvertPipeline, ConvertPipeline> pipelineMap = new ConcurrentHashMap<>();
 
     /**
      * Initialize CodecFactory with the specified Codec type.
@@ -79,112 +73,60 @@ public class CodecFactory {
             }
             // collect all encode and decode methods
             for (Method method : codec.getClass().getDeclaredMethods()) {
-                if (method.isBridge() || method.isVarArgs() || method.isDefault() || method.isSynthetic()) {
-                    continue; // ignore flags
+                ConvertMethod convertMethod = ConvertMethod.valueOf(codec, method);
+                if (convertMethod == null) {
+                    continue;
                 }
-                if (method.getReturnType() == Void.class) {
-                    continue; // ignore void return
-                }
-                Class[] paramTypes = method.getParameterTypes();
-                // collect EncodeMethod
-                if (paramTypes.length == 1 && paramTypes[0] == codec.support()) {
-                    encodeMap.put(new EncodeMethod(codec, method));
-                }
-                // collect DecodeMethod
-                if (paramTypes.length == 2 && paramTypes[1] == Type.class && method.getReturnType() == codec.support()) {
-                    decodeMap.put(new DecodeMethod(codec, method));
-                }
+                methodTree.put(convertMethod);
             }
             codec.setFactory(this);
         }
         // reset all pipeline
-        this.decodePipelineMap.clear();
-        this.encodePipelineMap.clear();
-    }
-
-    public <S, T> T encode(S src, Class<T> tgtClass) {
-        PipelineKey key = PipelineKey.valueOf(src.getClass(), tgtClass);
-        EncodePipeline pipeline = encodePipelineMap.computeIfAbsent(key, (k) -> {
-            List<EncodeMethod> methods = this.dfs(key.getSrc(), key.getTgt(), encodeMap);
-            if (methods == null || methods.size() == 0) {
-                return null;
-            }
-            return new EncodePipeline(methods.toArray(new EncodeMethod[0]));
-        });
-        if (pipeline == null) {
-            throw new IllegalStateException("Can't encode " + src.getClass() + " to " + tgtClass);
-        }
-        return (T) pipeline.encode(src);
-    }
-
-    public <S, T> T decode(S src, Class<T> tgtClass) {
-        PipelineKey key = PipelineKey.valueOf(src.getClass(), tgtClass);
-        DecodePipeline pipeline = decodePipelineMap.computeIfAbsent(key, (k) -> {
-            List<DecodeMethod> methods = this.dfs(key.getSrc(), key.getTgt(), decodeMap);
-            if (methods == null || methods.size() == 0) {
-                return null;
-            }
-            return new DecodePipeline(methods.toArray(new DecodeMethod[0]));
-        });
-        if (pipeline == null) {
-            throw new IllegalStateException("Can't encode " + src.getClass() + " to " + tgtClass);
-        }
-        return (T) pipeline.decode(src, tgtClass);
+        this.pipelineMap.clear();
     }
 
     /**
-     * Get DecodePipeline by the specified data convert direction.
+     * Do data convert. convert src into tgtClass instance.
      *
-     * @param src source class
-     * @param tgt target class
-     * @return DecodePipeline, null means noway.
+     * @param src      Source data
+     * @param tgtClass Target class
+     * @param <S>      GenericType
+     * @param <T>      GenericType
+     * @return Target instance
      */
-    public DecodePipeline getDecodePipeline(Class src, Class tgt) {
-        PipelineKey key = PipelineKey.valueOf(src, tgt);
-        return decodePipelineMap.computeIfAbsent(key, (k) -> {
-            List<DecodeMethod> methods = this.dfs(src, tgt, decodeMap);
+    @SuppressWarnings("unchecked")
+    public <S, T> T doConvert(S src, Class<T> tgtClass) {
+        ConvertPipeline key = ConvertPipeline.valueOf(src.getClass(), tgtClass);
+        ConvertPipeline pipeline = pipelineMap.computeIfAbsent(key, (k) -> {
+            List<ConvertMethod> methods = this.dfs(key.getSrcClass(), key.getTgtClass(), methodTree);
             if (methods == null || methods.size() == 0) {
                 return null;
             }
-            return new DecodePipeline(methods.toArray(new DecodeMethod[0]));
+            return ConvertPipeline.valueOf(methods);
         });
-    }
-
-    /**
-     * Get EncodePipeline by the specified data convert direction.
-     *
-     * @param src source class
-     * @param tgt target class
-     * @return EncodePipeline, null means noway
-     */
-    public EncodePipeline getEncodePipeline(Class src, Class tgt) {
-        PipelineKey key = PipelineKey.valueOf(src, tgt);
-        return encodePipelineMap.computeIfAbsent(key, (k) -> {
-            List<EncodeMethod> methods = this.dfs(src, tgt, encodeMap);
-            if (methods == null || methods.isEmpty()) {
-                return null;
-            }
-            return new EncodePipeline(methods.toArray(new EncodeMethod[0]));
-        });
+        if (pipeline == null) {
+            throw new IllegalStateException("Can't convert " + src.getClass() + " to " + tgtClass);
+        }
+        return (T) pipeline.convert(src, tgtClass);
     }
 
     /**
      * Search the shortest codec path
      */
-    private <T extends CodecMethod> List<T> dfs(Class src, Class tgt, CodecMap<T> map) {
-        T direct = map.get(src, tgt);
+    private List<ConvertMethod> dfs(Class src, Class tgt, CodecMap map) {
+        ConvertMethod direct = map.get(src, tgt);
         if (direct != null) {
             return Collections.singletonList(direct); // directly
         }
-        Collection<T> ts = map.get(src);
+        Collection<ConvertMethod> ts = map.get(src);
         if (ts == null || ts.isEmpty()) {
             return null; // noway
         }
         // find shortest way
-        T router = null;
-        List<T> subResult = null;
-        for (T t : ts) {
-            List<T> tmp = this.dfs(t.getTgtClass(), tgt, map);
+        ConvertMethod router = null;
+        List<ConvertMethod> subResult = null;
+        for (ConvertMethod t : ts) {
+            List<ConvertMethod> tmp = this.dfs(t.getTgtClass(), tgt, map);
             if (tmp == null || tmp.isEmpty()) {
                 continue;
             }
@@ -196,7 +138,7 @@ public class CodecFactory {
         if (subResult == null) {
             return null; // noway
         }
-        List<T> result = new ArrayList<>();
+        List<ConvertMethod> result = new ArrayList<>();
         result.add(router);
         result.addAll(subResult);
         return result;
@@ -204,28 +146,25 @@ public class CodecFactory {
 
     /**
      * CodecMap, like MultiKeyMap, meantains codec tree.
-     *
-     * @param <T> DecodeMethod or EncodeMethod
      */
-    public static class CodecMap<T extends CodecMethod> {
+    public static class CodecMap {
 
-        private Map<Class, Map<Class, T>> map = new ConcurrentHashMap<>();
+        private Map<Class, Map<Class, ConvertMethod>> map = new ConcurrentHashMap<>();
 
-        public void put(T t) {
-            Map<Class, T> tgtMap = map.computeIfAbsent(t.getSrcClass(), (c) -> new ConcurrentHashMap<>());
-            tgtMap.put(t.getTgtClass(), t);
+        public void put(ConvertMethod method) {
+            map.computeIfAbsent(method.getSrcClass(), (c) -> new ConcurrentHashMap<>()).put(method.getTgtClass(), method);
         }
 
-        public Collection<T> get(Class srcClass) {
-            Map<Class, T> tgtMap = map.get(srcClass);
+        public Collection<ConvertMethod> get(Class srcClass) {
+            Map<Class, ConvertMethod> tgtMap = map.get(srcClass);
             if (tgtMap == null) {
                 return null;
             }
             return tgtMap.values();
         }
 
-        public T get(Class srcClass, Class tgtClass) {
-            Map<Class, T> tgtMap = map.get(srcClass);
+        public ConvertMethod get(Class srcClass, Class tgtClass) {
+            Map<Class, ConvertMethod> tgtMap = map.get(srcClass);
             if (tgtMap == null) {
                 return null;
             }

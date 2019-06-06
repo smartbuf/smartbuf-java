@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.test;
 
-import com.github.sisyphsu.nakedata.node.array.BooleanArrayNode;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -17,6 +16,7 @@ public class TypeTest {
         System.out.println(Object[].class);
         System.out.println(Boolean[].class);
         System.out.println(boolean[].class);
+        System.out.println(int[].class);
 
         Class cls1 = Boolean[].class;
         System.out.println(cls1.isArray());
@@ -52,5 +52,8 @@ public class TypeTest {
             printInterfaces(it);
         }
     }
+
+//    public Map convert(int i, Class<Map<>> clz) {
+//    }
 
 }

@@ -13,7 +13,6 @@ import java.util.TreeMap;
  */
 public class MapCodec extends Codec<Map> {
 
-    @Override
     public Node toNode(Map map) {
         if (map == null) {
             return ObjectNode.NULL;

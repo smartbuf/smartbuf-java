@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.convertor;
+package com.github.sisyphsu.nakedata.convertor.pipeline;
 
 /**
  * @author sulin
