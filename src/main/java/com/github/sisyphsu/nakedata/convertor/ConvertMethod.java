@@ -62,7 +62,7 @@ public class ConvertMethod {
      * @param tgtType Target class
      * @return target instance
      */
-    public Object convert(Object data, Type tgtType) {
+    public Object convert(Object data, Class tgtType) {
         if (data != null && data.getClass() != this.srcClass) {
             throw new IllegalArgumentException("data type unmatched: " + this.srcClass + ", " + data.getClass());
         }

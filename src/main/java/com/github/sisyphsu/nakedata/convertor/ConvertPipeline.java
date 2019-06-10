@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.convertor;
 
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,7 +44,7 @@ public class ConvertPipeline {
      * @param tgtType 目标类型, 如POJO类、携带泛型类型的集合类等
      * @return 解码结果
      */
-    public Object convert(Object data, Type tgtType) {
+    public Object convert(Object data, Class tgtType) {
         Object result = data;
         for (ConvertMethod method : methods) {
             result = method.convert(result, tgtType);

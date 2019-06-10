@@ -147,7 +147,7 @@ public class CodecFactory {
     /**
      * CodecMap, like MultiKeyMap, meantains codec tree.
      */
-    public static class CodecMap {
+    private static class CodecMap {
 
         private Map<Class, Map<Class, ConvertMethod>> map = new ConcurrentHashMap<>();
 
