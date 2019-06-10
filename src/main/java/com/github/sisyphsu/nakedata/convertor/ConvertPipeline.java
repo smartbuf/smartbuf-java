@@ -1,7 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * 编码编排Codec的数据Decode转换处理器, 如:
@@ -58,24 +57,6 @@ public class ConvertPipeline {
 
     public Class getTgtClass() {
         return tgtClass;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        ConvertPipeline that = (ConvertPipeline) o;
-
-        return Objects.equals(srcClass, that.srcClass) && Objects.equals(tgtClass, that.tgtClass);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(srcClass, tgtClass);
     }
 
 }

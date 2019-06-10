@@ -17,8 +17,8 @@ public class CodecFactory {
     public static final CodecFactory Instance = new CodecFactory(null);
 
     private Set<Codec> codecs = new HashSet<>();
-    private CodecMap methodTree = new CodecMap();
-    private Map<ConvertPipeline, ConvertPipeline> pipelineMap = new ConcurrentHashMap<>();
+    private MMap<ConvertMethod> methodMap = new MMap<>();
+    private MMap<ConvertPipeline> pipelineMap = new MMap<>();
 
     /**
      * Initialize CodecFactory with the specified Codec type.
@@ -77,7 +77,7 @@ public class CodecFactory {
                 if (convertMethod == null) {
                     continue;
                 }
-                methodTree.put(convertMethod);
+                methodMap.put(convertMethod.getSrcClass(), convertMethod.getTgtClass(), convertMethod);
             }
             codec.setFactory(this);
         }
@@ -96,14 +96,14 @@ public class CodecFactory {
      */
     @SuppressWarnings("unchecked")
     public <S, T> T doConvert(S src, Class<T> tgtClass) {
-        ConvertPipeline key = ConvertPipeline.valueOf(src.getClass(), tgtClass);
-        ConvertPipeline pipeline = pipelineMap.computeIfAbsent(key, (k) -> {
-            List<ConvertMethod> methods = this.dfs(key.getSrcClass(), key.getTgtClass(), methodTree);
-            if (methods == null || methods.size() == 0) {
-                return null;
+        ConvertPipeline pipeline = pipelineMap.get(src.getClass(), tgtClass);
+        if (pipeline == null) {
+            List<ConvertMethod> methods = this.dfs(src.getClass(), tgtClass, methodMap);
+            if (methods != null && methods.size() > 0) {
+                pipeline = ConvertPipeline.valueOf(methods);
+                pipelineMap.put(src.getClass(), tgtClass, pipeline);
             }
-            return ConvertPipeline.valueOf(methods);
-        });
+        }
         if (pipeline == null) {
             throw new IllegalStateException("Can't convert " + src.getClass() + " to " + tgtClass);
         }
@@ -113,7 +113,7 @@ public class CodecFactory {
     /**
      * Search the shortest codec path
      */
-    private List<ConvertMethod> dfs(Class src, Class tgt, CodecMap map) {
+    private List<ConvertMethod> dfs(Class src, Class tgt, MMap<ConvertMethod> map) {
         ConvertMethod direct = map.get(src, tgt);
         if (direct != null) {
             return Collections.singletonList(direct); // directly
@@ -145,30 +145,34 @@ public class CodecFactory {
     }
 
     /**
-     * CodecMap, like MultiKeyMap, meantains codec tree.
+     * MultiMap, like MultiKeyMap.
      */
-    private static class CodecMap {
+    private static class MMap<T> {
 
-        private Map<Class, Map<Class, ConvertMethod>> map = new ConcurrentHashMap<>();
+        private Map<Class, Map<Class, T>> map = new ConcurrentHashMap<>();
 
-        public void put(ConvertMethod method) {
-            map.computeIfAbsent(method.getSrcClass(), (c) -> new ConcurrentHashMap<>()).put(method.getTgtClass(), method);
+        public void put(Class src, Class tgt, T method) {
+            map.computeIfAbsent(src, (c) -> new ConcurrentHashMap<>()).put(tgt, method);
         }
 
-        public Collection<ConvertMethod> get(Class srcClass) {
-            Map<Class, ConvertMethod> tgtMap = map.get(srcClass);
+        public Collection<T> get(Class srcClass) {
+            Map<Class, T> tgtMap = map.get(srcClass);
             if (tgtMap == null) {
                 return null;
             }
             return tgtMap.values();
         }
 
-        public ConvertMethod get(Class srcClass, Class tgtClass) {
-            Map<Class, ConvertMethod> tgtMap = map.get(srcClass);
+        public T get(Class srcClass, Class tgtClass) {
+            Map<Class, T> tgtMap = map.get(srcClass);
             if (tgtMap == null) {
                 return null;
             }
             return tgtMap.get(tgtClass);
+        }
+
+        public void clear() {
+            this.map.clear();
         }
 
     }

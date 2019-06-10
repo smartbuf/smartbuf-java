@@ -3,7 +3,6 @@ package com.github.sisyphsu.nakedata.convertor.codec;
 import com.github.sisyphsu.nakedata.convertor.CodecFactory;
 import com.github.sisyphsu.nakedata.node.Node;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Map;
@@ -22,7 +21,6 @@ import java.util.Map;
  * @author sulin
  * @since 2019-05-12 16:01:19
  */
-@SuppressWarnings("unchecked")
 public abstract class Codec<T> {
 
     private CodecFactory factory;
@@ -32,24 +30,16 @@ public abstract class Codec<T> {
     }
 
     /**
-     * 支持的Java数据类型
+     * Factory's doConvert convinence.
      *
-     * @return 泛型类型
+     * @param s    source data
+     * @param clz  target class
+     * @param <S>  Source template type
+     * @param <_T> Target template type
+     * @return target instance
      */
-    public Class<T> support() {
-        ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();
-        return (Class<T>) type.getActualTypeArguments()[0];
-    }
-
-    /**
-     * 将
-     * @param t
-     * @param clz
-     * @param <S>
-     * @return
-     */
-    public <S> S convert(T t, Class<S> clz) {
-        throw new UnsupportedOperationException();
+    public <S, _T> _T convert(S s, Class<_T> clz) {
+        return factory.doConvert(s, clz);
     }
 
     /****************************** Encode方法 **********************************/
