@@ -20,12 +20,17 @@ public class MapCodec extends Codec<Map> {
         TreeMap<String, Node> fields = new TreeMap<>();
         for (Object item : map.entrySet()) {
             Map.Entry entry = (Map.Entry) item;
-            String key = String.valueOf(entry.getKey()); // TODO key -> string
-            entry.getValue(); // TODO val -> node
+            String key;
+            if (entry.getKey() instanceof String) {
+                key = (String) entry.getKey();
+            } else {
+                key = convert(entry.getKey(), String.class);
+            }
+            Node value = convert(entry.getValue(), Node.class);
 
-            fields.put(key, null);
+            fields.put(key, value);
         }
-        return new ObjectNode(fields);
+        return ObjectNode.valueOf(fields);
     }
 
 }

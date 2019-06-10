@@ -11,7 +11,7 @@ import com.github.sisyphsu.nakedata.node.std.StringNode;
  * @author sulin
  * @since 2019-06-05 19:53:57
  */
-public class PrimaryArrayCodec extends Codec {
+public class ArrayCodec extends Codec {
 
     public Node toNode(boolean[] arr) {
         return BooleanArrayNode.valueOf(arr);

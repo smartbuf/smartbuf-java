@@ -17,20 +17,24 @@ import java.util.TreeMap;
 public class ObjectNode extends Node {
 
     public final static ObjectNode NULL = new ObjectNode(null);
+    public final static ObjectNode EMPTY = new ObjectNode(new TreeMap<>());
 
     private final TreeMap<String, Node> fields;
 
-    /**
-     * Object节点的元数据信息
-     */
     private ContextType contextType;
 
-    public ObjectNode() {
-        this(new TreeMap<>());
+    private ObjectNode(TreeMap<String, Node> fields) {
+        this.fields = fields;
     }
 
-    public ObjectNode(TreeMap<String, Node> fields) {
-        this.fields = fields;
+    public static ObjectNode valueOf(TreeMap<String, Node> fields) {
+        if (fields == null) {
+            return NULL;
+        }
+        if (fields.isEmpty()) {
+            return EMPTY;
+        }
+        return new ObjectNode(fields);
     }
 
     @Override
