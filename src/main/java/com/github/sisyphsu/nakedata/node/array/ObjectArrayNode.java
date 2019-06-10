@@ -13,6 +13,7 @@ import com.github.sisyphsu.nakedata.type.DataType;
 public class ObjectArrayNode extends ArrayNode {
 
     public static final ObjectArrayNode NULL = new ObjectArrayNode(null);
+    public static final ObjectArrayNode EMPTY = new ObjectArrayNode(new ObjectNode[0]);
 
     private ObjectNode[] items;
 
@@ -23,6 +24,9 @@ public class ObjectArrayNode extends ArrayNode {
     public static ObjectArrayNode valueOf(ObjectNode[] items) {
         if (items == null) {
             return NULL;
+        }
+        if (items.length == 0) {
+            return EMPTY;
         }
         return new ObjectArrayNode(items);
     }

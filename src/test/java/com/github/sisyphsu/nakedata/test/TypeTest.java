@@ -50,6 +50,10 @@ public class TypeTest {
     public void testEnum() {
         System.out.println(Gender.GIRL instanceof Enum);
         System.out.println(Gender.BOY.getClass());
+
+        for (Class clz = Gender.class; clz != null; clz = clz.getSuperclass()) {
+            System.out.println(clz.getGenericSuperclass());
+        }
     }
 
     private void printInterfaces(Class clz) {
