@@ -7,11 +7,22 @@ import com.github.sisyphsu.nakedata.type.DataType;
  * @author sulin
  * @since 2019-06-04 20:23:31
  */
-public class ConstNode extends Node {
+public class SymbolNode extends Node {
+
+    private String data;
+
+    private SymbolNode(String data) {
+        this.data = data;
+    }
+
+    public static SymbolNode valueOf(String data) {
+        // TODO should cache
+        return new SymbolNode(data);
+    }
 
     @Override
     public DataType dataType() {
-        return null;
+        return DataType.SYMBOL;
     }
 
     @Override

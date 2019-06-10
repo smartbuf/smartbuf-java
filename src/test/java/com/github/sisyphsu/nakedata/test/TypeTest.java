@@ -46,6 +46,12 @@ public class TypeTest {
         printInterfaces(listType);
     }
 
+    @Test
+    public void testEnum() {
+        System.out.println(Gender.GIRL instanceof Enum);
+        System.out.println(Gender.BOY.getClass());
+    }
+
     private void printInterfaces(Class clz) {
         for (Class it : clz.getInterfaces()) {
             System.out.println(it);
@@ -53,7 +59,9 @@ public class TypeTest {
         }
     }
 
-//    public Map convert(int i, Class<Map<>> clz) {
-//    }
+    public enum Gender {
+        GIRL,
+        BOY
+    }
 
 }
