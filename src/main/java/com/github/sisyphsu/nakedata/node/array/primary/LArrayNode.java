@@ -1,6 +1,7 @@
-package com.github.sisyphsu.nakedata.node.array;
+package com.github.sisyphsu.nakedata.node.array.primary;
 
 import com.github.sisyphsu.nakedata.context.model.ContextType;
+import com.github.sisyphsu.nakedata.node.array.ArrayNode;
 import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
@@ -9,25 +10,25 @@ import com.github.sisyphsu.nakedata.type.DataType;
  * @author sulin
  * @since 2019-06-05 15:54:35
  */
-public class LongArrayNode extends ArrayNode {
+public class LArrayNode extends ArrayNode {
 
-    public static final LongArrayNode NULL = new LongArrayNode(null);
-    public static final LongArrayNode EMPTY = new LongArrayNode(new long[0]);
+    public static final LArrayNode NULL = new LArrayNode(null);
+    public static final LArrayNode EMPTY = new LArrayNode(new long[0]);
 
     private long[] items;
 
-    private LongArrayNode(long[] items) {
+    private LArrayNode(long[] items) {
         this.items = items;
     }
 
-    public static LongArrayNode valueOf(long[] data) {
+    public static LArrayNode valueOf(long[] data) {
         if (data == null) {
             return NULL;
         }
         if (data.length == 0) {
             return EMPTY;
         }
-        return new LongArrayNode(data);
+        return new LArrayNode(data);
     }
 
     @Override

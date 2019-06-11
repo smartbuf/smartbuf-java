@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
+ * Map's Codec
+ *
  * @author sulin
  * @since 2019-06-05 20:29:40
  */

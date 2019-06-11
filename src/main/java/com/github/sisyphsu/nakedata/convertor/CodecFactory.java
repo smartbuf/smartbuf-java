@@ -96,6 +96,7 @@ public class CodecFactory {
      */
     @SuppressWarnings("unchecked")
     public <S, T> T doConvert(S src, Class<T> tgtClass) {
+        // TODO src == null
         ConvertPipeline pipeline = pipelineMap.get(src.getClass(), tgtClass);
         if (pipeline == null) {
             List<ConvertMethod> methods = this.dfs(src.getClass(), tgtClass, methodMap);

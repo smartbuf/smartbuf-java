@@ -16,6 +16,7 @@ public class TypeTest {
         System.out.println(Object[].class);
         System.out.println(Boolean[].class);
         System.out.println(boolean[].class);
+        System.out.println(byte[].class);
         System.out.println(int[].class);
 
         Class cls1 = Boolean[].class;

@@ -4,9 +4,9 @@ import com.github.sisyphsu.nakedata.context.model.ContextType;
 
 /**
  * @author sulin
- * @since 2019-06-11 20:32:34
+ * @since 2019-06-11 20:32:52
  */
-public class FloatArrayNode extends ArrayNode {
+public class VarintArrayNode extends ArrayNode {
 
     @Override
     public int size() {

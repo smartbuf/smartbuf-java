@@ -26,6 +26,16 @@ public abstract class ArrayNode extends Node {
      */
     public abstract ContextType contextType();
 
+    public boolean check(Object o) {
+        // TODO 数组与o是否类型兼容
+        return true;
+    }
+
+    public boolean isFix() {
+        // TODO 数组是否可变
+        return false;
+    }
+
     @Override
     public DataType dataType() {
         return DataType.ARRAY;

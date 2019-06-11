@@ -43,4 +43,5 @@ public class BooleanNode extends Node {
     public boolean isNull() {
         return this == NULL;
     }
+
 }

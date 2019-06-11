@@ -3,9 +3,12 @@ package com.github.sisyphsu.nakedata.node.codec;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.array.ArrayNode;
+import com.github.sisyphsu.nakedata.node.array.MixArrayNode;
 import com.github.sisyphsu.nakedata.node.array.ObjectArrayNode;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Collection's codec
@@ -22,17 +25,22 @@ public class CollectionCodec extends Codec {
         if (coll.isEmpty()) {
             return ObjectArrayNode.EMPTY;
         }
-        // 1. iterate coll, group by datatype
-        // 2. if multi group, return MixArray, else return NormalArray
-        // TODO
-        ArrayNode arrayNode = null;
-
-        for (Object o : coll) {
-            if (arrayNode == null) {
-                // build
+        List<ArrayNode> arrays = new ArrayList<>(4);
+        ArrayNode last = null;
+        for (Object item : coll) {
+            if (last != null && !last.check(item)) {
+                last = null;
             }
+            if (last == null) {
+                last = (ArrayNode) convert(item, ArrayNode.class);
+                arrays.add(last);
+            }
+            // TODO arrayNode.append
         }
-        return null;
+        if (arrays.size() > 1) {
+            return MixArrayNode.valueOf(arrays);
+        }
+        return last;
     }
 
 }

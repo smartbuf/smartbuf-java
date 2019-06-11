@@ -32,13 +32,13 @@ public abstract class Codec<T> {
     /**
      * Factory's doConvert convinence.
      *
-     * @param s    source data
-     * @param clz  target class
-     * @param <S>  Source template type
-     * @param <_T> Target template type
+     * @param s   source data
+     * @param clz target class
+     * @param <S> Source template type
+     * @param <Z> Target template type
      * @return target instance
      */
-    public <S, _T> _T convert(S s, Class<_T> clz) {
+    public <S, Z> Z convert(S s, Class<Z> clz) {
         return factory.doConvert(s, clz);
     }
 
