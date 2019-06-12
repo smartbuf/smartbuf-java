@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.node.array;
 
-import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.type.DataType;
 
@@ -20,20 +19,29 @@ public abstract class ArrayNode extends Node {
     public abstract int size();
 
     /**
+     * Try to append new object into this array.
+     *
+     * @param o new object
+     * @return Whether success or not
+     */
+    public abstract boolean tryAppend(Object o);
+
+    /**
+     * Get Array's element dataType
+     *
+     * @return DataType of element
+     */
+    public DataType elementDataType() {
+        return null;
+    }
+
+    /**
      * Get the real ContextType of items, only exists when dataType == Object
      *
      * @return array's ContextType
      */
-    public abstract ContextType contextType();
-
-    public boolean check(Object o) {
-        // TODO 数组与o是否类型兼容
-        return true;
-    }
-
-    public boolean isFix() {
-        // TODO 数组是否可变
-        return false;
+    public Object elementContextType() {
+        return null;
     }
 
     @Override

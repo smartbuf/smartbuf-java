@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.node.array.primary;
 
-import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.node.array.ArrayNode;
 import com.github.sisyphsu.nakedata.type.DataType;
 
@@ -37,13 +36,18 @@ public class IArrayNode extends ArrayNode {
     }
 
     @Override
-    public DataType dataType() {
-        return null;
+    public boolean tryAppend(Object o) {
+        return false;
     }
 
     @Override
-    public ContextType contextType() {
-        return null;
+    public DataType elementDataType() {
+        return DataType.VARINT;
+    }
+
+    @Override
+    public boolean isNull() {
+        return this == NULL;
     }
 
 }

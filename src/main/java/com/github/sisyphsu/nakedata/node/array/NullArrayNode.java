@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.node.array;
 
-import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
@@ -11,14 +10,6 @@ import com.github.sisyphsu.nakedata.type.DataType;
  */
 public class NullArrayNode extends ArrayNode {
 
-    private static final NullArrayNode[] TABLE = new NullArrayNode[16];
-
-    static {
-        for (int i = 0; i < TABLE.length; i++) {
-            TABLE[i] = new NullArrayNode(i);
-        }
-    }
-
     private int count;
 
     private NullArrayNode(int count) {
@@ -26,9 +17,6 @@ public class NullArrayNode extends ArrayNode {
     }
 
     public static NullArrayNode valueOf(int count) {
-        if (count < TABLE.length) {
-            return TABLE[count];
-        }
         return new NullArrayNode(count);
     }
 
@@ -38,13 +26,17 @@ public class NullArrayNode extends ArrayNode {
     }
 
     @Override
-    public DataType dataType() {
-        return DataType.NULL;
+    public boolean tryAppend(Object o) {
+        if (o == null) {
+            count++;
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public ContextType contextType() {
-        return null;
+    public DataType elementDataType() {
+        return DataType.NULL;
     }
 
 }

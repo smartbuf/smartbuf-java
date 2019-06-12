@@ -4,6 +4,10 @@ import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.node.std.ObjectNode;
 import com.github.sisyphsu.nakedata.type.DataType;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * object[] array, every item's ContextType must be the same
  *
@@ -12,38 +16,58 @@ import com.github.sisyphsu.nakedata.type.DataType;
  */
 public class ObjectArrayNode extends ArrayNode {
 
-    public static final ObjectArrayNode NULL = new ObjectArrayNode(null);
-    public static final ObjectArrayNode EMPTY = new ObjectArrayNode(new ObjectNode[0]);
+    private ContextType type;
+    private List<ObjectNode> items;
 
-    private ObjectNode[] items;
-
-    private ObjectArrayNode(ObjectNode[] items) {
+    private ObjectArrayNode(List<ObjectNode> items) {
+        if (items.size() > 0) {
+            this.type = items.get(0).getContextType();
+        }
+        for (ObjectNode item : items) {
+            if (this.type == null) {
+                this.type = item.getContextType();
+            } else if (this.type != item.getContextType()) {
+                throw new IllegalArgumentException("ContextType uncompatible");
+            }
+        }
         this.items = items;
     }
 
-    public static ObjectArrayNode valueOf(ObjectNode[] items) {
-        if (items == null) {
-            return NULL;
+    public static ObjectArrayNode valueOf(Collection<ObjectNode> items) {
+        List<ObjectNode> arr = new ArrayList<>();
+        if (items != null) {
+            arr.addAll(items);
         }
-        if (items.length == 0) {
-            return EMPTY;
-        }
-        return new ObjectArrayNode(items);
+        return new ObjectArrayNode(arr);
     }
 
     @Override
     public int size() {
-        return items.length;
+        return items == null ? 0 : items.size();
     }
 
     @Override
-    public DataType dataType() {
+    public boolean tryAppend(Object o) {
+        if (!(o instanceof ObjectNode)) {
+            return false;
+        }
+        ObjectNode node = (ObjectNode) o;
+        if (node.getContextType() != this.type) {
+            return false;
+        }
+        this.items.add(node);
+
+        return true;
+    }
+
+    @Override
+    public DataType elementDataType() {
         return DataType.OBJECT;
     }
 
     @Override
-    public ContextType contextType() {
-        return items[0].getContextType();
+    public Object elementContextType() {
+        return type;
     }
 
 }

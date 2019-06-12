@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.node.array;
 
-import com.github.sisyphsu.nakedata.context.model.ContextType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -48,8 +47,8 @@ public class MixArrayNode extends ArrayNode {
     }
 
     @Override
-    public ContextType contextType() {
-        return null;
+    public boolean tryAppend(Object o) {
+        return false;
     }
 
 }

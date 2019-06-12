@@ -1,7 +1,9 @@
 package com.github.sisyphsu.nakedata.node.array;
 
-import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.type.DataType;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * string[] array, can't contains null
@@ -12,11 +14,10 @@ import com.github.sisyphsu.nakedata.type.DataType;
 public class StringArrayNode extends ArrayNode {
 
     public static final StringArrayNode NULL = new StringArrayNode(null);
-    public static final StringArrayNode EMPTY = new StringArrayNode(new String[0]);
 
-    private String[] items;
+    private List<String> items;
 
-    private StringArrayNode(String[] items) {
+    private StringArrayNode(List<String> items) {
         this.items = items;
     }
 
@@ -24,25 +25,26 @@ public class StringArrayNode extends ArrayNode {
         if (items == null) {
             return NULL;
         }
-        if (items.length == 0) {
-            return EMPTY;
-        }
-        return new StringArrayNode(items);
+        return new StringArrayNode(Arrays.asList(items));
     }
 
     @Override
     public int size() {
-        return items.length;
+        return items == null ? 0 : items.size();
     }
 
     @Override
-    public DataType dataType() {
+    public boolean tryAppend(Object o) {
+        if (o instanceof String) {
+            this.items.add((String) o);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public DataType elementDataType() {
         return DataType.STRING;
-    }
-
-    @Override
-    public ContextType contextType() {
-        return null;
     }
 
 }

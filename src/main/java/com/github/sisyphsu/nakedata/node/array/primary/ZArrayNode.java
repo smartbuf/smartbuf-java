@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.node.array.primary;
 
-import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.node.array.ArrayNode;
+import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
  * boolean[] array
@@ -36,8 +36,18 @@ public class ZArrayNode extends ArrayNode {
     }
 
     @Override
-    public ContextType contextType() {
-        return null;
+    public boolean tryAppend(Object o) {
+        return false;
+    }
+
+    @Override
+    public DataType elementDataType() {
+        return DataType.BOOL;
+    }
+
+    @Override
+    public boolean isNull() {
+        return this == NULL;
     }
 
 }
