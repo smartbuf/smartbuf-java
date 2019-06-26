@@ -8,13 +8,19 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Map's Codec
+ * Object's Codec
  *
  * @author sulin
  * @since 2019-06-05 20:29:40
  */
-public class MapCodec extends Codec<Map> {
+public class ObjectCodec extends Codec<Map> {
 
+    /**
+     * encode map to ObjectNode, pojo should be encoded as map first.
+     *
+     * @param map Map
+     * @return ObjectNode
+     */
     public Node toNode(Map map) {
         if (map == null) {
             return ObjectNode.NULL;
@@ -33,6 +39,11 @@ public class MapCodec extends Codec<Map> {
             fields.put(key, value);
         }
         return ObjectNode.valueOf(fields);
+    }
+
+    public Map toMap(ObjectNode node) {
+
+        return null;
     }
 
 }

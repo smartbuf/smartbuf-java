@@ -80,7 +80,7 @@ public class ArrayCodec extends Codec {
         if (coll.isEmpty()) {
             return null;
         }
-        List<ArrayNode> arrays = new ArrayList<>(4);
+        List<ArrayNode> arrays = new ArrayList<>();
         ArrayNode last = null;
         for (Object item : coll) {
             if (last != null && !last.tryAppend(item)) {

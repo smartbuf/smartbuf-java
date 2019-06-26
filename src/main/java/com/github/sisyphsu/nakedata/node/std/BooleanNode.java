@@ -2,26 +2,19 @@ package com.github.sisyphsu.nakedata.node.std;
 
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.type.DataType;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * @author sulin
  * @since 2019-05-08 21:00:07
  */
-@Getter
-@Setter
 public class BooleanNode extends Node {
 
-    public final static BooleanNode NULL = new BooleanNode(false);
+    public final static BooleanNode NULL = new BooleanNode();
 
-    public final static BooleanNode TRUE = new BooleanNode(true);
-    public final static BooleanNode FALSE = new BooleanNode(false);
+    public final static BooleanNode TRUE = new BooleanNode();
+    public final static BooleanNode FALSE = new BooleanNode();
 
-    private final boolean value;
-
-    private BooleanNode(boolean value) {
-        this.value = value;
+    private BooleanNode() {
     }
 
     public static BooleanNode valueOf(boolean b) {
@@ -42,6 +35,13 @@ public class BooleanNode extends Node {
     @Override
     public boolean isNull() {
         return this == NULL;
+    }
+
+    public Boolean value() {
+        if (isNull()) {
+            return null;
+        }
+        return this == TRUE;
     }
 
 }
