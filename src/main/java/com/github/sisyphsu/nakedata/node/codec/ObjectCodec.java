@@ -41,9 +41,17 @@ public class ObjectCodec extends Codec<Map> {
         return ObjectNode.valueOf(fields);
     }
 
+    /**
+     * decode ObjectNode to map, expose fields directly.
+     *
+     * @param node ObjectNode
+     * @return Map
+     */
     public Map toMap(ObjectNode node) {
-
-        return null;
+        if (node == null || node.isNull()) {
+            return null;
+        }
+        return node.getFields();
     }
 
 }

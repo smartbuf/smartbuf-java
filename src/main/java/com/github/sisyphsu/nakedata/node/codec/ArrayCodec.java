@@ -5,10 +5,6 @@ import com.github.sisyphsu.nakedata.node.array.*;
 import com.github.sisyphsu.nakedata.node.array.primary.*;
 import com.google.common.collect.Lists;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 /**
  * Primary array can wrapped as Node directly, for better performance.
  *
@@ -71,31 +67,6 @@ public class ArrayCodec extends Codec {
 
     public ArrayNode toArrayNode(Double d) {
         return DoubleArrayNode.valueOf(Lists.newArrayList(d));
-    }
-
-    public ArrayNode toArrayNode(Collection coll) {
-        if (coll == null) {
-            return null;
-        }
-        if (coll.isEmpty()) {
-            return null;
-        }
-        List<ArrayNode> arrays = new ArrayList<>();
-        ArrayNode last = null;
-        for (Object item : coll) {
-            if (last != null && !last.tryAppend(item)) {
-                last = null;
-            }
-            if (last == null) {
-                last = (ArrayNode) convert(item, ArrayNode.class);
-                last.tryAppend(item);
-                arrays.add(last);
-            }
-        }
-        if (arrays.size() > 1) {
-            return MixArrayNode.valueOf(arrays);
-        }
-        return last;
     }
 
 }
