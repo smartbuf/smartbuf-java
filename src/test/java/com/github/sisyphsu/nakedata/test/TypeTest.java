@@ -31,10 +31,13 @@ public class TypeTest {
 
     @Test
     public void testArray() {
-        Boolean[] arr = new Boolean[0];
-        Object[] os = arr;
+        Boolean[] arr = new Boolean[1];
         System.out.println(arr.getClass());
-        System.out.println(arr.getClass());
+        System.out.println(arr.getClass().getSuperclass());
+
+        boolean[] arr2 = new boolean[1];
+        System.out.println(arr2.getClass());
+        System.out.println(arr2.getClass().getSuperclass());
     }
 
     @Test

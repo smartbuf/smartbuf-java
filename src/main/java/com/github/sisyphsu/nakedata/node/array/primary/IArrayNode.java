@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.node.array.primary;
 
-import com.github.sisyphsu.nakedata.node.array.ArrayNode;
+import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
@@ -9,10 +9,7 @@ import com.github.sisyphsu.nakedata.type.DataType;
  * @author sulin
  * @since 2019-06-05 15:54:27
  */
-public class IArrayNode extends ArrayNode {
-
-    public static final IArrayNode NULL = new IArrayNode(null);
-    public static final IArrayNode EMPTY = new IArrayNode(new int[0]);
+public class IArrayNode extends Node {
 
     private int[] items;
 
@@ -21,33 +18,24 @@ public class IArrayNode extends ArrayNode {
     }
 
     public static IArrayNode valueOf(int[] data) {
-        if (data == null) {
-            return NULL;
-        }
-        if (data.length == 0) {
-            return EMPTY;
+        if (data == null || data.length == 0) {
+            throw new IllegalArgumentException("data can't be null or empty");
         }
         return new IArrayNode(data);
     }
 
-    @Override
-    public int size() {
-        return items.length;
+    public int[] getItems() {
+        return items;
     }
 
     @Override
-    public boolean tryAppend(Object o) {
-        return false;
-    }
-
-    @Override
-    public DataType elementDataType() {
-        return DataType.VARINT;
+    public DataType dataType() {
+        return null;
     }
 
     @Override
     public boolean isNull() {
-        return this == NULL;
+        return false;
     }
 
 }

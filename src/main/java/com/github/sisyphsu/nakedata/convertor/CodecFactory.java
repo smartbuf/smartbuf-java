@@ -90,12 +90,11 @@ public class CodecFactory {
      *
      * @param src      Source data
      * @param tgtClass Target class
-     * @param <S>      GenericType
      * @param <T>      GenericType
      * @return Target instance
      */
     @SuppressWarnings("unchecked")
-    public <S, T> T doConvert(S src, Class<T> tgtClass) {
+    public <T> T doConvert(Object src, Class<T> tgtClass) {
         // TODO src == null
         ConvertPipeline pipeline = pipelineMap.get(src.getClass(), tgtClass);
         if (pipeline == null) {

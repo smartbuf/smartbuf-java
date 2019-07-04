@@ -5,20 +5,20 @@ import com.github.sisyphsu.nakedata.type.DataType;
 import java.util.List;
 
 /**
- * BooleanArrayNode represent an slice of Boolean object
+ * ByteArrayNode represent an slice of Byte object
  *
  * @author sulin
- * @since 2019-06-11 20:32:06
+ * @since 2019-07-03 20:41:07
  */
-public class BooleanArrayNode extends ArrayNode {
+public class ByteArrayNode extends ArrayNode {
 
-    public BooleanArrayNode(List items) {
+    public ByteArrayNode(List items) {
         super(items);
     }
 
     @Override
     public DataType elementType() {
-        return DataType.BOOL;
+        return DataType.BYTE;
     }
 
 }

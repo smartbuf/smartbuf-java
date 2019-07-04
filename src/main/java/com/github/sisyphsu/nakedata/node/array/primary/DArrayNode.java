@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.node.array.primary;
 
-import com.github.sisyphsu.nakedata.node.array.ArrayNode;
+import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
@@ -9,10 +9,7 @@ import com.github.sisyphsu.nakedata.type.DataType;
  * @author sulin
  * @since 2019-06-04 16:51:04
  */
-public class DArrayNode extends ArrayNode {
-
-    public static final DArrayNode NULL = new DArrayNode(null);
-    public static final DArrayNode EMPTY = new DArrayNode(new double[0]);
+public class DArrayNode extends Node {
 
     private double[] items;
 
@@ -20,34 +17,25 @@ public class DArrayNode extends ArrayNode {
         this.items = items;
     }
 
-    public static DArrayNode valueOf(double[] items) {
-        if (items == null) {
-            return NULL;
+    public static DArrayNode valueOf(double[] data) {
+        if (data == null || data.length == 0) {
+            throw new IllegalArgumentException("data can't be null or empty");
         }
-        if (items.length == 0) {
-            return EMPTY;
-        }
-        return new DArrayNode(items);
+        return new DArrayNode(data);
+    }
+
+    public double[] getItems() {
+        return items;
     }
 
     @Override
-    public int size() {
-        return items.length;
-    }
-
-    @Override
-    public DataType elementDataType() {
-        return DataType.DOUBLE;
-    }
-
-    @Override
-    public boolean tryAppend(Object o) {
-        return false;
+    public DataType dataType() {
+        return DataType.ARRAY;
     }
 
     @Override
     public boolean isNull() {
-        return this == NULL;
+        return false;
     }
 
 }

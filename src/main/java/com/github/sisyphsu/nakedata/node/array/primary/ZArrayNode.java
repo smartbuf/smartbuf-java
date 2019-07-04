@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.node.array.primary;
 
-import com.github.sisyphsu.nakedata.node.array.ArrayNode;
+import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.type.DataType;
 
 /**
@@ -9,10 +9,7 @@ import com.github.sisyphsu.nakedata.type.DataType;
  * @author sulin
  * @since 2019-06-04 19:53:42
  */
-public class ZArrayNode extends ArrayNode {
-
-    public static final ZArrayNode NULL = new ZArrayNode(null);
-    public static final ZArrayNode EMPTY = new ZArrayNode(new boolean[0]);
+public class ZArrayNode extends Node {
 
     private boolean[] items;
 
@@ -20,34 +17,25 @@ public class ZArrayNode extends ArrayNode {
         this.items = items;
     }
 
-    public static ZArrayNode valueOf(boolean[] items) {
-        if (items == null) {
-            return NULL;
+    public static ZArrayNode valueOf(boolean[] data) {
+        if (data == null || data.length == 0) {
+            throw new IllegalArgumentException("data can't be null or empty");
         }
-        if (items.length == 0) {
-            return EMPTY;
-        }
-        return new ZArrayNode(items);
+        return new ZArrayNode(data);
+    }
+
+    public boolean[] getItems() {
+        return items;
     }
 
     @Override
-    public int size() {
-        return items.length;
-    }
-
-    @Override
-    public boolean tryAppend(Object o) {
-        return false;
-    }
-
-    @Override
-    public DataType elementDataType() {
+    public DataType dataType() {
         return DataType.BOOL;
     }
 
     @Override
     public boolean isNull() {
-        return this == NULL;
+        return false;
     }
 
 }

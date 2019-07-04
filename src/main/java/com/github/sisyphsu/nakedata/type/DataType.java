@@ -14,15 +14,14 @@ public enum DataType {
     FLOAT(0x02),
     DOUBLE(0x03),
     BYTE(0x04),
-    VARINT(0x05),
-    STRING(0x06),
-    SYMBOL(0x07),
-    ARRAY(0x08),
-    OBJECT(0x09),
-
-    BINARY(0x07),
-    BIGINTEGER(0x10),
-    BIGDECIMAL(0x11);
+    SHORT(0x05),
+    INT(0x06),
+    LONG(0x07),
+    VARINT(0x08),
+    STRING(0x09),
+    SYMBOL(0x10),
+    ARRAY(0x11),
+    OBJECT(0x12);
 
     private final byte code;
 

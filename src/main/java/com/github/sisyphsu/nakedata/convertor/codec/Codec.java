@@ -34,11 +34,10 @@ public abstract class Codec<T> {
      *
      * @param s   source data
      * @param clz target class
-     * @param <S> Source template type
      * @param <Z> Target template type
      * @return target instance
      */
-    public <S, Z> Z convert(S s, Class<Z> clz) {
+    public <Z> Z convert(Object s, Class<Z> clz) {
         return factory.doConvert(s, clz);
     }
 
