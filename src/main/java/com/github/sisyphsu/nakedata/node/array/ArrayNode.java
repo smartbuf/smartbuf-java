@@ -3,7 +3,9 @@ package com.github.sisyphsu.nakedata.node.array;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.type.DataType;
 
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 
 /**
  * Slice represent an subarray of ArrayNode.
@@ -13,63 +15,30 @@ import java.util.List;
  */
 public class ArrayNode extends Node {
 
-    public static final ArrayNode NULL = new ArrayNode(null);
-    public static final ArrayNode EMPTY = new ArrayNode(null);
+    public static final ArrayNode NULL = new ArrayNode(new ArrayList());
+    public static final ArrayNode EMPTY = new ArrayNode(new ArrayList());
 
-    protected List items;
+    protected final List items;
+
+    public ArrayNode(Object[] items) {
+        this.items = new AsList<>(items);
+    }
 
     protected ArrayNode(List items) {
+        if (items == null) {
+            throw new NullPointerException("items can't be null");
+        }
         this.items = items;
     }
 
     @Override
     public boolean isNull() {
-        return false;
+        return this == NULL;
     }
 
     @Override
     public DataType dataType() {
         return DataType.ARRAY;
-    }
-
-    public static ArrayNode valueOf(List data) {
-        if (data == null) {
-            return NilArrayNode.NULL;
-        }
-        if (data.isEmpty()) {
-            return NilArrayNode.EMPTY;
-        }
-        Object item = data.get(0);
-        if (item == null) {
-            return new NullArrayNode(data);
-        } else if (item instanceof Boolean) {
-            return new BooleanArrayNode(data);
-        } else if (item instanceof Byte) {
-            return new ByteArrayNode(data);
-        } else if (item instanceof Short) {
-            return new ShortArrayNode(data);
-        } else if (item instanceof Integer) {
-            return new IntegerArrayNode(data);
-        } else if (item instanceof Long) {
-            return new LongArrayNode(data);
-        } else if (item instanceof Float) {
-            return new FloatArrayNode(data);
-        } else if (item instanceof Double) {
-            return new DoubleArrayNode(data);
-        } else if (item instanceof CharSequence) {
-            return new StringArrayNode(data);
-        } else if (item instanceof Node) {
-            return new ObjectArrayNode(data);
-        } else {
-            throw new IllegalArgumentException("unsupported data: " + item);
-        }
-    }
-
-    public static MixArrayNode mixOf(List<ArrayNode> list) {
-        if (list == null || list.size() < 2) {
-            throw new IllegalArgumentException("need multi ArrayNode to build MixArrayNode");
-        }
-        return new MixArrayNode(list);
     }
 
     /**
@@ -90,23 +59,105 @@ public class ArrayNode extends Node {
         return null;
     }
 
+    public List getItems() {
+        return items;
+    }
+
     /**
-     * Inner ArrayNode, used for specified usecase
+     * Inner ArrayList, don't copy Object[]
+     *
+     * @param <E>
      */
-    private static class NilArrayNode extends ArrayNode {
+    public class AsList<E> extends AbstractList<E> implements RandomAccess {
 
-        public static final ArrayNode NULL = new NilArrayNode();
-        public static final ArrayNode EMPTY = new NilArrayNode();
+        private final E[] a;
 
-        private NilArrayNode() {
-            super(null);
+        public AsList(E[] array) {
+            a = Objects.requireNonNull(array);
         }
 
         @Override
         public int size() {
-            return 0;
+            return a.length;
         }
 
+        @Override
+        public Object[] toArray() {
+            return a;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <T> T[] toArray(T[] a) {
+            int size = size();
+            if (a.length < size) {
+                return Arrays.copyOf(this.a, size, (Class<? extends T[]>) a.getClass());
+            }
+            System.arraycopy(this.a, 0, a, 0, size);
+            if (a.length > size) {
+                a[size] = null;
+            }
+            return a;
+        }
+
+        @Override
+        public E get(int index) {
+            return a[index];
+        }
+
+        @Override
+        public E set(int index, E element) {
+            E oldValue = a[index];
+            a[index] = element;
+            return oldValue;
+        }
+
+        @Override
+        public int indexOf(Object o) {
+            E[] a = this.a;
+            if (o == null) {
+                for (int i = 0; i < a.length; i++)
+                    if (a[i] == null)
+                        return i;
+            } else {
+                for (int i = 0; i < a.length; i++)
+                    if (o.equals(a[i]))
+                        return i;
+            }
+            return -1;
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return indexOf(o) != -1;
+        }
+
+        @Override
+        public Spliterator<E> spliterator() {
+            return Spliterators.spliterator(a, Spliterator.ORDERED);
+        }
+
+        @Override
+        public void forEach(Consumer<? super E> action) {
+            Objects.requireNonNull(action);
+            for (E e : a) {
+                action.accept(e);
+            }
+        }
+
+        @Override
+        public void replaceAll(UnaryOperator<E> operator) {
+            Objects.requireNonNull(operator);
+            E[] a = this.a;
+            for (int i = 0; i < a.length; i++) {
+                a[i] = operator.apply(a[i]);
+            }
+        }
+
+        @Override
+        public void sort(Comparator<? super E> c) {
+            Arrays.sort(a, c);
+        }
     }
 
 }

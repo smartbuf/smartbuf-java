@@ -3,23 +3,90 @@ package com.github.sisyphsu.nakedata.node.codec;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.array.*;
+import com.github.sisyphsu.nakedata.node.array.primary.*;
+import com.github.sisyphsu.nakedata.node.std.StringNode;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
- * Collection's codec
+ * Array, Collection's codec implemention.
+ * <p>
+ * Primary array can wrapped as specified Node directly, for better performance.
  *
  * @author sulin
- * @since 2019-06-05 20:14:25
+ * @since 2019-06-05 19:53:57
  */
-public class CollectionCodec extends Codec {
+public class ArrayCodec extends Codec {
+
+    public Node toNode(boolean[] arr) {
+        return ZArrayNode.valueOf(arr);
+    }
+
+    public Node toNode(byte[] arr) {
+        return BArrayNode.valueOf(arr);
+    }
+
+    public Node toNode(int[] arr) {
+        return IArrayNode.valueOf(arr);
+    }
+
+    public Node toNode(long[] arr) {
+        return LArrayNode.valueOf(arr);
+    }
+
+    public Node toNode(short[] arr) {
+        return SArrayNode.valueOf(arr);
+    }
+
+    public Node toNode(float[] arr) {
+        return FArrayNode.valueOf(arr);
+    }
+
+    public Node toNode(double[] arr) {
+        return DArrayNode.valueOf(arr);
+    }
+
+    public Node toNode(char[] arr) {
+        return StringNode.valueOf(String.valueOf(arr));
+    }
+
+    public boolean[] toArray(ZArrayNode node) {
+        return node.getItems();
+    }
+
+    public byte[] toArray(BArrayNode node) {
+        return node.getItems();
+    }
+
+    public short[] toArray(SArrayNode node) {
+        return node.getItems();
+    }
+
+    public int[] toArray(IArrayNode node) {
+        return node.getItems();
+    }
+
+    public long[] toArray(LArrayNode node) {
+        return node.getItems();
+    }
+
+    public float[] toArray(FArrayNode node) {
+        return node.getItems();
+    }
+
+    public double[] toArray(DArrayNode node) {
+        return node.getItems();
+    }
+
+    public char[] toArray(StringNode node) {
+        return node.getValue().toCharArray();
+    }
 
     /**
-     * encode collection to ArrayNode
+     * Encode List to ArrayNode, all Object[] and Collection should be encode through List.
      *
-     * @param list Collection
+     * @param list List
      * @return ArrayNode
      */
     public Node toNode(List list) {
@@ -92,9 +159,28 @@ public class CollectionCodec extends Codec {
         return new MixArrayNode(multiSliceResult);
     }
 
-    public Collection toCollection(ArrayNode node) {
-        // 应该直接转换为Array, 然后再按需转换为Collection的子类
-        return null;
+    /**
+     * Convert ArrayNode to List, in most case, toArray will not copy memory.
+     *
+     * @param node ArrayNode
+     * @return List
+     */
+    @SuppressWarnings("unchecked")
+    public List toList(ArrayNode node) {
+        if (node == ArrayNode.NULL) {
+            return null;
+        }
+        if (node == ArrayNode.EMPTY) {
+            return new ArrayList(0);
+        }
+        if (node instanceof MixArrayNode) {
+            List result = new ArrayList();
+            for (Object item : node.getItems()) {
+                result.addAll(((ArrayNode) item).getItems());
+            }
+            return result;
+        }
+        return node.getItems();
     }
 
 }

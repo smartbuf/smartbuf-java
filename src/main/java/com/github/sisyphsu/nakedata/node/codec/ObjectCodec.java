@@ -4,6 +4,7 @@ import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.std.ObjectNode;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -24,6 +25,9 @@ public class ObjectCodec extends Codec<Map> {
     public Node toNode(Map map) {
         if (map == null) {
             return ObjectNode.NULL;
+        }
+        if (map.isEmpty()) {
+            return ObjectNode.EMPTY;
         }
         TreeMap<String, Node> fields = new TreeMap<>();
         for (Object item : map.entrySet()) {
@@ -48,8 +52,11 @@ public class ObjectCodec extends Codec<Map> {
      * @return Map
      */
     public Map toMap(ObjectNode node) {
-        if (node == null || node.isNull()) {
+        if (node == ObjectNode.NULL) {
             return null;
+        }
+        if (node == ObjectNode.EMPTY) {
+            return new HashMap();
         }
         return node.getFields();
     }
