@@ -17,7 +17,6 @@ public class ObjectArrayNode extends ArrayNode {
 
     public ObjectArrayNode(List items) {
         super(items);
-        this.items = items;
         this.elType = ((Node) items.get(0)).dataType();
     }
 

@@ -72,7 +72,7 @@ public class OutputContext {
             case NULL:
             case BOOL:
             case STRING:
-            case BINARY:
+//            case BINARY:
             case VARINT:
                 break;
             default:

@@ -160,27 +160,27 @@ public class ArrayCodec extends Codec {
     }
 
     /**
-     * Convert ArrayNode to List, in most case, toArray will not copy memory.
+     * Convert ArrayNode to Array, in most case, toArray will not copy memory.
      *
      * @param node ArrayNode
-     * @return List
+     * @return Object[]
      */
     @SuppressWarnings("unchecked")
-    public List toList(ArrayNode node) {
+    public Object[] toList(ArrayNode node) {
         if (node == ArrayNode.NULL) {
             return null;
         }
         if (node == ArrayNode.EMPTY) {
-            return new ArrayList(0);
+            return new Object[0];
         }
         if (node instanceof MixArrayNode) {
             List result = new ArrayList();
             for (Object item : node.getItems()) {
                 result.addAll(((ArrayNode) item).getItems());
             }
-            return result;
+            return result.toArray();
         }
-        return node.getItems();
+        return node.getItems().toArray();
     }
 
 }

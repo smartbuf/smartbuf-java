@@ -10,4 +10,5 @@ import com.github.sisyphsu.nakedata.convertor.codec.Codec;
  */
 public class BooleanArrayCodec extends Codec<boolean[]> {
 
+
 }

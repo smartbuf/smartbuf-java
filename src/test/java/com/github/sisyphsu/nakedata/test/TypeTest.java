@@ -2,6 +2,8 @@ package com.github.sisyphsu.nakedata.test;
 
 import org.junit.Test;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +43,17 @@ public class TypeTest {
     }
 
     @Test
+    public void testObjArray() {
+        Object[] arr = new Object[3];
+        arr[0] = null;
+        arr[1] = true;
+        arr[2] = false;
+        Boolean[] arr2 = (Boolean[]) arr;
+
+        System.out.println(arr2);
+    }
+
+    @Test
     public void testTypeTree() {
         List<Integer> list = new ArrayList<>();
         Class listType = list.getClass();
@@ -58,6 +71,23 @@ public class TypeTest {
         for (Class clz = Gender.class; clz != null; clz = clz.getSuperclass()) {
             System.out.println(clz.getGenericSuperclass());
         }
+    }
+
+    @Test
+    public void testType2() {
+        Class t1 = boolean[].class;
+        System.out.println(t1);
+        System.out.println(t1.getComponentType());
+        Object arr1 = Array.newInstance(t1.getComponentType(), 2);
+        Array.set(arr1, 0, false);
+        System.out.println(arr1);
+
+        Class t2 = Boolean[].class;
+        System.out.println(t2);
+        System.out.println(t2.getComponentType());
+        Object arr2 = Array.newInstance(t2.getComponentType(), 2);
+        Array.set(arr2, 0, null);
+        System.out.println(arr2);
     }
 
     private void printInterfaces(Class clz) {

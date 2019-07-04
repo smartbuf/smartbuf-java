@@ -68,9 +68,9 @@ public class DataSerializer {
 //                }
 //                writer.writeVarInt(node.g);
                 break;
-            case BINARY:
-//                writer.writeBinary(node.binaryValue());
-                break;
+//            case BINARY:
+////                writer.writeBinary(node.binaryValue());
+//                break;
             case STRING:
 //                writer.writeString(node.textValue());
                 break;
