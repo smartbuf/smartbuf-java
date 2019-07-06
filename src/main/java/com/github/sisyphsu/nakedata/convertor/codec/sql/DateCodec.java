@@ -5,9 +5,24 @@ import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 import java.sql.Date;
 
 /**
+ * Date's codec
+ *
  * @author sulin
  * @since 2019-05-13 18:06:50
  */
-public class DateCodec extends Codec<Date> {
+public class DateCodec extends Codec {
+
+    /**
+     * Convert Long to Date
+     *
+     * @param l Long
+     * @return Date
+     */
+    public Date toDate(Long l) {
+        if (l == null)
+            return null;
+
+        return new Date(l);
+    }
 
 }
