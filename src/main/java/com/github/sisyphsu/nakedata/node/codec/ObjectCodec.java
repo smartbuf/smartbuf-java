@@ -14,7 +14,7 @@ import java.util.TreeMap;
  * @author sulin
  * @since 2019-06-05 20:29:40
  */
-public class ObjectCodec extends Codec<Map> {
+public class ObjectCodec extends Codec {
 
     /**
      * encode map to ObjectNode, pojo should be encoded as map first.

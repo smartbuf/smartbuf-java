@@ -19,8 +19,8 @@ import java.lang.reflect.Type;
 public class ConvertMethod {
 
     private Codec codec;
-    private Class srcClass;
-    private Class tgtClass;
+    private Type srcType;
+    private Type tgtType;
     private boolean hasTypeArg;
     private MethodAccessor function;
 
@@ -48,8 +48,8 @@ public class ConvertMethod {
         }
         ConvertMethod result = new ConvertMethod();
         result.codec = codec;
-        result.srcClass = argTypes[0];
-        result.tgtClass = rtType;
+        result.srcType = argTypes[0];
+        result.tgtType = rtType;
         result.hasTypeArg = argTypes.length == 2;
         result.function = ReflectionFactory.getReflectionFactory().getMethodAccessor(method);
         return result;
@@ -62,9 +62,9 @@ public class ConvertMethod {
      * @param tgtType Target class
      * @return target instance
      */
-    public Object convert(Object data, Class tgtType) {
-        if (data != null && data.getClass() != this.srcClass) {
-            throw new IllegalArgumentException("data type unmatched: " + this.srcClass + ", " + data.getClass());
+    public Object convert(Object data, Type tgtType) {
+        if (data != null && data.getClass() != this.srcType) {
+            throw new IllegalArgumentException("data type unmatched: " + this.srcType + ", " + data.getClass());
         }
         try {
             if (hasTypeArg) {
@@ -77,12 +77,12 @@ public class ConvertMethod {
         }
     }
 
-    public Class getSrcClass() {
-        return srcClass;
+    public Type getSrcType() {
+        return srcType;
     }
 
-    public Class getTgtClass() {
-        return tgtClass;
+    public Type getTgtType() {
+        return tgtType;
     }
 
 }

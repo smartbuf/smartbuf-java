@@ -8,13 +8,12 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * 1. Convert everything to Object[] if can
- * 2. Convert Object[] to String
+ * Convert everything to Object[] if could
  *
  * @author sulin
  * @since 2019-05-13 18:53:04
  */
-public class ObjectArrayCodec extends Codec<Object[]> {
+public class ObjectArrayCodec extends Codec {
 
     /**
      * Convert Object[] to T[] based on specified T Type.
@@ -28,14 +27,7 @@ public class ObjectArrayCodec extends Codec<Object[]> {
         if (type == null) {
             return arr; // dont convert
         }
-        if (!(type instanceof Class)) {
-            throw new IllegalArgumentException("need T[].class to convert array: " + type);
-        }
-        Class clz = (Class) type;
-        if (!clz.isArray()) {
-            throw new IllegalArgumentException("need T[].class to convert array: " + type);
-        }
-        if (arr.getClass() == clz) {
+        if (arr.getClass() == type) {
             return arr; // same array type
         }
         return this.toArray(Arrays.asList(arr), type);
@@ -49,17 +41,12 @@ public class ObjectArrayCodec extends Codec<Object[]> {
      * @return Target Array
      */
     public Object[] toArray(Collection list, Type type) {
+        if (list == null)
+            return null;
         if (type == null) {
             return list.toArray();
         }
-        if (!(type instanceof Class)) {
-            throw new IllegalArgumentException("need T[].class to convert: " + type);
-        }
-        Class clz = (Class) type;
-        if (!clz.isArray()) {
-            throw new IllegalArgumentException("need T[].class to convert: " + type);
-        }
-        Class<?> itemType = clz.getComponentType();
+        Class<?> itemType = forceParseArrayComponentType(type);
         Object[] result = (Object[]) Array.newInstance(itemType, list.size());
         int i = 0;
         for (Object item : list) {
@@ -71,11 +58,6 @@ public class ObjectArrayCodec extends Codec<Object[]> {
             i++;
         }
         return result;
-    }
-
-    public String toString(Object[] arr) {
-        // TODO, toString, fromString?
-        return "";
     }
 
 }

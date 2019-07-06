@@ -136,7 +136,7 @@ public class ArrayCodec extends Codec {
             } else {
                 List<Node> nodes = new ArrayList<>(subList.size());
                 for (Object o : subList) {
-                    nodes.add((Node) convert(o, Node.class));
+                    nodes.add(convert(o, Node.class));
                 }
                 slice = new ObjectArrayNode(nodes);
             }

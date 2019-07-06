@@ -3,9 +3,10 @@ package com.github.sisyphsu.nakedata.test;
 import org.junit.Test;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.TypeVariable;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author sulin
@@ -44,23 +45,27 @@ public class TypeTest {
 
     @Test
     public void testObjArray() {
-        Object[] arr = new Object[3];
-        arr[0] = null;
-        arr[1] = true;
-        arr[2] = false;
-        Boolean[] arr2 = (Boolean[]) arr;
-
-        System.out.println(arr2);
+        AtomicReference<Long> ref = new AtomicReference<>();
+        Class c = ref.getClass();
+        System.out.println(c);
+        System.out.println(c.toGenericString());
+        for (TypeVariable typeParameter : c.getTypeParameters()) {
+            System.out.println(typeParameter);
+        }
+        Type t = ref.getClass().getGenericSuperclass();
+        System.out.println(t instanceof ParameterizedType);
     }
 
     @Test
     public void testTypeTree() {
-        List<Integer> list = new ArrayList<>();
-        Class listType = list.getClass();
+        AtomicReference<Long> data = new AtomicReference<>();
+//        List<Integer> data = new ArrayList<>();
+        Class listType = data.getClass();
+
         for (Class clz = listType; clz != null; clz = clz.getSuperclass()) {
             System.out.println(clz.getGenericSuperclass());
+            System.out.println(clz.getGenericSuperclass() instanceof ParameterizedType);
         }
-        printInterfaces(listType);
     }
 
     @Test
