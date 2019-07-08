@@ -6,5 +6,5 @@ import com.github.sisyphsu.nakedata.convertor.codec.Codec;
  * @author sulin
  * @since 2019-05-13 18:26:27
  */
-public class StringBufferCodec extends Codec<StringBuffer> {
+public class StringBufferCodec extends Codec {
 }

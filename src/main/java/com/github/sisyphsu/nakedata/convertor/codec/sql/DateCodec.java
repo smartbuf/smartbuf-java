@@ -25,4 +25,14 @@ public class DateCodec extends Codec {
         return new Date(l);
     }
 
+    /**
+     * Convert Date into java.util.Date, to use its codec
+     *
+     * @param date Date
+     * @return java.util.Date
+     */
+    public Long toLong(Date date) {
+        return date == null ? null : date.getTime();
+    }
+
 }

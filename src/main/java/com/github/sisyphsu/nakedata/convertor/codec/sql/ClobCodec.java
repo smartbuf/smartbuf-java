@@ -3,6 +3,7 @@ package com.github.sisyphsu.nakedata.convertor.codec.sql;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.sql.Clob;
+import java.sql.SQLException;
 
 /**
  * Clob's codec
@@ -12,10 +13,20 @@ import java.sql.Clob;
  */
 public class ClobCodec extends Codec {
 
+    /**
+     * Convert Clob to String
+     *
+     * @param c Clob
+     * @return String
+     */
     public String toString(Clob c) {
         if (c == null)
             return null;
-        return c.toString(); // TODO
+        try {
+            return convert(c.getCharacterStream(), String.class);
+        } catch (SQLException e) {
+            throw new RuntimeException("Convert Clob to String failed", e);
+        }
     }
 
 }
