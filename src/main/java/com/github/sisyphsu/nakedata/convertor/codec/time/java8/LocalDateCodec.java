@@ -3,21 +3,34 @@ package com.github.sisyphsu.nakedata.convertor.codec.time.java8;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
- * {@link LocalDate}与{@link Long}的数据转换适配器
+ * LocalDate's codec
  *
  * @author sulin
  * @since 2019-05-10 10:44:06
  */
-public class LocalDateCodec extends Codec<LocalDate> {
+public class LocalDateCodec extends Codec {
 
-    protected Long toTargetNotNull(LocalDate localDate) {
-        return localDate.toEpochDay();
+    /**
+     * Convert LocalDateTime to LocalDate
+     *
+     * @param ldt LocalDateTime
+     * @return LocalDate
+     */
+    public LocalDate toLocalDate(LocalDateTime ldt) {
+        return ldt == null ? null : ldt.toLocalDate();
     }
 
-    protected LocalDate toSourceNotNull(Long aLong) {
-        return LocalDate.ofEpochDay(aLong);
+    /**
+     * Convert LocalDate to LocalDateTime
+     *
+     * @param localDate LocalDate
+     * @return LocalDateTime
+     */
+    public LocalDateTime toLong(LocalDate localDate) {
+        return localDate == null ? null : localDate.atStartOfDay();
     }
 
 }

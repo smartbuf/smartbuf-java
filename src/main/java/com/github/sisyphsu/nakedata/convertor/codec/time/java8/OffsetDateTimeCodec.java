@@ -7,18 +7,18 @@ import java.time.OffsetDateTime;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
 /**
- * {@link OffsetDateTime}与{@link String}的数据转换适配器
+ * OffsetDateTime's codec
  *
  * @author sulin
  * @since 2019-05-10 10:45:30
  */
-public class OffsetDateTimeCodec extends Codec<OffsetDateTime> {
+public class OffsetDateTimeCodec extends Codec {
 
-    protected String toTargetNotNull(OffsetDateTime offsetDateTime) {
+    public String toString(OffsetDateTime offsetDateTime) {
         return offsetDateTime.format(ISO_LOCAL_DATE);
     }
 
-    protected OffsetDateTime toSourceNotNull(String s) {
+    public OffsetDateTime toOffsetDateTime(String s) {
         return OffsetDateTime.parse(s, ISO_LOCAL_DATE);
     }
 

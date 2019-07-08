@@ -2,24 +2,36 @@ package com.github.sisyphsu.nakedata.convertor.codec.time.java8;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 
 /**
- * {@link LocalDateTime}与{@link Long}的类型转换适配器
+ * LocalDateTime's codec
  *
  * @author sulin
  * @since 2019-05-10 10:43:53
  */
-public class LocalDateTimeCodec extends Codec<LocalDateTime> {
+public class LocalDateTimeCodec extends Codec {
 
-    protected Long toTargetNotNull(LocalDateTime localDateTime) {
-        return localDateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
+    private static final ZoneOffset DEFAULT = OffsetDateTime.now().getOffset();
+
+    /**
+     * Convert ZonedDateTime to LocalDateTime
+     *
+     * @param zdt ZonedDateTime
+     * @return LocalDateTime
+     */
+    public LocalDateTime toLocalDateTime(OffsetDateTime zdt) {
+        return zdt == null ? null : zdt.toLocalDateTime();
     }
 
-    protected LocalDateTime toSourceNotNull(Long aLong) {
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(aLong), ZoneOffset.UTC);
+    /**
+     * Convert LocalDateTime to ZonedDateTime
+     *
+     * @param ldt LocalDateTime
+     * @return ZonedDateTime
+     */
+    public OffsetDateTime toZonedDateTime(LocalDateTime ldt) {
+        return ldt == null ? null : ldt.atOffset(DEFAULT);
     }
 
 }

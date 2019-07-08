@@ -5,19 +5,31 @@ import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 import java.time.Instant;
 
 /**
- * {@link Instant}与{@link Long}的数据转换适配器
+ * Instant's codec
  *
  * @author sulin
  * @since 2019-05-10 10:46:44
  */
-public class InstantCodec extends Codec<Instant> {
+public class InstantCodec extends Codec {
 
-    protected Long toTargetNotNull(Instant instant) {
-        return instant.toEpochMilli();
+    /**
+     * Convert Instant to Long
+     *
+     * @param instant Instant
+     * @return Long
+     */
+    public Long toLong(Instant instant) {
+        return instant == null ? null : instant.toEpochMilli();
     }
 
-    protected Instant toSourceNotNull(Long aLong) {
-        return Instant.ofEpochMilli(aLong);
+    /**
+     * Convert Long to Instant
+     *
+     * @param l Long
+     * @return Instant
+     */
+    public Instant toInstant(Long l) {
+        return l == null ? null : Instant.ofEpochMilli(l);
     }
 
 }
