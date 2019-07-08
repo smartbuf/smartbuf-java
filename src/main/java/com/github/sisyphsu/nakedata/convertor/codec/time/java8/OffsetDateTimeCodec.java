@@ -3,8 +3,7 @@ package com.github.sisyphsu.nakedata.convertor.codec.time.java8;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.time.OffsetDateTime;
-
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
+import java.time.format.DateTimeFormatter;
 
 /**
  * OffsetDateTime's codec
@@ -14,12 +13,26 @@ import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
  */
 public class OffsetDateTimeCodec extends Codec {
 
-    public String toString(OffsetDateTime offsetDateTime) {
-        return offsetDateTime.format(ISO_LOCAL_DATE);
+    private static DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
+
+    /**
+     * Convert String to OffsetDateTime
+     *
+     * @param s String
+     * @return OffsetDateTime
+     */
+    public OffsetDateTime toOffsetDateTime(String s) {
+        return s == null ? null : OffsetDateTime.parse(s, FORMATTER);
     }
 
-    public OffsetDateTime toOffsetDateTime(String s) {
-        return OffsetDateTime.parse(s, ISO_LOCAL_DATE);
+    /**
+     * Convert OffsetDateTime to String
+     *
+     * @param odt OffsetDateTime
+     * @return String
+     */
+    public String toString(OffsetDateTime odt) {
+        return odt == null ? null : odt.format(FORMATTER);
     }
 
 }
