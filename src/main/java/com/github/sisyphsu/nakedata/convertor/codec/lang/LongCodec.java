@@ -23,6 +23,16 @@ public class LongCodec extends Codec {
     }
 
     /**
+     * Convert Long to String
+     *
+     * @param l Long
+     * @return String
+     */
+    public String toString(Long l) {
+        return l == null ? null : l.toString();
+    }
+
+    /**
      * Convert Long[] to long[]
      *
      * @param arr long[]

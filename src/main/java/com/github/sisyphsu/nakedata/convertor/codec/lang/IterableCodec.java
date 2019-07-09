@@ -15,13 +15,14 @@ import java.util.List;
 public class IterableCodec extends Codec {
 
     /**
-     * Convert List to Iterable, User List as Default
+     * Convert List to Iterable
+     * <p>
+     * NOTICE: User List as Default, List's codec should support GenericType
      *
      * @param l List
      * @return Iterable
      */
-    public Iterable toIterable(List l, Type type) {
-        // List<R> to List<T>
+    public Iterable toIterable(List l) {
         return l;
     }
 
@@ -31,10 +32,21 @@ public class IterableCodec extends Codec {
      * @param it Iterable
      * @return Iterator
      */
-    public Iterator toIterator(Iterable it) {
+    public Iterator toIterator(Iterable it, Type type) {
         if (it == null)
             return null;
-        return it.iterator();
+        Iterator iterator = it.iterator();
+        Type genericType = getGenericType(type);
+        return new Iterator() {
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
+
+            public Object next() {
+                Object obj = iterator.next();
+                return genericType == null ? obj : convert(obj, genericType);
+            }
+        };
     }
 
 }

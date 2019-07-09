@@ -14,6 +14,18 @@ import java.util.Map;
 public class ObjectCodec extends Codec {
 
     public Object toObject(Map map, Type type) {
+        if (map == null)
+            return null;
+        if (type == Object.class)
+            return map;
+        Class clz = (Class) type;
+        try {
+            Object result = clz.newInstance();
+
+            return result;
+        } catch (Exception e) {
+
+        }
         return null;
     }
 

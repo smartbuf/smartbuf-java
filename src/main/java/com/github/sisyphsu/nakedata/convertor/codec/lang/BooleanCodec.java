@@ -15,11 +15,21 @@ public class BooleanCodec extends Codec {
      * 0 => false
      * !0 => true
      *
-     * @param i Integer
+     * @param l Integer
      * @return Boolean
      */
-    public Boolean toBoolean(Integer i) {
-        return i == null ? null : i != 0;
+    public Boolean toBoolean(Long l) {
+        return l == null ? null : l != 0;
+    }
+
+    /**
+     * Convert Boolean to Long
+     *
+     * @param b Boolean
+     * @return Long
+     */
+    public Long toLong(Boolean b) {
+        return b == null ? null : (b ? 1L : 0L);
     }
 
     /**
@@ -32,6 +42,16 @@ public class BooleanCodec extends Codec {
         if (s == null)
             return null;
         return Boolean.valueOf(s);
+    }
+
+    /**
+     * Convert Boolean to String
+     *
+     * @param b Boolean
+     * @return String
+     */
+    public String toString(Boolean b) {
+        return b == null ? null : b.toString();
     }
 
     /**

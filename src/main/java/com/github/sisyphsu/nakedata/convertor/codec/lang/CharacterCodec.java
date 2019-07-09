@@ -25,6 +25,36 @@ public class CharacterCodec extends Codec {
     }
 
     /**
+     * Convert Character to String
+     *
+     * @param c Character
+     * @return String
+     */
+    public String toString(Character c) {
+        return c == null ? null : c.toString();
+    }
+
+    /**
+     * Convert Integer to Character
+     *
+     * @param i Integer
+     * @return Character
+     */
+    public Character toCharacter(Integer i) {
+        return i == null ? null : (char) i.intValue();
+    }
+
+    /**
+     * Convert Character to Integer
+     *
+     * @param c Character
+     * @return Integer
+     */
+    public Integer toInteger(Character c) {
+        return c == null ? null : (int) c;
+    }
+
+    /**
      * Convert char[] to Character[]
      *
      * @param arr char[]
@@ -57,4 +87,5 @@ public class CharacterCodec extends Codec {
         }
         return result;
     }
+
 }

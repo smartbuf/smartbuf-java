@@ -21,15 +21,13 @@ public class ByteCodec extends Codec {
     }
 
     /**
-     * Convert Boolean to Byte
+     * Convert Byte to Long
      *
-     * @param b Boolean
-     * @return Byte
+     * @param b Byte
+     * @return Long
      */
-    public Byte toByte(Boolean b) {
-        if (b == null)
-            return null;
-        return (byte) (b ? 0x00 : 0x01);
+    public Long toLong(Byte b) {
+        return b == null ? null : b.longValue();
     }
 
     /**
