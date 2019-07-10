@@ -8,5 +8,9 @@ import java.util.Map;
  * @author sulin
  * @since 2019-05-13 18:37:34
  */
-public class MapEntryCodec extends Codec<Map.Entry> {
+public class MapEntryCodec extends Codec {
+
+    public Map.Entry toMapEntry() {
+        return null;
+    }
 }

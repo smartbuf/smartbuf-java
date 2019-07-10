@@ -6,5 +6,10 @@ import com.github.sisyphsu.nakedata.convertor.codec.Codec;
  * @author sulin
  * @since 2019-05-13 20:44:16
  */
-public class IllegalMonitorStateExceptionCodec extends Codec<IllegalMonitorStateException> {
+public class IllegalMonitorStateExceptionCodec extends Codec {
+
+    public IllegalMonitorStateException toIllegalMonitorStateException() {
+        return null;
+    }
+
 }

@@ -8,5 +8,6 @@ import java.util.AbstractCollection;
  * @author sulin
  * @since 2019-05-13 18:40:35
  */
-public class AbstractCollectionCodec extends Codec<AbstractCollection> {
+public class AbstractCollectionCodec extends Codec {
+
 }

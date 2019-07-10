@@ -8,5 +8,9 @@ import java.util.IdentityHashMap;
  * @author sulin
  * @since 2019-05-13 18:36:58
  */
-public class IdentityHashMapCodec extends Codec<IdentityHashMap> {
+public class IdentityHashMapCodec extends Codec {
+
+    public IdentityHashMap toIdentityHashMap() {
+        return null;
+    }
 }

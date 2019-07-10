@@ -8,5 +8,9 @@ import java.util.concurrent.LinkedTransferQueue;
  * @author sulin
  * @since 2019-05-13 20:34:44
  */
-public class LinkedTransferQueueCodec extends Codec<LinkedTransferQueue> {
+public class LinkedTransferQueueCodec extends Codec {
+
+    public LinkedTransferQueue toLinkedTransferQueue() {
+        return null;
+    }
 }

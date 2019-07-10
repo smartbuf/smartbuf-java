@@ -8,5 +8,9 @@ import java.util.WeakHashMap;
  * @author sulin
  * @since 2019-05-13 18:32:14
  */
-public class WeakHashMapCodec extends Codec<WeakHashMap> {
+public class WeakHashMapCodec extends Codec {
+
+    public WeakHashMap toWeakHashMap() {
+        return null;
+    }
 }

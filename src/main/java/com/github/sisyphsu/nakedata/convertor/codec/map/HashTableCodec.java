@@ -8,5 +8,9 @@ import java.util.Hashtable;
  * @author sulin
  * @since 2019-05-13 18:30:59
  */
-public class HashTableCodec extends Codec<Hashtable> {
+public class HashTableCodec extends Codec {
+
+    public Hashtable toHashtable() {
+        return null;
+    }
 }

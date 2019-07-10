@@ -8,5 +8,9 @@ import java.util.HashSet;
  * @author sulin
  * @since 2019-05-13 18:43:30
  */
-public class HashSetCodec extends Codec<HashSet> {
+public class HashSetCodec extends Codec {
+
+    public HashSet toHashSet() {
+        return null;
+    }
 }

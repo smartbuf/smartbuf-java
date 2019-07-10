@@ -19,9 +19,7 @@ public class ByteBufferCodec extends Codec {
      * @return ByteBuffer
      */
     public ByteBuffer toByteBuffer(byte[] bs) {
-        if (bs == null)
-            return null;
-        return ByteBuffer.wrap(bs);
+        return bs == null ? null : ByteBuffer.wrap(bs);
     }
 
     /**
@@ -31,9 +29,7 @@ public class ByteBufferCodec extends Codec {
      * @return byte[]
      */
     public byte[] toByteArray(ByteBuffer buf) {
-        if (buf == null)
-            return null;
-        return buf.array();
+        return buf == null ? null : buf.array();
     }
 
 }

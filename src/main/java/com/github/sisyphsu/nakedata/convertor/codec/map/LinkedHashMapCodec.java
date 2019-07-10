@@ -8,5 +8,9 @@ import java.util.LinkedHashMap;
  * @author sulin
  * @since 2019-05-13 18:31:52
  */
-public class LinkedHashMapCodec extends Codec<LinkedHashMap> {
+public class LinkedHashMapCodec extends Codec {
+
+    public LinkedHashMap toLinkedHashMap() {
+        return null;
+    }
 }

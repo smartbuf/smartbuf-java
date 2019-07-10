@@ -8,5 +8,9 @@ import java.util.TreeMap;
  * @author sulin
  * @since 2019-05-13 18:31:11
  */
-public class TreeMapCodec extends Codec<TreeMap> {
+public class TreeMapCodec extends Codec {
+
+    public TreeMap toTreeMap() {
+        return null;
+    }
 }

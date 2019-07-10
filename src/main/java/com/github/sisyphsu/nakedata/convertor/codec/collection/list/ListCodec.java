@@ -8,5 +8,9 @@ import java.util.List;
  * @author sulin
  * @since 2019-05-13 18:40:44
  */
-public class ListCodec extends Codec<List> {
+public class ListCodec extends Codec {
+
+    public List toList() {
+        return null;
+    }
 }

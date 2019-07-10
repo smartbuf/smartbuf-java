@@ -8,5 +8,10 @@ import java.util.LinkedList;
  * @author sulin
  * @since 2019-05-13 18:41:18
  */
-public class LinkedListCodec extends Codec<LinkedList> {
+public class LinkedListCodec extends Codec {
+
+    public LinkedList toLinkedList() {
+        return null;
+    }
+
 }

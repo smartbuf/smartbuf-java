@@ -8,5 +8,10 @@ import java.util.ArrayList;
  * @author sulin
  * @since 2019-05-13 18:40:54
  */
-public class ArrayListCodec extends Codec<ArrayList> {
+public class ArrayListCodec extends Codec {
+
+    public ArrayList toArrayList() {
+        return null;
+    }
+
 }

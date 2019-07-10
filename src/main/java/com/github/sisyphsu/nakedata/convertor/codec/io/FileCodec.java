@@ -19,10 +19,7 @@ public class FileCodec extends Codec {
      * @return String
      */
     public String toString(File file) {
-        if (file == null)
-            return null;
-
-        return file.toString();
+        return file == null ? null : file.toString();
     }
 
     /**

@@ -8,5 +8,9 @@ import java.util.LinkedHashSet;
  * @author sulin
  * @since 2019-05-13 18:43:41
  */
-public class LinkedHashSetCodec extends Codec<LinkedHashSet> {
+public class LinkedHashSetCodec extends Codec {
+
+    public LinkedHashSet toLinkedHashSet() {
+        return null;
+    }
 }

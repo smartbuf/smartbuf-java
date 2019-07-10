@@ -8,5 +8,9 @@ import java.util.concurrent.ArrayBlockingQueue;
  * @author sulin
  * @since 2019-05-13 20:30:55
  */
-public class ArrayBlockingQueueCodec extends Codec<ArrayBlockingQueue> {
+public class ArrayBlockingQueueCodec extends Codec {
+
+    public ArrayBlockingQueue toArrayBlockingQueue() {
+        return null;
+    }
 }

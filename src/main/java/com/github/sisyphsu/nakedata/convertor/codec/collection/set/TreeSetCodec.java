@@ -8,5 +8,9 @@ import java.util.TreeSet;
  * @author sulin
  * @since 2019-05-13 18:43:23
  */
-public class TreeSetCodec extends Codec<TreeSet> {
+public class TreeSetCodec extends Codec {
+
+    public TreeSet toTreeSet() {
+        return null;
+    }
 }

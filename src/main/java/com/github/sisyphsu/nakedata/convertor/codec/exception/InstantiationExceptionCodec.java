@@ -6,5 +6,5 @@ import com.github.sisyphsu.nakedata.convertor.codec.Codec;
  * @author sulin
  * @since 2019-05-13 20:44:54
  */
-public class InstantiationExceptionCodec extends Codec<InstantiationException> {
+public class InstantiationExceptionCodec extends Codec {
 }

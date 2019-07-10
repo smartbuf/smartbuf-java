@@ -6,5 +6,10 @@ import com.github.sisyphsu.nakedata.convertor.codec.Codec;
  * @author sulin
  * @since 2019-05-13 20:46:50
  */
-public class StringIndexOutOfBoundsExceptionCodec extends Codec<StringIndexOutOfBoundsException> {
+public class StringIndexOutOfBoundsExceptionCodec extends Codec {
+
+    public StringIndexOutOfBoundsException toStringIndexOutOfBoundsException() {
+        return null;
+    }
+
 }

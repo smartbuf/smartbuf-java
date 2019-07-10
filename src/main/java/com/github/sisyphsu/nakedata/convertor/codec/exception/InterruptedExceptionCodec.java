@@ -6,5 +6,5 @@ import com.github.sisyphsu.nakedata.convertor.codec.Codec;
  * @author sulin
  * @since 2019-05-13 20:45:07
  */
-public class InterruptedExceptionCodec extends Codec<InterruptedException> {
+public class InterruptedExceptionCodec extends Codec {
 }

@@ -8,5 +8,9 @@ import java.util.concurrent.BlockingDeque;
  * @author sulin
  * @since 2019-05-13 20:33:58
  */
-public class BlockingDequeCodec extends Codec<BlockingDeque> {
+public class BlockingDequeCodec extends Codec {
+
+    public BlockingDeque toBlockingDeque() {
+        return null;
+    }
 }

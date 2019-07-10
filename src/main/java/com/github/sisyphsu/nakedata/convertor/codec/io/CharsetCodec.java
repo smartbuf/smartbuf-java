@@ -19,10 +19,7 @@ public class CharsetCodec extends Codec {
      * @return Charset
      */
     public Charset toCharset(String s) {
-        if (s == null)
-            return null;
-
-        return Charset.forName(s);
+        return s == null ? null : Charset.forName(s);
     }
 
     /**
@@ -32,10 +29,7 @@ public class CharsetCodec extends Codec {
      * @return String
      */
     public String toString(Charset c) {
-        if (c == null)
-            return null;
-
-        return c.name();
+        return c == null ? null : c.name();
     }
 
 }

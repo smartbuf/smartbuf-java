@@ -8,5 +8,10 @@ import java.util.concurrent.TransferQueue;
  * @author sulin
  * @since 2019-05-13 20:35:31
  */
-public class TransferQueueCodec extends Codec<TransferQueue> {
+public class TransferQueueCodec extends Codec {
+
+    public TransferQueue toTransferQueue() {
+        return null;
+    }
+
 }

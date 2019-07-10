@@ -6,5 +6,10 @@ import com.github.sisyphsu.nakedata.convertor.codec.Codec;
  * @author sulin
  * @since 2019-05-13 20:47:06
  */
-public class VerifyErrorCodec extends Codec<VerifyError> {
+public class VerifyErrorCodec extends Codec {
+
+    public VerifyError toVerifyError() {
+        return null;
+    }
+
 }

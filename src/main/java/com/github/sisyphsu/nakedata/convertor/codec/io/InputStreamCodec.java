@@ -22,10 +22,7 @@ public class InputStreamCodec extends Codec {
      * @return InputStream
      */
     public InputStream toInputStream(byte[] bytes) {
-        if (bytes == null)
-            return null;
-
-        return new ByteArrayInputStream(bytes);
+        return bytes == null ? null : new ByteArrayInputStream(bytes);
     }
 
     /**

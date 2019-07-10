@@ -8,5 +8,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author sulin
  * @since 2019-05-13 18:32:52
  */
-public class ConcurrentHashMapCodec extends Codec<ConcurrentHashMap> {
+public class ConcurrentHashMapCodec extends Codec {
+
+    public ConcurrentHashMap toConcurrentHashMap() {
+        return null;
+    }
 }

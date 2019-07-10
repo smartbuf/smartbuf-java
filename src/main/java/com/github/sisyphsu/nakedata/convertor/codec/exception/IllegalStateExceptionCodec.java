@@ -6,5 +6,5 @@ import com.github.sisyphsu.nakedata.convertor.codec.Codec;
  * @author sulin
  * @since 2019-05-13 20:44:24
  */
-public class IllegalStateExceptionCodec extends Codec<IllegalStateException> {
+public class IllegalStateExceptionCodec extends Codec {
 }

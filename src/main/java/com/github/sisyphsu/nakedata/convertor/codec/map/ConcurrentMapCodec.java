@@ -8,5 +8,9 @@ import java.util.concurrent.ConcurrentMap;
  * @author sulin
  * @since 2019-05-13 18:33:34
  */
-public class ConcurrentMapCodec extends Codec<ConcurrentMap> {
+public class ConcurrentMapCodec extends Codec {
+
+    public ConcurrentMap toConcurrentMap() {
+        return null;
+    }
 }

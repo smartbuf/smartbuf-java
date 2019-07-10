@@ -8,5 +8,9 @@ import java.util.concurrent.DelayQueue;
  * @author sulin
  * @since 2019-05-13 20:32:57
  */
-public class DelayQueueCodec extends Codec<DelayQueue> {
+public class DelayQueueCodec extends Codec {
+
+    public DelayQueue toDelayQueue() {
+        return null;
+    }
 }
