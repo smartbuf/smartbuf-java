@@ -2,6 +2,7 @@ package com.github.sisyphsu.nakedata.convertor.codec.collection;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -36,6 +37,29 @@ public class CollectionCodec extends Codec {
         if (c instanceof List)
             return (List) c;
         return new ArrayList<Object>(c);
+    }
+
+    /**
+     * Copy Src to Tgt collection, and execute Item convert.
+     */
+    @SuppressWarnings("unchecked")
+    protected <T extends Collection> T execCopy(Collection src, T tgt, Type tgtType) {
+        Type genericType = getGenericType(tgtType);
+        for (Object o : src) {
+            tgt.add(convert(o, genericType));
+        }
+        return tgt;
+    }
+
+    /**
+     * Check whether src is compatible with tgtType
+     */
+    protected boolean checkCompatible(Collection src, Type tgtType) {
+        if (src == null)
+            return true; // null compatible with everything
+        // check class, empty special
+        // check generic type, and object type compare
+        return false;
     }
 
 }

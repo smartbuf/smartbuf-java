@@ -6,6 +6,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -95,11 +96,13 @@ public class TypeTest {
         System.out.println(arr2);
     }
 
-    private void printInterfaces(Class clz) {
-        for (Class it : clz.getInterfaces()) {
-            System.out.println(it);
-            printInterfaces(it);
-        }
+    @Test
+    public void testList() {
+        ArrayList<Boolean> list = new ArrayList<>();
+        ArrayList tmp = list;
+        ArrayList<Integer> tmp2 = tmp;
+        tmp2.add(1);
+        System.out.println(tmp2);
     }
 
     public enum Gender {

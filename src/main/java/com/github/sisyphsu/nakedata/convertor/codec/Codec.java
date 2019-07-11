@@ -34,7 +34,7 @@ public abstract class Codec {
      * @param tgtType Target Type
      * @return Target Instance
      */
-    public Object convert(Object src, Type tgtType) {
+    public final Object convert(Object src, Type tgtType) {
         return factory.doConvert(src, tgtType);
     }
 
@@ -47,7 +47,7 @@ public abstract class Codec {
      * @return target instance
      */
     @SuppressWarnings("unchecked")
-    public <Z> Z convert(Object src, Class<Z> clz) {
+    public final <Z> Z convert(Object src, Class<Z> clz) {
         return (Z) factory.doConvert(src, clz);
     }
 
