@@ -7,6 +7,9 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -98,11 +101,15 @@ public class TypeTest {
 
     @Test
     public void testList() {
-        ArrayList<Boolean> list = new ArrayList<>();
-        ArrayList tmp = list;
-        ArrayList<Integer> tmp2 = tmp;
-        tmp2.add(1);
-        System.out.println(tmp2);
+        Map map = new HashMap<>();
+        map.put(new Date(), new ArrayList());
+        Map<? extends Date, ? super ArrayList> map2 = map;
+//        map.put(new Date(), (AbstractList) new LinkedList());
+        for (Map.Entry<? extends Date, ? super ArrayList> entry : map2.entrySet()) {
+            Date date = entry.getKey();
+            System.out.println(date);
+            System.out.println(entry.getValue());
+        }
     }
 
     public enum Gender {
