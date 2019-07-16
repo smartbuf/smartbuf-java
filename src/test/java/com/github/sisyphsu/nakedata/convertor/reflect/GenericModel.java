@@ -20,7 +20,9 @@ public class GenericModel<T extends Number, X, R extends CharSequence> {
     private List<? extends Date> dates;
     private AtomicReference<? super ArrayList<? super Integer>> ref;
 
-    private GenBean<List> genBean;
+    private GenBean<Queue<? super Long>> gen1;
+    private GenBean<? extends List> gen2;
+    private GenBean gen3;
 
     public static class GenBean<C extends Collection> {
         private C c;

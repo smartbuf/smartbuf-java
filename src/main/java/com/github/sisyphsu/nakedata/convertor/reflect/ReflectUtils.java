@@ -5,6 +5,7 @@ import java.lang.reflect.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Reflect utils
@@ -28,6 +29,7 @@ public class ReflectUtils {
             CharSequence.class,
             InputStream.class,
             Date.class,
+            AtomicReference.class,
     };
 
     /**
@@ -37,36 +39,38 @@ public class ReflectUtils {
      * @return XType
      */
     public static XType toXType(Type type) {
+        // TODO avoid loop
         return toXType(null, type);
     }
 
     /**
      * Convert Type to XType, resolve all generic types.
+     *
+     * @param owner Owner Type, help detect generic type
+     * @param type  Target which need be resolved
      */
-    private static XType toXType(XType owner, Type type) {
+    protected static XType toXType(XType owner, Type type) {
         XType xType;
         if (type instanceof ParameterizedType) {
-            xType = toXType(owner, (ParameterizedType) type);
+            xType = convertParameterizedType(owner, (ParameterizedType) type);
         } else if (type instanceof GenericArrayType) {
-            xType = toXType(owner, (GenericArrayType) type);
+            xType = convertGenericArrayType(owner, (GenericArrayType) type);
         } else if (type instanceof WildcardType) {
-            xType = toXType(owner, (WildcardType) type);
+            xType = convertWildcardType(owner, (WildcardType) type);
         } else if (type instanceof TypeVariable) {
-            xType = toXType(owner, (TypeVariable) type);
+            xType = convertTypeVariable(owner, (TypeVariable) type);
         } else if (type instanceof Class) {
-            xType = new XType((Class<?>) type);
+            xType = convertClass((Class<?>) type);
         } else {
             throw new IllegalArgumentException("Unsupport Type: " + type);
         }
-        parseFields(xType);
-
         return xType;
     }
 
     /**
      * Convert ParameterizedType to XType
      */
-    private static XType toXType(XType owner, ParameterizedType type) {
+    private static XType convertParameterizedType(XType owner, ParameterizedType type) {
         if (!(type.getRawType() instanceof Class)) {
             throw new IllegalArgumentException("Cant parse rawType from " + type); // no way
         }
@@ -79,27 +83,40 @@ public class ReflectUtils {
             throw new IllegalStateException("Cant parse ParameterizedType " + type); // no way
         }
         for (int i = 0; i < argTypes.length; i++) {
+            TypeVariable var = variables[i]; // TODO bounds
             Type argType = argTypes[i];
-            TypeVariable var = variables[i];
-            XType argXType = toXType(owner, argType); // argType could be TypeVariable from owner
-            parameterizedTypeMap.put(var.getName(), argXType);
+            Type[] bounds = var.getBounds();
+            XType argXType = toXType(owner, argType); // should add TypeVariable as 3rd param
+            // If argType is TypeVariable, use bounds?
+            if (argXType.getRawType() == Object.class && bounds != null && bounds.length == 1) {
+                argXType = toXType(owner, bounds[0]);
+            }
+            String varName = var.getName();
+            if (varName.equals("?")) {
+                varName = "?" + i;
+            }
+            parameterizedTypeMap.put(varName, argXType);
         }
-        return new XType(rawType, parameterizedTypeMap);
+        XType result = new XType(rawType, parameterizedTypeMap);
+        parseFields(result);
+        return result;
     }
 
     /**
      * Convert GenericArrayType to XType
      */
-    private static XType toXType(XType owner, GenericArrayType type) {
+    private static XType convertGenericArrayType(XType owner, GenericArrayType type) {
         Class<?> rawClass = Object[].class;
         XType xType = toXType(owner, type.getGenericComponentType());
-        return new XType(rawClass, xType);
+        XType result = new XType(rawClass, xType);
+        parseFields(result);
+        return result;
     }
 
     /**
      * Convert WildcardType to XType
      */
-    private static XType toXType(XType owner, WildcardType type) {
+    private static XType convertWildcardType(XType owner, WildcardType type) {
         Type[] uppers = type.getUpperBounds();
         Type[] lowers = type.getLowerBounds();
         if (uppers != null && uppers.length == 1) {
@@ -114,7 +131,7 @@ public class ReflectUtils {
     /**
      * Convert TypeVariable to XType
      */
-    private static XType toXType(XType owner, TypeVariable type) {
+    private static XType convertTypeVariable(XType owner, TypeVariable type) {
         String varName = type.getName();
         if (owner != null && owner.getParameterizedTypeMap() != null) {
             if (owner.getParameterizedTypeMap() == null) {
@@ -134,6 +151,32 @@ public class ReflectUtils {
     }
 
     /**
+     * Convert Class to XType
+     */
+    private static XType convertClass(Class<?> cls) {
+        TypeVariable[] vars = cls.getTypeParameters();
+        XType xt;
+        if (vars != null && vars.length > 0) {
+            // Class supports generic type, but caller didn't use it, like `List l`
+            Map<String, XType> paramTypes = new HashMap<>();
+            for (int i = 0; i < vars.length; i++) {
+                TypeVariable var = vars[i];
+                String name = var.getName();
+                if (name.equals("?")) {
+                    name = "?" + i;
+                }
+                paramTypes.put(name, convertTypeVariable(null, var)); // no owner
+            }
+            xt = new XType(cls, paramTypes);
+        } else {
+            // Class dont support generic type
+            xt = new XType(cls);
+        }
+        parseFields(xt);
+        return xt;
+    }
+
+    /**
      * Parse fields of XType and fill them
      */
     private static void parseFields(XType type) {
@@ -144,6 +187,9 @@ public class ReflectUtils {
         }
         List<XField> fields = new ArrayList<>();
         for (Field field : type.getRawType().getDeclaredFields()) {
+            if (Modifier.isStatic(field.getModifiers())) {
+                continue; // ignore static
+            }
             XField xField = new XField();
             xField.setName(field.getName());
             xField.setType(toXType(type, field.getGenericType()));
