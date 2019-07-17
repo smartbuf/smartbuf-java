@@ -42,9 +42,9 @@ public class XType {
         this.componentType = componentType;
     }
 
-
     public XType(Class<?> rawType, Map<String, XType> parameterizedTypeMap) {
         this.rawType = rawType;
         this.parameterizedTypeMap = parameterizedTypeMap;
     }
+
 }

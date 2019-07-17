@@ -20,12 +20,24 @@ public class GenericModel<T extends Number, X, R extends CharSequence> {
     private List<? extends Date> dates;
     private AtomicReference<? super ArrayList<? super Integer>> ref;
 
-    private GenBean<List<Long>> gen1;
-    private GenBean<? extends List> gen2;
+    private GenBean<AbstractList<Long>> gen1;
+    private GenBean<? extends AbstractList> gen2;
     private GenBean gen3;
 
-    public static class GenBean<C extends Collection<Long>> {
+    private GenPojo<List<String>> pojo;
+
+    public static class GenBean<C extends List<Long>> {
         private C c;
+    }
+
+    public static class GenPojo<Z extends List> {
+        private Z z;
+    }
+
+    public void test() {
+        gen1.c.add(null);
+        gen2.c.add("");
+        gen3.c.add(null);
     }
 
 }
