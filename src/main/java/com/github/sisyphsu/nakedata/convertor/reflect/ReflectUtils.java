@@ -40,16 +40,24 @@ public class ReflectUtils {
      */
     public static XType toXType(Type type) {
         // TODO avoid loop
-        return toXType(null, type);
+        return toXType(null, type, null);
     }
 
     /**
      * Convert Type to XType, resolve all generic types.
+     * <p>
+     * owner's usecase:
+     * class Bean<T> {private T t;}
+     * <p>
+     * bound's usecase:
+     * class Bean<T extends Number>{}
+     * Bean<?> bean;
      *
-     * @param owner Owner Type, help detect generic type
+     * @param owner Owner Type, help to decide TypeVariable's real type
      * @param type  Target which need be resolved
+     * @param bound TypeVariable to describe type
      */
-    protected static XType toXType(XType owner, Type type) {
+    protected static XType toXType(XType owner, Type type, Type bound) {
         XType xType;
         if (type instanceof ParameterizedType) {
             xType = convertParameterizedType(owner, (ParameterizedType) type);
@@ -86,10 +94,11 @@ public class ReflectUtils {
             TypeVariable var = variables[i]; // TODO bounds
             Type argType = argTypes[i];
             Type[] bounds = var.getBounds();
-            XType argXType = toXType(owner, argType); // should add TypeVariable as 3rd param
+            XType argXType = toXType(owner, argType, bounds[0]); // should add TypeVariable as 3rd param
+//            XType boundXType = toXType(null, var);
             // If argType is TypeVariable, use bounds?
             if (argXType.getRawType() == Object.class && bounds != null && bounds.length == 1) {
-                argXType = toXType(owner, bounds[0]);
+                argXType = toXType(owner, bounds[0], null);
             }
             String varName = var.getName();
             if (varName.equals("?")) {
@@ -107,7 +116,7 @@ public class ReflectUtils {
      */
     private static XType convertGenericArrayType(XType owner, GenericArrayType type) {
         Class<?> rawClass = Object[].class;
-        XType xType = toXType(owner, type.getGenericComponentType());
+        XType xType = toXType(owner, type.getGenericComponentType(), null);
         XType result = new XType(rawClass, xType);
         parseFields(result);
         return result;
@@ -120,10 +129,10 @@ public class ReflectUtils {
         Type[] uppers = type.getUpperBounds();
         Type[] lowers = type.getLowerBounds();
         if (uppers != null && uppers.length == 1) {
-            return toXType(owner, uppers[0]); // treat <? extends T> as <T>
+            return toXType(owner, uppers[0], null); // treat <? extends T> as <T>
         }
         if (lowers != null && lowers.length == 1) {
-            return toXType(owner, lowers[0]); //treat <? super T> as <T>
+            return toXType(owner, lowers[0], null); //treat <? super T> as <T>
         }
         throw new IllegalArgumentException("unresolved WildcardType: " + type);
     }
@@ -147,7 +156,7 @@ public class ReflectUtils {
         if (bounds == null || bounds.length != 1) {
             throw new IllegalArgumentException("unresolved TypeVariable " + type);
         }
-        return toXType(null, bounds[0]);
+        return toXType(null, bounds[0], null);
     }
 
     /**
@@ -192,7 +201,7 @@ public class ReflectUtils {
             }
             XField xField = new XField();
             xField.setName(field.getName());
-            xField.setType(toXType(type, field.getGenericType()));
+            xField.setType(toXType(type, field.getGenericType(), null));
             xField.setField(field);
             fields.add(xField);
         }
