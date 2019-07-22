@@ -13,16 +13,9 @@ import java.util.List;
 
 /**
  * @author sulin
- * @since 2019-07-16 10:33:44
+ * @since 2019-07-22 14:59:45
  */
-public class ReflectUtilsTest {
-
-    @Test
-    public void testAssignable() {
-        System.out.println(Long.class.isAssignableFrom(Number.class));
-        System.out.println(Long.class.isAssignableFrom(Long.class));
-        System.out.println(Number.class.isAssignableFrom(Long.class));
-    }
+public class XTypeUtilsTest {
 
     @Test
     public void testTypeVariable() throws Exception {
@@ -42,9 +35,19 @@ public class ReflectUtilsTest {
         Type type = new TypeReference<GenericModel<?, Rectangle, String>>() {
         }.getType();
 
-        // TODO FIX
-        XType xType = ReflectUtils.toXType(type);
+        XType xType = XTypeUtils.toXType(type);
         System.out.println(xType);
+    }
+
+    @Test
+    public void testType() {
+        Type prev = null;
+        for (int i = 0; i < 10; i++) {
+            Type type = new TypeReference<GenericModel<?, Rectangle, String>>() {
+            }.getType();
+            System.out.println(type == prev);
+            prev = type;
+        }
     }
 
     public static class TypeVariableBean<T extends Date> {

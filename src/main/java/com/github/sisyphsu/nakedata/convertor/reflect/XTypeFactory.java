@@ -1,36 +1,36 @@
 package com.github.sisyphsu.nakedata.convertor.reflect;
 
-import java.io.InputStream;
 import java.lang.reflect.*;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Reflect utils
+ * Factory for XType, implement Type's reflection and GenericType's resolving.
+ * For better performance, It cache XType for all Type, which shouldn't too many.
  *
  * @author sulin
- * @since 2019-07-15 20:56:55
+ * @since 2019-07-22 14:43:00
  */
-public class ReflectUtils {
+public class XTypeFactory {
 
-    private static final Class[] STOP_TYPES = new Class[]{
-            Boolean.class,
-            Number.class,
-            Character.class,
-            Object[].class,
-            Collection.class,
-            Map.class,
-            Map.Entry.class,
-            Throwable.class,
-            ByteBuffer.class,
-            Charset.class,
-            CharSequence.class,
-            InputStream.class,
-            Date.class,
-            AtomicReference.class,
-    };
+    /**
+     * Stop-Class means some indivisible classes which shouldn't be split
+     */
+    private final List<Class> stopClasses;
+    /**
+     * XType's global cache, for performance optimization
+     */
+    private final Map<Type, XType> cacheMap;
+
+    /**
+     * Initialize XTypeFactory by specified stopClasses
+     *
+     * @param stopClasses Stop-Classes
+     */
+    public XTypeFactory(Collection<Class> stopClasses) {
+        this.stopClasses = new ArrayList<>(stopClasses);
+        this.cacheMap = new ConcurrentHashMap<>();
+    }
 
     /**
      * Convert Type to XType, all generic types should be resolved.
@@ -38,9 +38,8 @@ public class ReflectUtils {
      * @param type reflect type
      * @return XType
      */
-    public static XType toXType(Type type) {
-        // TODO avoid loop
-        return toXType(null, type);
+    public XType toXType(Type type) {
+        return cacheMap.computeIfAbsent(type, (t) -> toXType(null, t));
     }
 
     /**
@@ -52,7 +51,7 @@ public class ReflectUtils {
      * @param owner Owner Type, help to decide TypeVariable's real type
      * @param type  Target which need be resolved
      */
-    protected static XType toXType(XType owner, Type type) {
+    protected XType toXType(XType owner, Type type) {
         XType xType;
         if (type instanceof ParameterizedType) {
             xType = convertParameterizedType(owner, (ParameterizedType) type);
@@ -73,7 +72,7 @@ public class ReflectUtils {
     /**
      * Convert ParameterizedType to XType
      */
-    private static XType convertParameterizedType(XType owner, ParameterizedType type) {
+    private XType convertParameterizedType(XType owner, ParameterizedType type) {
         if (!(type.getRawType() instanceof Class)) {
             throw new IllegalArgumentException("Cant parse rawType from " + type); // no way
         }
@@ -112,7 +111,7 @@ public class ReflectUtils {
     /**
      * Convert GenericArrayType to XType
      */
-    private static XType convertGenericArrayType(XType owner, GenericArrayType type) {
+    private XType convertGenericArrayType(XType owner, GenericArrayType type) {
         Class<?> rawClass = Object[].class;
         XType xType = toXType(owner, type.getGenericComponentType());
         XType result = new XType(rawClass, xType);
@@ -123,7 +122,7 @@ public class ReflectUtils {
     /**
      * Convert WildcardType to XType
      */
-    private static XType convertWildcardType(XType owner, WildcardType type) {
+    private XType convertWildcardType(XType owner, WildcardType type) {
         Type[] uppers = type.getUpperBounds();
         Type[] lowers = type.getLowerBounds();
         if (lowers != null && lowers.length == 1) {
@@ -138,7 +137,7 @@ public class ReflectUtils {
     /**
      * Convert TypeVariable to XType
      */
-    private static XType convertTypeVariable(XType owner, TypeVariable type) {
+    private XType convertTypeVariable(XType owner, TypeVariable type) {
         String varName = type.getName();
         if (owner != null && owner.getParameterizedTypeMap() != null) {
             if (owner.getParameterizedTypeMap() == null) {
@@ -160,7 +159,7 @@ public class ReflectUtils {
     /**
      * Convert Class to XType
      */
-    private static XType convertClass(Class<?> cls) {
+    private XType convertClass(Class<?> cls) {
         TypeVariable[] vars = cls.getTypeParameters();
         XType xt;
         if (vars != null && vars.length > 0) {
@@ -186,8 +185,8 @@ public class ReflectUtils {
     /**
      * Parse fields of XType and fill them
      */
-    private static void parseFields(XType type) {
-        for (Class<?> stopType : STOP_TYPES) {
+    private void parseFields(XType type) {
+        for (Class<?> stopType : this.stopClasses) {
             if (stopType.isAssignableFrom(type.getRawType())) {
                 return; // type is stop class like Number/Collection...
             }
