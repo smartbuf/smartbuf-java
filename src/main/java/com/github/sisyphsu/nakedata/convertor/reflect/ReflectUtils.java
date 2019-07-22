@@ -92,15 +92,7 @@ public class ReflectUtils {
             // XType from field described, like `private Bean<?> bean`
             XType argXType = toXType(owner, argTypes[i]);
             XType finalXType;
-            // Generic cover role: argType <
-            // TODO should merge xtype???
-
-            // If argType equals or extends bound
-            if (argXType.getRawType() == boundXType.getRawType()
-                    || argXType.getRawType().isAssignableFrom(boundXType.getRawType())) {
-
-            }
-
+            // Don't support combined generic-type, adopt genericType from Type or declaredType from Class
             if (argXType.getRawType().isAssignableFrom(boundXType.getRawType())) {
                 finalXType = boundXType;
             } else {
