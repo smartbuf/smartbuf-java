@@ -27,9 +27,14 @@ public class ObjectArrayCodec extends Codec {
         if (type == null) {
             return arr; // dont convert
         }
-//        if (arr.getClass() == type) {
-//            return arr; // same array type
-//        }
+        Class itemType = type.getRawType().getComponentType();
+        if (type.getComponentType() != null) {
+            itemType = type.getComponentType().getRawType();
+        }
+        if (itemType == arr.getClass().getComponentType()) {
+            return arr; // compatible array
+        }
+
         return this.toArray(Arrays.asList(arr), type);
     }
 
