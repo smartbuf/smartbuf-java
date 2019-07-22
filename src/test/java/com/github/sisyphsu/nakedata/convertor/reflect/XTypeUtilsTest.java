@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.convertor.reflect;
 
-import com.alibaba.fastjson.TypeReference;
 import org.junit.Test;
 
 import java.awt.*;
@@ -32,7 +31,7 @@ public class XTypeUtilsTest {
 
     @Test
     public void testGenModel() {
-        Type type = new TypeReference<GenericModel<?, Rectangle, String>>() {
+        Type type = new TypeRef<GenericModel<?, Rectangle, String>>() {
         }.getType();
 
         XType xType = XTypeUtils.toXType(type);
@@ -40,14 +39,34 @@ public class XTypeUtilsTest {
     }
 
     @Test
-    public void testType() {
-        Type prev = null;
+    public void testCache() {
+        XType prevXT = null;
         for (int i = 0; i < 10; i++) {
-            Type type = new TypeReference<GenericModel<?, Rectangle, String>>() {
+            Type type = new TypeRef<GenericModel<?, Rectangle, String>>() {
             }.getType();
-            System.out.println(type == prev);
-            prev = type;
+            XType xt = XTypeUtils.toXType(type);
+            assert prevXT == null || prevXT == xt;
+            prevXT = xt;
+            System.out.println(xt);
         }
+    }
+
+    @Test
+    public void testVariable() {
+        Type type = new TypeRef<TypeVariableBean<?>>() {
+        }.getType();
+
+        XType xt = XTypeUtils.toXType(type);
+
+        assert xt.getRawType() == TypeVariableBean.class;
+
+        XField tField = xt.getFields().get("t");
+        XField listField = xt.getFields().get("list");
+        assert tField != null && listField != null;
+
+        assert tField.getType().getRawType() == Date.class;
+
+        assert listField.getType().getParameterizedTypeMap().get("E").getRawType() == Date.class;
     }
 
     public static class TypeVariableBean<T extends Date> {

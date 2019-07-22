@@ -2,7 +2,6 @@ package com.github.sisyphsu.nakedata.convertor.reflect;
 
 import lombok.Data;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,9 +28,9 @@ public class XType {
      */
     private Map<String, XType> parameterizedTypeMap;
     /**
-     * Fields
+     * Fields, only for no-stop-class
      */
-    private List<XField> fields;
+    private Map<String, XField> fields;
 
     public XType(Class<?> rawType) {
         this.rawType = rawType;

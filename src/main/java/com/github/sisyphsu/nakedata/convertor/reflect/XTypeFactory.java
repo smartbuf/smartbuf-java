@@ -191,7 +191,7 @@ public class XTypeFactory {
                 return; // type is stop class like Number/Collection...
             }
         }
-        List<XField> fields = new ArrayList<>();
+        Map<String, XField> fields = new HashMap<>();
         for (Field field : type.getRawType().getDeclaredFields()) {
             if (Modifier.isStatic(field.getModifiers())) {
                 continue; // ignore static
@@ -200,7 +200,8 @@ public class XTypeFactory {
             xField.setName(field.getName());
             xField.setType(toXType(type, field.getGenericType()));
             xField.setField(field);
-            fields.add(xField);
+
+            fields.put(xField.getName(), xField);
         }
         type.setFields(fields);
     }
