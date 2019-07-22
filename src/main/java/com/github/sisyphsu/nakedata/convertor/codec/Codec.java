@@ -1,6 +1,8 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
 import com.github.sisyphsu.nakedata.convertor.CodecFactory;
+import com.github.sisyphsu.nakedata.convertor.reflect.XType;
+import com.github.sisyphsu.nakedata.convertor.reflect.XTypeUtils;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -34,7 +36,7 @@ public abstract class Codec {
      * @param tgtType Target Type
      * @return Target Instance
      */
-    public final Object convert(Object src, Type tgtType) {
+    public final Object convert(Object src, XType tgtType) {
         return factory.doConvert(src, tgtType);
     }
 
@@ -48,7 +50,7 @@ public abstract class Codec {
      */
     @SuppressWarnings("unchecked")
     public final <Z> Z convert(Object src, Class<Z> clz) {
-        return (Z) factory.doConvert(src, clz);
+        return (Z) factory.doConvert(src, XTypeUtils.toXType(clz));
     }
 
     /**

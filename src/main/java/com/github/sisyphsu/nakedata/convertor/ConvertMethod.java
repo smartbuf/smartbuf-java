@@ -1,6 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
+import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 import lombok.extern.slf4j.Slf4j;
 import sun.reflect.MethodAccessor;
 import sun.reflect.ReflectionFactory;
@@ -19,10 +20,11 @@ import java.lang.reflect.Type;
 public class ConvertMethod {
 
     private Codec codec;
-    private Type srcType;
-    private Type tgtType;
-    private boolean hasTypeArg;
+    private Class<?> srcClass;
+    private Class<?> tgtClass;
     private MethodAccessor function;
+
+    private boolean hasTypeArg;
 
     private ConvertMethod() {
     }
@@ -48,8 +50,8 @@ public class ConvertMethod {
         }
         ConvertMethod result = new ConvertMethod();
         result.codec = codec;
-        result.srcType = argTypes[0];
-        result.tgtType = rtType;
+        result.srcClass = argTypes[0];
+        result.tgtClass = rtType;
         result.hasTypeArg = argTypes.length == 2;
         result.function = ReflectionFactory.getReflectionFactory().getMethodAccessor(method);
         return result;
@@ -59,12 +61,12 @@ public class ConvertMethod {
      * Convert the data to target instance
      *
      * @param data    Source data
-     * @param tgtType Target class
+     * @param tgtType Target Type
      * @return target instance
      */
-    public Object convert(Object data, Type tgtType) {
-        if (data != null && data.getClass() != this.srcType) {
-            throw new IllegalArgumentException("data type unmatched: " + this.srcType + ", " + data.getClass());
+    public Object convert(Object data, XType tgtType) {
+        if (data != null && data.getClass() != this.srcClass) {
+            throw new IllegalArgumentException("data type unmatched: " + this.srcClass + ", " + data.getClass());
         }
         try {
             if (hasTypeArg) {
@@ -77,12 +79,12 @@ public class ConvertMethod {
         }
     }
 
-    public Type getSrcType() {
-        return srcType;
+    public Class<?> getSrcClass() {
+        return srcClass;
     }
 
-    public Type getTgtType() {
-        return tgtType;
+    public Class<?> getTgtClass() {
+        return tgtClass;
     }
 
 }

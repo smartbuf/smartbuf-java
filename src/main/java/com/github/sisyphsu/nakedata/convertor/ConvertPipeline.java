@@ -1,6 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor;
 
-import java.lang.reflect.Type;
+import com.github.sisyphsu.nakedata.convertor.reflect.XType;
+
 import java.util.List;
 
 /**
@@ -14,17 +15,17 @@ import java.util.List;
  */
 public class ConvertPipeline {
 
-    private final Type srcType;
-    private final Type tgtType;
+    private final Class srcClass;
+    private final Class tgtClass;
     private final List<ConvertMethod> methods;
 
-    private ConvertPipeline(Type srcType, Type tgtType, List<ConvertMethod> methods) {
-        this.srcType = srcType;
-        this.tgtType = tgtType;
+    public ConvertPipeline(Class srcClass, Class tgtClass, List<ConvertMethod> methods) {
+        this.srcClass = srcClass;
+        this.tgtClass = tgtClass;
         this.methods = methods;
     }
 
-    public static ConvertPipeline valueOf(Type src, Type tgt) {
+    public static ConvertPipeline valueOf(Class src, Class tgt) {
         return new ConvertPipeline(src, tgt, null);
     }
 
@@ -32,9 +33,9 @@ public class ConvertPipeline {
         if (methods == null || methods.size() == 0) {
             throw new IllegalArgumentException("methods can't be null or empty");
         }
-        Type srcType = methods.get(0).getSrcType();
-        Type tgtType = methods.get(methods.size() - 1).getTgtType();
-        return new ConvertPipeline(srcType, tgtType, methods);
+        Class srcClass = methods.get(0).getSrcClass();
+        Class tgtClass = methods.get(methods.size() - 1).getTgtClass();
+        return new ConvertPipeline(srcClass, tgtClass, methods);
     }
 
     /**
@@ -44,7 +45,7 @@ public class ConvertPipeline {
      * @param tgtType 目标类型, 如POJO类、携带泛型类型的集合类等
      * @return 解码结果
      */
-    public Object convert(Object data, Type tgtType) {
+    public Object convert(Object data, XType tgtType) {
         Object result = data;
         for (ConvertMethod method : methods) {
             result = method.convert(result, tgtType);
@@ -52,12 +53,12 @@ public class ConvertPipeline {
         return result;
     }
 
-    public Type getSrcType() {
-        return srcType;
+    public Class getSrcClass() {
+        return srcClass;
     }
 
-    public Type getTgtType() {
-        return tgtType;
+    public Class getTgtClass() {
+        return tgtClass;
     }
 
 }

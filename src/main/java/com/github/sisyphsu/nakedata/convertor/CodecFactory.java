@@ -1,9 +1,9 @@
 package com.github.sisyphsu.nakedata.convertor;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
+import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -78,7 +78,7 @@ public class CodecFactory {
                 if (convertMethod == null) {
                     continue;
                 }
-                methodMap.put(convertMethod.getSrcType(), convertMethod.getTgtType(), convertMethod);
+                methodMap.put(convertMethod.getSrcClass(), convertMethod.getTgtClass(), convertMethod);
             }
             codec.setFactory(this);
         }
@@ -89,35 +89,39 @@ public class CodecFactory {
     /**
      * Execute data convert, convert src to the specified type target
      *
-     * @param src Source Data
-     * @param tgt Target Type
+     * @param srcObj  Source Object
+     * @param tgtType Target Type
      * @return Target Instance
      */
-    public Object doConvert(Object src, Type tgt) {
-        // TODO src == null
-        ConvertPipeline pipeline = pipelineMap.get(src.getClass(), tgt);
+    public Object doConvert(Object srcObj, XType tgtType) {
+        if (srcObj == null) {
+            return null;
+        }
+        Class srcClass = srcObj.getClass();
+        Class tgtClass = tgtType.getClass();
+        ConvertPipeline pipeline = pipelineMap.get(srcClass, tgtClass);
         if (pipeline == null) {
-            List<ConvertMethod> methods = this.dfs(src.getClass(), tgt, methodMap);
+            List<ConvertMethod> methods = this.dfs(srcClass, tgtClass, methodMap);
             if (methods != null && methods.size() > 0) {
                 pipeline = ConvertPipeline.valueOf(methods);
-                pipelineMap.put(src.getClass(), tgt, pipeline);
+                pipelineMap.put(srcClass, tgtClass, pipeline);
             }
         }
         if (pipeline == null) {
-            throw new IllegalStateException("Can't convert " + src.getClass() + " to " + tgt);
+            throw new IllegalStateException("Can't convert " + srcObj.getClass() + " to " + tgtType);
         }
-        return pipeline.convert(src, tgt);
+        return pipeline.convert(srcObj, tgtType);
     }
 
     /**
      * Search the shortest codec path
      */
-    private List<ConvertMethod> dfs(Type src, Type tgt, MMap<ConvertMethod> map) {
-        ConvertMethod direct = map.get(src, tgt);
+    private List<ConvertMethod> dfs(Class srcClass, Class tgtClass, MMap<ConvertMethod> map) {
+        ConvertMethod direct = map.get(srcClass, tgtClass);
         if (direct != null) {
             return Collections.singletonList(direct); // directly
         }
-        Collection<ConvertMethod> ts = map.get(src);
+        Collection<ConvertMethod> ts = map.get(srcClass);
         if (ts == null || ts.isEmpty()) {
             return null; // noway
         }
@@ -125,7 +129,7 @@ public class CodecFactory {
         ConvertMethod router = null;
         List<ConvertMethod> subResult = null;
         for (ConvertMethod t : ts) {
-            List<ConvertMethod> tmp = this.dfs(t.getTgtType(), tgt, map);
+            List<ConvertMethod> tmp = this.dfs(t.getTgtClass(), tgtClass, map);
             if (tmp == null || tmp.isEmpty()) {
                 continue;
             }
@@ -148,22 +152,22 @@ public class CodecFactory {
      */
     private static class MMap<T> {
 
-        private Map<Type, Map<Type, T>> map = new ConcurrentHashMap<>();
+        private Map<Class, Map<Class, T>> map = new ConcurrentHashMap<>();
 
-        public void put(Type srcType, Type tgtType, T method) {
+        public void put(Class srcType, Class tgtType, T method) {
             map.computeIfAbsent(srcType, (c) -> new ConcurrentHashMap<>()).put(tgtType, method);
         }
 
-        public Collection<T> get(Type srcType) {
-            Map<Type, T> tgtMap = map.get(srcType);
+        public Collection<T> get(Class srcType) {
+            Map<Class, T> tgtMap = map.get(srcType);
             if (tgtMap == null) {
                 return null;
             }
             return tgtMap.values();
         }
 
-        public T get(Type srcType, Type tgtType) {
-            Map<Type, T> tgtMap = map.get(srcType);
+        public T get(Class srcType, Class tgtType) {
+            Map<Class, T> tgtMap = map.get(srcType);
             if (tgtMap == null) {
                 return null;
             }
