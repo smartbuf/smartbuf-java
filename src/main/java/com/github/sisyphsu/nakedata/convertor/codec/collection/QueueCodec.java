@@ -1,6 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor.codec.collection;
 
-import java.lang.reflect.Type;
+import com.github.sisyphsu.nakedata.convertor.reflect.XType;
+
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -20,13 +21,13 @@ public class QueueCodec extends CollectionCodec {
      * @param <T>  Generic
      * @return Queue
      */
-    public <T extends Queue> T toQueue(Collection data, Type type) {
+    public <T extends Queue> T toQueue(Collection data, XType type) {
         if (data == null)
             return null;
         if (checkCompatible(data, type)) {
             return (T) data;
         }
-        Class clz = (Class) type;
+        Class clz = type.getRawType();
         Queue queue;
         if (ArrayBlockingQueue.class.isAssignableFrom(clz)) {
             queue = new ArrayBlockingQueue(data.size());
@@ -55,7 +56,7 @@ public class QueueCodec extends CollectionCodec {
         } else {
             throw new IllegalArgumentException("");
         }
-        Type genericType = getGenericType(type);
+        XType genericType = type.getParameterizedType();
         for (Object o : data) {
             queue.offer(convert(o, genericType));
         }

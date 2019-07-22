@@ -1,8 +1,8 @@
 package com.github.sisyphsu.nakedata.convertor.codec.atomic;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
+import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
-import java.lang.reflect.Type;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -20,14 +20,14 @@ public class AtomicReferenceCodec extends Codec {
      * @param t Reference Type
      * @return AtomicReference
      */
-    public AtomicReference<?> toAtomicReference(Object o, Type t) {
+    public AtomicReference<?> toAtomicReference(Object o, XType<AtomicReference> t) {
         if (o == null)
             return null;
-        Type genericType = getGenericType(t);
-        if (genericType == null) {
+        XType paramType = t.getParameterizedTypeMap().get("V");
+        if (paramType == null || paramType.getRawType() == Object.class) {
             return new AtomicReference<>(o); // no generic, use Object directly
         }
-        return new AtomicReference<>(convert(o, genericType));
+        return new AtomicReference<>(convert(o, paramType));
     }
 
 }

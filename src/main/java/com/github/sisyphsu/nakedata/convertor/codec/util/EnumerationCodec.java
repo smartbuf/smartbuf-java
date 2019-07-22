@@ -1,8 +1,8 @@
 package com.github.sisyphsu.nakedata.convertor.codec.util;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
+import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -23,9 +23,9 @@ public class EnumerationCodec extends Codec {
      * @param t Type
      * @return Enumeration
      */
-    public Enumeration toEnumeration(List l, Type t) {
+    public Enumeration toEnumeration(List l, XType<?> t) {
         Iterator it = l.iterator();
-        Type genericType = getGenericType(t);
+        XType<?> genericType = t.getParameterizedType();
         return new Enumeration() {
             @Override
             public boolean hasMoreElements() {

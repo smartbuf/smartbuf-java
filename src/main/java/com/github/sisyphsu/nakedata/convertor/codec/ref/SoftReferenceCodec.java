@@ -1,9 +1,9 @@
 package com.github.sisyphsu.nakedata.convertor.codec.ref;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
+import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
 import java.lang.ref.SoftReference;
-import java.lang.reflect.Type;
 
 /**
  * SoftReference's codec
@@ -20,12 +20,12 @@ public class SoftReferenceCodec extends Codec {
      * @param t Type
      * @return SoftReference
      */
-    public SoftReference toSoftReference(Object o, Type t) {
+    public SoftReference toSoftReference(Object o, XType t) {
         if (o == null)
             return null;
 
-        Type genericType = getGenericType(t);
-        if (genericType == null) {
+        XType genericType = t.getParameterizedType();
+        if (genericType == null || genericType.getRawType() == Object.class) {
             return new SoftReference<>(o);
         }
         return new SoftReference<>(convert(o, genericType));

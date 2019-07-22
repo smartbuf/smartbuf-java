@@ -1,8 +1,8 @@
 package com.github.sisyphsu.nakedata.convertor.codec.util;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
+import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
-import java.lang.reflect.Type;
 import java.util.Optional;
 
 /**
@@ -20,11 +20,11 @@ public class OptionalCodec extends Codec {
      * @param type Type
      * @return Optional
      */
-    public Optional toOptional(Object o, Type type) {
+    public Optional toOptional(Object o, XType type) {
         if (o == null)
             return Optional.empty();
 
-        Type genericType = getGenericType(type);
+        XType<?> genericType = type.getParameterizedType();
         if (genericType == null) {
             return Optional.of(o);
         } else {

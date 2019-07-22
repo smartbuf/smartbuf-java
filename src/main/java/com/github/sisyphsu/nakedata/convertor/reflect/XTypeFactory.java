@@ -20,7 +20,7 @@ public class XTypeFactory {
     /**
      * XType's global cache, for performance optimization
      */
-    private final Map<Type, XType> cacheMap;
+    private final Map<Type, XType<?>> cacheMap;
 
     /**
      * Initialize XTypeFactory by specified stopClasses
@@ -38,7 +38,7 @@ public class XTypeFactory {
      * @param type reflect type
      * @return XType
      */
-    public XType toXType(Type type) {
+    public XType<?> toXType(Type type) {
         return cacheMap.computeIfAbsent(type, (t) -> toXType(null, t));
     }
 
@@ -51,8 +51,8 @@ public class XTypeFactory {
      * @param owner Owner Type, help to decide TypeVariable's real type
      * @param type  Target which need be resolved
      */
-    protected XType toXType(XType owner, Type type) {
-        XType xType;
+    protected XType<?> toXType(XType<?> owner, Type type) {
+        XType<?> xType;
         if (type instanceof ParameterizedType) {
             xType = convertParameterizedType(owner, (ParameterizedType) type);
         } else if (type instanceof GenericArrayType) {
@@ -72,11 +72,11 @@ public class XTypeFactory {
     /**
      * Convert ParameterizedType to XType
      */
-    private XType convertParameterizedType(XType owner, ParameterizedType type) {
+    private XType<?> convertParameterizedType(XType<?> owner, ParameterizedType type) {
         if (!(type.getRawType() instanceof Class)) {
             throw new IllegalArgumentException("Cant parse rawType from " + type); // no way
         }
-        Class rawType = (Class) type.getRawType();
+        Class<?> rawType = (Class) type.getRawType();
         // Parse parameterized types
         Map<String, XType> parameterizedTypeMap = new HashMap<>();
         Type[] argTypes = type.getActualTypeArguments();
@@ -87,10 +87,10 @@ public class XTypeFactory {
         for (int i = 0; i < argTypes.length; i++) {
             TypeVariable var = variables[i];
             // XType from class declared, like `class Bean<T extends Number>{}`
-            XType boundXType = toXType(null, var);
+            XType<?> boundXType = toXType(null, var);
             // XType from field described, like `private Bean<?> bean`
-            XType argXType = toXType(owner, argTypes[i]);
-            XType finalXType;
+            XType<?> argXType = toXType(owner, argTypes[i]);
+            XType<?> finalXType;
             // Don't support combined generic-type, adopt genericType from Type or declaredType from Class
             if (argXType.getRawType().isAssignableFrom(boundXType.getRawType())) {
                 finalXType = boundXType;
@@ -103,7 +103,7 @@ public class XTypeFactory {
             }
             parameterizedTypeMap.put(varName, finalXType);
         }
-        XType result = new XType(rawType, parameterizedTypeMap);
+        XType<?> result = new XType<>(rawType, parameterizedTypeMap);
         parseFields(result);
         return result;
     }
@@ -111,10 +111,10 @@ public class XTypeFactory {
     /**
      * Convert GenericArrayType to XType
      */
-    private XType convertGenericArrayType(XType owner, GenericArrayType type) {
+    private XType<?> convertGenericArrayType(XType<?> owner, GenericArrayType type) {
         Class<?> rawClass = Object[].class;
-        XType xType = toXType(owner, type.getGenericComponentType());
-        XType result = new XType(rawClass, xType);
+        XType<?> xType = toXType(owner, type.getGenericComponentType());
+        XType<?> result = new XType<>(rawClass, xType);
         parseFields(result);
         return result;
     }
@@ -122,7 +122,7 @@ public class XTypeFactory {
     /**
      * Convert WildcardType to XType
      */
-    private XType convertWildcardType(XType owner, WildcardType type) {
+    private XType<?> convertWildcardType(XType<?> owner, WildcardType type) {
         Type[] uppers = type.getUpperBounds();
         Type[] lowers = type.getLowerBounds();
         if (lowers != null && lowers.length == 1) {
@@ -137,13 +137,13 @@ public class XTypeFactory {
     /**
      * Convert TypeVariable to XType
      */
-    private XType convertTypeVariable(XType owner, TypeVariable type) {
+    private XType<?> convertTypeVariable(XType<?> owner, TypeVariable type) {
         String varName = type.getName();
         if (owner != null && owner.getParameterizedTypeMap() != null) {
             if (owner.getParameterizedTypeMap() == null) {
                 throw new IllegalArgumentException("unresolved owner for TypeVariable " + type);
             }
-            XType xType = owner.getParameterizedTypeMap().get(varName);
+            XType<?> xType = owner.getParameterizedTypeMap().get(varName);
             if (xType == null) {
                 throw new IllegalArgumentException("unresolved owner for TypeVariable " + type);
             }
@@ -159,9 +159,9 @@ public class XTypeFactory {
     /**
      * Convert Class to XType
      */
-    private XType convertClass(Class<?> cls) {
+    private <T> XType<T> convertClass(Class<T> cls) {
         TypeVariable[] vars = cls.getTypeParameters();
-        XType xt;
+        XType<T> xt;
         if (vars != null && vars.length > 0) {
             // Class supports generic type, but caller didn't use it, like `List l`
             Map<String, XType> paramTypes = new HashMap<>();
@@ -173,10 +173,10 @@ public class XTypeFactory {
                 }
                 paramTypes.put(name, convertTypeVariable(null, var)); // no owner
             }
-            xt = new XType(cls, paramTypes);
+            xt = new XType<>(cls, paramTypes);
         } else {
             // Class dont support generic type
-            xt = new XType(cls);
+            xt = new XType<>(cls);
         }
         parseFields(xt);
         return xt;
@@ -185,7 +185,8 @@ public class XTypeFactory {
     /**
      * Parse fields of XType and fill them
      */
-    private void parseFields(XType type) {
+    @SuppressWarnings("unchecked")
+    private void parseFields(XType<?> type) {
         for (Class<?> stopType : this.stopClasses) {
             if (stopType.isAssignableFrom(type.getRawType())) {
                 return; // type is stop class like Number/Collection...
@@ -196,9 +197,10 @@ public class XTypeFactory {
             if (Modifier.isStatic(field.getModifiers())) {
                 continue; // ignore static
             }
-            XField xField = new XField();
+            XType fieldType = toXType(type, field.getGenericType());
+            XField<?> xField = new XField<>();
             xField.setName(field.getName());
-            xField.setType(toXType(type, field.getGenericType()));
+            xField.setType(fieldType);
             xField.setField(field);
 
             fields.put(xField.getName(), xField);

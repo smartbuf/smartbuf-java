@@ -56,12 +56,12 @@ public class XTypeUtilsTest {
         Type type = new TypeRef<TypeVariableBean<?>>() {
         }.getType();
 
-        XType xt = XTypeUtils.toXType(type);
+        XType<?> xt = XTypeUtils.toXType(type);
 
         assert xt.getRawType() == TypeVariableBean.class;
 
-        XField tField = xt.getFields().get("t");
-        XField listField = xt.getFields().get("list");
+        XField<?> tField = xt.getFields().get("t");
+        XField<?> listField = xt.getFields().get("list");
         assert tField != null && listField != null;
 
         assert tField.getType().getRawType() == Date.class;

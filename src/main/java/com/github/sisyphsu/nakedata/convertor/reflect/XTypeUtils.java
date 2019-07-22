@@ -46,7 +46,7 @@ public class XTypeUtils {
      * @param type Standard type like Class/ParameterizedType/GenericArrayType/etc...
      * @return XType instance
      */
-    public static XType toXType(Type type) {
+    public static XType<?> toXType(Type type) {
         return factory.toXType(type);
     }
 

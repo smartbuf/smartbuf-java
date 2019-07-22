@@ -1,10 +1,11 @@
 package com.github.sisyphsu.nakedata.convertor.codec.collection;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
+import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Collection's codec
@@ -21,14 +22,14 @@ public class CollectionCodec extends Codec {
      * @param type Type
      * @return Collection
      */
-    public Collection toCollection(Collection src, Type type) {
+    public Collection toCollection(Collection src, XType type) {
         if (src == null)
             return null;
         if (checkCompatible(src, type))
             return src;
         // use ArrayList as default Collection
-        Type genericType = getGenericType(type);
-        ArrayList list = new ArrayList();
+        XType<?> genericType = type.getParameterizedType();
+        List list = new ArrayList();
         for (Object o : src) {
             list.add(convert(o, genericType));
         }
@@ -38,7 +39,7 @@ public class CollectionCodec extends Codec {
     /**
      * Check whether src is compatible with tgtType
      */
-    protected boolean checkCompatible(Collection src, Type tgtType) {
+    protected boolean checkCompatible(Collection src, XType tgtType) {
         if (src == null)
             return true; // null compatible with everything
         // TODO check class, empty special

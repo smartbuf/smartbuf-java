@@ -1,6 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor.codec.collection;
 
-import java.lang.reflect.Type;
+import com.github.sisyphsu.nakedata.convertor.reflect.XType;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -21,15 +22,15 @@ public class SetCodec extends CollectionCodec {
      * @param <T>  Generic
      * @return Set
      */
-    public <T extends Set> T toSet(Collection src, Type type) {
+    public <T extends Set> T toSet(Collection src, XType type) {
         if (src == null)
             return null;
         if (checkCompatible(src, type))
             return (T) src;
         // init Set
         Set set;
-        Class clz = (Class) type;
-        Type genericType = getGenericType(type);
+        Class clz = type.getRawType();
+        XType genericType = type.getParameterizedType();
         if (HashSet.class.isAssignableFrom(clz)) {
             set = new HashSet();
         } else if (TreeSet.class.isAssignableFrom(clz)) {
@@ -37,7 +38,7 @@ public class SetCodec extends CollectionCodec {
         } else if (LinkedHashSet.class.isAssignableFrom(clz)) {
             set = new LinkedHashSet();
         } else if (EnumSet.class.isAssignableFrom(clz)) {
-            set = EnumSet.noneOf((Class) genericType);
+            set = EnumSet.noneOf(genericType.getRawType());
         } else if (CopyOnWriteArraySet.class.isAssignableFrom(clz)) {
             set = new CopyOnWriteArraySet();
         } else if (ConcurrentSkipListSet.class.isAssignableFrom(clz)) {

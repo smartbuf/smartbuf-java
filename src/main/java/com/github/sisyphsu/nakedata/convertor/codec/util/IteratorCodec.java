@@ -1,8 +1,8 @@
 package com.github.sisyphsu.nakedata.convertor.codec.util;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
+import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -22,11 +22,11 @@ public class IteratorCodec extends Codec {
      * @param type Type
      * @return Iterator
      */
-    public Iterator toIterator(List list, Type type) {
+    public Iterator toIterator(List list, XType type) {
         if (list == null)
             return null;
         final Iterator it = list.iterator();
-        final Type genericType = getGenericType(type);
+        XType<?> genericType = type.getParameterizedType();
         return new Iterator() {
             @Override
             public boolean hasNext() {

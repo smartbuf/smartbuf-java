@@ -1,9 +1,9 @@
 package com.github.sisyphsu.nakedata.convertor.codec.ref;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
+import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Type;
 
 /**
  * WeakReference's codec
@@ -20,11 +20,11 @@ public class WeakReferenceCodec extends Codec {
      * @param t Type
      * @return WeakReference
      */
-    public WeakReference toWeakReference(Object o, Type t) {
+    public WeakReference toWeakReference(Object o, XType t) {
         if (o == null)
             return null;
-        Type genericType = getGenericType(t);
-        if (genericType == null) {
+        XType genericType = t.getParameterizedType();
+        if (genericType == null || genericType.getRawType() == Object.class) {
             return new WeakReference<>(o);
         }
         return new WeakReference<>(convert(o, genericType));

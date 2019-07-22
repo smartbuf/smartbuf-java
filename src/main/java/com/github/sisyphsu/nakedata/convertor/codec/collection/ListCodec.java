@@ -1,6 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor.codec.collection;
 
-import java.lang.reflect.Type;
+import com.github.sisyphsu.nakedata.convertor.reflect.XType;
+
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -20,7 +21,7 @@ public class ListCodec extends CollectionCodec {
      * @param <T>  Generic Type
      * @return List
      */
-    public <T extends List> T toList(Collection src, Type type) {
+    public <T extends List> T toList(Collection src, XType type) {
         if (src == null)
             return null;
         if (checkCompatible(src, type)) {
@@ -28,7 +29,7 @@ public class ListCodec extends CollectionCodec {
         }
         // init List
         List result;
-        Class clz = (Class) type;
+        Class clz = type.getRawType();
         if (ArrayList.class.isAssignableFrom(clz)) {
             result = new ArrayList();
         } else if (LinkedList.class.isAssignableFrom(clz)) {
@@ -43,7 +44,7 @@ public class ListCodec extends CollectionCodec {
             throw new RuntimeException("");
         }
         // copy item
-        Type genericType = getGenericType(type);
+        XType genericType = type.getParameterizedType();
         for (Object o : src) {
             result.add(convert(o, genericType));
         }

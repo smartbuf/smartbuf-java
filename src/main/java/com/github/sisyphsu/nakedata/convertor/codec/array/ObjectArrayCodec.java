@@ -1,9 +1,9 @@
 package com.github.sisyphsu.nakedata.convertor.codec.array;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
+import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -23,13 +23,13 @@ public class ObjectArrayCodec extends Codec {
      * @param type Target Type
      * @return Target Array
      */
-    public Object[] toArray(Object[] arr, Type type) {
+    public Object[] toArray(Object[] arr, XType<Object[]> type) {
         if (type == null) {
             return arr; // dont convert
         }
-        if (arr.getClass() == type) {
-            return arr; // same array type
-        }
+//        if (arr.getClass() == type) {
+//            return arr; // same array type
+//        }
         return this.toArray(Arrays.asList(arr), type);
     }
 
@@ -40,17 +40,17 @@ public class ObjectArrayCodec extends Codec {
      * @param type Target Type
      * @return Target Array
      */
-    public Object[] toArray(Collection list, Type type) {
+    public Object[] toArray(Collection list, XType<Object[]> type) {
         if (list == null)
             return null;
         if (type == null) {
             return list.toArray();
         }
-        Class<?> itemType = forceParseArrayComponentType(type);
-        Object[] result = (Object[]) Array.newInstance(itemType, list.size());
+        XType<?> itemType = type.getComponentType();
+        Object[] result = (Object[]) Array.newInstance(itemType.getRawType(), list.size());
         int i = 0;
         for (Object item : list) {
-            if (item == null || (item.getClass() == itemType)) {
+            if (item == null || (item.getClass() == itemType.getRawType())) {
                 result[i] = item; // copy directly
             } else {
                 result[i] = convert(item, itemType); // need convert

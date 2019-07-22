@@ -11,19 +11,19 @@ import java.lang.reflect.Field;
  * @since 2019-07-15 20:42:17
  */
 @Data
-public class XField {
+public class XField<T> {
 
     /**
      * Field's name
      */
     private String name;
     /**
-     * Field's clear type
-     */
-    private XType type;
-    /**
      * Java's reflect field
      */
     private Field field;
+    /**
+     * Field's clear type
+     */
+    private XType<T> type;
 
 }

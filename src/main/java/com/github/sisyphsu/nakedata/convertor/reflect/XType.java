@@ -13,16 +13,16 @@ import java.util.Map;
  * @since 2019-07-15 20:40:47
  */
 @Data
-public class XType {
+public class XType<T> {
 
     /**
      * Basic Object Type
      */
-    private Class<?> rawType;
+    private Class<T> rawType;
     /**
      * Component type for Object[], support GenericArrayType
      */
-    private XType componentType;
+    private XType<?> componentType;
     /**
      * Parsed type map for ParameterizedType
      */
@@ -32,18 +32,23 @@ public class XType {
      */
     private Map<String, XField> fields;
 
-    public XType(Class<?> rawType) {
+    public XType(Class<T> rawType) {
         this.rawType = rawType;
     }
 
-    public XType(Class<?> rawType, XType componentType) {
+    public XType(Class<T> rawType, XType<?> componentType) {
         this.rawType = rawType;
         this.componentType = componentType;
     }
 
-    public XType(Class<?> rawType, Map<String, XType> parameterizedTypeMap) {
+    public XType(Class<T> rawType, Map<String, XType> parameterizedTypeMap) {
         this.rawType = rawType;
         this.parameterizedTypeMap = parameterizedTypeMap;
+    }
+
+    public XType<?> getParameterizedType() {
+        Map.Entry<String, XType> entry = this.parameterizedTypeMap.entrySet().iterator().next();
+        return entry.getValue();
     }
 
 }
