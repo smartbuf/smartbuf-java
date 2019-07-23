@@ -1,15 +1,13 @@
 package com.github.sisyphsu.nakedata.convertor.codec.util;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
-import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Enumeration's codec
+ * This codec don't handle generic type, which should be processed by CollectionCodec
  *
  * @author sulin
  * @since 2019-05-13 18:48:23
@@ -17,27 +15,17 @@ import java.util.List;
 public class EnumerationCodec extends Codec {
 
     /**
-     * Convert List to Enumeration, wrap an Inner Enumeration.
+     * Convert Collection to Enumeration
      *
-     * @param l List
-     * @param t Type
+     * @param coll List
      * @return Enumeration
      */
-    public Enumeration toEnumeration(List l, XType<?> t) {
-        Iterator it = l.iterator();
-        XType<?> genericType = t.getParameterizedType();
-        return new Enumeration() {
-            @Override
-            public boolean hasMoreElements() {
-                return it.hasNext();
-            }
+    @Converter
+    public Enumeration toEnumeration(Collection<?> coll) {
+        if (coll == null)
+            return null;
 
-            @Override
-            public Object nextElement() {
-                Object obj = it.next();
-                return genericType == null ? obj : convert(obj, genericType);
-            }
-        };
+        return Collections.enumeration(coll);
     }
 
     /**
@@ -50,11 +38,11 @@ public class EnumerationCodec extends Codec {
         if (e == null)
             return null;
 
-        List<Object> l = new ArrayList<>();
+        List<Object> result = new ArrayList<>();
         while (e.hasMoreElements()) {
-            l.add(e.nextElement());
+            result.add(e.nextElement());
         }
-        return l;
+        return result;
     }
 
 }

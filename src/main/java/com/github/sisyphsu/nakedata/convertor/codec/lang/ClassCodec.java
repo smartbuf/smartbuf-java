@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.lang;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 /**
@@ -16,6 +17,7 @@ public class ClassCodec extends Codec {
      * @param name String
      * @return Class
      */
+    @Converter
     public Class toClass(String name) {
         if (name == null || name.isEmpty())
             return null;
@@ -32,6 +34,7 @@ public class ClassCodec extends Codec {
      * @param cls Class
      * @return String
      */
+    @Converter
     public String toString(Class cls) {
         return cls == null ? null : cls.getName();
     }

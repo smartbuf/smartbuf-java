@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.awt;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.awt.*;
@@ -18,6 +19,7 @@ public class ColorCodec extends Codec {
      * @param s String
      * @return Color
      */
+    @Converter
     public Color toColor(String s) {
         return Color.decode(s);
     }
@@ -28,6 +30,7 @@ public class ColorCodec extends Codec {
      * @param c Color
      * @return String
      */
+    @Converter
     public String toString(Color c) {
         return "#" + Integer.toString(c.getAlpha(), 16);
     }

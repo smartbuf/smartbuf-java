@@ -1,7 +1,9 @@
 package com.github.sisyphsu.nakedata.convertor.codec.array;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 import com.github.sisyphsu.nakedata.convertor.reflect.XType;
+import com.github.sisyphsu.nakedata.convertor.reflect.XTypeUtils;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -23,18 +25,18 @@ public class ObjectArrayCodec extends Codec {
      * @param type Target Type
      * @return Target Array
      */
-    public Object[] toArray(Object[] arr, XType<Object[]> type) {
+    @Converter
+    public Object[] toArray(Object[] arr, XType<?> type) {
         if (type == null) {
             return arr; // dont convert
         }
-        Class itemType = type.getRawType().getComponentType();
-        if (type.getComponentType() != null) {
-            itemType = type.getComponentType().getRawType();
+        if (type.isPure()) {
+            Class<?> srcArrClass = arr.getClass();
+            Class<?> tgtArrClass = type.getRawType();
+            if (tgtArrClass.isAssignableFrom(srcArrClass)) {
+                return arr; // can assign arr to be type.
+            }
         }
-        if (itemType == arr.getClass().getComponentType()) {
-            return arr; // compatible array
-        }
-
         return this.toArray(Arrays.asList(arr), type);
     }
 
@@ -45,17 +47,21 @@ public class ObjectArrayCodec extends Codec {
      * @param type Target Type
      * @return Target Array
      */
-    public Object[] toArray(Collection list, XType<Object[]> type) {
+    @Converter
+    public Object[] toArray(Collection list, XType<?> type) {
         if (list == null)
             return null;
         if (type == null) {
             return list.toArray();
         }
         XType<?> itemType = type.getComponentType();
+        if (itemType == null) {
+            itemType = XTypeUtils.toXType(type.getRawType().getComponentType());
+        }
         Object[] result = (Object[]) Array.newInstance(itemType.getRawType(), list.size());
         int i = 0;
         for (Object item : list) {
-            if (item == null || (item.getClass() == itemType.getRawType())) {
+            if (item == null || (itemType.isPure() && item.getClass() == itemType.getRawType())) {
                 result[i] = item; // copy directly
             } else {
                 result[i] = convert(item, itemType); // need convert

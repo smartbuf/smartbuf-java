@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.time;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.util.Calendar;
@@ -18,6 +19,7 @@ public class CalendarCodec extends Codec {
      * @param l Long
      * @return Calendar
      */
+    @Converter
     public Calendar toCalendar(Long l) {
         if (l == null)
             return null;
@@ -33,6 +35,7 @@ public class CalendarCodec extends Codec {
      * @param c Calendar
      * @return Long
      */
+    @Converter
     public Long toLong(Calendar c) {
         if (c == null)
             return null;

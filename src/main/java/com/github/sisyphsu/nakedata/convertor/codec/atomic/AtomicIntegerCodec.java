@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.atomic;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,6 +19,7 @@ public class AtomicIntegerCodec extends Codec {
      * @param i Integer
      * @return AtomicInteger
      */
+    @Converter
     public AtomicInteger toAtomicInteger(Integer i) {
         if (i == null) {
             return null;

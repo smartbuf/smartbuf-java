@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.atomic;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -18,9 +19,11 @@ public class AtomicLongCodec extends Codec {
      * @param l Long
      * @return AtomicLong
      */
+    @Converter
     public AtomicLong toAtomicLong(Long l) {
-        if (l == null)
+        if (l == null) {
             return null;
+        }
 
         return new AtomicLong(l);
     }

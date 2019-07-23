@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.lang;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 /**
@@ -16,6 +17,7 @@ public class FloatCodec extends Codec {
      * @param d Double
      * @return Double
      */
+    @Converter
     public Float toFloat(Double d) {
         return d == null ? null : d.floatValue();
     }
@@ -26,6 +28,7 @@ public class FloatCodec extends Codec {
      * @param arr float[]
      * @return Float[]
      */
+    @Converter
     public Float[] convert(float[] arr) {
         if (arr == null) {
             return null;
@@ -43,6 +46,7 @@ public class FloatCodec extends Codec {
      * @param arr Float[]
      * @return float[]
      */
+    @Converter
     public float[] convert(Float[] arr) {
         if (arr == null) {
             return null;

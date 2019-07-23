@@ -1,8 +1,8 @@
 package com.github.sisyphsu.nakedata.convertor.codec.lang;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
-
-import java.lang.reflect.Type;
+import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
 /**
  * Enum's codec
@@ -19,11 +19,13 @@ public class EnumCodec extends Codec {
      * @param type Enum Type
      * @return Enum
      */
-    public Enum toEnum(String name, Type type) {
-        if (name == null)
+    @Converter
+    @SuppressWarnings("unchecked")
+    public Enum toEnum(String name, XType type) {
+        if (name == null) {
             return null;
-        Class t = (Class) type;
-        return Enum.valueOf(t, name);
+        }
+        return Enum.valueOf(type.getRawType(), name);
     }
 
     /**

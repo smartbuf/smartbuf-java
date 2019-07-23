@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.atomic;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.util.concurrent.atomic.AtomicLongArray;
@@ -19,10 +20,11 @@ public class AtomicLongArrayCodec extends Codec {
      * @param arr long[]
      * @return AtomicLongArray
      */
+    @Converter
     public AtomicLongArray toAtomicLongArray(long[] arr) {
-        if (arr == null)
+        if (arr == null) {
             return null;
-
+        }
         return new AtomicLongArray(arr);
     }
 

@@ -46,9 +46,40 @@ public class XType<T> {
         this.parameterizedTypeMap = parameterizedTypeMap;
     }
 
+    /**
+     * Fetch the parameterized type for common generic type, like Collection's E type
+     *
+     * @return Generic Type
+     */
     public XType<?> getParameterizedType() {
         Map.Entry<String, XType> entry = this.parameterizedTypeMap.entrySet().iterator().next();
         return entry.getValue();
+    }
+
+    /**
+     * Fetch all parameterized type sort by place, like Map's K and V type
+     *
+     * @return Generic Types
+     */
+    public XType<?>[] getParameterizedTypes() {
+        XType<?>[] result = new XType[parameterizedTypeMap.size()];
+        int i = 0;
+        for (Map.Entry<String, XType> e : this.parameterizedTypeMap.entrySet()) {
+            result[i] = e.getValue();
+            i++;
+        }
+        return result;
+    }
+
+    /**
+     * Check whether this XType is a pure class or not
+     *
+     * @return Pure type or not
+     */
+    public boolean isPure() {
+        boolean noBodyGeneric = componentType == null;
+        boolean noParamGeneric = parameterizedTypeMap == null || parameterizedTypeMap.isEmpty();
+        return noBodyGeneric && noParamGeneric;
     }
 
 }

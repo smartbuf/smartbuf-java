@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.util;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.util.TimeZone;
@@ -18,9 +19,11 @@ public class TimeZoneCodec extends Codec {
      * @param s String
      * @return TimeZone
      */
+    @Converter
     public TimeZone toTimeZone(String s) {
         if (s == null)
             return null;
+        
         return TimeZone.getTimeZone(s);
     }
 
@@ -30,6 +33,7 @@ public class TimeZoneCodec extends Codec {
      * @param tz TimeZone
      * @return String
      */
+    @Converter
     public String toString(TimeZone tz) {
         if (tz == null)
             return null;

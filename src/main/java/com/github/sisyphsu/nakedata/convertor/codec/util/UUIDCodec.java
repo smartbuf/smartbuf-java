@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.util;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.util.UUID;
@@ -18,6 +19,7 @@ public class UUIDCodec extends Codec {
      * @param s String
      * @return UUID
      */
+    @Converter
     public UUID toUUID(String s) {
         if (s == null)
             return null;
@@ -31,9 +33,11 @@ public class UUIDCodec extends Codec {
      * @param uuid UUID
      * @return String
      */
+    @Converter
     public String toString(UUID uuid) {
         if (uuid == null)
             return null;
+
         return uuid.toString();
     }
 

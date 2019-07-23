@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.lang;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 /**
@@ -18,6 +19,7 @@ public class BooleanCodec extends Codec {
      * @param l Integer
      * @return Boolean
      */
+    @Converter
     public Boolean toBoolean(Long l) {
         return l == null ? null : l != 0;
     }
@@ -28,6 +30,7 @@ public class BooleanCodec extends Codec {
      * @param b Boolean
      * @return Long
      */
+    @Converter
     public Long toLong(Boolean b) {
         return b == null ? null : (b ? 1L : 0L);
     }
@@ -38,6 +41,7 @@ public class BooleanCodec extends Codec {
      * @param s String
      * @return Boolean
      */
+    @Converter
     public Boolean toBoolean(String s) {
         if (s == null)
             return null;
@@ -50,6 +54,7 @@ public class BooleanCodec extends Codec {
      * @param b Boolean
      * @return String
      */
+    @Converter
     public String toString(Boolean b) {
         return b == null ? null : b.toString();
     }
@@ -60,6 +65,7 @@ public class BooleanCodec extends Codec {
      * @param arr boolean[]
      * @return Boolean[]
      */
+    @Converter
     public Boolean[] convert(boolean[] arr) {
         if (arr == null) {
             return null;
@@ -77,6 +83,7 @@ public class BooleanCodec extends Codec {
      * @param arr Boolean[]
      * @return boolean[]
      */
+    @Converter
     public boolean[] convert(Boolean[] arr) {
         if (arr == null) {
             return null;

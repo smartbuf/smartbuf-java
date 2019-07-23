@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.text;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.text.SimpleDateFormat;
@@ -18,6 +19,7 @@ public class SimpleDateFormatCodec extends Codec {
      * @param s String
      * @return SimpleDateFormat
      */
+    @Converter
     public SimpleDateFormat toSimpleDateFormat(String s) {
         if (s == null)
             return null;
@@ -31,6 +33,7 @@ public class SimpleDateFormatCodec extends Codec {
      * @param format SimpleDateFormat
      * @return Pattern String
      */
+    @Converter
     public String toString(SimpleDateFormat format) {
         if (format == null)
             return null;

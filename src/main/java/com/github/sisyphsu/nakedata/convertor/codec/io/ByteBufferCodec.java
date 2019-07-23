@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.io;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.nio.ByteBuffer;
@@ -18,6 +19,7 @@ public class ByteBufferCodec extends Codec {
      * @param bs byte[]
      * @return ByteBuffer
      */
+    @Converter
     public ByteBuffer toByteBuffer(byte[] bs) {
         return bs == null ? null : ByteBuffer.wrap(bs);
     }
@@ -28,6 +30,7 @@ public class ByteBufferCodec extends Codec {
      * @param buf ByteBuffer
      * @return byte[]
      */
+    @Converter
     public byte[] toByteArray(ByteBuffer buf) {
         return buf == null ? null : buf.array();
     }

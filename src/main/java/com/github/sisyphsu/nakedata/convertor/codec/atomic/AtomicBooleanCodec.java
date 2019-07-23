@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.atomic;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -18,6 +19,7 @@ public class AtomicBooleanCodec extends Codec {
      * @param b Boolean
      * @return AtomicBoolean
      */
+    @Converter
     public AtomicBoolean convertBoolean(Boolean b) {
         if (b == null) {
             return null;

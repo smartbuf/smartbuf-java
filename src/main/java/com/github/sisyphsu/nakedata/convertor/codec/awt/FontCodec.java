@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.awt;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.awt.*;
@@ -24,6 +25,7 @@ public class FontCodec extends Codec {
      * @param map Map
      * @return Font
      */
+    @Converter
     @SuppressWarnings({"MagicConstant"})
     public Font toFont(Map map) {
         if (map == null) {
@@ -47,6 +49,7 @@ public class FontCodec extends Codec {
      * @param font Font
      * @return Map
      */
+    @Converter
     public Map toMap(Font font) {
         if (font == null)
             return null;

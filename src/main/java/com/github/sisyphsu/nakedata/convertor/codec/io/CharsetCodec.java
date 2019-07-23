@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.io;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.nio.charset.Charset;
@@ -18,6 +19,7 @@ public class CharsetCodec extends Codec {
      * @param s String
      * @return Charset
      */
+    @Converter
     public Charset toCharset(String s) {
         return s == null ? null : Charset.forName(s);
     }
@@ -28,6 +30,7 @@ public class CharsetCodec extends Codec {
      * @param c Charset
      * @return String
      */
+    @Converter
     public String toString(Charset c) {
         return c == null ? null : c.name();
     }

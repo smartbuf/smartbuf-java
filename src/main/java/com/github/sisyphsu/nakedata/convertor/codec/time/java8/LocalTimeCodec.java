@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.time.java8;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.time.LocalTime;
@@ -23,6 +24,7 @@ public class LocalTimeCodec extends Codec {
      * @param ot OffsetTime
      * @return LocalTime
      */
+    @Converter
     public LocalTime toLocalTime(OffsetTime ot) {
         return ot == null ? null : ot.toLocalTime();
     }
@@ -33,6 +35,7 @@ public class LocalTimeCodec extends Codec {
      * @param localTime LocalTime
      * @return OffsetTime
      */
+    @Converter
     protected OffsetTime toTargetNotNull(LocalTime localTime) {
         return localTime == null ? null : localTime.atOffset(DEFAULT);
     }

@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.io;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.io.ByteArrayInputStream;
@@ -21,6 +22,7 @@ public class InputStreamCodec extends Codec {
      * @param bytes byte[]
      * @return InputStream
      */
+    @Converter
     public InputStream toInputStream(byte[] bytes) {
         return bytes == null ? null : new ByteArrayInputStream(bytes);
     }
@@ -31,9 +33,11 @@ public class InputStreamCodec extends Codec {
      * @param is InputStream
      * @return byte[]
      */
+    @Converter
     public byte[] toByteArray(InputStream is) {
-        if (is == null)
+        if (is == null) {
             return null;
+        }
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         try {
             byte[] buffer = new byte[4096];

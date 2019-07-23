@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.sql;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.sql.Date;
@@ -18,6 +19,7 @@ public class DateCodec extends Codec {
      * @param l Long
      * @return Date
      */
+    @Converter
     public Date toDate(Long l) {
         if (l == null)
             return null;
@@ -31,6 +33,7 @@ public class DateCodec extends Codec {
      * @param date Date
      * @return java.util.Date
      */
+    @Converter
     public Long toLong(Date date) {
         return date == null ? null : date.getTime();
     }

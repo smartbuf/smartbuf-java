@@ -1,9 +1,11 @@
 package com.github.sisyphsu.nakedata.convertor.codec.util;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,33 +18,20 @@ import java.util.List;
 public class IteratorCodec extends Codec {
 
     /**
-     * Convert List to Iterator
+     * Convert Collection to Iterator
+     * Collection is compatible with Iterator, CollectionCodec will handle generic type.
      *
-     * @param list List
+     * @param coll Collection
      * @param type Type
      * @return Iterator
      */
-    public Iterator toIterator(List list, XType type) {
-        if (list == null)
-            return null;
-        final Iterator it = list.iterator();
-        XType<?> genericType = type.getParameterizedType();
-        return new Iterator() {
-            @Override
-            public boolean hasNext() {
-                return it.hasNext();
-            }
-
-            @Override
-            public Object next() {
-                Object obj = it.next();
-                return genericType == null ? obj : convert(obj, genericType);
-            }
-        };
+    @Converter
+    public Iterator toIterator(Collection coll, XType type) {
+        return coll == null ? null : coll.iterator();
     }
 
     /**
-     * Convert Iterator to List
+     * Convert Iterator to List as default collection, CollectionCodec will handle generic type.
      *
      * @param it Iterator
      * @return List

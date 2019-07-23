@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.util;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.util.Currency;
@@ -18,6 +19,7 @@ public class CurrencyCodec extends Codec {
      * @param s String
      * @return Currency
      */
+    @Converter
     public Currency toCurrency(String s) {
         if (s == null)
             return null;
@@ -31,6 +33,7 @@ public class CurrencyCodec extends Codec {
      * @param c Currency
      * @return String
      */
+    @Converter
     public String toString(Currency c) {
         if (c == null)
             return null;

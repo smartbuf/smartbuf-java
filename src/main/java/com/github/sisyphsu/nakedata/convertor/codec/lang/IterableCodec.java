@@ -1,10 +1,11 @@
 package com.github.sisyphsu.nakedata.convertor.codec.lang;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Iterable's codec
@@ -17,13 +18,14 @@ public class IterableCodec extends Codec {
     /**
      * Convert List to Iterable
      * <p>
-     * NOTICE: User List as Default, List's codec should support GenericType
+     * CollectionCodec should handle generic-type previously, so this converter don't need care.
      *
-     * @param l List
+     * @param coll Compatible Collection
      * @return Iterable
      */
-    public Iterable toIterable(List l) {
-        return l;
+    @Converter
+    public Iterable toIterable(Collection coll) {
+        return coll;
     }
 
     /**
@@ -32,11 +34,12 @@ public class IterableCodec extends Codec {
      * @param it Iterable
      * @return Iterator
      */
+    @Converter
     public Iterator toIterator(Iterable it, XType<?> type) {
         if (it == null)
             return null;
         Iterator iterator = it.iterator();
-        XType eType = type.getParameterizedTypeMap().get("E");
+        XType paramType = type.getParameterizedType();
         return new Iterator() {
             public boolean hasNext() {
                 return iterator.hasNext();
@@ -44,7 +47,7 @@ public class IterableCodec extends Codec {
 
             public Object next() {
                 Object obj = iterator.next();
-                return eType == null ? obj : convert(obj, eType);
+                return paramType == null ? obj : convert(obj, paramType);
             }
         };
     }

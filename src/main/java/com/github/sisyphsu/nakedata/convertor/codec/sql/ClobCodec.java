@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.sql;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.sql.Clob;
@@ -19,6 +20,7 @@ public class ClobCodec extends Codec {
      * @param c Clob
      * @return String
      */
+    @Converter
     public String toString(Clob c) {
         if (c == null)
             return null;

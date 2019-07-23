@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.sql;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.io.InputStream;
@@ -20,6 +21,7 @@ public class BlobCodec extends Codec {
      * @param b Blob
      * @return InputStream
      */
+    @Converter
     public InputStream toInputStream(Blob b) {
         if (b == null)
             return null;

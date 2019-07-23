@@ -18,14 +18,13 @@ public class ListCodec extends CollectionCodec {
      *
      * @param src  Collection
      * @param type List's Type
-     * @param <T>  Generic Type
      * @return List
      */
-    public <T extends List> T toList(Collection src, XType type) {
+    public List toList(Collection src, XType type) {
         if (src == null)
             return null;
         if (checkCompatible(src, type)) {
-            return (T) src;
+            return (List) src;
         }
         // init List
         List result;
@@ -48,7 +47,7 @@ public class ListCodec extends CollectionCodec {
         for (Object o : src) {
             result.add(convert(o, genericType));
         }
-        return (T) result;
+        return result;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.time.java8;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.time.OffsetDateTime;
@@ -21,6 +22,7 @@ public class OffsetDateTimeCodec extends Codec {
      * @param s String
      * @return OffsetDateTime
      */
+    @Converter
     public OffsetDateTime toOffsetDateTime(String s) {
         return s == null ? null : OffsetDateTime.parse(s, FORMATTER);
     }
@@ -31,6 +33,7 @@ public class OffsetDateTimeCodec extends Codec {
      * @param odt OffsetDateTime
      * @return String
      */
+    @Converter
     public String toString(OffsetDateTime odt) {
         return odt == null ? null : odt.format(FORMATTER);
     }

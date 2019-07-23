@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.util;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.util.Locale;
@@ -18,6 +19,7 @@ public class LocaleCodec extends Codec {
      * @param s String
      * @return Locale
      */
+    @Converter
     public Locale toLocale(String s) {
         if (s == null)
             return null;
@@ -31,6 +33,7 @@ public class LocaleCodec extends Codec {
      * @param locale Locale
      * @return String
      */
+    @Converter
     public String toString(Locale locale) {
         if (locale == null)
             return null;

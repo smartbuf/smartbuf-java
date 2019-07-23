@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.time.java8;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.time.LocalDate;
@@ -19,6 +20,7 @@ public class LocalDateCodec extends Codec {
      * @param ldt LocalDateTime
      * @return LocalDate
      */
+    @Converter
     public LocalDate toLocalDate(LocalDateTime ldt) {
         return ldt == null ? null : ldt.toLocalDate();
     }
@@ -29,6 +31,7 @@ public class LocalDateCodec extends Codec {
      * @param localDate LocalDate
      * @return LocalDateTime
      */
+    @Converter
     public LocalDateTime toLong(LocalDate localDate) {
         return localDate == null ? null : localDate.atStartOfDay();
     }

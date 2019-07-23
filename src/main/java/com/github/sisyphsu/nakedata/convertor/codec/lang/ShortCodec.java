@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.lang;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 /**
@@ -16,6 +17,7 @@ public class ShortCodec extends Codec {
      * @param l Long
      * @return Short
      */
+    @Converter
     public Short toShort(Long l) {
         return l == null ? null : l.shortValue();
     }
@@ -26,6 +28,7 @@ public class ShortCodec extends Codec {
      * @param s Short
      * @return Long
      */
+    @Converter
     public Long toLong(Short s) {
         return s == null ? null : s.longValue();
     }
@@ -36,6 +39,7 @@ public class ShortCodec extends Codec {
      * @param arr short[]
      * @return Short[]
      */
+    @Converter
     public Short[] convert(short[] arr) {
         if (arr == null) {
             return null;
@@ -53,6 +57,7 @@ public class ShortCodec extends Codec {
      * @param arr Short[]
      * @return short[]
      */
+    @Converter
     public short[] convert(Short[] arr) {
         if (arr == null) {
             return null;

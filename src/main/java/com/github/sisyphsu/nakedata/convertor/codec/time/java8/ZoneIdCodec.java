@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.time.java8;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.time.ZoneId;
@@ -18,6 +19,7 @@ public class ZoneIdCodec extends Codec {
      * @param s String
      * @return ZoneId
      */
+    @Converter
     public ZoneId toZoneId(String s) {
         return s == null ? null : ZoneId.of(s);
     }
@@ -28,6 +30,7 @@ public class ZoneIdCodec extends Codec {
      * @param zoneId ZoneId
      * @return String
      */
+    @Converter
     public String toString(ZoneId zoneId) {
         return zoneId == null ? null : zoneId.getId();
     }

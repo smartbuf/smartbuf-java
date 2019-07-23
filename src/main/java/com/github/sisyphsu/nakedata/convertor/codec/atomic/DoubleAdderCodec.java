@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.atomic;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.util.concurrent.atomic.DoubleAdder;
@@ -18,6 +19,7 @@ public class DoubleAdderCodec extends Codec {
      * @param d Double
      * @return DoubleAdder
      */
+    @Converter
     public DoubleAdder toDoubleAdder(Double d) {
         if (d == null) {
             return null;

@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.io;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.io.File;
@@ -18,6 +19,7 @@ public class FileCodec extends Codec {
      * @param file File
      * @return String
      */
+    @Converter
     public String toString(File file) {
         return file == null ? null : file.toString();
     }
@@ -28,10 +30,11 @@ public class FileCodec extends Codec {
      * @param s String
      * @return File
      */
+    @Converter
     public File toFile(String s) {
-        if (s == null)
+        if (s == null) {
             return null;
-
+        }
         throw new RuntimeException("can't convert String to File: " + s);
     }
 

@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.time.java8;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.time.OffsetDateTime;
@@ -19,6 +20,7 @@ public class ZonedDateTimeCodec extends Codec {
      * @param zdt ZonedDateTime
      * @return OffsetDateTime
      */
+    @Converter
     public OffsetDateTime toOffsetDateTime(ZonedDateTime zdt) {
         return zdt == null ? null : zdt.toOffsetDateTime();
     }
@@ -29,6 +31,7 @@ public class ZonedDateTimeCodec extends Codec {
      * @param odt OffsetDateTime
      * @return ZonedDateTime
      */
+    @Converter
     public ZonedDateTime toZonedDateTime(OffsetDateTime odt) {
         return odt == null ? null : odt.toZonedDateTime();
     }

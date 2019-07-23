@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.util;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.util.BitSet;
@@ -18,6 +19,7 @@ public class BitSetCodec extends Codec {
      * @param bytes byte[]
      * @return BitSet
      */
+    @Converter
     public BitSet toBitSet(byte[] bytes) {
         if (bytes == null)
             return null;
@@ -30,6 +32,7 @@ public class BitSetCodec extends Codec {
      * @param bitSet BitSet
      * @return byte[]
      */
+    @Converter
     public byte[] toByteArray(BitSet bitSet) {
         if (bitSet == null)
             return null;

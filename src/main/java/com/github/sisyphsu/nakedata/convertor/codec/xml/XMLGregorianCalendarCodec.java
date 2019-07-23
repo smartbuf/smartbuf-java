@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.xml;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -19,6 +20,7 @@ public class XMLGregorianCalendarCodec extends Codec {
      * @param calendar XMLGregorianCalendar
      * @return Calendar
      */
+    @Converter
     public Calendar toCalendar(XMLGregorianCalendar calendar) {
         if (calendar == null)
             return null;

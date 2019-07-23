@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.lang;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 /**
@@ -16,6 +17,7 @@ public class CharacterCodec extends Codec {
      * @param s String
      * @return Character
      */
+    @Converter
     public Character toCharacter(String s) {
         if (s == null)
             return null;
@@ -30,6 +32,7 @@ public class CharacterCodec extends Codec {
      * @param c Character
      * @return String
      */
+    @Converter
     public String toString(Character c) {
         return c == null ? null : c.toString();
     }
@@ -40,6 +43,7 @@ public class CharacterCodec extends Codec {
      * @param i Integer
      * @return Character
      */
+    @Converter
     public Character toCharacter(Integer i) {
         return i == null ? null : (char) i.intValue();
     }
@@ -50,6 +54,7 @@ public class CharacterCodec extends Codec {
      * @param c Character
      * @return Integer
      */
+    @Converter
     public Integer toInteger(Character c) {
         return c == null ? null : (int) c;
     }
@@ -60,6 +65,7 @@ public class CharacterCodec extends Codec {
      * @param arr char[]
      * @return Character[]
      */
+    @Converter
     public Character[] convert(char[] arr) {
         if (arr == null) {
             return null;
@@ -77,6 +83,7 @@ public class CharacterCodec extends Codec {
      * @param arr Character[]
      * @return char[]
      */
+    @Converter
     public char[] convert(Character[] arr) {
         if (arr == null) {
             return null;

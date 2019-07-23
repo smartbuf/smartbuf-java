@@ -1,6 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor.codec.lang;
 
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
+import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -13,14 +14,22 @@ import java.util.Map;
  */
 public class ObjectCodec extends Codec {
 
-    public Object toObject(Map map, Type type) {
-        if (map == null)
+    /**
+     * TODO implementation
+     *
+     * @param map
+     * @param type
+     * @return
+     */
+    public Object toObject(Map map, XType type) {
+        if (map == null) {
             return null;
-        if (type == Object.class)
+        }
+        if (type.getRawType() == Object.class) {
             return map;
-        Class clz = (Class) type;
+        }
         try {
-            Object result = clz.newInstance();
+            Object result = type.getRawType().newInstance();
 
             return result;
         } catch (Exception e) {

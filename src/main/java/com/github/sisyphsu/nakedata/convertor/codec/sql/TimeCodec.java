@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.sql;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.sql.Time;
@@ -18,6 +19,7 @@ public class TimeCodec extends Codec {
      * @param s String
      * @return Time
      */
+    @Converter
     public Time toTime(String s) {
         if (s == null)
             return null;
@@ -31,6 +33,7 @@ public class TimeCodec extends Codec {
      * @param time Time
      * @return String
      */
+    @Converter
     public String toString(Time time) {
         if (time == null)
             return null;

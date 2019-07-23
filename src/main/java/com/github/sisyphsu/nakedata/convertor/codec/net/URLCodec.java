@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.net;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.net.MalformedURLException;
@@ -19,6 +20,7 @@ public class URLCodec extends Codec {
      * @param s String
      * @return URL
      */
+    @Converter
     public URL toURL(String s) {
         if (s == null)
             return null;
@@ -35,6 +37,7 @@ public class URLCodec extends Codec {
      * @param url URL
      * @return String
      */
+    @Converter
     public String toString(URL url) {
         if (url == null)
             return null;

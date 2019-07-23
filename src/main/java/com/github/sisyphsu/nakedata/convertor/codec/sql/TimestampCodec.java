@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.sql;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.sql.Timestamp;
@@ -18,6 +19,7 @@ public class TimestampCodec extends Codec {
      * @param l Long
      * @return Timestamp
      */
+    @Converter
     public Timestamp toTimestamp(Long l) {
         if (l == null)
             return null;
@@ -31,6 +33,7 @@ public class TimestampCodec extends Codec {
      * @param t Timestamp
      * @return Long
      */
+    @Converter
     public Long toLong(Timestamp t) {
         if (t == null)
             return null;

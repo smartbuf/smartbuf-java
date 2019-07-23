@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.math;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.math.BigInteger;
@@ -18,6 +19,7 @@ public class BigIntegerCodec extends Codec {
      * @param s String
      * @return BigInteger
      */
+    @Converter
     public BigInteger toBigInteger(String s) {
         if (s == null)
             return null;
@@ -31,6 +33,7 @@ public class BigIntegerCodec extends Codec {
      * @param bi BigInteger
      * @return String
      */
+    @Converter
     public String toString(BigInteger bi) {
         if (bi == null)
             return null;

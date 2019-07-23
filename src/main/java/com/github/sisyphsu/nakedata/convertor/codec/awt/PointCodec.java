@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.awt;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.awt.*;
@@ -23,12 +24,12 @@ public class PointCodec extends Codec {
      * @param map Map
      * @return Point
      */
+    @Converter
     public Point toPoint(Map map) {
         if (map == null)
             return null;
         Integer x = convert(map.get(P_X), Integer.class);
         Integer y = convert(map.get(P_Y), Integer.class);
-        // TODO Null check
         return new Point(x, y);
     }
 
@@ -38,6 +39,7 @@ public class PointCodec extends Codec {
      * @param p Point
      * @return Long
      */
+    @Converter
     public Map toLong(Point p) {
         if (p == null)
             return null;

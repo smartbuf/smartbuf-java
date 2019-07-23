@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.awt;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.awt.*;
@@ -25,6 +26,7 @@ public class RectangleCodec extends Codec {
      * @param map Map
      * @return Rectangle
      */
+    @Converter
     public Rectangle toRectangle(Map map) {
         if (map == null)
             return null;
@@ -32,7 +34,6 @@ public class RectangleCodec extends Codec {
         Integer y = convert(map.get(R_Y), Integer.class);
         Integer width = convert(map.get(R_WIDTH), Integer.class);
         Integer height = convert(map.get(R_HEIGHT), Integer.class);
-        // TODO Null Check
         return new Rectangle(x, y, width, height);
     }
 
@@ -42,6 +43,7 @@ public class RectangleCodec extends Codec {
      * @param r Rectangle
      * @return Map
      */
+    @Converter
     public Map toMap(Rectangle r) {
         if (r == null)
             return null;

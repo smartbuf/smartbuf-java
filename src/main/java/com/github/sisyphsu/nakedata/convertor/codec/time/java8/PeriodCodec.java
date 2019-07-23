@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.time.java8;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.time.Period;
@@ -18,6 +19,7 @@ public class PeriodCodec extends Codec {
      * @param i Integer
      * @return Period
      */
+    @Converter
     public Period toPeriod(Integer i) {
         if (i == null)
             return null;
@@ -33,6 +35,7 @@ public class PeriodCodec extends Codec {
      * @param period Period
      * @return Integer
      */
+    @Converter
     public Integer toInteger(Period period) {
         if (period == null)
             return null;

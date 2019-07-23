@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.net;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.net.URI;
@@ -18,6 +19,7 @@ public class URICodec extends Codec {
      * @param s String
      * @return URI
      */
+    @Converter
     public URI toURI(String s) {
         if (s == null)
             return null;
@@ -31,6 +33,7 @@ public class URICodec extends Codec {
      * @param uri URI
      * @return String
      */
+    @Converter
     public String toString(URI uri) {
         if (uri == null)
             return null;

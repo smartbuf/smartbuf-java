@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.net;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.net.InetAddress;
@@ -19,6 +20,7 @@ public class InetAddressCodec extends Codec {
      * @param s String
      * @return InetAddress
      */
+    @Converter
     public InetAddress toInetAddress(String s) {
         if (s == null)
             return null;
@@ -35,6 +37,7 @@ public class InetAddressCodec extends Codec {
      * @param addr InetAddress
      * @return String
      */
+    @Converter
     public String toString(InetAddress addr) {
         if (addr == null)
             return null;

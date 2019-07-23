@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.atomic;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.util.concurrent.atomic.LongAdder;
@@ -18,6 +19,7 @@ public class LongAdderCodec extends Codec {
      * @param l Long
      * @return LongAdder
      */
+    @Converter
     public LongAdder toLongAdder(Long l) {
         if (l == null) {
             return null;

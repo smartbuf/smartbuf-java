@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.time.java8;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.math.BigInteger;
@@ -21,6 +22,7 @@ public class DurationCodec extends Codec {
      * @param bigInteger BigInteger
      * @return Duration
      */
+    @Converter
     public Duration toDuration(BigInteger bigInteger) {
         if (bigInteger == null)
             return null;
@@ -37,6 +39,7 @@ public class DurationCodec extends Codec {
      * @param duration Duration
      * @return BigInteger
      */
+    @Converter
     public BigInteger toBigInteger(Duration duration) {
         if (duration == null)
             return null;

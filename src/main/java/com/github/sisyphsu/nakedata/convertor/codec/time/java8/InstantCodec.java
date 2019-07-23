@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.time.java8;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.time.Instant;
@@ -18,6 +19,7 @@ public class InstantCodec extends Codec {
      * @param instant Instant
      * @return Long
      */
+    @Converter
     public Long toLong(Instant instant) {
         return instant == null ? null : instant.toEpochMilli();
     }
@@ -28,6 +30,7 @@ public class InstantCodec extends Codec {
      * @param l Long
      * @return Instant
      */
+    @Converter
     public Instant toInstant(Long l) {
         return l == null ? null : Instant.ofEpochMilli(l);
     }

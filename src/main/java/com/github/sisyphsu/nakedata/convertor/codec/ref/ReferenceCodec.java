@@ -1,9 +1,12 @@
 package com.github.sisyphsu.nakedata.convertor.codec.ref;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
+import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 
 /**
  * Reference's codec
@@ -14,13 +17,33 @@ import java.lang.ref.SoftReference;
 public class ReferenceCodec extends Codec {
 
     /**
-     * Use SoftReference as default
+     * Convert Any Object to Reference
      *
-     * @param ref SoftReference
-     * @return Reference
+     * @param obj  Object
+     * @param type Type
+     * @return WeakReference
      */
-    public Reference toReference(SoftReference ref) {
-        return ref;
+    @Converter
+    public Reference toReference(Object obj, XType type) {
+        if (obj == null) {
+            return null;
+        }
+        XType<?> paramType = type.getParameterizedType();
+        Object value;
+        if (paramType.isPure() && paramType.getRawType().isAssignableFrom(obj.getClass())) {
+            value = obj; // compatible
+        } else {
+            value = convert(obj, paramType); // convert
+        }
+        // build reference
+        Class<?> refClass = type.getRawType();
+        if (refClass == SoftReference.class || refClass == Reference.class) {
+            return new SoftReference<>(value);
+        }
+        if (refClass == WeakReference.class) {
+            return new WeakReference<>(value);
+        }
+        throw new IllegalArgumentException("Unsupport Reference: " + refClass);
     }
 
     /**

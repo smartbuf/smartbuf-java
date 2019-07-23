@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.lang;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 /**
@@ -16,6 +17,7 @@ public class StringBufferCodec extends Codec {
      * @param s String
      * @return StringBuffer
      */
+    @Converter
     public StringBuffer toStringBuffer(String s) {
         return s == null ? null : new StringBuffer(s);
     }
@@ -26,6 +28,7 @@ public class StringBufferCodec extends Codec {
      * @param sb StringBuffer
      * @return String
      */
+    @Converter
     public String toString(StringBuffer sb) {
         return sb == null ? null : sb.toString();
     }

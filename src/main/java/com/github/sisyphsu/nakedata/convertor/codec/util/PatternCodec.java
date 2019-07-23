@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.util;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.util.regex.Pattern;
@@ -18,9 +19,11 @@ public class PatternCodec extends Codec {
      * @param s String
      * @return Pattern
      */
+    @Converter
     public Pattern toPattern(String s) {
         if (s == null)
             return null;
+
         return Pattern.compile(s);
     }
 
@@ -30,9 +33,11 @@ public class PatternCodec extends Codec {
      * @param p Pattern
      * @return String
      */
+    @Converter
     public String toString(Pattern p) {
         if (p == null)
             return null;
+
         return p.pattern();
     }
 

@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.math;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 
 import java.math.BigDecimal;
@@ -18,6 +19,7 @@ public class BigDecimalCodec extends Codec {
      * @param s String
      * @return BigDecimal
      */
+    @Converter
     public BigDecimal toBigDecimal(String s) {
         if (s == null)
             return null;
@@ -31,6 +33,7 @@ public class BigDecimalCodec extends Codec {
      * @param bd BigDecimal
      * @return String
      */
+    @Converter
     public String toString(BigDecimal bd) {
         if (bd == null)
             return null;
