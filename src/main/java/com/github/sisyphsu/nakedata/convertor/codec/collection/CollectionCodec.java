@@ -22,15 +22,53 @@ public class CollectionCodec extends Codec {
      * @param type Type
      * @return Collection
      */
+    @SuppressWarnings("unchecked")
     public Collection toCollection(Collection src, XType<?> type) {
-        if (src == null || checkCompatible(src, type))
+        if (src == null) {
+            return null;
+        }
+        // filter empty collection
+        Class clz = type.getRawType();
+        if (clz.isInstance(src) && src.isEmpty()) {
             return src;
-        // Initialize target collection
-        Collection result;
-        int size = src.size();
-        Class<?> clz = type.getRawType();
-        XType genericType = type.getParameterizedType();
-        if (clz.isAssignableFrom(List.class)) {
+        }
+        // check compatible
+        XType paramType = type.getParameterizedType();
+        boolean compatible = clz.isInstance(src) && paramType.isPure();
+        if (compatible && paramType.getRawType() != Object.class) {
+            for (Object o : src) {
+                if (o != null) {
+                    compatible = paramType.getRawType().isAssignableFrom(o.getClass());
+                }
+                if (!compatible) {
+                    break;
+                }
+            }
+        }
+        if (compatible) {
+            return src;
+        }
+        // create target collection
+        Collection result = create(clz, paramType.getRawType(), src.size());
+        for (Object o : src) {
+            result.add(convert(o, paramType));
+        }
+        return result;
+    }
+
+    /**
+     * Create an collection instance by the specified Type.
+     *
+     * @param clz      Collection Type
+     * @param itemType Element Type, for EnumSet
+     * @param size     Initialize siz
+     * @return Collection
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Collection> T create(Class<T> clz, Class itemType, int size) {
+        Collection result = null;
+
+        if (List.class.isAssignableFrom(clz)) {
             if (clz.isAssignableFrom(ArrayList.class)) {
                 result = new ArrayList();
             } else if (clz.isAssignableFrom(LinkedList.class)) {
@@ -42,7 +80,7 @@ public class CollectionCodec extends Codec {
             } else if (clz.isAssignableFrom(CopyOnWriteArrayList.class)) {
                 result = new CopyOnWriteArrayList();
             }
-        } else if (clz.isAssignableFrom(Set.class)) {
+        } else if (Set.class.isAssignableFrom(clz)) {
             if (clz.isAssignableFrom(HashSet.class)) {
                 result = new HashSet();
             } else if (clz.isAssignableFrom(TreeSet.class)) {
@@ -50,13 +88,13 @@ public class CollectionCodec extends Codec {
             } else if (clz.isAssignableFrom(LinkedHashSet.class)) {
                 result = new LinkedHashSet();
             } else if (clz.isAssignableFrom(EnumSet.class)) {
-                result = EnumSet.noneOf(genericType.getRawType());
+                result = EnumSet.noneOf(itemType);
             } else if (clz.isAssignableFrom(CopyOnWriteArraySet.class)) {
                 result = new CopyOnWriteArraySet();
             } else if (clz.isAssignableFrom(ConcurrentSkipListSet.class)) {
                 result = new ConcurrentSkipListSet();
             }
-        } else if (clz.isAssignableFrom(Queue.class)) {
+        } else if (Queue.class.isAssignableFrom(clz)) {
             if (clz.isAssignableFrom(ArrayBlockingQueue.class)) {
                 result = new ArrayBlockingQueue(size);
             } else if (clz.isAssignableFrom(ArrayDeque.class)) {
@@ -83,23 +121,10 @@ public class CollectionCodec extends Codec {
                 result = new ConcurrentLinkedQueue();
             }
         }
-        // use ArrayList as default Collection
-        List list = new ArrayList();
-        for (Object o : src) {
-            list.add(convert(o, genericType));
+        if (result == null) {
+            throw new UnsupportedOperationException("Invalid Collection Type: " + clz);
         }
-        return list;
-    }
-
-    /**
-     * Check whether src is compatible with tgtType
-     */
-    protected boolean checkCompatible(Collection src, XType tgtType) {
-        if (src == null)
-            return true; // null compatible with everything
-        // TODO check class, empty special
-        // TODO check generic type, and object type compare
-        return false;
+        return (T) result;
     }
 
 }
