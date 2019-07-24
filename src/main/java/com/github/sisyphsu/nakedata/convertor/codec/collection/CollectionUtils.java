@@ -1,36 +1,29 @@
 package com.github.sisyphsu.nakedata.convertor.codec.collection;
 
-import com.github.sisyphsu.nakedata.convertor.codec.Codec;
-import com.github.sisyphsu.nakedata.convertor.reflect.XType;
-
 import java.util.*;
 import java.util.concurrent.*;
 
 /**
- * Collection's codec
- * Use Map to
+ * Maintain optimized global Creator for collection
  *
  * @author sulin
- * @since 2019-05-13 18:40:23
+ * @since 2019-07-24 11:50:08
  */
-public class CollectionCodec extends Codec {
+public final class CollectionUtils {
 
     /**
-     * Convert Any Collection to Collection, support GenericType convert.
+     * Create an collection instance by the specified Type.
      *
-     * @param src  Collection
-     * @param type Type
+     * @param clz      Collection Type
+     * @param itemType Element Type, for EnumSet
+     * @param size     Initialize siz
      * @return Collection
      */
-    public Collection toCollection(Collection src, XType<?> type) {
-        if (src == null || checkCompatible(src, type))
-            return src;
-        // Initialize target collection
-        Collection result;
-        int size = src.size();
-        Class<?> clz = type.getRawType();
-        XType genericType = type.getParameterizedType();
-        if (clz.isAssignableFrom(List.class)) {
+    @SuppressWarnings("unchecked")
+    public static <T extends Collection> T create(Class<T> clz, Class itemType, int size) {
+        Collection result = null;
+
+        if (List.class.isAssignableFrom(clz)) {
             if (clz.isAssignableFrom(ArrayList.class)) {
                 result = new ArrayList();
             } else if (clz.isAssignableFrom(LinkedList.class)) {
@@ -42,7 +35,7 @@ public class CollectionCodec extends Codec {
             } else if (clz.isAssignableFrom(CopyOnWriteArrayList.class)) {
                 result = new CopyOnWriteArrayList();
             }
-        } else if (clz.isAssignableFrom(Set.class)) {
+        } else if (Set.class.isAssignableFrom(clz)) {
             if (clz.isAssignableFrom(HashSet.class)) {
                 result = new HashSet();
             } else if (clz.isAssignableFrom(TreeSet.class)) {
@@ -50,13 +43,13 @@ public class CollectionCodec extends Codec {
             } else if (clz.isAssignableFrom(LinkedHashSet.class)) {
                 result = new LinkedHashSet();
             } else if (clz.isAssignableFrom(EnumSet.class)) {
-                result = EnumSet.noneOf(genericType.getRawType());
+                result = EnumSet.noneOf(itemType);
             } else if (clz.isAssignableFrom(CopyOnWriteArraySet.class)) {
                 result = new CopyOnWriteArraySet();
             } else if (clz.isAssignableFrom(ConcurrentSkipListSet.class)) {
                 result = new ConcurrentSkipListSet();
             }
-        } else if (clz.isAssignableFrom(Queue.class)) {
+        } else if (Queue.class.isAssignableFrom(clz)) {
             if (clz.isAssignableFrom(ArrayBlockingQueue.class)) {
                 result = new ArrayBlockingQueue(size);
             } else if (clz.isAssignableFrom(ArrayDeque.class)) {
@@ -83,23 +76,10 @@ public class CollectionCodec extends Codec {
                 result = new ConcurrentLinkedQueue();
             }
         }
-        // use ArrayList as default Collection
-        List list = new ArrayList();
-        for (Object o : src) {
-            list.add(convert(o, genericType));
+        if (result == null) {
+            throw new UnsupportedOperationException("Invalid Collection Type: " + clz);
         }
-        return list;
-    }
-
-    /**
-     * Check whether src is compatible with tgtType
-     */
-    protected boolean checkCompatible(Collection src, XType tgtType) {
-        if (src == null)
-            return true; // null compatible with everything
-        // TODO check class, empty special
-        // TODO check generic type, and object type compare
-        return false;
+        return (T) result;
     }
 
 }
