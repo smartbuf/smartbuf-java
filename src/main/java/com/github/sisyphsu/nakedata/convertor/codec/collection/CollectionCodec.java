@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.collection;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
@@ -13,6 +14,7 @@ import java.util.concurrent.*;
  * @author sulin
  * @since 2019-05-13 18:40:23
  */
+@SuppressWarnings("unchecked")
 public class CollectionCodec extends Codec {
 
     /**
@@ -22,7 +24,7 @@ public class CollectionCodec extends Codec {
      * @param type Type
      * @return Collection
      */
-    @SuppressWarnings("unchecked")
+    @Converter
     public Collection toCollection(Collection src, XType<?> type) {
         if (src == null) {
             return null;

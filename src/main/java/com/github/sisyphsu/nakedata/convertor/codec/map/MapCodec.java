@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.map;
 
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
@@ -24,43 +25,35 @@ public class MapCodec extends Codec {
      * @param type Generic Type
      * @return Map
      */
+    @Converter
     public Map toMap(Map<?, ?> map, XType<?> type) {
-        if (map == null)
+        if (map == null) {
             return null;
+        }
+        if (map.isEmpty() && type.getRawType().isInstance(map)) {
+            return map;
+        }
+        // check compatible, avoid unnessery copy
         Class<?> rawType = type.getRawType();
         XType<?>[] paramTypes = type.getParameterizedTypes();
         XType<?> keyType = paramTypes[0];
         XType<?> valType = paramTypes[1];
-        // TODO check compatible, avoid unnessery copy
-
-        // prepare map
-        Map result;
-        if (rawType.isAssignableFrom(EnumMap.class)) {
-            result = new EnumMap(keyType.getRawType());
-        } else if (rawType.isAssignableFrom(HashMap.class)) {
-            result = new HashMap();
-        } else if (rawType.isAssignableFrom(Hashtable.class)) {
-            result = new Hashtable();
-        } else if (rawType.isAssignableFrom(IdentityHashMap.class)) {
-            result = new IdentityHashMap();
-        } else if (rawType.isAssignableFrom(LinkedHashMap.class)) {
-            result = new LinkedHashMap();
-        } else if (rawType.isAssignableFrom(Properties.class)) {
-            result = new Properties();
-        } else if (rawType.isAssignableFrom(TreeMap.class)) {
-            result = new TreeMap();
-        } else if (rawType.isAssignableFrom(WeakHashMap.class)) {
-            result = new WeakHashMap(map.size());
-        } else if (rawType.isAssignableFrom(ConcurrentHashMap.class)) {
-            result = new ConcurrentHashMap(map.size());
-        } else if (rawType.isAssignableFrom(ConcurrentSkipListMap.class)) {
-            result = new ConcurrentSkipListMap();
-        } else if (rawType.isAssignableFrom(Attributes.class)) {
-            result = new Attributes(map.size());
-        } else {
-            throw new RuntimeException("Unsupport Map: " + type.getRawType());
+        boolean compatible = rawType.isInstance(map) && keyType.isPure() && valType.isPure();
+        if (compatible && !(keyType.getRawType() == Object.class && valType.getRawType() == Object.class)) {
+            for (Map.Entry<?, ?> entry : map.entrySet()) {
+                Object key = entry.getKey();
+                Object val = entry.getValue();
+                if (!keyType.getRawType().isInstance(key) || !valType.getRawType().isInstance(val)) {
+                    compatible = false;
+                    break;
+                }
+            }
         }
-        // copy entries
+        if (compatible) {
+            return map;
+        }
+        // Build new Map
+        Map result = create(rawType, keyType.getRawType(), map.size());
         for (Map.Entry<?, ?> entry : map.entrySet()) {
             Object key = convert(entry.getKey(), keyType);
             Object val = convert(entry.getValue(), valType);
@@ -75,6 +68,7 @@ public class MapCodec extends Codec {
      * @param entry Entry
      * @return Map
      */
+    @Converter
     public Map toMap(Map.Entry entry) {
         if (entry == null)
             return null;
@@ -98,11 +92,10 @@ public class MapCodec extends Codec {
         XType<?>[] paramTypes = type.getParameterizedTypes();
         Object key = convert(entry.getKey(), paramTypes[0]);
         Object val = convert(entry.getValue(), paramTypes[1]);
-        if (clz.isAssignableFrom(AbstractMap.SimpleEntry.class)) {
+        if (clz.isAssignableFrom(AbstractMap.SimpleEntry.class))
             return new AbstractMap.SimpleEntry(key, val);
-        } else if (clz.isAssignableFrom(AbstractMap.SimpleImmutableEntry.class)) {
+        if (clz.isAssignableFrom(AbstractMap.SimpleImmutableEntry.class))
             return new AbstractMap.SimpleImmutableEntry(key, val);
-        }
         throw new IllegalArgumentException("Unsupported Type: " + type.getRawType());
     }
 
@@ -112,6 +105,7 @@ public class MapCodec extends Codec {
      * @param map Map
      * @return Map.Entry
      */
+    @Converter
     public Map.Entry toMapEntry(Map<?, ?> map) {
         if (map == null || map.isEmpty())
             return null;
@@ -119,6 +113,40 @@ public class MapCodec extends Codec {
             throw new IllegalArgumentException("Can't convert Map[size > 1] to Map.Entry");
         }
         return map.entrySet().iterator().next();
+    }
+
+    /**
+     * Create an Map instance by the specified Class
+     *
+     * @param clz     The specified Map class
+     * @param keyType Key Type
+     * @param size    initial size
+     * @return Map Instance
+     */
+    public static Map create(Class<?> clz, Class<?> keyType, int size) {
+        if (clz.isAssignableFrom(EnumMap.class))
+            return new EnumMap(keyType);
+        if (clz.isAssignableFrom(HashMap.class))
+            return new HashMap();
+        if (clz.isAssignableFrom(Hashtable.class))
+            return new Hashtable();
+        if (clz.isAssignableFrom(IdentityHashMap.class))
+            return new IdentityHashMap();
+        if (clz.isAssignableFrom(LinkedHashMap.class))
+            return new LinkedHashMap();
+        if (clz.isAssignableFrom(Properties.class))
+            return new Properties();
+        if (clz.isAssignableFrom(TreeMap.class))
+            return new TreeMap();
+        if (clz.isAssignableFrom(WeakHashMap.class))
+            return new WeakHashMap(size);
+        if (clz.isAssignableFrom(ConcurrentHashMap.class))
+            return new ConcurrentHashMap(size);
+        if (clz.isAssignableFrom(ConcurrentSkipListMap.class))
+            return new ConcurrentSkipListMap();
+        if (clz.isAssignableFrom(Attributes.class))
+            return new Attributes(size);
+        throw new UnsupportedOperationException("Unsupport Map: " + clz);
     }
 
 }
