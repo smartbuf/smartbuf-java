@@ -15,7 +15,7 @@ import java.util.Collection;
  * @author sulin
  * @since 2019-05-13 18:53:04
  */
-public class ObjectArrayCodec extends Codec {
+public class ArrayCodec extends Codec {
 
     /**
      * Convert Object[] to T[] based on specified T Type.

@@ -15,9 +15,6 @@ public class CharsetCodec extends Codec {
 
     /**
      * Convert String to Charset
-     *
-     * @param s String
-     * @return Charset
      */
     @Converter
     public Charset toCharset(String s) {
@@ -26,9 +23,6 @@ public class CharsetCodec extends Codec {
 
     /**
      * Convert Charset to String
-     *
-     * @param c Charset
-     * @return String
      */
     @Converter
     public String toString(Charset c) {

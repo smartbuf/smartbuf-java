@@ -15,9 +15,6 @@ public class FileCodec extends Codec {
 
     /**
      * Convert File to String, toString directly
-     *
-     * @param file File
-     * @return String
      */
     @Converter
     public String toString(File file) {
@@ -26,9 +23,6 @@ public class FileCodec extends Codec {
 
     /**
      * Convert String to File, should throw Exception
-     *
-     * @param s String
-     * @return File
      */
     @Converter
     public File toFile(String s) {

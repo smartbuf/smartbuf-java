@@ -18,9 +18,6 @@ public class InputStreamCodec extends Codec {
 
     /**
      * Convert byte[] to InputStream
-     *
-     * @param bytes byte[]
-     * @return InputStream
      */
     @Converter
     public InputStream toInputStream(byte[] bytes) {
@@ -29,9 +26,6 @@ public class InputStreamCodec extends Codec {
 
     /**
      * Convert InputStream to byte[]
-     *
-     * @param is InputStream
-     * @return byte[]
      */
     @Converter
     public byte[] toByteArray(InputStream is) {

@@ -15,9 +15,6 @@ public class ByteBufferCodec extends Codec {
 
     /**
      * Convert byte[] to ByteBuffer
-     *
-     * @param bs byte[]
-     * @return ByteBuffer
      */
     @Converter
     public ByteBuffer toByteBuffer(byte[] bs) {
@@ -26,9 +23,6 @@ public class ByteBufferCodec extends Codec {
 
     /**
      * Convert ByteBuffer to byte[]
-     *
-     * @param buf ByteBuffer
-     * @return byte[]
      */
     @Converter
     public byte[] toByteArray(ByteBuffer buf) {
