@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.convertor;
 
-import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;

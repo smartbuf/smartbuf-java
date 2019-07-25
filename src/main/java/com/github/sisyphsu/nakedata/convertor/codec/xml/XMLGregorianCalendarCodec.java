@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor.codec.xml;
 
 import com.github.sisyphsu.nakedata.convertor.Converter;
-import com.github.sisyphsu.nakedata.convertor.codec.Codec;
+import com.github.sisyphsu.nakedata.convertor.Codec;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.Calendar;

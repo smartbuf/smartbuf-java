@@ -1,7 +1,7 @@
-package com.github.sisyphsu.nakedata.convertor.codec.text;
+package com.github.sisyphsu.nakedata.convertor.codec;
 
 import com.github.sisyphsu.nakedata.convertor.Converter;
-import com.github.sisyphsu.nakedata.convertor.codec.Codec;
+import com.github.sisyphsu.nakedata.convertor.Codec;
 
 import java.text.SimpleDateFormat;
 
@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
  * @author sulin
  * @since 2019-05-13 18:29:02
  */
-public class SimpleDateFormatCodec extends Codec {
+public class TextCodec extends Codec {
 
     /**
      * Convert String to SimpleDateFormat

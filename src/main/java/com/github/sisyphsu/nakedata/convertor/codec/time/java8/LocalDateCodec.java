@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor.codec.time.java8;
 
 import com.github.sisyphsu.nakedata.convertor.Converter;
-import com.github.sisyphsu.nakedata.convertor.codec.Codec;
+import com.github.sisyphsu.nakedata.convertor.Codec;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

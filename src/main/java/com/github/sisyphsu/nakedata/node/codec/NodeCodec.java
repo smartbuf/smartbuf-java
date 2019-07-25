@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.node.codec;
 
-import com.github.sisyphsu.nakedata.convertor.codec.Codec;
+import com.github.sisyphsu.nakedata.convertor.Codec;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.std.*;
 

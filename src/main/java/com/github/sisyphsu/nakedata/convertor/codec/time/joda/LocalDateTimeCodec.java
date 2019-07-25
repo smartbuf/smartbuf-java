@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec.time.joda;
 
-import com.github.sisyphsu.nakedata.convertor.codec.Codec;
+import com.github.sisyphsu.nakedata.convertor.Codec;
 import org.joda.time.LocalDateTime;
 
 /**

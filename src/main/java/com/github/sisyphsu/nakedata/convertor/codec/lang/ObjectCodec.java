@@ -1,9 +1,8 @@
 package com.github.sisyphsu.nakedata.convertor.codec.lang;
 
-import com.github.sisyphsu.nakedata.convertor.codec.Codec;
+import com.github.sisyphsu.nakedata.convertor.Codec;
 import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
-import java.lang.reflect.Type;
 import java.util.Map;
 
 /**

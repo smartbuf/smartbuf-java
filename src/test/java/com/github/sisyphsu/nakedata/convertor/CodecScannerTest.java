@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.convertor;
 
-import com.github.sisyphsu.nakedata.convertor.codec.Codec;
 import org.junit.Test;
 
 import java.util.Set;
