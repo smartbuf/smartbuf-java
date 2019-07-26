@@ -18,6 +18,56 @@ import java.util.concurrent.*;
 public class CollectionCodec extends Codec {
 
     /**
+     * Convert Collection to Iterator
+     * Collection is compatible with Iterator, CollectionCodec will handle generic type.
+     */
+    @Converter
+    public Iterator toIterator(Collection coll) {
+        return coll == null ? null : coll.iterator();
+    }
+
+    /**
+     * Convert Iterator to List as default collection, CollectionCodec will handle generic type.
+     */
+    @Converter
+    public Collection toList(Iterator it) {
+        if (it == null)
+            return null;
+
+        List<Object> list = new ArrayList<>();
+        while (it.hasNext()) {
+            list.add(it.next());
+        }
+        return list;
+    }
+
+    /**
+     * Convert Collection to Enumeration
+     */
+    @Converter
+    public Enumeration toEnumeration(Collection<?> coll) {
+        if (coll == null)
+            return null;
+
+        return Collections.enumeration(coll);
+    }
+
+    /**
+     * Convert Enumeration to List
+     */
+    @Converter
+    public Collection toList(Enumeration e) {
+        if (e == null)
+            return null;
+
+        List<Object> result = new ArrayList<>();
+        while (e.hasMoreElements()) {
+            result.add(e.nextElement());
+        }
+        return result;
+    }
+    
+    /**
      * Convert Any Collection to Collection, support GenericType convert.
      *
      * @param src  Collection
