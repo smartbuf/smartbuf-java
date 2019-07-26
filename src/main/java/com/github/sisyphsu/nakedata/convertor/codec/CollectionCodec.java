@@ -21,8 +21,6 @@ public class CollectionCodec extends Codec {
      */
     @Converter
     public Iterator toIterator(Iterable it, XType<?> type) {
-        if (it == null)
-            return null;
         Iterator iterator = it.iterator();
         XType paramType = type.getParameterizedType();
         return new Iterator() {
@@ -43,7 +41,7 @@ public class CollectionCodec extends Codec {
      */
     @Converter
     public Iterator toIterator(Collection coll) {
-        return coll == null ? null : coll.iterator();
+        return coll.iterator();
     }
 
     /**
@@ -51,9 +49,6 @@ public class CollectionCodec extends Codec {
      */
     @Converter
     public Collection toCollection(Iterator it) {
-        if (it == null)
-            return null;
-
         List<Object> list = new ArrayList<>();
         while (it.hasNext()) {
             list.add(it.next());
@@ -66,9 +61,6 @@ public class CollectionCodec extends Codec {
      */
     @Converter
     public Enumeration toEnumeration(Collection<?> coll) {
-        if (coll == null)
-            return null;
-
         return Collections.enumeration(coll);
     }
 
@@ -92,9 +84,6 @@ public class CollectionCodec extends Codec {
      */
     @Converter
     public Collection toCollection(Collection src, XType<?> type) {
-        if (src == null) {
-            return null;
-        }
         // filter empty collection
         Class clz = type.getRawType();
         if (clz.isInstance(src) && src.isEmpty()) {

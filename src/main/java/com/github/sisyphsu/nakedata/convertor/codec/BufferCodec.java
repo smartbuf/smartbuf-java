@@ -18,7 +18,7 @@ public class BufferCodec extends Codec {
      */
     @Converter
     public byte[] toByteArray(ByteBuffer buf) {
-        return buf == null ? null : buf.array();
+        return buf.array();
     }
 
     /**
@@ -26,97 +26,97 @@ public class BufferCodec extends Codec {
      */
     @Converter
     public ByteBuffer toByteBuffer(byte[] bs) {
-        return bs == null ? null : ByteBuffer.wrap(bs);
+        return ByteBuffer.wrap(bs);
     }
 
     @Converter
     public char[] toCharArray(CharBuffer buf) {
-        return buf == null ? null : buf.array();
+        return buf.array();
     }
 
     @Converter
     public CharBuffer toCharBuffer(char[] chars) {
-        return chars == null ? null : CharBuffer.wrap(chars);
+        return CharBuffer.wrap(chars);
     }
 
     @Converter
     public CharBuffer toCharBuffer(ByteBuffer buf) {
-        return buf == null ? null : buf.asCharBuffer();
+        return buf.asCharBuffer();
     }
 
     @Converter
     public float[] toFloatArray(FloatBuffer buf) {
-        return buf == null ? null : buf.array();
+        return buf.array();
     }
 
     @Converter
     public FloatBuffer toFloatBuffer(float[] floats) {
-        return floats == null ? null : FloatBuffer.wrap(floats);
+        return FloatBuffer.wrap(floats);
     }
 
     @Converter
     public FloatBuffer toFloatBuffer(ByteBuffer buf) {
-        return buf == null ? null : buf.asFloatBuffer();
+        return buf.asFloatBuffer();
     }
 
     @Converter
     public double[] toDoubleArray(DoubleBuffer buf) {
-        return buf == null ? null : buf.array();
+        return buf.array();
     }
 
     @Converter
     public DoubleBuffer toDoubleBuffer(double[] doubles) {
-        return doubles == null ? null : DoubleBuffer.wrap(doubles);
+        return DoubleBuffer.wrap(doubles);
     }
 
     @Converter
     public DoubleBuffer toDoubleBuffer(ByteBuffer buf) {
-        return buf == null ? null : buf.asDoubleBuffer();
+        return buf.asDoubleBuffer();
     }
 
     @Converter
     public short[] toShortArray(ShortBuffer buf) {
-        return buf == null ? null : buf.array();
+        return buf.array();
     }
 
     @Converter
     public ShortBuffer toShortBuffer(short[] shorts) {
-        return shorts == null ? null : ShortBuffer.wrap(shorts);
+        return ShortBuffer.wrap(shorts);
     }
 
     @Converter
     public ShortBuffer toShortBuffer(ByteBuffer buf) {
-        return buf == null ? null : buf.asShortBuffer();
+        return buf.asShortBuffer();
     }
 
     @Converter
     public int[] toIntArray(IntBuffer buf) {
-        return buf == null ? null : buf.array();
+        return buf.array();
     }
 
     @Converter
     public IntBuffer toIntBuffer(int[] ints) {
-        return ints == null ? null : IntBuffer.wrap(ints);
+        return IntBuffer.wrap(ints);
     }
 
     @Converter
     public IntBuffer toIntBuffer(ByteBuffer buf) {
-        return buf == null ? null : buf.asIntBuffer();
+        return buf.asIntBuffer();
     }
 
     @Converter
     public long[] toLongArray(LongBuffer buf) {
-        return buf == null ? null : buf.array();
+        return buf.array();
     }
 
     @Converter
     public LongBuffer toLongBuffer(long[] longs) {
-        return longs == null ? null : LongBuffer.wrap(longs);
+        return LongBuffer.wrap(longs);
     }
 
     @Converter
     public LongBuffer toLongBuffer(ByteBuffer buf) {
-        return buf == null ? null : buf.asLongBuffer();
+        return buf.asLongBuffer();
     }
 
 }

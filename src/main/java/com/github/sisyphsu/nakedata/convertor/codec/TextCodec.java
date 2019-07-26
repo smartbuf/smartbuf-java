@@ -19,7 +19,7 @@ public class TextCodec extends Codec {
      */
     @Converter
     public SimpleDateFormat toSimpleDateFormat(String s) {
-        return s == null ? null : new SimpleDateFormat(s);
+        return new SimpleDateFormat(s);
     }
 
     /**
@@ -27,7 +27,7 @@ public class TextCodec extends Codec {
      */
     @Converter
     public String toString(SimpleDateFormat format) {
-        return format == null ? null : format.toPattern();
+        return format.toPattern();
     }
 
     /**
@@ -35,7 +35,7 @@ public class TextCodec extends Codec {
      */
     @Converter
     public StringCharacterIterator toStringCharacterIterator(String s) {
-        return s == null ? null : new StringCharacterIterator(s);
+        return new StringCharacterIterator(s);
     }
 
     /**
@@ -43,8 +43,6 @@ public class TextCodec extends Codec {
      */
     @Converter
     public String toString(StringCharacterIterator sc) {
-        if (sc == null)
-            return null;
         StringBuilder sb = new StringBuilder();
         char c = sc.first();
         while (c != StringCharacterIterator.DONE) {

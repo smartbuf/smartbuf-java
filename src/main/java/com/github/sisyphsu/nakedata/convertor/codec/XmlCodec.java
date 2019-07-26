@@ -19,7 +19,7 @@ public class XmlCodec extends Codec {
      */
     @Converter
     public Calendar toCalendar(XMLGregorianCalendar calendar) {
-        return calendar == null ? null : calendar.toGregorianCalendar();
+        return calendar.toGregorianCalendar();
     }
 
 }

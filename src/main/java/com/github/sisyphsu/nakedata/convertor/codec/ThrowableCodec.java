@@ -35,9 +35,6 @@ public class ThrowableCodec extends Codec {
      */
     @Converter
     public StackTraceElement toStackTraceElement(Map map) {
-        if (map == null)
-            return null;
-
         String declarer = convert(map.get(F_DECLARER), String.class);
         String method = convert(map.get(F_METHOD), String.class);
         String file = convert(map.get(F_FILE), String.class);
@@ -56,8 +53,6 @@ public class ThrowableCodec extends Codec {
      */
     @Converter
     public Map toMap(StackTraceElement element) {
-        if (element == null)
-            return null;
         Map<String, Object> result = new HashMap<>();
         result.put(F_DECLARER, element.getClassName());
         result.put(F_METHOD, element.getMethodName());
@@ -74,9 +69,6 @@ public class ThrowableCodec extends Codec {
      */
     @Converter
     public Map toMap(Throwable t) {
-        if (t == null) {
-            return null;
-        }
         Map<String, Object> result = new HashMap<>();
         result.put(E_TYPE, t.getClass().getName());
         result.put(E_MSG, t.getMessage());

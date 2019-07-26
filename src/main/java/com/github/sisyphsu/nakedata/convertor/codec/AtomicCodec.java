@@ -1,12 +1,14 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
-import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.Codec;
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
 import java.util.concurrent.atomic.*;
 
 /**
+ * Codec for java.util.concurrent.atomic package.
+ *
  * @author sulin
  * @since 2019-07-25 12:00:54
  */
@@ -17,7 +19,7 @@ public class AtomicCodec extends Codec {
      */
     @Converter
     public AtomicBoolean toAtomicBoolean(Boolean b) {
-        return b == null ? null : new AtomicBoolean(b);
+        return new AtomicBoolean(b);
     }
 
     /**
@@ -25,7 +27,7 @@ public class AtomicCodec extends Codec {
      */
     @Converter
     public Boolean toBoolean(AtomicBoolean ab) {
-        return ab == null ? null : ab.get();
+        return ab.get();
     }
 
     /**
@@ -33,7 +35,7 @@ public class AtomicCodec extends Codec {
      */
     @Converter
     public AtomicIntegerArray toAtomicIntegerArray(int[] arr) {
-        return arr == null ? null : new AtomicIntegerArray(arr);
+        return new AtomicIntegerArray(arr);
     }
 
     /**
@@ -53,7 +55,7 @@ public class AtomicCodec extends Codec {
      */
     @Converter
     public AtomicInteger toAtomicInteger(Integer i) {
-        return i == null ? null : new AtomicInteger(i);
+        return new AtomicInteger(i);
     }
 
     /**
@@ -61,7 +63,7 @@ public class AtomicCodec extends Codec {
      */
     @Converter
     public Integer toInteger(AtomicInteger ai) {
-        return ai == null ? null : ai.get();
+        return ai.get();
     }
 
     /**
@@ -69,7 +71,7 @@ public class AtomicCodec extends Codec {
      */
     @Converter
     public AtomicLongArray toAtomicLongArray(long[] arr) {
-        return arr == null ? null : new AtomicLongArray(arr);
+        return new AtomicLongArray(arr);
     }
 
     /**
@@ -89,7 +91,7 @@ public class AtomicCodec extends Codec {
      */
     @Converter
     public AtomicLong toAtomicLong(Long l) {
-        return l == null ? null : new AtomicLong(l);
+        return new AtomicLong(l);
     }
 
     /**
@@ -97,7 +99,7 @@ public class AtomicCodec extends Codec {
      */
     @Converter
     public Long toLong(AtomicLong al) {
-        return al == null ? null : al.get();
+        return al.get();
     }
 
     /**
@@ -120,7 +122,7 @@ public class AtomicCodec extends Codec {
      */
     @Converter
     public Object toObject(AtomicReference ref) {
-        return ref == null ? null : ref.get();
+        return ref.get();
     }
 
     /**
@@ -138,7 +140,7 @@ public class AtomicCodec extends Codec {
      */
     @Converter
     public Double toDouble(DoubleAdder adder) {
-        return adder == null ? null : adder.doubleValue();
+        return adder.doubleValue();
     }
 
     /**
@@ -156,7 +158,7 @@ public class AtomicCodec extends Codec {
      */
     @Converter
     public Long toLong(LongAdder adder) {
-        return adder == null ? null : adder.longValue();
+        return adder.longValue();
     }
 
 }

@@ -18,16 +18,9 @@ public class ReferenceCodec extends Codec {
 
     /**
      * Convert Any Object to Reference
-     *
-     * @param obj  Object
-     * @param type Type
-     * @return WeakReference
      */
     @Converter
     public Reference toReference(Object obj, XType type) {
-        if (obj == null) {
-            return null;
-        }
         XType<?> paramType = type.getParameterizedType();
         Object value;
         if (paramType.isPure() && paramType.getRawType().isAssignableFrom(obj.getClass())) {
@@ -53,8 +46,6 @@ public class ReferenceCodec extends Codec {
      * @return Object
      */
     public Object toObject(Reference ref) {
-        if (ref == null)
-            return null;
         return ref.get();
     }
 

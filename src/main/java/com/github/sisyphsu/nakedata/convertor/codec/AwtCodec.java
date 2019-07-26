@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
-import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.Codec;
+import com.github.sisyphsu.nakedata.convertor.Converter;
 
 import java.awt.*;
 import java.util.LinkedHashMap;
@@ -29,9 +29,6 @@ public class AwtCodec extends Codec {
      */
     @Converter
     public Font toFont(Map map) {
-        if (map == null) {
-            return null;
-        }
         String name = convert(map.get(FONT_NAME), String.class);
         Integer style = convert(map.get(FONT_STYLE), Integer.class);
         Integer size = convert(map.get(FONT_SIZE), Integer.class);
@@ -49,8 +46,6 @@ public class AwtCodec extends Codec {
      */
     @Converter
     public Map toMap(Font font) {
-        if (font == null)
-            return null;
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(FONT_NAME, font.getName());
         map.put(FONT_STYLE, font.getStyle());
@@ -64,7 +59,7 @@ public class AwtCodec extends Codec {
      */
     @Converter
     public Color toColor(String s) {
-        return s == null ? null : Color.decode(s);
+        return Color.decode(s);
     }
 
     /**
@@ -72,7 +67,7 @@ public class AwtCodec extends Codec {
      */
     @Converter
     public String toString(Color c) {
-        return c == null ? null : ("#" + Integer.toString(c.getAlpha(), 16));
+        return "#" + Integer.toString(c.getAlpha(), 16);
     }
 
     /**
@@ -80,8 +75,6 @@ public class AwtCodec extends Codec {
      */
     @Converter
     public Point toPoint(Map map) {
-        if (map == null)
-            return null;
         Integer x = convert(map.get(POINT_X), Integer.class);
         Integer y = convert(map.get(POINT_Y), Integer.class);
         return new Point(x, y);
@@ -92,8 +85,6 @@ public class AwtCodec extends Codec {
      */
     @Converter
     public Dimension toDemension(Map map) {
-        if (map == null)
-            return null;
         Integer width = convert(map.get(DIMENSION_WIDTH), Integer.class);
         Integer height = convert(map.get(DIMENSION_HEIGHT), Integer.class);
         return new Dimension(width, height);
@@ -104,8 +95,6 @@ public class AwtCodec extends Codec {
      */
     @Converter
     public Rectangle toRectangle(Map map) {
-        if (map == null)
-            return null;
         Integer x = convert(map.get(POINT_X), Integer.class);
         Integer y = convert(map.get(POINT_Y), Integer.class);
         Integer width = convert(map.get(DIMENSION_WIDTH), Integer.class);

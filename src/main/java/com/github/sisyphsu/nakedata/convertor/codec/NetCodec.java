@@ -22,7 +22,7 @@ public class NetCodec extends Codec {
      */
     @Converter
     public URI toURI(String s) {
-        return s == null ? null : URI.create(s);
+        return URI.create(s);
     }
 
     /**
@@ -30,7 +30,7 @@ public class NetCodec extends Codec {
      */
     @Converter
     public String toString(URI uri) {
-        return uri == null ? null : uri.toString();
+        return uri.toString();
     }
 
     /**
@@ -38,7 +38,7 @@ public class NetCodec extends Codec {
      */
     @Converter
     public URL toURL(String s) throws MalformedURLException {
-        return s == null ? null : new URL(s);
+        return new URL(s);
     }
 
     /**
@@ -46,7 +46,7 @@ public class NetCodec extends Codec {
      */
     @Converter
     public String toString(URL url) {
-        return url == null ? null : url.toString();
+        return url.toString();
     }
 
     /**
@@ -54,7 +54,7 @@ public class NetCodec extends Codec {
      */
     @Converter
     public Inet4Address toInet4Address(String s) throws UnknownHostException {
-        return s == null ? null : (Inet4Address) InetAddress.getByName(s);
+        return (Inet4Address) InetAddress.getByName(s);
     }
 
     /**
@@ -62,7 +62,7 @@ public class NetCodec extends Codec {
      */
     @Converter
     public String toString(Inet4Address addr) {
-        return addr == null ? null : addr.getHostAddress();
+        return addr.getHostAddress();
     }
 
     /**
@@ -70,7 +70,7 @@ public class NetCodec extends Codec {
      */
     @Converter
     public Inet6Address toInet6Address(String s) throws UnknownHostException {
-        return s == null ? null : (Inet6Address) InetAddress.getByName(s);
+        return (Inet6Address) InetAddress.getByName(s);
     }
 
     /**
@@ -78,7 +78,7 @@ public class NetCodec extends Codec {
      */
     @Converter
     public String toString(Inet6Address addr) {
-        return addr == null ? null : addr.toString();
+        return addr.toString();
     }
 
 
@@ -87,7 +87,7 @@ public class NetCodec extends Codec {
      */
     @Converter
     public InetAddress toInetAddress(String s) throws UnknownHostException {
-        return s == null ? null : InetAddress.getByName(s);
+        return InetAddress.getByName(s);
     }
 
     /**
@@ -95,7 +95,7 @@ public class NetCodec extends Codec {
      */
     @Converter
     public String toString(InetAddress addr) {
-        return addr == null ? null : addr.toString();
+        return addr.toString();
     }
 
     /**
@@ -103,9 +103,6 @@ public class NetCodec extends Codec {
      */
     @Converter
     public InetSocketAddress toInetSocketAddress(String s) {
-        if (s == null)
-            return null;
-
         Matcher matcher = PATTERN.matcher(s);
         if (!matcher.matches()) {
             throw new RuntimeException("Cant convert String to InetSocketAddress" + s);
@@ -122,9 +119,6 @@ public class NetCodec extends Codec {
      */
     @Converter
     public String toString(InetSocketAddress addr) {
-        if (addr == null)
-            return null;
-
         String addrStr = convert(addr.getAddress(), String.class);
         return addrStr + ":" + addr.getPort();
     }

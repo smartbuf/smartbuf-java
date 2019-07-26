@@ -23,7 +23,7 @@ public class SqlCodec extends Codec {
      */
     @Converter
     public InputStream toInputStream(Blob b) throws SQLException {
-        return b == null ? null : b.getBinaryStream();
+        return b.getBinaryStream();
     }
 
     /**
@@ -39,7 +39,7 @@ public class SqlCodec extends Codec {
      */
     @Converter
     public Date toDate(LocalDate d) {
-        return d == null ? null : Date.valueOf(d);
+        return Date.valueOf(d);
     }
 
     /**
@@ -47,7 +47,7 @@ public class SqlCodec extends Codec {
      */
     @Converter
     public LocalDate toLocalDate(Date date) {
-        return date == null ? null : date.toLocalDate();
+        return date.toLocalDate();
     }
 
     /**
@@ -55,7 +55,7 @@ public class SqlCodec extends Codec {
      */
     @Converter
     public Time toTime(LocalTime time) {
-        return time == null ? null : Time.valueOf(time);
+        return Time.valueOf(time);
     }
 
     /**
@@ -63,7 +63,7 @@ public class SqlCodec extends Codec {
      */
     @Converter
     public LocalTime toLocalTime(Time time) {
-        return time == null ? null : time.toLocalTime();
+        return time.toLocalTime();
     }
 
     /**
@@ -71,7 +71,7 @@ public class SqlCodec extends Codec {
      */
     @Converter
     public Timestamp toTimestamp(LocalDateTime dt) {
-        return dt == null ? null : Timestamp.valueOf(dt);
+        return Timestamp.valueOf(dt);
     }
 
     /**
@@ -79,7 +79,7 @@ public class SqlCodec extends Codec {
      */
     @Converter
     public LocalDateTime toLocalDateTime(Timestamp t) {
-        return t == null ? null : t.toLocalDateTime();
+        return t.toLocalDateTime();
     }
 
 }

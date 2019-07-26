@@ -50,7 +50,7 @@ public class StringCodec extends Codec {
      */
     @Converter
     public StringBuilder toStringBuilder(String s) {
-        return s == null ? null : new StringBuilder(s);
+        return new StringBuilder(s);
     }
 
     /**
@@ -58,7 +58,7 @@ public class StringCodec extends Codec {
      */
     @Converter
     public String toString(StringBuilder sb) {
-        return sb == null ? null : sb.toString();
+        return sb.toString();
     }
 
     /**
@@ -66,7 +66,7 @@ public class StringCodec extends Codec {
      */
     @Converter
     public String toString(char[] chars) {
-        return chars == null ? null : new String(chars);
+        return new String(chars);
     }
 
     /**
@@ -74,7 +74,7 @@ public class StringCodec extends Codec {
      */
     @Converter
     public char[] toCharArray(String s) {
-        return s == null ? null : s.toCharArray();
+        return s.toCharArray();
     }
 
     /**
@@ -82,7 +82,7 @@ public class StringCodec extends Codec {
      */
     @Converter
     public byte[] toByteArray(String s) {
-        return s == null ? null : s.getBytes();
+        return s.getBytes();
     }
 
     /**
@@ -90,7 +90,7 @@ public class StringCodec extends Codec {
      */
     @Converter
     public StringBuffer toStringBuffer(String s) {
-        return s == null ? null : new StringBuffer(s);
+        return new StringBuffer(s);
     }
 
     /**
@@ -98,7 +98,7 @@ public class StringCodec extends Codec {
      */
     @Converter
     public String toString(StringBuffer sb) {
-        return sb == null ? null : sb.toString();
+        return sb.toString();
     }
 
 }

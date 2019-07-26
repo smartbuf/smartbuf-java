@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
-import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.Codec;
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
 import java.util.*;
@@ -20,16 +20,9 @@ public class MapCodec extends Codec {
 
     /**
      * Convert Map to Map with the specified generic type
-     *
-     * @param map  Source Map
-     * @param type Generic Type
-     * @return Map
      */
     @Converter
     public Map toMap(Map<?, ?> map, XType<?> type) {
-        if (map == null) {
-            return null;
-        }
         if (map.isEmpty() && type.getRawType().isInstance(map)) {
             return map;
         }
@@ -64,14 +57,9 @@ public class MapCodec extends Codec {
 
     /**
      * Convert Map.Entry to Map, dont handle generic type
-     *
-     * @param entry Entry
-     * @return Map
      */
     @Converter
     public Map toMap(Map.Entry entry) {
-        if (entry == null)
-            return null;
         Map map = new HashMap();
         map.put(entry.getKey(), entry.getValue());
         return map;
@@ -79,15 +67,9 @@ public class MapCodec extends Codec {
 
     /**
      * Convert Map.Entry to Map.Entry with the specified generic type
-     *
-     * @param entry Map.Entry
-     * @param type  Type
-     * @return Map.Entry
      */
+    @Converter
     public Map.Entry toMapEntry(Map.Entry<?, ?> entry, XType<?> type) {
-        if (entry == null)
-            return null;
-
         Class<?> clz = type.getRawType();
         XType<?>[] paramTypes = type.getParameterizedTypes();
         Object key = convert(entry.getKey(), paramTypes[0]);
@@ -101,13 +83,10 @@ public class MapCodec extends Codec {
 
     /**
      * Convert Map to Map.Entry, dont handle generic type
-     *
-     * @param map Map
-     * @return Map.Entry
      */
     @Converter
     public Map.Entry toMapEntry(Map<?, ?> map) {
-        if (map == null || map.isEmpty())
+        if (map.isEmpty())
             return null;
         if (map.size() > 1) {
             throw new IllegalArgumentException("Can't convert Map[size > 1] to Map.Entry");

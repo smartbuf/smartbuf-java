@@ -17,4 +17,12 @@ import static java.lang.annotation.ElementType.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = {METHOD})
 public @interface Converter {
+
+    /**
+     * Indicate this converter accept null or not.
+     *
+     * @return default false, means null shouldn't be passed into converter.
+     */
+    boolean nullable() default false;
+
 }

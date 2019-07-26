@@ -37,10 +37,6 @@ public class LangCodec extends Codec {
 
     /**
      * Convert String to Enum
-     *
-     * @param name String
-     * @param type Enum Type
-     * @return Enum
      */
     @Converter
     @SuppressWarnings("unchecked")
@@ -50,9 +46,6 @@ public class LangCodec extends Codec {
 
     /**
      * Convert Enum to String
-     *
-     * @param e Enum
-     * @return String
      */
     @Converter
     public String toString(Enum e) {
@@ -61,9 +54,6 @@ public class LangCodec extends Codec {
 
     /**
      * Convert String to Class
-     *
-     * @param name String
-     * @return Class
      */
     @Converter
     public Class toClass(String name) throws ClassNotFoundException {
@@ -72,9 +62,6 @@ public class LangCodec extends Codec {
 
     /**
      * Convert Class to String
-     *
-     * @param cls Class
-     * @return String
      */
     @Converter
     public String toString(Class cls) {

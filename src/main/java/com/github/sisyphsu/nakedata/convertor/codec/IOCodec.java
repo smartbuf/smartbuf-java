@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
-import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.Codec;
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
 import java.io.*;
@@ -21,7 +21,7 @@ public class IOCodec extends Codec {
      */
     @Converter
     public Charset toCharset(String s) {
-        return s == null ? null : Charset.forName(s);
+        return Charset.forName(s);
     }
 
     /**
@@ -29,7 +29,7 @@ public class IOCodec extends Codec {
      */
     @Converter
     public String toString(Charset c) {
-        return c == null ? null : c.name();
+        return c.name();
     }
 
     /**
@@ -37,7 +37,7 @@ public class IOCodec extends Codec {
      */
     @Converter
     public String toString(File file) {
-        return file == null ? null : file.toString();
+        return file.toString();
     }
 
     /**
@@ -45,9 +45,6 @@ public class IOCodec extends Codec {
      */
     @Converter
     public byte[] toByteArray(InputStream is) throws IOException {
-        if (is == null) {
-            return null;
-        }
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         for (int n; (n = is.read(buffer)) >= 0; ) {
@@ -61,9 +58,6 @@ public class IOCodec extends Codec {
      */
     @Converter
     public InputStream toInputStream(byte[] bytes, XType type) {
-        if (bytes == null) {
-            return null;
-        }
         Class<?> clz = type.getRawType();
         if (clz.isAssignableFrom(ByteArrayInputStream.class)) {
             return new ByteArrayInputStream(bytes);
@@ -99,8 +93,6 @@ public class IOCodec extends Codec {
      */
     @Converter
     public Readable toReadable(String s, XType type) {
-        if (s == null)
-            return null;
         Class<?> clz = type.getRawType();
         if (clz.isAssignableFrom(StringReader.class)) {
             return new StringReader(s);

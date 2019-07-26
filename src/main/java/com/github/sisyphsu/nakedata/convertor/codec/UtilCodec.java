@@ -21,7 +21,7 @@ public class UtilCodec extends Codec {
      */
     @Converter
     public BitSet toBitSet(byte[] bytes) {
-        return bytes == null ? null : BitSet.valueOf(bytes);
+        return BitSet.valueOf(bytes);
     }
 
     /**
@@ -29,7 +29,7 @@ public class UtilCodec extends Codec {
      */
     @Converter
     public byte[] toByteArray(BitSet bitSet) {
-        return bitSet == null ? null : bitSet.toByteArray();
+        return bitSet.toByteArray();
     }
 
     /**
@@ -37,7 +37,7 @@ public class UtilCodec extends Codec {
      */
     @Converter
     public Currency toCurrency(String s) {
-        return s == null ? null : Currency.getInstance(s);
+        return Currency.getInstance(s);
     }
 
     /**
@@ -45,7 +45,7 @@ public class UtilCodec extends Codec {
      */
     @Converter
     public String toString(Currency c) {
-        return c == null ? null : c.getCurrencyCode();
+        return c.getCurrencyCode();
     }
 
     /**
@@ -53,7 +53,7 @@ public class UtilCodec extends Codec {
      */
     @Converter
     public Locale toLocale(String s) {
-        return s == null ? null : Locale.forLanguageTag(s);
+        return Locale.forLanguageTag(s);
     }
 
     /**
@@ -61,7 +61,7 @@ public class UtilCodec extends Codec {
      */
     @Converter
     public String toString(Locale locale) {
-        return locale == null ? null : locale.toLanguageTag();
+        return locale.toLanguageTag();
     }
 
     /**
@@ -69,7 +69,7 @@ public class UtilCodec extends Codec {
      */
     @Converter
     public UUID toUUID(String s) {
-        return s == null ? null : UUID.fromString(s);
+        return UUID.fromString(s);
     }
 
     /**
@@ -77,7 +77,7 @@ public class UtilCodec extends Codec {
      */
     @Converter
     public String toString(UUID uuid) {
-        return uuid == null ? null : uuid.toString();
+        return uuid.toString();
     }
 
     /**
@@ -85,7 +85,7 @@ public class UtilCodec extends Codec {
      */
     @Converter
     public TimeZone toTimeZone(String s) {
-        return s == null ? null : TimeZone.getTimeZone(s);
+        return TimeZone.getTimeZone(s);
     }
 
     /**
@@ -93,7 +93,7 @@ public class UtilCodec extends Codec {
      */
     @Converter
     public String toString(TimeZone tz) {
-        return tz == null ? null : tz.getID();
+        return tz.getID();
     }
 
     /**
@@ -101,7 +101,7 @@ public class UtilCodec extends Codec {
      */
     @Converter
     public Pattern toPattern(String s) {
-        return s == null ? null : Pattern.compile(s);
+        return Pattern.compile(s);
     }
 
     /**
@@ -109,13 +109,13 @@ public class UtilCodec extends Codec {
      */
     @Converter
     public String toString(Pattern p) {
-        return p == null ? null : p.pattern();
+        return p.pattern();
     }
 
     /**
      * Convert Object to Optional
      */
-    @Converter
+    @Converter(nullable = true)
     public Optional toOptional(Object o, XType type) {
         if (o == null)
             return Optional.empty();
@@ -138,7 +138,7 @@ public class UtilCodec extends Codec {
     /**
      * Convert Double to OptionalDouble
      */
-    @Converter
+    @Converter(nullable = true)
     public OptionalDouble toOptionalDouble(Double d) {
         return d == null ? OptionalDouble.empty() : OptionalDouble.of(d);
     }
@@ -154,7 +154,7 @@ public class UtilCodec extends Codec {
     /**
      * Convert Integer to OptionalInt
      */
-    @Converter
+    @Converter(nullable = true)
     public OptionalInt toOptionalInt(Integer i) {
         return i == null ? OptionalInt.empty() : OptionalInt.of(i);
     }
@@ -170,7 +170,7 @@ public class UtilCodec extends Codec {
     /**
      * Convert Long to OptionalLong
      */
-    @Converter
+    @Converter(nullable = true)
     public OptionalLong toOptionalLong(Long l) {
         return l == null ? OptionalLong.empty() : OptionalLong.of(l);
     }

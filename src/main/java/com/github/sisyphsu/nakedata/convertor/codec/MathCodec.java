@@ -19,7 +19,7 @@ public class MathCodec extends Codec {
      */
     @Converter
     public BigDecimal toBigDecimal(String s) {
-        return s == null ? null : new BigDecimal(s);
+        return new BigDecimal(s);
     }
 
     /**
@@ -27,7 +27,7 @@ public class MathCodec extends Codec {
      */
     @Converter
     public String toString(BigDecimal bd) {
-        return bd == null ? null : bd.toPlainString();
+        return bd.toPlainString();
     }
 
     /**
@@ -35,7 +35,7 @@ public class MathCodec extends Codec {
      */
     @Converter
     public BigInteger toBigInteger(String s) {
-        return s == null ? null : new BigInteger(s);
+        return new BigInteger(s);
     }
 
     /**
@@ -43,7 +43,7 @@ public class MathCodec extends Codec {
      */
     @Converter
     public String toString(BigInteger bi) {
-        return bi == null ? null : bi.toString();
+        return bi.toString();
     }
 
 }
