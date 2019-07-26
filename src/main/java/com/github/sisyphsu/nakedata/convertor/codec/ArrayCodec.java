@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
-import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.Codec;
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 import com.github.sisyphsu.nakedata.convertor.reflect.XTypeUtils;
 
@@ -20,16 +20,9 @@ public class ArrayCodec extends Codec {
     /**
      * Convert Object[] to T[] based on specified T Type.
      * For beter performance, some array shouldn't use this way, like byte[]...
-     *
-     * @param arr  Source Array
-     * @param type Target Type
-     * @return Target Array
      */
     @Converter
     public Object[] toArray(Object[] arr, XType<?> type) {
-        if (type == null) {
-            return arr; // dont convert
-        }
         if (type.isPure()) {
             Class<?> srcArrClass = arr.getClass();
             Class<?> tgtArrClass = type.getRawType();
@@ -42,15 +35,9 @@ public class ArrayCodec extends Codec {
 
     /**
      * Convert Collection to T[] based on specified T Type.
-     *
-     * @param list Source List
-     * @param type Target Type
-     * @return Target Array
      */
     @Converter
     public Object[] toArray(Collection list, XType<?> type) {
-        if (list == null)
-            return null;
         if (type == null) {
             return list.toArray();
         }
@@ -67,6 +54,204 @@ public class ArrayCodec extends Codec {
                 result[i] = convert(item, itemType); // need convert
             }
             i++;
+        }
+        return result;
+    }
+
+    /**
+     * Convert boolean[] to Boolean[]
+     */
+    @Converter
+    public Boolean[] toBooleanArray(boolean[] arr) {
+        Boolean[] result = new Boolean[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    /**
+     * Convert Boolean[] to boolean[]
+     */
+    @Converter
+    public boolean[] toBoolArray(Boolean[] arr) {
+        boolean[] result = new boolean[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i]; // could NPE
+        }
+        return result;
+    }
+
+    /**
+     * Convert byte[] to Byte[]
+     */
+    @Converter
+    public Byte[] toByteArray(byte[] arr) {
+        Byte[] result = new Byte[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    /**
+     * Convert Byte[] to byte[]
+     */
+    @Converter
+    public byte[] toByteArray(Byte[] arr) {
+        byte[] result = new byte[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    /**
+     * Convert char[] to Character[]
+     */
+    @Converter
+    public Character[] toCharacterArray(char[] arr) {
+        Character[] result = new Character[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    /**
+     * Convert Character[] to char[]
+     */
+    @Converter
+    public char[] toCharArray(Character[] arr) {
+        char[] result = new char[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    /**
+     * Convert double[] to Double[]
+     */
+    @Converter
+    public Double[] toDoubleArray(double[] arr) {
+        Double[] result = new Double[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    /**
+     * Convert Double[] to double[]
+     */
+    @Converter
+    public double[] toDoubleArray(Double[] arr) {
+        double[] result = new double[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    /**
+     * Convert float[] to Float[]
+     */
+    @Converter
+    public Float[] toFloatArray(float[] arr) {
+        Float[] result = new Float[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    /**
+     * Convert Float[] to float[]
+     */
+    @Converter
+    public float[] toFloatArray(Float[] arr) {
+        float[] result = new float[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    /**
+     * Convert Integer[] to int[]
+     */
+    @Converter
+    public Integer[] toIntegerArray(int[] arr) {
+        Integer[] result = new Integer[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    /**
+     * Convert Integer[] to int[]
+     */
+    @Converter
+    public int[] toIntArray(Integer[] arr) {
+        int[] result = new int[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    /**
+     * Convert Long[] to long[]
+     */
+    @Converter
+    public Long[] toLongArray(long[] arr) {
+        if (arr == null) {
+            return null;
+        }
+        Long[] result = new Long[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    /**
+     * Convert Long[] to long[]
+     */
+    @Converter
+    public long[] toLongArray(Long[] arr) {
+        if (arr == null) {
+            return null;
+        }
+        long[] result = new long[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    /**
+     * Convert Short[] to short[]
+     */
+    @Converter
+    public Short[] toShortArray(short[] arr) {
+        Short[] result = new Short[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
+        }
+        return result;
+    }
+
+    /**
+     * Convert Short[] to short[]
+     */
+    @Converter
+    public short[] toShortArray(Short[] arr) {
+        short[] result = new short[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i];
         }
         return result;
     }

@@ -9,13 +9,33 @@ import java.util.concurrent.*;
 
 /**
  * Collection's codec
- * Use Map to
  *
  * @author sulin
  * @since 2019-05-13 18:40:23
  */
 @SuppressWarnings("unchecked")
 public class CollectionCodec extends Codec {
+
+    /**
+     * Convert Iterable to Iterator
+     */
+    @Converter
+    public Iterator toIterator(Iterable it, XType<?> type) {
+        if (it == null)
+            return null;
+        Iterator iterator = it.iterator();
+        XType paramType = type.getParameterizedType();
+        return new Iterator() {
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
+
+            public Object next() {
+                Object obj = iterator.next();
+                return paramType == null ? obj : convert(obj, paramType);
+            }
+        };
+    }
 
     /**
      * Convert Collection to Iterator
@@ -27,10 +47,10 @@ public class CollectionCodec extends Codec {
     }
 
     /**
-     * Convert Iterator to List as default collection, CollectionCodec will handle generic type.
+     * Convert Iterator to List as default collection
      */
     @Converter
-    public Collection toList(Iterator it) {
+    public Collection toCollection(Iterator it) {
         if (it == null)
             return null;
 
@@ -56,7 +76,7 @@ public class CollectionCodec extends Codec {
      * Convert Enumeration to List
      */
     @Converter
-    public Collection toList(Enumeration e) {
+    public Collection toCollection(Enumeration e) {
         if (e == null)
             return null;
 
@@ -66,13 +86,9 @@ public class CollectionCodec extends Codec {
         }
         return result;
     }
-    
+
     /**
      * Convert Any Collection to Collection, support GenericType convert.
-     *
-     * @param src  Collection
-     * @param type Type
-     * @return Collection
      */
     @Converter
     public Collection toCollection(Collection src, XType<?> type) {

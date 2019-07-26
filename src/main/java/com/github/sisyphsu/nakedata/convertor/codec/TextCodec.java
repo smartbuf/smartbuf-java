@@ -33,6 +33,7 @@ public class TextCodec extends Codec {
     /**
      * Convert String to StringCharacterIterator
      */
+    @Converter
     public StringCharacterIterator toStringCharacterIterator(String s) {
         return s == null ? null : new StringCharacterIterator(s);
     }
@@ -40,6 +41,7 @@ public class TextCodec extends Codec {
     /**
      * Convert StringCharacterIterator to String
      */
+    @Converter
     public String toString(StringCharacterIterator sc) {
         if (sc == null)
             return null;

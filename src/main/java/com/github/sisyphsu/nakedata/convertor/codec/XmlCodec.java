@@ -7,7 +7,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.Calendar;
 
 /**
- * Codec for java.xml package.
+ * Codec for javax.xml package.
  *
  * @author sulin
  * @since 2019-05-13 18:25:17

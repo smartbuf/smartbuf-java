@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * Optional's codec
+ * Codec for java.util package, exclude Date and others
  *
  * @author sulin
  * @since 2019-05-13 18:15:18

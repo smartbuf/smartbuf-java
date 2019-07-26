@@ -41,8 +41,6 @@ public class AtomicCodec extends Codec {
      */
     @Converter
     public int[] toIntegerArray(AtomicIntegerArray aia) {
-        if (aia == null)
-            return null;
         int[] result = new int[aia.length()];
         for (int i = 0; i < result.length; i++) {
             result[i] = aia.get(i);
@@ -79,8 +77,6 @@ public class AtomicCodec extends Codec {
      */
     @Converter
     public long[] toLongArray(AtomicLongArray ala) {
-        if (ala == null)
-            return null;
         long[] result = new long[ala.length()];
         for (int i = 0; i < result.length; i++) {
             result[i] = ala.get(i);
@@ -109,9 +105,6 @@ public class AtomicCodec extends Codec {
      */
     @Converter
     public AtomicReference<?> toAtomicReference(Object obj, XType type) {
-        if (obj == null) {
-            return null;
-        }
         XType<?> refType = type.getParameterizedType();
         if (refType == null) {
             return new AtomicReference<>(obj); // no generic, use Object directly
@@ -135,9 +128,6 @@ public class AtomicCodec extends Codec {
      */
     @Converter
     public DoubleAdder toDoubleAdder(Double d) {
-        if (d == null) {
-            return null;
-        }
         DoubleAdder addr = new DoubleAdder();
         addr.add(d);
         return addr;
@@ -156,9 +146,6 @@ public class AtomicCodec extends Codec {
      */
     @Converter
     public LongAdder toLongAdder(Long l) {
-        if (l == null) {
-            return null;
-        }
         LongAdder adder = new LongAdder();
         adder.add(l);
         return adder;
