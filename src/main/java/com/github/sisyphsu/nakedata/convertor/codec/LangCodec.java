@@ -4,6 +4,7 @@ import com.github.sisyphsu.nakedata.convertor.Codec;
 import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 /**
@@ -66,6 +67,22 @@ public class LangCodec extends Codec {
     @Converter
     public String toString(Class cls) {
         return cls.getName();
+    }
+
+    /**
+     * Convert String to SimpleDateFormat
+     */
+    @Converter
+    public SimpleDateFormat toSimpleDateFormat(String s) {
+        return new SimpleDateFormat(s);
+    }
+
+    /**
+     * Convert SimpleDateFormat to String
+     */
+    @Converter
+    public String toString(SimpleDateFormat format) {
+        return format.toPattern();
     }
 
 }

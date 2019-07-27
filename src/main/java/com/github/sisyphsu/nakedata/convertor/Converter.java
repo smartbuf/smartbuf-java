@@ -19,10 +19,18 @@ import static java.lang.annotation.ElementType.*;
 public @interface Converter {
 
     /**
-     * Indicate this converter accept null or not.
+     * Indicate this converter accept null or not,
+     * which means null shouldn't be passed into converter.
      *
-     * @return default false, means null shouldn't be passed into converter.
+     * @return default false
      */
     boolean nullable() default false;
+
+    /**
+     * Indicate this converter is extensible or not
+     *
+     * @return default false
+     */
+    boolean extensible() default false;
 
 }

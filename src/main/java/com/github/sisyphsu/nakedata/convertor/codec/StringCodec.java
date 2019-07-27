@@ -3,6 +3,8 @@ package com.github.sisyphsu.nakedata.convertor.codec;
 import com.github.sisyphsu.nakedata.convertor.Codec;
 import com.github.sisyphsu.nakedata.convertor.Converter;
 
+import java.text.StringCharacterIterator;
+
 /**
  * String's codec
  *
@@ -10,6 +12,38 @@ import com.github.sisyphsu.nakedata.convertor.Converter;
  * @since 2019-05-13 18:14:25
  */
 public class StringCodec extends Codec {
+
+    /**
+     * Convert StringBuffer to String
+     */
+    @Converter
+    public String toString(StringBuffer sb) {
+        return sb.toString();
+    }
+
+    /**
+     * Convert String to StringBuffer
+     */
+    @Converter
+    public StringBuffer toStringBuffer(String s) {
+        return new StringBuffer(s);
+    }
+
+    /**
+     * Convert StringBuilder to String
+     */
+    @Converter
+    public String toString(StringBuilder sb) {
+        return sb.toString();
+    }
+
+    /**
+     * Convert String to StringBuilder
+     */
+    @Converter
+    public StringBuilder toStringBuilder(String s) {
+        return new StringBuilder(s);
+    }
 
     /**
      * Convert String to Character
@@ -30,38 +64,6 @@ public class StringCodec extends Codec {
     }
 
     /**
-     * Convert Integer to Character
-     */
-    @Converter
-    public Character toCharacter(Integer i) {
-        return (char) i.intValue();
-    }
-
-    /**
-     * Convert Character to Integer
-     */
-    @Converter
-    public Integer toInteger(Character c) {
-        return (int) c;
-    }
-
-    /**
-     * Convert String to StringBuilder
-     */
-    @Converter
-    public StringBuilder toStringBuilder(String s) {
-        return new StringBuilder(s);
-    }
-
-    /**
-     * Convert StringBuilder to String
-     */
-    @Converter
-    public String toString(StringBuilder sb) {
-        return sb.toString();
-    }
-
-    /**
      * Convert char[] to String
      */
     @Converter
@@ -78,6 +80,14 @@ public class StringCodec extends Codec {
     }
 
     /**
+     * Convert byte[] to String
+     */
+    @Converter
+    public String toString(byte[] bytes) {
+        return new String(bytes);
+    }
+
+    /**
      * Convert String to byte[]
      */
     @Converter
@@ -86,19 +96,25 @@ public class StringCodec extends Codec {
     }
 
     /**
-     * Convert String to StringBuffer
+     * Convert StringCharacterIterator to String
      */
     @Converter
-    public StringBuffer toStringBuffer(String s) {
-        return new StringBuffer(s);
+    public String toString(StringCharacterIterator sc) {
+        StringBuilder sb = new StringBuilder();
+        char c = sc.first();
+        while (c != StringCharacterIterator.DONE) {
+            sb.append(c);
+            c = sc.next();
+        }
+        return sb.toString();
     }
 
     /**
-     * Convert StringBuffer to String
+     * Convert String to StringCharacterIterator
      */
     @Converter
-    public String toString(StringBuffer sb) {
-        return sb.toString();
+    public StringCharacterIterator toStringCharacterIterator(String s) {
+        return new StringCharacterIterator(s);
     }
 
 }

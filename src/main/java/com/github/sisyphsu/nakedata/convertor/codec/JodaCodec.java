@@ -18,123 +18,163 @@ import java.util.TimeZone;
  */
 public class JodaCodec extends Codec {
 
-    // -------- LocalDateTime
-
+    /**
+     * Convert java.LocalDateTime to joda.LocalDateTime
+     */
     @Converter
     public LocalDateTime toLocalDateTime(java.time.LocalDateTime dt) {
         return new LocalDateTime(dt.getYear(), dt.getMonthValue(), dt.getDayOfMonth(),
                 dt.getHour(), dt.getMinute(), dt.getSecond());
     }
 
+    /**
+     * Convert joda.LocalDateTime to java.LocalDateTime
+     */
     @Converter
     public java.time.LocalDateTime toZonedDateTime(LocalDateTime dt) {
         return java.time.LocalDateTime.of(dt.getYear(), dt.getMonthOfYear(), dt.getDayOfMonth(),
                 dt.getHourOfDay(), dt.getMinuteOfHour(), dt.getSecondOfMinute());
     }
 
-    // -------- DateTime <==> LocalDateTime
-
+    /**
+     * Convert joda.LocalDateTime to joda.DateTime
+     */
     @Converter
     public DateTime toDateTime(LocalDateTime ldt) {
         return ldt.toDateTime();
     }
 
+    /**
+     * Convert joda.DateTime to joda.LocalDateTime
+     */
     @Converter
     public LocalDateTime toOffsetDateTime(DateTime dt) {
         return dt.toLocalDateTime();
     }
 
-    // --------- LocalDate <==> java.time.LocalDate
-
+    /**
+     * Convert java.LocalDate to joda.LocalDate
+     */
     @Converter
     public LocalDate toLocalDate(java.time.LocalDate ldt) {
         return new LocalDate(ldt.getYear(), ldt.getMonthValue(), ldt.getDayOfMonth());
     }
 
+    /**
+     * Convert joda.LocalDate to java.LocalDate
+     */
     @Converter
     public java.time.LocalDate toLocalDate(LocalDate date) {
         return java.time.LocalDate.of(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
     }
 
-    // -------- LocalTime <==> java.time.LocalTime
-
+    /**
+     * Convert java.LocalTimee to joda.LocalTime
+     */
     @Converter
     public LocalTime toLocalTime(java.time.LocalTime time) {
         return LocalTime.fromMillisOfDay(time.toNanoOfDay() / 1000000L);
     }
 
+    /**
+     * Convert joda.LocalTime to java.LocalTime
+     */
     @Converter
     public java.time.LocalTime toLocalTime(LocalTime time) {
         return java.time.LocalTime.ofNanoOfDay(time.getMillisOfDay() * 1000000L);
     }
 
-    // ---------------- Duration <==> java.time.Duration
-
+    /**
+     * Convert java.Duration to joda.Duration
+     */
     @Converter
     public Duration toDuration(java.time.Duration d) {
         return Duration.millis(d.toMillis());
     }
 
+    /**
+     * Convert joda.Duration to java.Duration
+     */
     @Converter
     public java.time.Duration toDuration(Duration d) {
         return java.time.Duration.ofMillis(d.getMillis());
     }
 
-    // ---------------- Instant <==> java.time.Instant
-
+    /**
+     * Convert java.Instant to joda.Instant
+     */
     @Converter
     public Instant toInstant(java.time.Instant instant) {
         return Instant.ofEpochMilli(instant.toEpochMilli());
     }
 
+    /**
+     * Convert joda.Instant to java.Instant
+     */
     @Converter
     public java.time.Instant toInstant(Instant instant) {
         return java.time.Instant.ofEpochMilli(instant.getMillis());
     }
 
-    // ---------------- DateTimeZone
-
+    /**
+     * Convert joda.DateTimeZone to java.TimeZone
+     */
     @Converter
     public TimeZone toTimeZone(DateTimeZone zone) {
         return zone.toTimeZone();
     }
 
+    /**
+     * Convert java.TimeZone to joda.DateTimeZone
+     */
     @Converter
     public DateTimeZone toDateTimeZone(TimeZone zone) {
         return DateTimeZone.forTimeZone(zone);
     }
 
-    // ---------------- DateTimeFormatter
-
+    /**
+     * Convert DateTimeFormatter to String
+     */
     @Converter
     public String toString(DateTimeFormatter formatter) {
         return formatter.toString();
     }
 
+    /**
+     * Convert String to DateTimeFormatter
+     */
     @Converter
     public DateTimeFormatter toDateTimeFormatter(String str) {
         return DateTimeFormat.forPattern(str);
     }
 
-    // ---------------- Period <==> String
-
+    /**
+     * Convert String to Period
+     */
     @Converter
     public Period toPeriod(String str) {
         return Period.parse(str);
     }
 
+    /**
+     * Convert Period to String
+     */
     @Converter
     public String toString(Period period) {
         return period.toString();
     }
 
-    // --------------- Interval <==> String
-
+    /**
+     * Convert String to Interal
+     */
     @Converter
     public Interval toInterval(String str) {
         return Interval.parse(str);
     }
 
+    /**
+     * Convert Interal to String
+     */
     @Converter
     public String toString(Interval interval) {
         return interval.toString();

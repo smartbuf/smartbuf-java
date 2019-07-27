@@ -113,26 +113,32 @@ public class UtilCodec extends Codec {
     }
 
     /**
-     * Convert Object to Optional
+     * Convert Object to Optional, support generic type
      */
     @Converter(nullable = true)
     public Optional toOptional(Object o, XType type) {
         if (o == null)
             return Optional.empty();
-        XType<?> genericType = type.getParameterizedType();
-        if (genericType.isPure() && genericType.getRawType().isAssignableFrom(o.getClass())) {
-            return Optional.of(o);
-        } else {
-            return Optional.of(convert(o, genericType));
+        XType<?> paramType = type.getParameterizedType();
+        if (!(paramType.isPure() && paramType.getRawType().isInstance(o))) {
+            o = convert(o, paramType); // not compatible
         }
+        return Optional.of(o);
     }
 
     /**
      * Convert Optional to Object
      */
     @Converter
-    public Object toObject(Optional optional) {
-        return optional.isPresent() ? optional.get() : null;
+    public Object toObject(Optional optional, XType type) {
+        if (!optional.isPresent()) {
+            return null;
+        }
+        Object obj = optional.get();
+        if (!(type.isPure() && type.getRawType().isInstance(obj))) {
+            obj = convert(obj, type); // not compatible
+        }
+        return obj;
     }
 
     /**

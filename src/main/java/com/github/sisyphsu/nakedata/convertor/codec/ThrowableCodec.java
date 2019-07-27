@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Throwable's codec
+ * Codec for Throwable, support standard Throwable and StackTraceElement
  *
  * @author sulin
  * @since 2019-05-13 20:43:35
@@ -29,9 +29,6 @@ public class ThrowableCodec extends Codec {
 
     /**
      * Convert Map to StackTraceElement
-     *
-     * @param map Map
-     * @return StackTraceElement
      */
     @Converter
     public StackTraceElement toStackTraceElement(Map map) {
@@ -47,9 +44,6 @@ public class ThrowableCodec extends Codec {
 
     /**
      * Convert StackTraceElement to Map
-     *
-     * @param element StackTraceElement
-     * @return Map
      */
     @Converter
     public Map toMap(StackTraceElement element) {
@@ -63,9 +57,6 @@ public class ThrowableCodec extends Codec {
 
     /**
      * Convert Throwable to Map
-     *
-     * @param t Throwable
-     * @return Map
      */
     @Converter
     public Map toMap(Throwable t) {
@@ -79,10 +70,6 @@ public class ThrowableCodec extends Codec {
 
     /**
      * Convert Map to Throwable
-     *
-     * @param map  map
-     * @param type exception type
-     * @return Throwable
      */
     @Converter
     public Throwable toThrowable(Map map, XType type) {

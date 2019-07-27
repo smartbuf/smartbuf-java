@@ -141,4 +141,20 @@ public class NumberCodec extends Codec {
         return b.toString();
     }
 
+    /**
+     * Convert Integer to Character
+     */
+    @Converter
+    public Character toCharacter(Integer i) {
+        return (char) i.intValue();
+    }
+
+    /**
+     * Convert Character to Integer
+     */
+    @Converter
+    public Integer toInteger(Character c) {
+        return (int) c;
+    }
+
 }
