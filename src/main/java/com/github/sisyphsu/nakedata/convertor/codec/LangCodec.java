@@ -15,11 +15,13 @@ import java.util.Map;
  * @author sulin
  * @since 2019-07-26 10:55:47
  */
+@SuppressWarnings("unchecked")
 public class LangCodec extends Codec {
 
     /**
      * Convert Map to Object
      */
+    @Converter
     public Object toObject(Map<?, ?> map, XType<?> type) {
         if (type.getRawType() == Object.class) {
             return map; // dont need convert
@@ -44,6 +46,7 @@ public class LangCodec extends Codec {
     /**
      * Convert Object to Map, use cglib directly
      */
+    @Converter
     public Map toMap(Object obj) {
         return BeanMap.create(obj);
     }
@@ -52,7 +55,6 @@ public class LangCodec extends Codec {
      * Convert String to Enum
      */
     @Converter
-    @SuppressWarnings("unchecked")
     public Enum toEnum(String name, XType type) {
         return Enum.valueOf(type.getRawType(), name);
     }

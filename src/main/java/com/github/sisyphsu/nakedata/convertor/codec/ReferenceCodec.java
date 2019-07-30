@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
-import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.Codec;
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
 import java.lang.ref.Reference;
@@ -41,12 +41,14 @@ public class ReferenceCodec extends Codec {
 
     /**
      * Convert Reference to Object
-     *
-     * @param ref Reference
-     * @return Object
      */
-    public Object toObject(Reference ref) {
-        return ref.get();
+    @Converter
+    public Object toObject(Reference ref, XType<?> type) {
+        Object obj = ref.get();
+        if (type.isPure() && type.getRawType().isInstance(obj)) {
+            return obj;
+        }
+        return convert(obj, type);
     }
 
 }
