@@ -60,13 +60,13 @@ public class XTypeUtilsTest {
 
         assert xt.getRawType() == TypeVariableBean.class;
 
-        XField<?> tField = xt.getFields().get("t");
-        XField<?> listField = xt.getFields().get("list");
+        XField<?> tField = xt.getField("t");
+        XField<?> listField = xt.getField("list");
         assert tField != null && listField != null;
 
         assert tField.getType().getRawType() == Date.class;
 
-        assert listField.getType().getParameterizedTypeMap().get("E").getRawType() == Date.class;
+        assert listField.getType().getParameterizedType("E").getRawType() == Date.class;
     }
 
     public static class TypeVariableBean<T extends Date> {

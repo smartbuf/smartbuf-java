@@ -78,12 +78,13 @@ public class XTypeFactory {
         }
         Class<?> rawType = (Class) type.getRawType();
         // Parse parameterized types
-        Map<String, XType> parameterizedTypeMap = new HashMap<>();
         Type[] argTypes = type.getActualTypeArguments();
         TypeVariable<?>[] variables = rawType.getTypeParameters();
         if (argTypes == null || variables == null || argTypes.length != variables.length) {
             throw new IllegalStateException("Cant parse ParameterizedType " + type); // no way
         }
+        String[] names = new String[variables.length];
+        XType<?>[] types = new XType[variables.length];
         for (int i = 0; i < argTypes.length; i++) {
             TypeVariable var = variables[i];
             // XType from class declared, like `class Bean<T extends Number>{}`
@@ -97,13 +98,10 @@ public class XTypeFactory {
             } else {
                 finalXType = argXType;
             }
-            String varName = var.getName();
-            if (varName.equals("?")) {
-                varName = "?" + i;
-            }
-            parameterizedTypeMap.put(varName, finalXType);
+            names[i] = var.getName();
+            types[i] = finalXType;
         }
-        XType<?> result = new XType<>(rawType, parameterizedTypeMap);
+        XType<?> result = new XType<>(rawType, names, types);
         parseFields(result);
         return result;
     }
@@ -139,13 +137,10 @@ public class XTypeFactory {
      */
     private XType<?> convertTypeVariable(XType<?> owner, TypeVariable type) {
         String varName = type.getName();
-        if (owner != null && owner.getParameterizedTypeMap() != null) {
-            if (owner.getParameterizedTypeMap() == null) {
-                throw new IllegalArgumentException("unresolved owner for TypeVariable " + type);
-            }
-            XType<?> xType = owner.getParameterizedTypeMap().get(varName);
+        if (owner != null) {
+            XType<?> xType = owner.getParameterizedType(varName);
             if (xType == null) {
-                throw new IllegalArgumentException("unresolved owner for TypeVariable " + type);
+                throw new IllegalArgumentException("unresolved type for TypeVariable " + type);
             }
             return xType;
         }
@@ -164,16 +159,14 @@ public class XTypeFactory {
         XType<T> xt;
         if (vars != null && vars.length > 0) {
             // Class supports generic type, but caller didn't use it, like `List l`
-            Map<String, XType> paramTypes = new HashMap<>();
+            String[] names = new String[vars.length];
+            XType<?>[] types = new XType[vars.length];
             for (int i = 0; i < vars.length; i++) {
                 TypeVariable var = vars[i];
-                String name = var.getName();
-                if (name.equals("?")) {
-                    name = "?" + i;
-                }
-                paramTypes.put(name, convertTypeVariable(null, var)); // no owner
+                names[i] = var.getName();
+                types[i] = convertTypeVariable(null, var);// no owner
             }
-            xt = new XType<>(cls, paramTypes);
+            xt = new XType<>(cls, names, types);
         } else {
             // Class dont support generic type
             xt = new XType<>(cls);

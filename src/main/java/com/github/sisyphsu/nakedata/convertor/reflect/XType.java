@@ -1,8 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor.reflect;
 
-import lombok.Data;
-
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * XType represent an clear Java type with raw class and its generic types.
@@ -12,21 +11,24 @@ import java.util.Map;
  * @author sulin
  * @since 2019-07-15 20:40:47
  */
-@Data
 public class XType<T> {
 
     /**
      * Basic Object Type
      */
-    private Class<T> rawType;
+    private final Class<T> rawType;
     /**
      * Component type for Object[], support GenericArrayType
      */
     private XType<?> componentType;
     /**
-     * Parsed type map for ParameterizedType
+     * ParameterizedType's name in decleared class, like [K, V] for Map<K, V>.
      */
-    private Map<String, XType> parameterizedTypeMap;
+    private String[] parameteriedNames;
+    /**
+     * Parsed types from ParameterizedType, like [String, Object] for HashMap<String, Object>
+     */
+    private XType<?>[] parameteriedTypes;
     /**
      * Fields, only for no-stop-class
      */
@@ -41,9 +43,10 @@ public class XType<T> {
         this.componentType = componentType;
     }
 
-    public XType(Class<T> rawType, Map<String, XType> parameterizedTypeMap) {
+    public XType(Class<T> rawType, String[] parameteriedNames, XType<?>[] parameteriedTypes) {
         this.rawType = rawType;
-        this.parameterizedTypeMap = parameterizedTypeMap;
+        this.parameteriedNames = parameteriedNames;
+        this.parameteriedTypes = parameteriedTypes;
     }
 
     /**
@@ -52,8 +55,27 @@ public class XType<T> {
      * @return Generic Type
      */
     public XType<?> getParameterizedType() {
-        Map.Entry<String, XType> entry = this.parameterizedTypeMap.entrySet().iterator().next();
-        return entry.getValue();
+        if (this.parameteriedTypes == null || this.parameteriedTypes.length != 1) {
+            throw new UnsupportedOperationException("Can't getParameterizedType from " + this.toString());
+        }
+        return this.parameteriedTypes[0];
+    }
+
+    /**
+     * Fetch the specified parameterized type for named generic type.
+     *
+     * @param name Parameterized name
+     * @return Parameterized type
+     */
+    public XType<?> getParameterizedType(String name) {
+        if (this.parameteriedNames != null) {
+            for (int i = 0; i < this.parameteriedNames.length; i++) {
+                if (Objects.equals(this.parameteriedNames[i], name)) {
+                    return this.parameteriedTypes[i];
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -62,13 +84,7 @@ public class XType<T> {
      * @return Generic Types
      */
     public XType<?>[] getParameterizedTypes() {
-        XType<?>[] result = new XType[parameterizedTypeMap.size()];
-        int i = 0;
-        for (Map.Entry<String, XType> e : this.parameterizedTypeMap.entrySet()) {
-            result[i] = e.getValue();
-            i++;
-        }
-        return result;
+        return this.parameteriedTypes;
     }
 
     /**
@@ -78,8 +94,30 @@ public class XType<T> {
      */
     public boolean isPure() {
         boolean noBodyGeneric = componentType == null;
-        boolean noParamGeneric = parameterizedTypeMap == null || parameterizedTypeMap.isEmpty();
+        boolean noParamGeneric = parameteriedNames == null || parameteriedNames.length == 0;
         return noBodyGeneric && noParamGeneric;
+    }
+
+    public Class<T> getRawType() {
+        return rawType;
+    }
+
+    protected void setFields(Map<String, XField> fields) {
+        this.fields = fields;
+    }
+
+    public XField<?> getField(String name) {
+        if (this.fields == null)
+            return null;
+        return this.fields.get(name);
+    }
+
+    public Map<String, XField> getFields() {
+        return fields;
+    }
+
+    public XType<?> getComponentType() {
+        return componentType;
     }
 
 }
