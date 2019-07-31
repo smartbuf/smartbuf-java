@@ -27,7 +27,8 @@ public @interface Converter {
     boolean nullable() default false;
 
     /**
-     * Indicate this converter is extensible or not
+     * Indicate this converter is extensible or not,
+     * which means converter support target-class's subclass
      *
      * @return default false
      */

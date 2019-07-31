@@ -16,21 +16,27 @@ import java.lang.reflect.Type;
  * @since 2019-06-06 12:19:53
  */
 @Slf4j
-public class ConvertMethod {
+public class ConverterMethod {
 
     private Codec codec;
     private Class<?> srcClass;
     private Class<?> tgtClass;
     private MethodAccessor function;
+    private Converter annotation;
 
     private boolean hasTypeArg;
 
-    private ConvertMethod() {
+    private ConverterMethod() {
     }
 
-    public static ConvertMethod valueOf(Codec codec, Method method) {
+    public static ConverterMethod valueOf(Codec codec, Method method) {
         Class<?>[] argTypes = method.getParameterTypes();
         Class<?> rtType = method.getReturnType();
+        Converter anno = method.getAnnotation(Converter.class);
+        if (anno == null) {
+            log.debug("ignore method that don't have @Converter: {}", method);
+            return null;
+        }
         if (method.isBridge() || method.isVarArgs() || method.isDefault() || method.isSynthetic()) {
             log.debug("ignore method by flags: {}", method);
             return null;
@@ -47,12 +53,13 @@ public class ConvertMethod {
             log.debug("ignore method by the second argument!=Type: {}", method);
             return null;
         }
-        ConvertMethod result = new ConvertMethod();
+        ConverterMethod result = new ConverterMethod();
         result.codec = codec;
         result.srcClass = argTypes[0];
         result.tgtClass = rtType;
         result.hasTypeArg = argTypes.length == 2;
         result.function = ReflectionFactory.getReflectionFactory().getMethodAccessor(method);
+        result.annotation = anno;
         return result;
     }
 
@@ -64,6 +71,9 @@ public class ConvertMethod {
      * @return target instance
      */
     public Object convert(Object data, XType tgtType) {
+        if (!annotation.nullable() && data == null) {
+            return null;
+        }
         if (data != null && data.getClass() != this.srcClass) {
             throw new IllegalArgumentException("data type unmatched: " + this.srcClass + ", " + data.getClass());
         }

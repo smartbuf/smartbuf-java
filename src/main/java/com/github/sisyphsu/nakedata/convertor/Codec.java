@@ -3,9 +3,6 @@ package com.github.sisyphsu.nakedata.convertor;
 import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 import com.github.sisyphsu.nakedata.convertor.reflect.XTypeUtils;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
 /**
  * 数据转换适配器
  * <p>
@@ -50,41 +47,6 @@ public abstract class Codec {
     @SuppressWarnings("unchecked")
     public final <Z> Z convert(Object src, Class<Z> clz) {
         return (Z) factory.doConvert(src, XTypeUtils.toXType(clz));
-    }
-
-    /**
-     * Get Array Class's ComponentType, throw Exception directly if not
-     *
-     * @param type Type
-     * @return Array Class's ComponentType
-     */
-    public static Class<?> forceParseArrayComponentType(Type type) {
-        if (!(type instanceof Class)) {
-            throw new IllegalArgumentException("need Class: " + type);
-        }
-        Class clz = (Class) type;
-        if (!clz.isArray()) {
-            throw new IllegalArgumentException("need Array Class: " + type);
-        }
-        return clz.getComponentType();
-    }
-
-    /**
-     * Get Parameterized Class's GenericType, like Long for List<Long>
-     *
-     * @param type Type
-     * @return Parameterized Class's ActualType
-     */
-    public static Type getGenericType(Type type) {
-        if (!(type instanceof ParameterizedType)) {
-            return null;
-        }
-        ParameterizedType pt = (ParameterizedType) type;
-        Type[] types = pt.getActualTypeArguments();
-        if (types.length == 0) {
-            return null;
-        }
-        return types[0];
     }
 
 }
