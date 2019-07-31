@@ -32,8 +32,8 @@ public class ConverterMethod {
     public static ConverterMethod valueOf(Codec codec, Method method) {
         Class<?>[] argTypes = method.getParameterTypes();
         Class<?> rtType = method.getReturnType();
-        Converter anno = method.getAnnotation(Converter.class);
-        if (anno == null) {
+        Converter annotation = method.getAnnotation(Converter.class);
+        if (annotation == null) {
             log.debug("ignore method that don't have @Converter: {}", method);
             return null;
         }
@@ -59,7 +59,7 @@ public class ConverterMethod {
         result.tgtClass = rtType;
         result.hasTypeArg = argTypes.length == 2;
         result.function = ReflectionFactory.getReflectionFactory().getMethodAccessor(method);
-        result.annotation = anno;
+        result.annotation = annotation;
         return result;
     }
 

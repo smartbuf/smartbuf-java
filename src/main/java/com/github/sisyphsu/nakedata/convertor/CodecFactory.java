@@ -100,7 +100,7 @@ public class CodecFactory {
         Class tgtClass = tgtType.getClass();
         ConverterPipeline pipeline = pipelineMap.get(srcClass, tgtClass);
         if (pipeline == null) {
-            List<ConverterMethod> methods = this.dfs(srcClass, tgtClass, methodMap);
+            List<ConverterMethod> methods = this.dfs(srcClass, tgtClass);
             if (methods != null && methods.size() > 0) {
                 pipeline = ConverterPipeline.valueOf(methods);
                 pipelineMap.put(srcClass, tgtClass, pipeline);
@@ -115,12 +115,12 @@ public class CodecFactory {
     /**
      * Search the shortest codec path
      */
-    private List<ConverterMethod> dfs(Class srcClass, Class tgtClass, MMap<ConverterMethod> map) {
-        ConverterMethod direct = map.get(srcClass, tgtClass);
+    private List<ConverterMethod> dfs(Class srcClass, Class tgtClass) {
+        ConverterMethod direct = methodMap.get(srcClass, tgtClass);
         if (direct != null) {
             return Collections.singletonList(direct); // directly
         }
-        Collection<ConverterMethod> ts = map.get(srcClass);
+        Collection<ConverterMethod> ts = methodMap.get(srcClass);
         if (ts == null || ts.isEmpty()) {
             return null; // noway
         }
@@ -128,7 +128,7 @@ public class CodecFactory {
         ConverterMethod router = null;
         List<ConverterMethod> subResult = null;
         for (ConverterMethod t : ts) {
-            List<ConverterMethod> tmp = this.dfs(t.getTgtClass(), tgtClass, map);
+            List<ConverterMethod> tmp = this.dfs(t.getTgtClass(), tgtClass);
             if (tmp == null || tmp.isEmpty()) {
                 continue;
             }

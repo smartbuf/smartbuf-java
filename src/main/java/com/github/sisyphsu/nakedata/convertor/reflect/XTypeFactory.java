@@ -126,7 +126,7 @@ public class XTypeFactory {
         Type[] uppers = type.getUpperBounds();
         Type[] lowers = type.getLowerBounds();
         if (lowers != null && lowers.length == 1) {
-            return toXType(owner, lowers[0]); //treat <? super T> as <T>
+            return toXType(owner, lowers[0]); // treat <? super T> as <T>
         }
         if (uppers != null && uppers.length == 1) {
             return toXType(owner, uppers[0]); // treat <? extends T> as <T>
