@@ -96,4 +96,8 @@ public class ConverterMethod {
         return tgtClass;
     }
 
+    public int getDistance() {
+        return annotation.distance();
+    }
+
 }

@@ -34,4 +34,11 @@ public @interface Converter {
      */
     boolean extensible() default false;
 
+    /**
+     * Indicate this converter's distance, used for dfs.
+     *
+     * @return default 5
+     */
+    int distance() default 5;
+
 }

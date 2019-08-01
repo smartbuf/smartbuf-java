@@ -100,9 +100,9 @@ public class CodecFactory {
         Class tgtClass = tgtType.getClass();
         ConverterPipeline pipeline = pipelineMap.get(srcClass, tgtClass);
         if (pipeline == null) {
-            List<ConverterMethod> methods = this.dfs(srcClass, tgtClass);
-            if (methods != null && methods.size() > 0) {
-                pipeline = ConverterPipeline.valueOf(methods);
+            Path shortestPath = this.findShortestPath(null, srcClass, tgtClass);
+            if (shortestPath != null) {
+                pipeline = new ConverterPipeline(srcClass, tgtClass, shortestPath.methods);
                 pipelineMap.put(srcClass, tgtClass, pipeline);
             }
         }
@@ -113,37 +113,37 @@ public class CodecFactory {
     }
 
     /**
-     * Search the shortest codec path
+     * Find the shortest from srcClass to tgtClass
+     *
+     * @param passed   Passed router which shouldn't be used again
+     * @param srcClass Source Class
+     * @param tgtClass Target Class
+     * @return The shortest path, could be null
      */
-    private List<ConverterMethod> dfs(Class srcClass, Class tgtClass) {
-        ConverterMethod direct = methodMap.get(srcClass, tgtClass);
-        if (direct != null) {
-            return Collections.singletonList(direct); // directly
+    private Path findShortestPath(Set<Class> passed, Class srcClass, Class tgtClass) {
+        if (srcClass == tgtClass) {
+            ConverterMethod method = methodMap.get(srcClass, srcClass);
+            return new Path(0, method);
         }
-        Collection<ConverterMethod> ts = methodMap.get(srcClass);
-        if (ts == null || ts.isEmpty()) {
-            return null; // noway
-        }
-        // find shortest way
-        ConverterMethod router = null;
-        List<ConverterMethod> subResult = null;
-        for (ConverterMethod t : ts) {
-            List<ConverterMethod> tmp = this.dfs(t.getTgtClass(), tgtClass);
-            if (tmp == null || tmp.isEmpty()) {
-                continue;
+        passed = passed == null ? new HashSet<>() : new HashSet<>(passed);
+        passed.add(srcClass);
+        // calculate all path
+        List<Path> paths = new ArrayList<>();
+        Collection<ConverterMethod> routes = methodMap.get(srcClass);
+        for (ConverterMethod route : routes) {
+            if (passed.contains(route.getTgtClass())) {
+                continue; // ignore passed node
             }
-            if (subResult == null || subResult.size() > tmp.size()) {
-                subResult = tmp;
-                router = t;
+            Path path = this.findShortestPath(passed, route.getTgtClass(), tgtClass);
+            if (path != null) {
+                paths.add(new Path(route, path));
             }
         }
-        if (subResult == null) {
-            return null; // noway
+        // find shortest path if exists
+        if (!paths.isEmpty()) {
+            paths.sort(Comparator.comparingInt(o -> o.distance));
         }
-        List<ConverterMethod> result = new ArrayList<>();
-        result.add(router);
-        result.addAll(subResult);
-        return result;
+        return paths.isEmpty() ? null : paths.get(0);
     }
 
     /**
@@ -177,6 +177,27 @@ public class CodecFactory {
             this.map.clear();
         }
 
+    }
+
+    /**
+     * Converter's Path
+     */
+    private static class Path {
+        private final int distance;
+        private final List<ConverterMethod> methods = new ArrayList<>();
+
+        public Path(int distance, ConverterMethod method) {
+            this.distance = distance;
+            if (method != null) {
+                this.methods.add(method);
+            }
+        }
+
+        public Path(ConverterMethod route, Path next) {
+            this.distance = route.getDistance() + next.distance;
+            this.methods.add(route);
+            this.methods.addAll(next.methods);
+        }
     }
 
 }

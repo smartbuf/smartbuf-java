@@ -20,23 +20,10 @@ public class ConverterPipeline {
     private final Class tgtClass;
     private final List<ConverterMethod> methods;
 
-    private ConverterPipeline(Class srcClass, Class tgtClass, List<ConverterMethod> methods) {
+    public ConverterPipeline(Class srcClass, Class tgtClass, List<ConverterMethod> methods) {
         this.srcClass = srcClass;
         this.tgtClass = tgtClass;
         this.methods = methods;
-    }
-
-    public static ConverterPipeline valueOf(Class src, Class tgt) {
-        return new ConverterPipeline(src, tgt, null);
-    }
-
-    public static ConverterPipeline valueOf(List<ConverterMethod> methods) {
-        if (methods == null || methods.size() == 0) {
-            throw new IllegalArgumentException("methods can't be null or empty");
-        }
-        Class srcClass = methods.get(0).getSrcClass();
-        Class tgtClass = methods.get(methods.size() - 1).getTgtClass();
-        return new ConverterPipeline(srcClass, tgtClass, methods);
     }
 
     /**
