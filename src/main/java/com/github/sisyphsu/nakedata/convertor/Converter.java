@@ -37,8 +37,8 @@ public @interface Converter {
     /**
      * Indicate this converter's distance, used for dfs.
      *
-     * @return default 5
+     * @return default 100
      */
-    int distance() default 5;
+    int distance() default 100;
 
 }

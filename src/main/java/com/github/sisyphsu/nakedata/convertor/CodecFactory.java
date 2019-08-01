@@ -1,6 +1,8 @@
 package com.github.sisyphsu.nakedata.convertor;
 
 import com.github.sisyphsu.nakedata.convertor.reflect.XType;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -16,9 +18,10 @@ public class CodecFactory {
 
     public static final CodecFactory Instance = new CodecFactory(null);
 
-    private Set<Codec> codecs = new HashSet<>();
-    private MMap<ConverterMethod> methodMap = new MMap<>();
-    private MMap<ConverterPipeline> pipelineMap = new MMap<>();
+    private Set<Class> classes = ConcurrentHashMap.newKeySet();
+    private Set<Codec> codecs = ConcurrentHashMap.newKeySet();
+    private ConverterChart chart = new ConverterChart();
+    private Map<PKey, ConverterPipeline> pipelineMap = new ConcurrentHashMap<>();
 
     /**
      * Initialize CodecFactory with the specified Codec type.
@@ -73,11 +76,11 @@ public class CodecFactory {
             }
             // collect all encode and decode methods
             for (Method method : codec.getClass().getDeclaredMethods()) {
-                ConverterMethod convertMethod = ConverterMethod.valueOf(codec, method);
+                RealConverterMethod convertMethod = RealConverterMethod.valueOf(codec, method);
                 if (convertMethod == null) {
                     continue;
                 }
-                methodMap.put(convertMethod.getSrcClass(), convertMethod.getTgtClass(), convertMethod);
+                chart.putReal(convertMethod);
             }
             codec.setFactory(this);
         }
@@ -98,12 +101,16 @@ public class CodecFactory {
         }
         Class srcClass = srcObj.getClass();
         Class tgtClass = tgtType.getClass();
-        ConverterPipeline pipeline = pipelineMap.get(srcClass, tgtClass);
+        ConverterPipeline pipeline = pipelineMap.get(new PKey(srcClass, tgtClass));
         if (pipeline == null) {
+            // auto generate TranConverter for srcClass and tgtClass
+            this.flushCastConverter(srcClass);
+            this.flushCastConverter(tgtClass);
+            // find the shortest path
             Path shortestPath = this.findShortestPath(null, srcClass, tgtClass);
             if (shortestPath != null) {
                 pipeline = new ConverterPipeline(srcClass, tgtClass, shortestPath.methods);
-                pipelineMap.put(srcClass, tgtClass, pipeline);
+                pipelineMap.put(new PKey(srcClass, tgtClass), pipeline);
             }
         }
         if (pipeline == null) {
@@ -113,28 +120,34 @@ public class CodecFactory {
     }
 
     /**
-     * Find the shortest from srcClass to tgtClass
+     * Find the shortest path from srcClass to tgtClass
+     * Don't need care about inherit, because all subclass->class will be represent by TranConvertMethod
      *
      * @param passed   Passed router which shouldn't be used again
      * @param srcClass Source Class
      * @param tgtClass Target Class
      * @return The shortest path, could be null
      */
-    private Path findShortestPath(Set<Class> passed, Class srcClass, Class tgtClass) {
+    private Path findShortestPath(Set<Class<?>> passed, Class<?> srcClass, Class<?> tgtClass) {
         if (srcClass == tgtClass) {
-            ConverterMethod method = methodMap.get(srcClass, srcClass);
+            ConverterMethod method = chart.get(srcClass, tgtClass);
             return new Path(0, method);
         }
         passed = passed == null ? new HashSet<>() : new HashSet<>(passed);
         passed.add(srcClass);
         // calculate all path
         List<Path> paths = new ArrayList<>();
-        Collection<ConverterMethod> routes = methodMap.get(srcClass);
+        Collection<ConverterMethod> routes = chart.get(srcClass);
         for (ConverterMethod route : routes) {
             if (passed.contains(route.getTgtClass())) {
-                continue; // ignore passed node
+                continue;  // ignore passed node
             }
-            Path path = this.findShortestPath(passed, route.getTgtClass(), tgtClass);
+            Path path;
+            if (route.isExtensible() && route.getTgtClass().isAssignableFrom(tgtClass)) {
+                path = this.findShortestPath(passed, tgtClass, tgtClass);
+            } else {
+                path = this.findShortestPath(passed, route.getTgtClass(), tgtClass);
+            }
             if (path != null) {
                 paths.add(new Path(route, path));
             }
@@ -147,36 +160,19 @@ public class CodecFactory {
     }
 
     /**
-     * MultiMap, like MultiKeyMap.
+     * Check the specified class, if it's new, flush CastConverter for it.
      */
-    private static class MMap<T> {
-
-        private Map<Class, Map<Class, T>> map = new ConcurrentHashMap<>();
-
-        public void put(Class srcType, Class tgtType, T method) {
-            map.computeIfAbsent(srcType, (c) -> new ConcurrentHashMap<>()).put(tgtType, method);
+    private void flushCastConverter(Class<?> cls) {
+        if (classes.contains(cls)) {
+            return;
         }
-
-        public Collection<T> get(Class srcType) {
-            Map<Class, T> tgtMap = map.get(srcType);
-            if (tgtMap == null) {
-                return null;
+        for (Class<?> oldCls : classes) {
+            if (oldCls.isAssignableFrom(cls)) {
+                this.chart.putTran(cls, oldCls);
+            } else if (cls.isAssignableFrom(oldCls)) {
+                this.chart.putTran(oldCls, cls);
             }
-            return tgtMap.values();
         }
-
-        public T get(Class srcType, Class tgtType) {
-            Map<Class, T> tgtMap = map.get(srcType);
-            if (tgtMap == null) {
-                return null;
-            }
-            return tgtMap.get(tgtType);
-        }
-
-        public void clear() {
-            this.map.clear();
-        }
-
     }
 
     /**
@@ -187,10 +183,10 @@ public class CodecFactory {
         private final List<ConverterMethod> methods = new ArrayList<>();
 
         public Path(int distance, ConverterMethod method) {
-            this.distance = distance;
             if (method != null) {
                 this.methods.add(method);
             }
+            this.distance = distance + (method == null ? 0 : method.getDistance());
         }
 
         public Path(ConverterMethod route, Path next) {
@@ -198,6 +194,16 @@ public class CodecFactory {
             this.methods.add(route);
             this.methods.addAll(next.methods);
         }
+    }
+
+    /**
+     * Pipeline's key, used for Map
+     */
+    @Data
+    @AllArgsConstructor
+    public static class PKey {
+        private final Class<?> srcClass;
+        private final Class<?> tgtClass;
     }
 
 }
