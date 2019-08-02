@@ -13,10 +13,18 @@ import java.util.Set;
 public class CodecScannerTest {
 
     @Test
-    public void loadAllCodec() {
-        Set<Class<? extends Codec>> codecs = CodecScanner.scanAllCodecs();
+    public void scanAllCodecs() {
+        Set<Class<? extends Codec>> codecs = CodecScanner.scanCodecs();
         for (Class<? extends Codec> codec : codecs) {
             System.out.println(codec);
+        }
+    }
+
+    @Test
+    public void scanAllClasses() {
+        Set<Class<? extends Codec>> classes = CodecScanner.scanCodecs("com.github.sisyphsu");
+        for (Class<? extends Codec> codecCls : classes) {
+            System.out.println(codecCls);
         }
     }
 

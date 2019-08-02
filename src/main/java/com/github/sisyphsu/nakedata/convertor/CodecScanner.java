@@ -15,6 +15,7 @@ import java.util.*;
  * @since 2019-06-03 20:18:54
  */
 @Slf4j
+@SuppressWarnings("unchecked")
 public class CodecScanner {
 
     /**
@@ -22,9 +23,18 @@ public class CodecScanner {
      *
      * @return All Codec classes
      */
-    @SuppressWarnings("unchecked")
-    public static Set<Class<? extends Codec>> scanAllCodecs() {
-        Class<?>[] classes = scanAllClasses(Codec.class.getPackage().getName());
+    public static Set<Class<? extends Codec>> scanCodecs() {
+        return scanCodecs(Codec.class.getPackage().getName());
+    }
+
+    /**
+     * Scan all Codec classes from the specified package.
+     *
+     * @param pkgName package name
+     * @return All Codec classes
+     */
+    public static Set<Class<? extends Codec>> scanCodecs(String pkgName) {
+        Class<?>[] classes = scanClasses(pkgName);
         Set<Class<? extends Codec>> result = new HashSet<>();
         for (Class<?> clz : classes) {
             if (clz == Codec.class || clz.isInterface() || Modifier.isAbstract(clz.getModifiers())) {
@@ -43,7 +53,7 @@ public class CodecScanner {
      * @param packageName The base package
      * @return The classes
      */
-    public static Class[] scanAllClasses(String packageName) {
+    public static Class[] scanClasses(String packageName) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {
             throw new IllegalStateException("can't get classloader");
@@ -86,7 +96,7 @@ public class CodecScanner {
                 String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
                 try {
                     classes.add(Class.forName(className));
-                    log.debug("load class [{}]", className);
+                    log.trace("load class [{}]", className);
                 } catch (ClassNotFoundException e) {
                     log.warn("load class [{}] failed.", className, e);
                 }

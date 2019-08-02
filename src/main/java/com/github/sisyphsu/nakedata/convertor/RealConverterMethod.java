@@ -55,7 +55,7 @@ public class RealConverterMethod extends ConverterMethod {
             log.debug("ignore method by argument count: {}", method);
             return null;
         }
-        if (argTypes.length == 2 && argTypes[1] != Type.class) {
+        if (argTypes.length == 2 && argTypes[1] != XType.class) {
             log.debug("ignore method by the second argument!=Type: {}", method);
             return null;
         }

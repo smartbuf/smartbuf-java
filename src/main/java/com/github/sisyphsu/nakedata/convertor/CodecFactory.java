@@ -3,6 +3,7 @@ package com.github.sisyphsu.nakedata.convertor;
 import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -10,18 +11,20 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * CodecFactory, meantains CodecMethod and Pipeline.
+ * It should scan all Codec to generate ConverterMethod, and cache all related classes to build ConverterMap,
+ * Then use the ConverterMap to find the shortest data-converter-path.
  *
  * @author sulin
  * @since 2019-05-20 16:14:54
  */
+@Getter
 public class CodecFactory {
 
     public static final CodecFactory Instance = new CodecFactory(null);
 
-    private Set<Class> classes = ConcurrentHashMap.newKeySet();
-    private Set<Codec> codecs = ConcurrentHashMap.newKeySet();
-    private ConverterChart chart = new ConverterChart();
-    private Map<PKey, ConverterPipeline> pipelineMap = new ConcurrentHashMap<>();
+    private final Set<Codec> codecs = ConcurrentHashMap.newKeySet();
+    private final ConverterMap converterMap = new ConverterMap();
+    private final Map<PKey, ConverterPipeline> pipelineMap = new ConcurrentHashMap<>();
 
     /**
      * Initialize CodecFactory with the specified Codec type.
@@ -29,7 +32,7 @@ public class CodecFactory {
      * @param codecs Codec type
      */
     public CodecFactory(Set<Codec> codecs) {
-        for (Class<? extends Codec> codecCls : CodecScanner.scanAllCodecs()) {
+        for (Class<? extends Codec> codecCls : CodecScanner.scanCodecs()) {
             this.installCodec(codecCls);
         }
         if (codecs != null) {
@@ -80,7 +83,7 @@ public class CodecFactory {
                 if (convertMethod == null) {
                     continue;
                 }
-                chart.putReal(convertMethod);
+                converterMap.putReal(convertMethod);
             }
             codec.setFactory(this);
         }
@@ -104,8 +107,8 @@ public class CodecFactory {
         ConverterPipeline pipeline = pipelineMap.get(new PKey(srcClass, tgtClass));
         if (pipeline == null) {
             // auto generate TranConverter for srcClass and tgtClass
-            this.flushCastConverter(srcClass);
-            this.flushCastConverter(tgtClass);
+            this.converterMap.flushCastConverter(srcClass);
+            this.converterMap.flushCastConverter(tgtClass);
             // find the shortest path
             Path shortestPath = this.findShortestPath(null, srcClass, tgtClass);
             if (shortestPath != null) {
@@ -130,14 +133,14 @@ public class CodecFactory {
      */
     private Path findShortestPath(Set<Class<?>> passed, Class<?> srcClass, Class<?> tgtClass) {
         if (srcClass == tgtClass) {
-            ConverterMethod method = chart.get(srcClass, tgtClass);
+            ConverterMethod method = converterMap.get(srcClass, tgtClass);
             return new Path(0, method);
         }
         passed = passed == null ? new HashSet<>() : new HashSet<>(passed);
         passed.add(srcClass);
         // calculate all path
         List<Path> paths = new ArrayList<>();
-        Collection<ConverterMethod> routes = chart.get(srcClass);
+        Collection<ConverterMethod> routes = converterMap.get(srcClass);
         for (ConverterMethod route : routes) {
             if (passed.contains(route.getTgtClass())) {
                 continue;  // ignore passed node
@@ -157,22 +160,6 @@ public class CodecFactory {
             paths.sort(Comparator.comparingInt(o -> o.distance));
         }
         return paths.isEmpty() ? null : paths.get(0);
-    }
-
-    /**
-     * Check the specified class, if it's new, flush CastConverter for it.
-     */
-    private void flushCastConverter(Class<?> cls) {
-        if (classes.contains(cls)) {
-            return;
-        }
-        for (Class<?> oldCls : classes) {
-            if (oldCls.isAssignableFrom(cls)) {
-                this.chart.putTran(cls, oldCls);
-            } else if (cls.isAssignableFrom(oldCls)) {
-                this.chart.putTran(oldCls, cls);
-            }
-        }
     }
 
     /**
