@@ -83,7 +83,7 @@ public class CodecFactory {
                 if (convertMethod == null) {
                     continue;
                 }
-                converterMap.putReal(convertMethod);
+                converterMap.put(convertMethod);
             }
             codec.setFactory(this);
         }
@@ -106,9 +106,6 @@ public class CodecFactory {
         Class tgtClass = tgtType.getClass();
         ConverterPipeline pipeline = pipelineMap.get(new PKey(srcClass, tgtClass));
         if (pipeline == null) {
-            // auto generate TranConverter for srcClass and tgtClass
-            this.converterMap.flushCastConverter(srcClass);
-            this.converterMap.flushCastConverter(tgtClass);
             // find the shortest path
             Path shortestPath = this.findShortestPath(null, srcClass, tgtClass);
             if (shortestPath != null) {
