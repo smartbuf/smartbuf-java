@@ -116,7 +116,7 @@ public class CodecFactory {
      * @param tgtClass Target class
      * @return ConverterPipeline, could be null
      */
-    public ConverterPipeline getPipeline(Class srcClass, Class tgtClass) {
+    protected ConverterPipeline getPipeline(Class srcClass, Class tgtClass) {
         ConverterPipeline pipeline = pipelineMap.get(new PKey(srcClass, tgtClass));
         if (pipeline == null) {
             // find the shortest path
@@ -138,7 +138,7 @@ public class CodecFactory {
      * @param tgtClass Target Class
      * @return The shortest path, could be null
      */
-    private Path findShortestPath(Set<Class<?>> passed, Class<?> srcClass, Class<?> tgtClass) {
+    protected Path findShortestPath(Set<Class<?>> passed, Class<?> srcClass, Class<?> tgtClass) {
         if (srcClass == tgtClass) {
             ConverterMethod method = converterMap.get(srcClass, tgtClass);
             return new Path(0, method);

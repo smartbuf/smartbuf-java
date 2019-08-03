@@ -49,4 +49,8 @@ public class ConverterPipeline {
         return tgtClass;
     }
 
+    public List<ConverterMethod> getMethods() {
+        return methods;
+    }
+
 }

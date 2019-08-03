@@ -1,10 +1,10 @@
 package com.github.sisyphsu.nakedata.convertor;
 
+import com.github.sisyphsu.nakedata.node.Node;
 import org.junit.Test;
 
 import java.util.BitSet;
-
-import static org.junit.Assert.*;
+import java.util.Set;
 
 /**
  * @author sulin
@@ -12,18 +12,20 @@ import static org.junit.Assert.*;
  */
 public class CodecFactoryTest {
 
-    @Test
-    public void test() {
-        CodecFactory factory = CodecFactory.Instance;
-        ConverterPipeline pipeline = factory.getPipeline(BitSet.class, Byte[].class);
-    }
+    private static CodecFactory factory = CodecFactory.Instance;
 
     @Test
     public void installCodec() {
+        Set<Class<? extends Codec>> codecs = CodecScanner.scanCodecs(Node.class.getPackage().getName());
+        for (Class<? extends Codec> codec : codecs) {
+            factory.installCodec(codec);
+        }
     }
 
     @Test
-    public void doConvert() {
+    public void getPipeline() {
+        ConverterPipeline pipeline1 = factory.getPipeline(BitSet.class, Byte[].class);
+        assert pipeline1.getMethods().size() == 2;
     }
 
 }

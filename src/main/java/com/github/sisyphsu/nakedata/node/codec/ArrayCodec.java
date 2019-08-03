@@ -1,6 +1,7 @@
 package com.github.sisyphsu.nakedata.node.codec;
 
 import com.github.sisyphsu.nakedata.convertor.Codec;
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.array.*;
 import com.github.sisyphsu.nakedata.node.array.primary.*;
@@ -17,68 +18,85 @@ import java.util.List;
  * @author sulin
  * @since 2019-06-05 19:53:57
  */
+@SuppressWarnings("unchecked")
 public class ArrayCodec extends Codec {
 
+    @Converter
     public Node toNode(boolean[] arr) {
         return ZArrayNode.valueOf(arr);
     }
 
+    @Converter
     public Node toNode(byte[] arr) {
         return BArrayNode.valueOf(arr);
     }
 
+    @Converter
     public Node toNode(int[] arr) {
         return IArrayNode.valueOf(arr);
     }
 
+    @Converter
     public Node toNode(long[] arr) {
         return LArrayNode.valueOf(arr);
     }
 
+    @Converter
     public Node toNode(short[] arr) {
         return SArrayNode.valueOf(arr);
     }
 
+    @Converter
     public Node toNode(float[] arr) {
         return FArrayNode.valueOf(arr);
     }
 
+    @Converter
     public Node toNode(double[] arr) {
         return DArrayNode.valueOf(arr);
     }
 
+    @Converter
     public Node toNode(char[] arr) {
         return StringNode.valueOf(String.valueOf(arr));
     }
 
+    @Converter
     public boolean[] toArray(ZArrayNode node) {
         return node.getItems();
     }
 
+    @Converter
     public byte[] toArray(BArrayNode node) {
         return node.getItems();
     }
 
+    @Converter
     public short[] toArray(SArrayNode node) {
         return node.getItems();
     }
 
+    @Converter
     public int[] toArray(IArrayNode node) {
         return node.getItems();
     }
 
+    @Converter
     public long[] toArray(LArrayNode node) {
         return node.getItems();
     }
 
+    @Converter
     public float[] toArray(FArrayNode node) {
         return node.getItems();
     }
 
+    @Converter
     public double[] toArray(DArrayNode node) {
         return node.getItems();
     }
 
+    @Converter
     public char[] toArray(StringNode node) {
         return node.getValue().toCharArray();
     }
@@ -89,6 +107,7 @@ public class ArrayCodec extends Codec {
      * @param list List
      * @return ArrayNode
      */
+    @Converter
     public Node toNode(List list) {
         if (list == null) {
             return ArrayNode.NULL;
@@ -165,7 +184,7 @@ public class ArrayCodec extends Codec {
      * @param node ArrayNode
      * @return Object[]
      */
-    @SuppressWarnings("unchecked")
+    @Converter
     public Object[] toList(ArrayNode node) {
         if (node == ArrayNode.NULL) {
             return null;

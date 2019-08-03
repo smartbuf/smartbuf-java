@@ -1,6 +1,7 @@
 package com.github.sisyphsu.nakedata.node.codec;
 
 import com.github.sisyphsu.nakedata.convertor.Codec;
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.std.ObjectNode;
 
@@ -22,6 +23,7 @@ public class ObjectCodec extends Codec {
      * @param map Map
      * @return ObjectNode
      */
+    @Converter
     public Node toNode(Map map) {
         if (map == null) {
             return ObjectNode.NULL;
@@ -51,6 +53,7 @@ public class ObjectCodec extends Codec {
      * @param node ObjectNode
      * @return Map
      */
+    @Converter
     public Map toMap(ObjectNode node) {
         if (node == ObjectNode.NULL) {
             return null;
