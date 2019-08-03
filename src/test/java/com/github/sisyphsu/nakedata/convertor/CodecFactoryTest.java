@@ -2,6 +2,8 @@ package com.github.sisyphsu.nakedata.convertor;
 
 import org.junit.Test;
 
+import java.util.BitSet;
+
 import static org.junit.Assert.*;
 
 /**
@@ -13,6 +15,7 @@ public class CodecFactoryTest {
     @Test
     public void test() {
         CodecFactory factory = CodecFactory.Instance;
+        ConverterPipeline pipeline = factory.getPipeline(BitSet.class, Byte[].class);
     }
 
     @Test

@@ -17,23 +17,23 @@ import java.lang.reflect.Method;
 @Slf4j
 public class RealConverterMethod extends ConverterMethod {
 
-    private boolean compatible;
-
     private Codec codec;
     private boolean hasTypeArg;
     private Converter annotation;
+    private Method method;
     private MethodAccessor function;
 
-    public RealConverterMethod(Class<?> srcClass, Class<?> tgtClass) {
+    private RealConverterMethod(Class<?> srcClass, Class<?> tgtClass) {
         super(srcClass, tgtClass);
     }
 
-    public static RealConverterMethod valueOf(Class<?> srcClass, Class<?> tgtClass) {
-        RealConverterMethod method = new RealConverterMethod(srcClass, tgtClass);
-        method.compatible = true;
-        return method;
-    }
-
+    /**
+     * Create RealConverterMethod by Codec and Method
+     *
+     * @param codec  Codec instance
+     * @param method Method reference
+     * @return RealConverterMethod
+     */
     public static RealConverterMethod valueOf(Codec codec, Method method) {
         Class<?>[] argTypes = method.getParameterTypes();
         Class<?> rtType = method.getReturnType();
@@ -59,18 +59,16 @@ public class RealConverterMethod extends ConverterMethod {
             return null;
         }
         RealConverterMethod result = new RealConverterMethod(argTypes[0], rtType);
+        result.annotation = annotation;
+        result.method = method;
         result.codec = codec;
         result.hasTypeArg = argTypes.length == 2;
-        result.function = ReflectionFactory.getReflectionFactory().getMethodAccessor(method);
-        result.annotation = annotation;
+        result.function = ReflectionFactory.getReflectionFactory().newMethodAccessor(method);
         return result;
     }
 
     @Override
     public Object convert(Object data, XType tgtType) {
-        if (this.compatible) {
-            return data;
-        }
         if (!annotation.nullable() && data == null) {
             return null;
         }

@@ -3,7 +3,6 @@ package com.github.sisyphsu.nakedata.convertor;
 import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -17,7 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author sulin
  * @since 2019-05-20 16:14:54
  */
-@Getter
 public class CodecFactory {
 
     public static final CodecFactory Instance = new CodecFactory(null);
@@ -104,6 +102,21 @@ public class CodecFactory {
         }
         Class srcClass = srcObj.getClass();
         Class tgtClass = tgtType.getClass();
+        ConverterPipeline pipeline = this.getPipeline(srcClass, tgtClass);
+        if (pipeline == null) {
+            throw new IllegalStateException("Can't convert " + srcObj.getClass() + " to " + tgtType);
+        }
+        return pipeline.convert(srcObj, tgtType);
+    }
+
+    /**
+     * Get the specified ConverterPipeline from srcClass to tgtClass
+     *
+     * @param srcClass Source class
+     * @param tgtClass Target class
+     * @return ConverterPipeline, could be null
+     */
+    public ConverterPipeline getPipeline(Class srcClass, Class tgtClass) {
         ConverterPipeline pipeline = pipelineMap.get(new PKey(srcClass, tgtClass));
         if (pipeline == null) {
             // find the shortest path
@@ -113,10 +126,7 @@ public class CodecFactory {
                 pipelineMap.put(new PKey(srcClass, tgtClass), pipeline);
             }
         }
-        if (pipeline == null) {
-            throw new IllegalStateException("Can't convert " + srcObj.getClass() + " to " + tgtType);
-        }
-        return pipeline.convert(srcObj, tgtType);
+        return pipeline;
     }
 
     /**
@@ -157,6 +167,10 @@ public class CodecFactory {
             paths.sort(Comparator.comparingInt(o -> o.distance));
         }
         return paths.isEmpty() ? null : paths.get(0);
+    }
+
+    public ConverterMap getConverterMap() {
+        return converterMap;
     }
 
     /**
