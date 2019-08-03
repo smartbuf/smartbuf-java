@@ -46,7 +46,7 @@ public class RealConverterMethod extends ConverterMethod {
             log.debug("ignore method by flags: {}", method);
             return null;
         }
-        if (rtType == Void.class) {
+        if (rtType == void.class || rtType == Void.class) {
             log.debug("ignore method by void return: {}", method);
             return null; // ignore void return
         }
@@ -96,4 +96,7 @@ public class RealConverterMethod extends ConverterMethod {
         return annotation.extensible();
     }
 
+    public boolean isHasTypeArg() {
+        return hasTypeArg;
+    }
 }
