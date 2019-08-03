@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.convertor;
+package com.github.sisyphsu.nakedata.convertor.reflect;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;

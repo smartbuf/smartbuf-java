@@ -7,7 +7,6 @@ import sun.reflect.ReflectionFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 
 /**
  * ConvertMethod, Must match `<S> S convert(T t, Class<S> clz)`

@@ -29,8 +29,18 @@ public abstract class ConverterMethod {
      */
     public abstract Object convert(Object data, XType tgtType);
 
+    /**
+     * The distance in map, which used for shortest calculation.
+     *
+     * @return Distance
+     */
     public abstract int getDistance();
 
+    /**
+     * This method is extensible or not.
+     *
+     * @return extensible
+     */
     public abstract boolean isExtensible();
 
 }
