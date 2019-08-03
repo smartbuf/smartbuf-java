@@ -13,7 +13,7 @@ public class ConverterMapTest {
     @Test
     public void printChart() throws Exception {
         ConverterMap map = CodecFactory.Instance.getConverterMap();
-        map.printChart();
+        System.out.println(map.printChart());
     }
 
 }

@@ -2,10 +2,7 @@ package com.github.sisyphsu.nakedata.convertor;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
-import java.io.PrintWriter;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Converter's map, used for searching path.
@@ -15,8 +12,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class ConverterMap {
-
-    private static String CHART_SVG = System.getProperty("user.home") + "/ConverterMap.svg";
 
     private Set<Class> classes = new HashSet<>();
     private Map<Class, Map<Class, ConverterMethod>> map = new HashMap<>();
@@ -48,7 +43,7 @@ public class ConverterMap {
 
     public synchronized void putTran(Class srcClass, Class tgtClass) {
         ConverterMethod method = this.get(srcClass, tgtClass);
-        if (method == null) {
+        if (method != null) {
             return;
         }
         method = new TranConverterMethod(srcClass, tgtClass);
@@ -76,57 +71,57 @@ public class ConverterMap {
         this.classes.clear();
     }
 
-    public synchronized void printChart() throws Exception {
-        StringBuilder buf = new StringBuilder();
-        // print nodes
+    public synchronized String printChart() {
+        // prepare nodes
         Map<Class, String> nodeMap = new HashMap<>();
         for (Class clz : classes) {
-            String[] parts = clz.getName().split("\\.");
-            if (parts.length <= 0) {
-                continue;
-            }
-            String nodeName = parts[parts.length - 1];
-            if (parts.length > 1 && !parts[0].equals("java") && !parts[0].equals("javax")) {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < parts.length - 2; i++) {
-                    sb.append(parts[i].charAt(0)).append('.');
-                }
-                sb.append(parts[parts.length - 1]);
-                nodeName = sb.toString();
-            }
-            nodeMap.put(clz, '"' + nodeName + '"');
+            nodeMap.put(clz, "\"" + genNodeName(clz) + "\"");
         }
-        for (String s : nodeMap.values()) {
-            if (buf.length() > 0) {
-                buf.append(",\n");
-            }
-            buf.append(s);
-        }
-        buf.append(";\n");
         // print lines
-        for (Map<Class, ConverterMethod> value : map.values()) {
-            for (ConverterMethod method : value.values()) {
+        StringBuilder buf = new StringBuilder();
+        map.entrySet().stream().sorted((o1, o2) -> Integer.compare(o2.getValue().size(), o1.getValue().size())).forEach(entry -> {
+            for (ConverterMethod method : entry.getValue().values()) {
+                if (method.getTgtClass() == Object.class && method instanceof TranConverterMethod) {
+                    continue;
+                }
                 String src = nodeMap.get(method.getSrcClass());
                 String tgt = nodeMap.get(method.getTgtClass());
-                buf.append(src).append("\t->").append(tgt).append("\t:").append(method.getDistance()).append(";\n");
+                // buf.append(src).append(" - ").append(method.getDistance()).append(" ->> ").append(tgt).append('\n');
+                // buf.append(src).append(" -> ").append(tgt).append(':').append(method.getDistance()).append('\n');
+                buf.append(src).append(" -> ").append(tgt).append(";\n");
             }
+        });
+//        for (Map<Class, ConverterMethod> value : map.values()) {
+//            for (ConverterMethod method : value.values()) {
+//                String src = nodeMap.get(method.getSrcClass());
+//                String tgt = nodeMap.get(method.getTgtClass());
+//                // buf.append(src).append(" - ").append(method.getDistance()).append(" ->> ").append(tgt).append('\n');
+//                // buf.append(src).append(" -> ").append(tgt).append(':').append(method.getDistance()).append('\n');
+//                buf.append(src).append(" -> ").append(tgt).append(";\n");
+//            }
+//        }
+        return buf.toString();
+    }
+
+    private String genNodeName(Class cls) {
+        if (cls.isArray()) {
+            String itemName = genNodeName(cls.getComponentType());
+            return itemName + "[]";
         }
-        // write as smcat
-        File file = File.createTempFile("converter-map", ".smcat");
-        PrintWriter writer = new PrintWriter(file);
-        writer.print(buf.toString());
-        writer.close();
-        log.info("generate smcat source: {}", file.toString());
-        // try to generate svg
-        try {
-            ProcessBuilder pb = new ProcessBuilder("smcat", file.toString(), "-o", CHART_SVG).inheritIO();
-            Process p = pb.start();
-            p.waitFor(15, TimeUnit.SECONDS);
-            p.destroyForcibly();
-            log.info("generate smcat svg: {}", CHART_SVG);
-        } catch (Exception e) {
-            log.error("generate svg failed: ", e);
+        String[] parts = cls.getName().split("\\.");
+        if (parts.length <= 0) {
+            return "";
         }
+        String nodeName = parts[parts.length - 1];
+        if (parts.length > 1 && !parts[0].equals("java") && !parts[0].equals("javax")) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < parts.length - 2; i++) {
+                sb.append(parts[i].charAt(0)).append('.');
+            }
+            sb.append(parts[parts.length - 1]);
+            nodeName = sb.toString();
+        }
+        return nodeName;
     }
 
 }
