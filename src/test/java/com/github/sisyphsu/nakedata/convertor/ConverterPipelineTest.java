@@ -1,0 +1,34 @@
+package com.github.sisyphsu.nakedata.convertor;
+
+import com.github.sisyphsu.nakedata.convertor.reflect.XTypeUtils;
+import org.junit.Test;
+
+import java.util.BitSet;
+
+/**
+ * @author sulin
+ * @since 2019-08-03 11:09:37
+ */
+public class ConverterPipelineTest {
+
+    private static final CodecFactory factory = CodecFactory.Instance;
+
+    @Test
+    public void convert() {
+        ConverterPipeline pipeline = factory.getPipeline(BitSet.class, Byte[].class);
+        assert pipeline.getSrcClass() == BitSet.class;
+        assert pipeline.getTgtClass() == Byte[].class;
+
+        Object tgt = pipeline.convert(BitSet.valueOf(new byte[]{1, 2, 3, 4}), XTypeUtils.toXType(Byte[].class));
+        assert tgt != null;
+        assert tgt instanceof Byte[];
+
+        Byte[] bs = (Byte[]) tgt;
+        assert bs.length == 4;
+        assert bs[0] == 1;
+        assert bs[1] == 2;
+        assert bs[2] == 3;
+        assert bs[3] == 4;
+    }
+
+}
