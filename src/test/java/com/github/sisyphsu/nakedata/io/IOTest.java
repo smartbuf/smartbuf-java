@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.io;
 
 import com.github.sisyphsu.nakedata.utils.AssetUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author sulin

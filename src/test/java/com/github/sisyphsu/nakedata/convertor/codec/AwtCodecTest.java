@@ -1,8 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
 import com.github.sisyphsu.nakedata.convertor.CodecFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.awt.*;
 import java.util.Map;
@@ -13,11 +12,10 @@ import java.util.Map;
  */
 public class AwtCodecTest {
 
-    private AwtCodec codec = new AwtCodec();
+    private static AwtCodec codec = new AwtCodec();
 
-    @Before
-    public void setUp() {
-        codec.setFactory(CodecFactory.Instance);
+    static {
+        codec.setFactory(new CodecFactory(null));
     }
 
     @Test

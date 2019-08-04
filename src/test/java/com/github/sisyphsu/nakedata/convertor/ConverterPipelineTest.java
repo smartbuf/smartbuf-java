@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor;
 
 import com.github.sisyphsu.nakedata.convertor.reflect.XTypeUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.BitSet;
 

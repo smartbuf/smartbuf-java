@@ -2,8 +2,7 @@ package com.github.sisyphsu.nakedata.convertor.codec;
 
 import com.github.sisyphsu.nakedata.convertor.CodecFactory;
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.Calendar;
@@ -14,11 +13,10 @@ import java.util.Calendar;
  */
 public class JavaxCodecTest {
 
-    private JavaxCodec codec = new JavaxCodec();
+    private static JavaxCodec codec = new JavaxCodec();
 
-    @Before
-    public void setUp() {
-        codec.setFactory(CodecFactory.Instance);
+    static {
+        codec.setFactory(new CodecFactory(null));
     }
 
     @Test

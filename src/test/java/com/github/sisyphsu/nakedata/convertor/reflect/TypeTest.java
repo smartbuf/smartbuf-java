@@ -3,7 +3,7 @@ package com.github.sisyphsu.nakedata.convertor.reflect;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import lombok.Data;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.ref.Reference;
 import java.lang.reflect.*;
@@ -77,9 +77,9 @@ public class TypeTest {
         P<Double>.Item item = new P<Double>().new Item();
         item.t = 10000.3;
         str = JSON.toJSONString(item);
-        P.Item item2 = JSON.parseObject(str, new TypeReference<P<Double>.Item>() {
-        });
-        System.out.println(item2);
+//        P.Item item2 = JSON.parseObject(str, new TypeReference<P<Double>.Item>() {
+//        });
+//        System.out.println(item2);
     }
 
     public static class Model<X, T> {

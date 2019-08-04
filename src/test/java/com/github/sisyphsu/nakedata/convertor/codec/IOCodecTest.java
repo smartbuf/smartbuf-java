@@ -2,8 +2,7 @@ package com.github.sisyphsu.nakedata.convertor.codec;
 
 import com.github.sisyphsu.nakedata.convertor.CodecFactory;
 import com.github.sisyphsu.nakedata.convertor.reflect.XTypeUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.CharArrayReader;
@@ -19,11 +18,10 @@ import java.util.Objects;
  */
 public class IOCodecTest {
 
-    private IOCodec codec = new IOCodec();
+    private static IOCodec codec = new IOCodec();
 
-    @Before
-    public void setUp() {
-        codec.setFactory(CodecFactory.Instance);
+    static {
+        codec.setFactory(new CodecFactory(null));
     }
 
     @Test

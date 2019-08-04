@@ -21,7 +21,7 @@ public class MapCodec extends Codec {
     /**
      * Convert Map to Map with the specified generic type
      */
-    @Converter
+    @Converter(extensible = true)
     public Map toMap(Map<?, ?> map, XType<?> type) {
         if (map.isEmpty() && type.getRawType().isInstance(map)) {
             return map;
@@ -66,22 +66,6 @@ public class MapCodec extends Codec {
     }
 
     /**
-     * Convert Map.Entry to Map.Entry with the specified generic type
-     */
-    @Converter
-    public Map.Entry toMapEntry(Map.Entry<?, ?> entry, XType<?> type) {
-        Class<?> clz = type.getRawType();
-        XType<?>[] paramTypes = type.getParameterizedTypes();
-        Object key = convert(entry.getKey(), paramTypes[0]);
-        Object val = convert(entry.getValue(), paramTypes[1]);
-        if (clz.isAssignableFrom(AbstractMap.SimpleEntry.class))
-            return new AbstractMap.SimpleEntry(key, val);
-        if (clz.isAssignableFrom(AbstractMap.SimpleImmutableEntry.class))
-            return new AbstractMap.SimpleImmutableEntry(key, val);
-        throw new IllegalArgumentException("Unsupported Type: " + type.getRawType());
-    }
-
-    /**
      * Convert Map to Map.Entry, dont handle generic type
      */
     @Converter
@@ -92,6 +76,22 @@ public class MapCodec extends Codec {
             throw new IllegalArgumentException("Can't convert Map[size > 1] to Map.Entry");
         }
         return map.entrySet().iterator().next();
+    }
+
+    /**
+     * Convert Map.Entry to Map.Entry with the specified generic type
+     */
+    @Converter(extensible = true)
+    public Map.Entry toMapEntry(Map.Entry<?, ?> entry, XType<?> type) {
+        Class<?> clz = type.getRawType();
+        XType<?>[] paramTypes = type.getParameterizedTypes();
+        Object key = convert(entry.getKey(), paramTypes[0]);
+        Object val = convert(entry.getValue(), paramTypes[1]);
+        if (clz.isAssignableFrom(AbstractMap.SimpleEntry.class))
+            return new AbstractMap.SimpleEntry(key, val);
+        if (clz.isAssignableFrom(AbstractMap.SimpleImmutableEntry.class))
+            return new AbstractMap.SimpleImmutableEntry(key, val);
+        throw new IllegalArgumentException("Unsupported Type: " + type.getRawType());
     }
 
     /**

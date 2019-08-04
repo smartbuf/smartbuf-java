@@ -2,7 +2,7 @@ package com.github.sisyphsu.nakedata.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author sulin

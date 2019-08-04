@@ -5,13 +5,10 @@ import com.github.sisyphsu.nakedata.convertor.reflect.XTypeUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -20,11 +17,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class LangCodecTest {
 
-    private LangCodec codec = new LangCodec();
+    private static LangCodec codec = new LangCodec();
 
-    @Before
-    public void setUp() {
-        codec.setFactory(CodecFactory.Instance);
+    static {
+        codec.setFactory(new CodecFactory(null));
     }
 
     @Test

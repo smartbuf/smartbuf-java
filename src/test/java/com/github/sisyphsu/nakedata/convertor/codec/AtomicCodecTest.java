@@ -3,8 +3,7 @@ package com.github.sisyphsu.nakedata.convertor.codec;
 import com.github.sisyphsu.nakedata.convertor.CodecFactory;
 import com.github.sisyphsu.nakedata.convertor.reflect.TypeRef;
 import com.github.sisyphsu.nakedata.convertor.reflect.XTypeUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.BitSet;
@@ -16,11 +15,10 @@ import java.util.concurrent.atomic.*;
  */
 public class AtomicCodecTest {
 
-    private AtomicCodec codec = new AtomicCodec();
+    private static AtomicCodec codec = new AtomicCodec();
 
-    @Before
-    public void setUp() {
-        codec.setFactory(CodecFactory.Instance);
+    static {
+        codec.setFactory(new CodecFactory(null));
     }
 
     @Test

@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author sulin

@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.reflect;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.awt.*;
 import java.lang.reflect.Field;
