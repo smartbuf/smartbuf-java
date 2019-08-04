@@ -28,7 +28,7 @@ public class LangCodec extends Codec {
         }
         Object result;
         try {
-            result = type.getRawType().newInstance();
+            result = type.getRawType().newInstance(); // TODO refactor error info
         } catch (Exception e) {
             throw new IllegalArgumentException("Initialize " + type.getRawType() + " failed: ", e);
         }

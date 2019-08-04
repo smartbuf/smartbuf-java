@@ -101,7 +101,7 @@ public class CodecFactory {
             return null;
         }
         Class srcClass = srcObj.getClass();
-        Class tgtClass = tgtType.getClass();
+        Class tgtClass = tgtType.getRawType();
         ConverterPipeline pipeline = this.getPipeline(srcClass, tgtClass);
         if (pipeline == null) {
             throw new IllegalStateException("Can't convert " + srcObj.getClass() + " to " + tgtType);
@@ -150,7 +150,7 @@ public class CodecFactory {
         Collection<ConverterMethod> routes = converterMap.get(srcClass);
         for (ConverterMethod route : routes) {
             if (passed.contains(route.getTgtClass())) {
-                continue;  // ignore passed node
+                continue;  // ignore passed node, TODO but sometimes need repass same node
             }
             Path path;
             if (route.isExtensible() && route.getTgtClass().isAssignableFrom(tgtClass)) {
@@ -199,7 +199,7 @@ public class CodecFactory {
      */
     @Data
     @AllArgsConstructor
-    public static class PKey {
+    private static class PKey {
         private final Class<?> srcClass;
         private final Class<?> tgtClass;
     }

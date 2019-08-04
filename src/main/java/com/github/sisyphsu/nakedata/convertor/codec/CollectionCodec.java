@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
-import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.Codec;
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
 import java.util.*;
@@ -17,22 +17,21 @@ import java.util.concurrent.*;
 public class CollectionCodec extends Codec {
 
     /**
-     * Convert Iterable to Iterator
+     * Convert Collection to Iterable
      */
     @Converter
-    public Iterator toIterator(Iterable it, XType<?> type) {
-        Iterator iterator = it.iterator();
-        XType paramType = type.getParameterizedType();
-        return new Iterator() {
-            public boolean hasNext() {
-                return iterator.hasNext();
-            }
+    public Iterable toIterable(Collection collection) {
+        return collection;
+    }
 
-            public Object next() {
-                Object obj = iterator.next();
-                return paramType == null ? obj : convert(obj, paramType);
-            }
-        };
+    /**
+     * Converter Iterable to Collection
+     */
+    @Converter
+    public Collection toCollection(Iterable it) {
+        List<Object> list = new ArrayList<>();
+        it.forEach(list::add);
+        return list;
     }
 
     /**
@@ -82,7 +81,7 @@ public class CollectionCodec extends Codec {
     /**
      * Convert Any Collection to Collection, support GenericType convert.
      */
-    @Converter
+    @Converter(extensible = true)
     public Collection toCollection(Collection src, XType<?> type) {
         // filter empty collection
         Class clz = type.getRawType();
@@ -125,7 +124,47 @@ public class CollectionCodec extends Codec {
     public static <T extends Collection> T create(Class<T> clz, Class itemType, int size) {
         Collection result = null;
 
-        if (List.class.isAssignableFrom(clz)) {
+        if (Set.class.isAssignableFrom(clz)) {
+            if (clz.isAssignableFrom(HashSet.class)) {
+                result = new HashSet();
+            } else if (clz.isAssignableFrom(TreeSet.class)) {
+                result = new TreeSet();
+            } else if (clz.isAssignableFrom(LinkedHashSet.class)) {
+                result = new LinkedHashSet();
+            } else if (clz.isAssignableFrom(CopyOnWriteArraySet.class)) {
+                result = new CopyOnWriteArraySet();
+            } else if (clz.isAssignableFrom(ConcurrentSkipListSet.class)) {
+                result = new ConcurrentSkipListSet();
+            } else if (clz.isAssignableFrom(EnumSet.class)) {
+                result = EnumSet.noneOf(itemType);
+            }
+        } else if (Queue.class.isAssignableFrom(clz)) {
+            if (clz.isAssignableFrom(LinkedList.class)) {
+                result = new LinkedList();
+            } else if (clz.isAssignableFrom(ArrayDeque.class)) {
+                result = new ArrayDeque(size);
+            } else if (clz.isAssignableFrom(DelayQueue.class)) {
+                result = new DelayQueue();
+            } else if (clz.isAssignableFrom(LinkedBlockingDeque.class)) {
+                result = new LinkedBlockingDeque(size);
+            } else if (clz.isAssignableFrom(LinkedBlockingQueue.class)) {
+                result = new LinkedBlockingQueue(size);
+            } else if (clz.isAssignableFrom(LinkedTransferQueue.class)) {
+                result = new LinkedTransferQueue();
+            } else if (clz.isAssignableFrom(PriorityBlockingQueue.class)) {
+                result = new PriorityBlockingQueue(size);
+            } else if (clz.isAssignableFrom(ArrayBlockingQueue.class)) {
+                result = new ArrayBlockingQueue(size);
+            } else if (clz.isAssignableFrom(PriorityQueue.class)) {
+                result = new PriorityQueue(size);
+            } else if (clz.isAssignableFrom(SynchronousQueue.class)) {
+                result = new SynchronousQueue();
+            } else if (clz.isAssignableFrom(ConcurrentLinkedDeque.class)) {
+                result = new ConcurrentLinkedDeque();
+            } else if (clz.isAssignableFrom(ConcurrentLinkedQueue.class)) {
+                result = new ConcurrentLinkedQueue();
+            }
+        } else {
             if (clz.isAssignableFrom(ArrayList.class)) {
                 result = new ArrayList();
             } else if (clz.isAssignableFrom(LinkedList.class)) {
@@ -136,46 +175,6 @@ public class CollectionCodec extends Codec {
                 result = new Vector();
             } else if (clz.isAssignableFrom(CopyOnWriteArrayList.class)) {
                 result = new CopyOnWriteArrayList();
-            }
-        } else if (Set.class.isAssignableFrom(clz)) {
-            if (clz.isAssignableFrom(HashSet.class)) {
-                result = new HashSet();
-            } else if (clz.isAssignableFrom(TreeSet.class)) {
-                result = new TreeSet();
-            } else if (clz.isAssignableFrom(LinkedHashSet.class)) {
-                result = new LinkedHashSet();
-            } else if (clz.isAssignableFrom(EnumSet.class)) {
-                result = EnumSet.noneOf(itemType);
-            } else if (clz.isAssignableFrom(CopyOnWriteArraySet.class)) {
-                result = new CopyOnWriteArraySet();
-            } else if (clz.isAssignableFrom(ConcurrentSkipListSet.class)) {
-                result = new ConcurrentSkipListSet();
-            }
-        } else if (Queue.class.isAssignableFrom(clz)) {
-            if (clz.isAssignableFrom(ArrayBlockingQueue.class)) {
-                result = new ArrayBlockingQueue(size);
-            } else if (clz.isAssignableFrom(ArrayDeque.class)) {
-                result = new ArrayDeque(size);
-            } else if (clz.isAssignableFrom(DelayQueue.class)) {
-                result = new DelayQueue();
-            } else if (clz.isAssignableFrom(LinkedList.class)) {
-                result = new LinkedList();
-            } else if (clz.isAssignableFrom(LinkedBlockingDeque.class)) {
-                result = new LinkedBlockingDeque(size);
-            } else if (clz.isAssignableFrom(LinkedBlockingQueue.class)) {
-                result = new LinkedBlockingQueue(size);
-            } else if (clz.isAssignableFrom(LinkedTransferQueue.class)) {
-                result = new LinkedTransferQueue();
-            } else if (clz.isAssignableFrom(PriorityBlockingQueue.class)) {
-                result = new PriorityBlockingQueue(size);
-            } else if (clz.isAssignableFrom(PriorityQueue.class)) {
-                result = new PriorityQueue(size);
-            } else if (clz.isAssignableFrom(SynchronousQueue.class)) {
-                result = new SynchronousQueue();
-            } else if (clz.isAssignableFrom(ConcurrentLinkedDeque.class)) {
-                result = new ConcurrentLinkedDeque();
-            } else if (clz.isAssignableFrom(ConcurrentLinkedQueue.class)) {
-                result = new ConcurrentLinkedQueue();
             }
         }
         if (result == null) {

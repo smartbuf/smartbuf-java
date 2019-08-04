@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.convertor.codec;
+package com.github.sisyphsu.nakedata.convertor;
 
 import org.junit.Test;
 

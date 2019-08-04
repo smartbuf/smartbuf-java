@@ -103,28 +103,28 @@ public class MapCodec extends Codec {
      * @return Map Instance
      */
     public static Map create(Class<?> clz, Class<?> keyType, int size) {
-        if (clz.isAssignableFrom(EnumMap.class))
-            return new EnumMap(keyType);
         if (clz.isAssignableFrom(HashMap.class))
             return new HashMap();
-        if (clz.isAssignableFrom(Hashtable.class))
-            return new Hashtable();
-        if (clz.isAssignableFrom(IdentityHashMap.class))
-            return new IdentityHashMap();
-        if (clz.isAssignableFrom(LinkedHashMap.class))
-            return new LinkedHashMap();
-        if (clz.isAssignableFrom(Properties.class))
-            return new Properties();
         if (clz.isAssignableFrom(TreeMap.class))
             return new TreeMap();
+        if (clz.isAssignableFrom(Hashtable.class))
+            return new Hashtable();
         if (clz.isAssignableFrom(WeakHashMap.class))
             return new WeakHashMap(size);
+        if (clz.isAssignableFrom(LinkedHashMap.class))
+            return new LinkedHashMap();
+        if (clz.isAssignableFrom(IdentityHashMap.class))
+            return new IdentityHashMap();
         if (clz.isAssignableFrom(ConcurrentHashMap.class))
             return new ConcurrentHashMap(size);
         if (clz.isAssignableFrom(ConcurrentSkipListMap.class))
             return new ConcurrentSkipListMap();
+        if (clz.isAssignableFrom(Properties.class))
+            return new Properties();
         if (clz.isAssignableFrom(Attributes.class))
             return new Attributes(size);
+        if (clz.isAssignableFrom(EnumMap.class))
+            return new EnumMap(keyType);
         throw new UnsupportedOperationException("Unsupport Map: " + clz);
     }
 

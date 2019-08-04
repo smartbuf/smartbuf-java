@@ -137,7 +137,7 @@ public class JodaCodec extends Codec {
      */
     @Converter
     public String toString(DateTimeFormatter formatter) {
-        return formatter.toString();
+        throw new UnsupportedOperationException();
     }
 
     /**

@@ -72,7 +72,7 @@ public class RealConverterMethod extends ConverterMethod {
         if (!annotation.nullable() && data == null) {
             return null;
         }
-        if (data != null && data.getClass() != this.getSrcClass()) {
+        if (data != null && !this.getSrcClass().isAssignableFrom(data.getClass())) {
             throw new IllegalArgumentException("data type unmatched: " + this.getSrcClass() + ", " + data.getClass());
         }
         try {
