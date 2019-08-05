@@ -25,6 +25,11 @@ public class StringCodecTest {
         assert str.equals(codec.toString(codec.toCharArray(str)));
         assert str.equals(codec.toString(codec.toByteArray(str)));
         assert str.equals(codec.toString(codec.toStringCharacterIterator(str)));
+        try {
+            codec.toCharacter(str);
+        } catch (Exception e) {
+            assert e instanceof UnsupportedOperationException;
+        }
 
         String s = "s";
         assert s.equals(codec.toString(codec.toCharacter(s)));

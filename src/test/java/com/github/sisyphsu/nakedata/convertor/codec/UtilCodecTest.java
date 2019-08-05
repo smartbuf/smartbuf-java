@@ -34,19 +34,16 @@ public class UtilCodecTest {
         Locale locale = Locale.KOREAN;
         assert locale.equals(codec.toLocale(codec.toString(locale)));
 
-        UUID uuid = UUID.randomUUID();
-        assert uuid.equals(codec.toUUID(codec.toString(uuid)));
-
-        String uuidStr = codec.toString(UUID.randomUUID()).replaceAll("-", "");
-        assert uuidStr.equals(codec.toString(codec.toUUID(uuidStr)).replaceAll("-", ""));
-
         TimeZone timeZone = TimeZone.getDefault();
         assert timeZone.equals(codec.toTimeZone(codec.toString(timeZone)));
 
         Pattern pattern = Pattern.compile(".*");
         Pattern pattern1 = codec.toPattern(codec.toString(pattern));
         assert pattern.pattern().equals(pattern1.pattern());
+    }
 
+    @Test
+    public void testOptional() {
         Integer i = 100;
         assert i.equals(codec.toInteger(codec.toOptionalInt(i)));
         assert codec.toInteger(codec.toOptionalInt(null)) == null;
@@ -59,17 +56,38 @@ public class UtilCodecTest {
         assert d.equals(codec.toDouble(codec.toOptionalDouble(d)));
         assert codec.toDouble(codec.toOptionalDouble(null)) == null;
 
-        Object o = new Object();
-        XType oType = XTypeUtils.toXType(o.getClass());
-        XType optionalType = XTypeUtils.toXType(new TypeRef<Optional<Object>>() {
+        XType oType = XTypeUtils.toXType(l.getClass());
+        XType optionalType = XTypeUtils.toXType(new TypeRef<Optional<Long>>() {
         }.getType());
-        assert o == codec.toObject(codec.toOptional(o, optionalType), oType);
+        assert l == codec.toObject(codec.toOptional(l, optionalType), oType);
         assert codec.toObject(codec.toOptional(null, optionalType), oType) == null;
+
+        Optional optional = codec.toOptional(l, XTypeUtils.toXType(new TypeRef<Optional<Integer>>() {
+        }.getType()));
+        assert optional.isPresent() && optional.get().equals(l.intValue());
+
+        assert codec.toObject(optional, oType).equals(l);
     }
 
     @Test
     public void testUUID() {
-        System.out.println(UUID.randomUUID().toString());
+        UUID uuid = UUID.randomUUID();
+        assert uuid.equals(codec.toUUID(codec.toString(uuid)));
+
+        String uuidStr = codec.toString(UUID.randomUUID()).replaceAll("-", "");
+        assert uuidStr.equals(codec.toString(codec.toUUID(uuidStr)).replaceAll("-", ""));
+
+        try {
+            codec.toUUID("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
+        } catch (Exception e) {
+            assert e instanceof IllegalArgumentException && e.getCause() instanceof NumberFormatException;
+        }
+
+        try {
+            codec.toUUID("1234");
+        } catch (Exception e) {
+            assert e instanceof IllegalArgumentException && e.getCause() == null;
+        }
     }
 
 }

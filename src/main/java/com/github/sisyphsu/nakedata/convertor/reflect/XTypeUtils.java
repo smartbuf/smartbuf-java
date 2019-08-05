@@ -1,6 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor.reflect;
 
 import java.io.InputStream;
+import java.lang.ref.Reference;
 import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -36,6 +37,7 @@ public class XTypeUtils {
                 CharSequence.class,
                 InputStream.class,
                 Date.class,
+                Reference.class, // TODO why stackoverflow
                 AtomicReference.class
         ));
     }

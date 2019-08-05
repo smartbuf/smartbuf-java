@@ -38,6 +38,13 @@ public class AwtCodecTest {
         Map<String, Object> fontMap = codec.toMap(font);
         assert font.equals(codec.toFont(fontMap));
 
+        fontMap.remove("style");
+        fontMap.remove("size");
+        Font newFont = codec.toFont(fontMap);
+        assert newFont.getSize() != font.getSize();
+        assert newFont.getStyle() != font.getStyle();
+        assert newFont.getName().equals(font.getName());
+
         String rgb = "#00FF88";
         Color rgbColor = codec.toColor(rgb);
         assert (rgb + "FF").equalsIgnoreCase(codec.toString(rgbColor));

@@ -106,8 +106,9 @@ public class ThrowableCodec extends Codec {
      * @return Throwable
      */
     public static Throwable createThrowable(Class<?> clz, String msg, Throwable cause) {
-        if (!Throwable.class.isAssignableFrom(clz))
-            throw new UnsupportedOperationException("invalid Throwable type: " + clz);
+        if (!Throwable.class.isAssignableFrom(clz)) {
+            throw new IllegalArgumentException("invalid Throwable type: " + clz);
+        }
         // try Throwable(msg, cause)
         Throwable result = null;
         try {
@@ -134,6 +135,9 @@ public class ThrowableCodec extends Codec {
                 result = (Throwable) clz.getConstructor().newInstance();
             } catch (Exception ignored) {
             }
+        }
+        if (result == null) {
+            throw new UnsupportedOperationException("Can't initialize Throwable: " + clz);
         }
         return result;
     }

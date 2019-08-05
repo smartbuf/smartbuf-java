@@ -5,10 +5,7 @@ import com.github.sisyphsu.nakedata.convertor.reflect.XTypeUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.CharArrayReader;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Objects;
@@ -34,14 +31,39 @@ public class IOCodecTest {
         File file = File.createTempFile("100", "test");
         String fileName = codec.toString(file);
         assert fileName != null;
+    }
 
+    @Test
+    public void testInputStream() throws IOException {
         byte[] bytes = new byte[]{1, 2, 3, 4, 5};
         assert Arrays.equals(bytes, codec.toByteArray(codec.toInputStream(bytes, XTypeUtils.toXType(ByteArrayInputStream.class))));
 
+        assert codec.toInputStream(bytes, XTypeUtils.toXType(ByteArrayInputStream.class)).getClass() == ByteArrayInputStream.class;
+        assert codec.toInputStream(bytes, XTypeUtils.toXType(BufferedInputStream.class)).getClass() == BufferedInputStream.class;
+        assert codec.toInputStream(bytes, XTypeUtils.toXType(DataInputStream.class)).getClass() == DataInputStream.class;
+
+        try {
+            codec.toInputStream(bytes, XTypeUtils.toXType(FileInputStream.class));
+        } catch (Exception e) {
+            assert e instanceof UnsupportedOperationException;
+        }
+    }
+
+    @Test
+    public void testReadable() throws IOException {
         String str = "hello world";
         Readable readable = codec.toReadable(str, XTypeUtils.toXType(CharArrayReader.class));
         assert readable instanceof CharArrayReader;
         assert str.equals(codec.toString(readable));
+
+        assert codec.toReadable(str, XTypeUtils.toXType(StringReader.class)) instanceof StringReader;
+        assert codec.toReadable(str, XTypeUtils.toXType(BufferedReader.class)) instanceof BufferedReader;
+
+        try {
+            codec.toReadable(str, XTypeUtils.toXType(FileReader.class));
+        } catch (Exception e) {
+            assert e instanceof UnsupportedOperationException;
+        }
     }
 
 }

@@ -37,7 +37,7 @@ public class AwtCodec extends Codec {
             style = Font.PLAIN;
         }
         if (size == null) {
-            size = 0;
+            size = 12;
         }
         return new Font(name, style, size);
     }

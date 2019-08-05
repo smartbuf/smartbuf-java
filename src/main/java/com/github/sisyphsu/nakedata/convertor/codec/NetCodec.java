@@ -51,7 +51,7 @@ public class NetCodec extends Codec {
     @Converter(extensible = true)
     public InetAddress toInetAddress(String s) throws UnknownHostException {
         int off = s.indexOf('/');
-        if (off > 0) {
+        if (off >= 0) {
             String hostname = s.substring(0, off);
             String address = s.substring(off + 1);
             s = hostname.length() == 0 ? address : hostname;
@@ -82,7 +82,7 @@ public class NetCodec extends Codec {
         }
         InetAddress addr = convert(host, InetAddress.class);
         if (port == null) {
-            return new InetSocketAddress(addr, -1);
+            return new InetSocketAddress(addr, 0);
         }
         return new InetSocketAddress(addr, Integer.parseInt(port));
     }

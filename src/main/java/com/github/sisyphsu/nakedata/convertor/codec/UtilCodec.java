@@ -86,7 +86,7 @@ public class UtilCodec extends Codec {
                 components[4] = Long.valueOf(s.substring(20, 32), 16);
             }
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid UUID string: " + s);
+            throw new IllegalArgumentException("Invalid UUID string: " + s, e);
         }
         if (components[0] == null) {
             throw new IllegalArgumentException("Invalid UUID string: " + s);
@@ -151,10 +151,10 @@ public class UtilCodec extends Codec {
         if (o == null)
             return Optional.empty();
         XType<?> paramType = type.getParameterizedType();
-        if (!(paramType.isPure() && paramType.getRawType().isInstance(o))) {
-            o = convert(o, paramType); // not compatible
+        if (paramType.isPure() && paramType.getRawType().isInstance(o)) {
+            return Optional.of(o); // compatible
         }
-        return Optional.of(o);
+        return Optional.of(convert(o, paramType));
     }
 
     /**
@@ -166,10 +166,10 @@ public class UtilCodec extends Codec {
             return null;
         }
         Object obj = optional.get();
-        if (!(type.isPure() && type.getRawType().isInstance(obj))) {
-            obj = convert(obj, type); // not compatible
+        if (type.isPure() && type.getRawType().isInstance(obj)) {
+            return obj; // compatible
         }
-        return obj;
+        return convert(obj, type);
     }
 
     /**

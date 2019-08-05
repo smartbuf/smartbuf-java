@@ -19,7 +19,7 @@ public class ReferenceCodec extends Codec {
     /**
      * Convert Any Object to Reference
      */
-    @Converter
+    @Converter(extensible = true)
     public Reference toReference(Object obj, XType type) {
         XType<?> paramType = type.getParameterizedType();
         Object value;

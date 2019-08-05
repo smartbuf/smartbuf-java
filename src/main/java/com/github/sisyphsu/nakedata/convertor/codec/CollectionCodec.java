@@ -169,10 +169,10 @@ public class CollectionCodec extends Codec {
                 result = new ArrayList();
             } else if (clz.isAssignableFrom(LinkedList.class)) {
                 result = new LinkedList();
-            } else if (clz.isAssignableFrom(Stack.class)) {
-                result = new Stack();
             } else if (clz.isAssignableFrom(Vector.class)) {
                 result = new Vector();
+            } else if (clz.isAssignableFrom(Stack.class)) {
+                result = new Stack();
             } else if (clz.isAssignableFrom(CopyOnWriteArrayList.class)) {
                 result = new CopyOnWriteArrayList();
             }

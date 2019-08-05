@@ -137,6 +137,12 @@ public class CollectionCodecTest {
         assert CollectionCodec.create(Deque.class, Integer.class, 10) instanceof LinkedList;
         assert CollectionCodec.create(BlockingQueue.class, Integer.class, 10) instanceof DelayQueue;
         assert CollectionCodec.create(BlockingDeque.class, Integer.class, 10) instanceof LinkedBlockingDeque;
+
+        try {
+            CollectionCodec.create(Collections.singletonList(0).getClass(), Integer.class, 10);
+        } catch (Exception e) {
+            assert e instanceof UnsupportedOperationException;
+        }
     }
 
 }

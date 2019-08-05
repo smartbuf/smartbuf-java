@@ -44,10 +44,26 @@ public class ThrowableCodecTest {
         assert Objects.equals(exception.getMessage(), throwable2.getMessage());
         assert Arrays.equals(exception.getStackTrace(), throwable2.getStackTrace());
 
-        assert codec.toThrowable(map, XTypeUtils.toXType(RuntimeException.class)) instanceof RuntimeException;
+        assert codec.toThrowable(map, XTypeUtils.toXType(RuntimeException.class)).getClass() == RuntimeException.class;
+
+        map.put("type", "12314124123");
+        Throwable throwable3 = codec.toThrowable(map, XTypeUtils.toXType(Throwable.class));
+        assert throwable3.getClass() == Throwable.class;
+
+        map.put("type", Object.class.getName());
+        Throwable throwable4 = codec.toThrowable(map, XTypeUtils.toXType(Throwable.class));
+        assert throwable4.getClass() == Throwable.class;
+    }
+
+    @Test
+    public void testStackTraceElement() {
+        Exception exception = new Exception();
 
         StackTraceElement element = exception.getStackTrace()[0];
         assert element.equals(codec.toStackTraceElement(codec.toMap(element)));
+        Map elementMap = codec.toMap(element);
+        elementMap.remove("line");
+        assert codec.toStackTraceElement(elementMap).getLineNumber() == -1;
     }
 
     @Test
@@ -98,6 +114,41 @@ public class ThrowableCodecTest {
         assert ThrowableCodec.createThrowable(ConnectException.class, "", npe) instanceof ConnectException;
         assert ThrowableCodec.createThrowable(ProtocolException.class, "", npe) instanceof ProtocolException;
         assert ThrowableCodec.createThrowable(UnknownHostException.class, "", npe) instanceof UnknownHostException;
+
+        assert ThrowableCodec.createThrowable(CauseException.class, null, null) instanceof CauseException;
+        assert ThrowableCodec.createThrowable(EmptyException.class, null, null) instanceof EmptyException;
+
+        try {
+            ThrowableCodec.createThrowable(Object.class, null, null);
+        } catch (Exception e) {
+            assert e instanceof IllegalArgumentException;
+        }
+
+        try {
+            ThrowableCodec.createThrowable(InvalidException.class, null, null);
+        } catch (Exception e) {
+            assert e instanceof UnsupportedOperationException;
+        }
+    }
+
+    public static class CauseException extends Exception {
+        public CauseException(Throwable cause) {
+            super(cause);
+        }
+    }
+
+    public static class EmptyException extends Exception {
+        public EmptyException() {
+        }
+    }
+
+    public static class InvalidException extends Exception {
+        private final long time;
+
+        public InvalidException(String message, Throwable cause, long time) {
+            super(message, cause);
+            this.time = time;
+        }
     }
 
 }

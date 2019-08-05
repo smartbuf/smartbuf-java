@@ -38,9 +38,6 @@ public class ArrayCodec extends Codec {
      */
     @Converter
     public Object[] toArray(Collection list, XType<?> type) {
-        if (type == null) {
-            return list.toArray();
-        }
         XType<?> itemType = type.getComponentType();
         if (itemType == null) {
             itemType = XTypeUtils.toXType(type.getRawType().getComponentType());
@@ -207,9 +204,6 @@ public class ArrayCodec extends Codec {
      */
     @Converter
     public Long[] toLongArray(long[] arr) {
-        if (arr == null) {
-            return null;
-        }
         Long[] result = new Long[arr.length];
         for (int i = 0; i < arr.length; i++) {
             result[i] = arr[i];
@@ -222,9 +216,6 @@ public class ArrayCodec extends Codec {
      */
     @Converter
     public long[] toLongArray(Long[] arr) {
-        if (arr == null) {
-            return null;
-        }
         long[] result = new long[arr.length];
         for (int i = 0; i < arr.length; i++) {
             result[i] = arr[i];

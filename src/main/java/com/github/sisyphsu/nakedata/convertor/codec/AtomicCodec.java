@@ -108,9 +108,6 @@ public class AtomicCodec extends Codec {
     @Converter
     public AtomicReference<?> toAtomicReference(Object obj, XType type) {
         XType<?> refType = type.getParameterizedType();
-        if (refType == null) {
-            return new AtomicReference<>(obj); // no generic, use Object directly
-        }
         if (refType.isPure() && refType.getRawType().isAssignableFrom(obj.getClass())) {
             return new AtomicReference<>(obj); // compatible
         }

@@ -75,6 +75,14 @@ public class NumberCodec extends Codec {
     }
 
     /**
+     * Convert String to Float
+     */
+    @Converter
+    public Float toFloat(String s) {
+        return Float.parseFloat(s);
+    }
+
+    /**
      * Convert Float to Double
      */
     @Converter

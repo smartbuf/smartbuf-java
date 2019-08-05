@@ -26,6 +26,9 @@ public class NetCodecTest {
     public void test() throws Exception {
         InetSocketAddress address = new InetSocketAddress("www.bing.com", 80);
         assert address.equals(codec.toInetSocketAddress(codec.toString(address)));
+        assert codec.toInetSocketAddress("www.bing.com").getPort() == 0;
+
+        assert codec.toInetAddress("/127.0.0.1") != null;
 
         InetAddress inetAddress = InetAddress.getByName("www.bing.com");
         assert inetAddress.equals(codec.toInetAddress(codec.toString(inetAddress)));
@@ -35,6 +38,9 @@ public class NetCodecTest {
 
         Inet6Address inet6Address = (Inet6Address) Inet6Address.getByName("www.neu6.edu.cn");
         assert inet6Address.equals(codec.toInetAddress(codec.toString(inet6Address)));
+
+        // auto split hostname by /
+        assert inetAddress.equals(codec.toInetAddress(inetAddress.toString()));
 
         String uri1 = "http://java.sun.com/j2se/1.3/";
         String uri2 = "../../../demo/jfc/SwingSet2/src/SwingSet2.java";

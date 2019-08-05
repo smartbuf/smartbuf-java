@@ -48,6 +48,15 @@ public class MapCodecTest {
         assert MapCodec.create(ConcurrentMap.class, Long.class, 10) instanceof ConcurrentHashMap;
         assert MapCodec.create(ConcurrentNavigableMap.class, Long.class, 10) instanceof ConcurrentSkipListMap;
         assert MapCodec.create(EnumMap.class, TimeUnit.class, 10) instanceof EnumMap;
+
+        try {
+            MapCodec.create(MyMap.class, null, 10);
+        } catch (Exception e) {
+            assert e instanceof UnsupportedOperationException;
+        }
+    }
+
+    public static class MyMap extends HashMap {
     }
 
 }

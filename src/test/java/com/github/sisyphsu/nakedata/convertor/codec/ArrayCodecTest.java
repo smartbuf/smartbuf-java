@@ -29,6 +29,8 @@ public class ArrayCodecTest {
     @Test
     public void testObjectArray() {
         BigInteger[] arr = new BigInteger[]{BigInteger.valueOf(100), BigInteger.valueOf(200)};
+        assert arr == codec.toArray(arr, XTypeUtils.toXType(Object[].class));
+
         Object[] objects = codec.toArray(arr, XTypeUtils.toXType(String[].class));
         assert objects instanceof String[];
 
@@ -42,13 +44,20 @@ public class ArrayCodecTest {
         byte[] bs1 = new byte[]{1, 3, 5};
         byte[] bs2 = new byte[]{4, 6, 8};
         Collection<BitSet> sets = Arrays.asList(BitSet.valueOf(bs1), BitSet.valueOf(bs2));
+
         Object[] objects = codec.toArray(sets, XTypeUtils.toXType(new TypeRef<byte[][]>() {
         }.getType()));
-
         assert objects instanceof byte[][];
         byte[][] byteArrs = (byte[][]) objects;
         assert Arrays.equals(byteArrs[0], bs1);
         assert Arrays.equals(byteArrs[1], bs2);
+
+        Object[] objArr2 = codec.toArray(sets, XTypeUtils.toXType(new TypeRef<BitSet[]>() {
+        }.getType()));
+        assert objArr2 instanceof BitSet[];
+        BitSet[] bitSets = (BitSet[]) objArr2;
+        assert bitSets[0].equals(BitSet.valueOf(bs1));
+        assert bitSets[1].equals(BitSet.valueOf(bs2));
     }
 
     @Test
