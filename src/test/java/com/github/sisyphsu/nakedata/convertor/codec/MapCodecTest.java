@@ -1,6 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
 import com.github.sisyphsu.nakedata.convertor.CodecFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -13,10 +14,11 @@ import java.util.jar.Attributes;
  */
 public class MapCodecTest {
 
-    private static MapCodec codec = new MapCodec();
+    private MapCodec codec = new MapCodec();
 
-    static {
-        codec.setFactory(new CodecFactory(null));
+    @BeforeEach
+    void setUp() {
+        codec.setFactory(CodecFactory.Instance);
     }
 
     @Test

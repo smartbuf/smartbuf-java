@@ -16,12 +16,12 @@ public class IOTest {
         InputReader input = new InputReader(new ByteArrayInput(data));
 
         output.writeVarInt(0L);
-        output.writeInt(Byte.MAX_VALUE);
-        output.writeInt(Byte.MIN_VALUE);
-        output.writeInt(Short.MAX_VALUE);
-        output.writeInt(Short.MIN_VALUE);
-        output.writeInt(Integer.MAX_VALUE);
-        output.writeInt(Integer.MIN_VALUE);
+        output.writeVarInt(Byte.MAX_VALUE);
+        output.writeVarInt(Byte.MIN_VALUE);
+        output.writeVarInt(Short.MAX_VALUE);
+        output.writeVarInt(Short.MIN_VALUE);
+        output.writeVarInt(Integer.MAX_VALUE);
+        output.writeVarInt(Integer.MIN_VALUE);
         output.writeVarInt(Long.MAX_VALUE);
         output.writeVarInt(Long.MIN_VALUE);
 

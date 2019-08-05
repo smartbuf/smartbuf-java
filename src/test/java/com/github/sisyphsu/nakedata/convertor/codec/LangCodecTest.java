@@ -5,6 +5,7 @@ import com.github.sisyphsu.nakedata.convertor.reflect.XTypeUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -17,10 +18,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class LangCodecTest {
 
-    private static LangCodec codec = new LangCodec();
+    private LangCodec codec = new LangCodec();
 
-    static {
-        codec.setFactory(new CodecFactory(null));
+    @BeforeEach
+    void setUp() {
+        codec.setFactory(CodecFactory.Instance);
     }
 
     @Test
@@ -37,7 +39,7 @@ public class LangCodecTest {
 //        Pojo pojo = new Pojo(1000L, "hello");
         Pojo pojo = new Pojo("hello");
         Map map = codec.toMap(pojo);
-        assert map != null && map.size() == pojo.getClass().getDeclaredFields().length;
+        assert map != null;
         assert Objects.equals(map.get("name"), pojo.name);
 //        assert Objects.equals(map.get("id"), pojo.id);
 //        assert pojo.scores.equals(map.get("scores"));

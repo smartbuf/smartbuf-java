@@ -1,6 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor;
 
 import com.github.sisyphsu.nakedata.convertor.reflect.XTypeUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.BitSet;
@@ -11,7 +12,12 @@ import java.util.BitSet;
  */
 public class ConverterPipelineTest {
 
-    private static final CodecFactory factory = CodecFactory.Instance;
+    private CodecFactory factory;
+
+    @BeforeEach
+    void setUp() {
+        factory = CodecFactory.Instance;
+    }
 
     @Test
     public void convert() {

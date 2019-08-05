@@ -2,6 +2,7 @@ package com.github.sisyphsu.nakedata.convertor.codec;
 
 
 import com.github.sisyphsu.nakedata.convertor.CodecFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -10,10 +11,11 @@ import org.junit.jupiter.api.Test;
  */
 public class DateCodecTest {
 
-    private static CollectionCodec codec = new CollectionCodec();
+    private CollectionCodec codec = new CollectionCodec();
 
-    static {
-        codec.setFactory(new CodecFactory(null));
+    @BeforeEach
+    void setUp() {
+        codec.setFactory(CodecFactory.Instance);
     }
 
     @Test

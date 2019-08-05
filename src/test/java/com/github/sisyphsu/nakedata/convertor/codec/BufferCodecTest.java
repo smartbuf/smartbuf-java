@@ -1,6 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
 import com.github.sisyphsu.nakedata.convertor.CodecFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
@@ -12,10 +13,11 @@ import java.util.Arrays;
  */
 public class BufferCodecTest {
 
-    private static BufferCodec codec = new BufferCodec();
+    private BufferCodec codec = new BufferCodec();
 
-    static {
-        codec.setFactory(new CodecFactory(null));
+    @BeforeEach
+    void setUp() {
+        codec.setFactory(CodecFactory.Instance);
     }
 
     @Test

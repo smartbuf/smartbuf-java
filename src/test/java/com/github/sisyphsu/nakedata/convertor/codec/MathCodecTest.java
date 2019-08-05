@@ -1,6 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
 import com.github.sisyphsu.nakedata.convertor.CodecFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -12,10 +13,11 @@ import java.math.BigInteger;
  */
 public class MathCodecTest {
 
-    private static MathCodec codec = new MathCodec();
+    private MathCodec codec = new MathCodec();
 
-    static {
-        codec.setFactory(new CodecFactory(null));
+    @BeforeEach
+    void setUp() {
+        codec.setFactory(CodecFactory.Instance);
     }
 
     @Test

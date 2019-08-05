@@ -3,6 +3,8 @@ package com.github.sisyphsu.nakedata.convertor.codec;
 import com.github.sisyphsu.nakedata.convertor.CodecFactory;
 import com.github.sisyphsu.nakedata.convertor.reflect.TypeRef;
 import com.github.sisyphsu.nakedata.convertor.reflect.XTypeUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
@@ -14,12 +16,14 @@ import java.util.Collection;
  * @author sulin
  * @since 2019-08-03 15:51:12
  */
+@Slf4j
 public class ArrayCodecTest {
 
-    private static ArrayCodec codec = new ArrayCodec();
+    private ArrayCodec codec = new ArrayCodec();
 
-    static {
-        codec.setFactory(new CodecFactory(null));
+    @BeforeEach
+    void setUp() {
+        codec.setFactory(CodecFactory.Instance);
     }
 
     @Test

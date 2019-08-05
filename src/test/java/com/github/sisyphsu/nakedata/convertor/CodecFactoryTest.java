@@ -1,6 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor;
 
 import com.github.sisyphsu.nakedata.node.Node;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.BitSet;
@@ -12,7 +13,12 @@ import java.util.Set;
  */
 public class CodecFactoryTest {
 
-    private static CodecFactory factory = CodecFactory.Instance;
+    private CodecFactory factory;
+
+    @BeforeEach
+    void setUp() {
+        factory = CodecFactory.Instance;
+    }
 
     @Test
     public void installCodec() {

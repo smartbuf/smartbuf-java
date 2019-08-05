@@ -3,6 +3,7 @@ package com.github.sisyphsu.nakedata.convertor.codec;
 import com.github.sisyphsu.nakedata.convertor.CodecFactory;
 import com.github.sisyphsu.nakedata.convertor.reflect.TypeRef;
 import com.github.sisyphsu.nakedata.convertor.reflect.XTypeUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -15,10 +16,11 @@ import java.util.concurrent.atomic.*;
  */
 public class AtomicCodecTest {
 
-    private static AtomicCodec codec = new AtomicCodec();
+    private AtomicCodec codec = new AtomicCodec();
 
-    static {
-        codec.setFactory(new CodecFactory(null));
+    @BeforeEach
+    void setUp() {
+        codec.setFactory(CodecFactory.Instance);
     }
 
     @Test

@@ -3,6 +3,7 @@ package com.github.sisyphsu.nakedata.convertor.codec;
 import com.github.sisyphsu.nakedata.convertor.CodecFactory;
 import org.joda.time.Interval;
 import org.joda.time.Period;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -11,10 +12,11 @@ import org.junit.jupiter.api.Test;
  */
 public class JodaCodecTest {
 
-    private static JodaCodec codec = new JodaCodec();
+    private JodaCodec codec = new JodaCodec();
 
-    static {
-        codec.setFactory(new CodecFactory(null));
+    @BeforeEach
+    void setUp() {
+        codec.setFactory(CodecFactory.Instance);
     }
 
     @Test
