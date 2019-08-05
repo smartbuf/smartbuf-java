@@ -1,6 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
 import com.github.sisyphsu.nakedata.convertor.CodecFactory;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * @author sulin
@@ -8,10 +9,11 @@ import com.github.sisyphsu.nakedata.convertor.CodecFactory;
  */
 public class UtilCodecTest {
 
-    private static UtilCodec codec = new UtilCodec();
+    private UtilCodec codec = new UtilCodec();
 
-    static {
-        codec.setFactory(new CodecFactory(null));
+    @BeforeEach
+    void setUp() {
+        codec.setFactory(CodecFactory.Instance);
     }
 
 }

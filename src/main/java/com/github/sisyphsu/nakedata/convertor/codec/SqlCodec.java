@@ -1,8 +1,10 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
-import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.Codec;
+import com.github.sisyphsu.nakedata.convertor.Converter;
 
+import javax.sql.rowset.serial.SerialBlob;
+import javax.sql.rowset.serial.SerialClob;
 import java.io.InputStream;
 import java.io.Reader;
 import java.sql.*;
@@ -19,11 +21,27 @@ import java.time.LocalTime;
 public class SqlCodec extends Codec {
 
     /**
+     * Convert byte[] to Blob
+     */
+    @Converter
+    public Blob toBlob(byte[] bytes) throws SQLException {
+        return new SerialBlob(bytes);
+    }
+
+    /**
      * Convert Blob to InputStream
      */
     @Converter
     public InputStream toInputStream(Blob b) throws SQLException {
         return b.getBinaryStream();
+    }
+
+    /**
+     * Convert String to Clob
+     */
+    @Converter
+    public Clob toClob(String str) throws SQLException {
+        return new SerialClob(str.toCharArray());
     }
 
     /**

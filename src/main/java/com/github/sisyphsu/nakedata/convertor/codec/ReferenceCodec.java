@@ -43,7 +43,7 @@ public class ReferenceCodec extends Codec {
      * Convert Reference to Object
      */
     @Converter
-    public Object toObject(Reference ref, XType<?> type) {
+    public Object toObject(Reference<?> ref, XType<?> type) {
         Object obj = ref.get();
         if (type.isPure() && type.getRawType().isInstance(obj)) {
             return obj;

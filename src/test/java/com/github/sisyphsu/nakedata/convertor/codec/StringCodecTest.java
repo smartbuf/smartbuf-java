@@ -1,6 +1,8 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
 import com.github.sisyphsu.nakedata.convertor.CodecFactory;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author sulin
@@ -8,10 +10,24 @@ import com.github.sisyphsu.nakedata.convertor.CodecFactory;
  */
 public class StringCodecTest {
 
-    private static StringCodec codec = new StringCodec();
+    private StringCodec codec = new StringCodec();
 
-    static {
-        codec.setFactory(new CodecFactory(null));
+    @BeforeEach
+    void setUp() {
+        codec.setFactory(CodecFactory.Instance);
+    }
+
+    @Test
+    public void test() {
+        String str = "hello world";
+        assert str.equals(codec.toString(codec.toStringBuffer(str)));
+        assert str.equals(codec.toString(codec.toStringBuilder(str)));
+        assert str.equals(codec.toString(codec.toCharArray(str)));
+        assert str.equals(codec.toString(codec.toByteArray(str)));
+        assert str.equals(codec.toString(codec.toStringCharacterIterator(str)));
+
+        String s = "s";
+        assert s.equals(codec.toString(codec.toCharacter(s)));
     }
 
 }
