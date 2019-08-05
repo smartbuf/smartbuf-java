@@ -51,7 +51,6 @@ public class ConverterMap {
      */
     @SuppressWarnings("unchecked")
     public synchronized Collection<ConverterMethod> get(Class srcClass) {
-        this.flushCastConverter(srcClass);
         Map<Class, ConverterMethod> tgtMap = methodMap.get(srcClass);
         if (tgtMap == null) {
             return Collections.EMPTY_LIST;
@@ -63,13 +62,36 @@ public class ConverterMap {
      * Get the ConverterMethod from srcClass to tgtClass
      */
     public synchronized ConverterMethod get(Class srcClass, Class tgtClass) {
-        this.flushCastConverter(srcClass);
-        this.flushCastConverter(tgtClass);
         Map<Class, ConverterMethod> tgtMap = methodMap.get(srcClass);
         if (tgtMap == null) {
             return null;
         }
         return tgtMap.get(tgtClass);
+    }
+
+    /**
+     * Check the specified class, if it's new, flush CastConverter for it.
+     */
+    public void flushCastConverter(Class<?> cls) {
+        if (!classes.add(cls)) {
+            return;
+        }
+        for (Class<?> oldCls : classes) {
+            if (oldCls == cls) {
+                continue;
+            }
+            Class srcClass = null, tgtClass = null;
+            if (oldCls.isAssignableFrom(cls)) {
+                srcClass = cls;
+                tgtClass = oldCls;
+            } else if (cls.isAssignableFrom(oldCls)) {
+                srcClass = oldCls;
+                tgtClass = cls;
+            }
+            if (srcClass != null) {
+                this.put(new TranConverterMethod(srcClass, tgtClass));
+            }
+        }
     }
 
     /**
@@ -119,31 +141,6 @@ public class ConverterMap {
             nodeName = sb.toString();
         }
         return nodeName;
-    }
-
-    /**
-     * Check the specified class, if it's new, flush CastConverter for it.
-     */
-    private void flushCastConverter(Class<?> cls) {
-        if (!classes.add(cls)) {
-            return;
-        }
-        for (Class<?> oldCls : classes) {
-            if (oldCls == cls) {
-                continue;
-            }
-            Class srcClass = null, tgtClass = null;
-            if (oldCls.isAssignableFrom(cls)) {
-                srcClass = cls;
-                tgtClass = oldCls;
-            } else if (cls.isAssignableFrom(oldCls)) {
-                srcClass = oldCls;
-                tgtClass = cls;
-            }
-            if (srcClass != null) {
-                this.put(new TranConverterMethod(srcClass, tgtClass));
-            }
-        }
     }
 
 }

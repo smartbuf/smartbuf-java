@@ -3,6 +3,7 @@ package com.github.sisyphsu.nakedata.convertor;
 import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -16,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author sulin
  * @since 2019-05-20 16:14:54
  */
+@Slf4j
 public class CodecFactory {
 
     public static final CodecFactory Instance = new CodecFactory(null);
@@ -44,13 +46,12 @@ public class CodecFactory {
      * @param codecClass new codec's class
      */
     public void installCodec(Class<? extends Codec> codecClass) {
-        Codec codec;
         try {
-            codec = codecClass.newInstance();
+            Codec codec = codecClass.newInstance();
+            this.installCodec(codec);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid codec's class, newInstance failed.", e);
+            log.warn("Ignore invalid codec, newInstance failed: " + codecClass);
         }
-        this.installCodec(codec);
     }
 
     /**
@@ -119,6 +120,8 @@ public class CodecFactory {
     protected ConverterPipeline getPipeline(Class srcClass, Class tgtClass) {
         ConverterPipeline pipeline = pipelineMap.get(new PKey(srcClass, tgtClass));
         if (pipeline == null) {
+            converterMap.flushCastConverter(srcClass);
+            converterMap.flushCastConverter(tgtClass);
             // find the shortest path
             Path shortestPath = this.findShortestPath(null, srcClass, tgtClass);
             if (shortestPath != null) {
@@ -138,19 +141,22 @@ public class CodecFactory {
      * @param tgtClass Target Class
      * @return The shortest path, could be null
      */
-    protected Path findShortestPath(Set<Class<?>> passed, Class<?> srcClass, Class<?> tgtClass) {
+    protected Path findShortestPath(Map<Class, Integer> passed, Class<?> srcClass, Class<?> tgtClass) {
         if (srcClass == tgtClass) {
             ConverterMethod method = converterMap.get(srcClass, tgtClass);
             return new Path(0, method);
         }
-        passed = passed == null ? new HashSet<>() : new HashSet<>(passed);
-        passed.add(srcClass);
+        passed = passed == null ? new HashMap<>() : new HashMap<>(passed);
+        passed.compute(srcClass, (clz, v) -> 1 + (v == null ? 0 : v));
         // calculate all path
         List<Path> paths = new ArrayList<>();
-        Collection<ConverterMethod> routes = converterMap.get(srcClass);
-        for (ConverterMethod route : routes) {
-            if (passed.contains(route.getTgtClass())) {
-                continue;  // ignore passed node, TODO but sometimes need repass same node
+        for (ConverterMethod route : converterMap.get(srcClass)) {
+            int passTimes = passed.getOrDefault(route.getTgtClass(), 0);
+            if (route.getSrcClass() != route.getTgtClass() && passTimes >= 1) {
+                continue; // for normal node, allow pass once
+            }
+            if (route.getSrcClass() == route.getTgtClass() && passTimes >= 2) {
+                continue; // for self-converted node, allow repass once
             }
             Path path;
             if (route.isExtensible() && route.getTgtClass().isAssignableFrom(tgtClass)) {

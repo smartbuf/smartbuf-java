@@ -78,6 +78,23 @@ public class CollectionCodecTest {
     }
 
     @Test
+    public void testCollectionCompatible() {
+        Set emptySet = Collections.emptySet();
+        assert emptySet == codec.toCollection(emptySet, XTypeUtils.toXType(Set.class));
+        assert emptySet == codec.toCollection(emptySet, XTypeUtils.toXType(new TypeRef<Set<String>>() {
+        }.getType()));
+
+        List list = new ArrayList();
+        list.add(1);
+        list.add(2L);
+        assert list == codec.toCollection(list, XTypeUtils.toXType(new TypeRef<List<Number>>() {
+        }.getType()));
+
+        assert list != codec.toCollection(list, XTypeUtils.toXType(new TypeRef<List<Long>>() {
+        }.getType()));
+    }
+
+    @Test
     public void testCollection() {
         Set set = (Set) codec.toCollection(Arrays.asList(1, 3, 5, 9), XTypeUtils.toXType(Set.class));
         assert set != null && set.size() == 4;

@@ -51,7 +51,7 @@ public class ConverterMethodTest {
         assert methodMap.get("valid2").isHasTypeArg();
     }
 
-    public static class TestCodec extends Codec {
+    private static class TestCodec extends Codec {
 
         @Converter
         public Object valid1(String s) {

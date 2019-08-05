@@ -4,7 +4,10 @@ import com.github.sisyphsu.nakedata.convertor.CodecFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.InputStream;
+import java.io.Reader;
 import java.sql.*;
+import java.util.Arrays;
 
 /**
  * @author sulin
@@ -22,13 +25,15 @@ public class SqlCodecTest {
 
     @Test
     public void test() throws SQLException {
-        byte[] byets = new byte[]{1, 2, 3, 4, 5, 6, 7, 8};
-        Blob blob = codec.toBlob(byets);
-        assert codec.toInputStream(blob) != null; // TODO InputStream => byte[]
+        byte[] bytes = new byte[]{1, 2, 3, 4, 5, 6, 7, 8};
+        Blob blob = codec.toBlob(bytes);
+        InputStream is = codec.toInputStream(blob);
+        assert Arrays.equals(codec.convert(is, byte[].class), bytes);
 
         String str = "hello world";
         Clob clob = codec.toClob(str);
-        assert codec.toReader(clob) != null; // TODO Reader => String
+        Reader reader = codec.toReader(clob);
+        assert str.equals(codec.convert(reader, String.class));
 
         Date date = new Date(System.currentTimeMillis());
         Date date2 = codec.toDate(codec.toLocalDate(date));

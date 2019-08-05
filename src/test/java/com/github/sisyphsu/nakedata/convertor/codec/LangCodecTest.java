@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -46,18 +44,17 @@ public class LangCodecTest {
 
     @Test
     public void testPojo2() {
-//        Pojo pojo = new Pojo(1000L, "hello", Collections.singleton(1.999));
-//        Pojo pojo = new Pojo(1000L, "hello");
-        Pojo pojo = new Pojo("hello");
+        Pojo pojo = new Pojo(1000L, "hello", Collections.singleton(1.999));
         Map map = codec.toMap(pojo);
         assert map != null;
-        assert Objects.equals(map.get("name"), pojo.name);
-//        assert Objects.equals(map.get("id"), pojo.id);
-//        assert pojo.scores.equals(map.get("scores"));
+        assert Objects.equals(map.get("id"), pojo.id);
+        assert pojo.name == map.get("name");
+        assert pojo.scores == map.get("scores");
 
         Object obj = codec.toObject(map, XTypeUtils.toXType(Pojo.class));
         assert obj instanceof Pojo;
         assert obj.equals(pojo);
+        assert ((Pojo) obj).scores == pojo.scores;
     }
 
     @Test
@@ -75,9 +72,9 @@ public class LangCodecTest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Pojo {
-        // private long id; // TODO can't resolve primary data type
+        private long id;
         private String name;
-        // private Set<Double> scores; // TODO can't repass Collection
+        private Set<Double> scores;
     }
 
     @Data

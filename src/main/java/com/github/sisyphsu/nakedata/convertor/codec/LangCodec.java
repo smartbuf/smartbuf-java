@@ -28,9 +28,9 @@ public class LangCodec extends Codec {
         }
         Object result;
         try {
-            result = type.getRawType().newInstance(); // TODO refactor error info
+            result = type.getRawType().newInstance();
         } catch (Exception e) {
-            throw new IllegalArgumentException("Initialize " + type.getRawType() + " failed: ", e);
+            throw new IllegalArgumentException("Can't newInstance of " + type.getRawType() + ": ", e);
         }
         BeanMap bm = BeanMap.create(result);
         for (Map.Entry<String, XField> entry : type.getFields().entrySet()) {

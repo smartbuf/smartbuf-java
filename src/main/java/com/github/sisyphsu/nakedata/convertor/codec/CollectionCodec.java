@@ -68,9 +68,6 @@ public class CollectionCodec extends Codec {
      */
     @Converter
     public Collection toCollection(Enumeration e) {
-        if (e == null)
-            return null;
-
         List<Object> result = new ArrayList<>();
         while (e.hasMoreElements()) {
             result.add(e.nextElement());
