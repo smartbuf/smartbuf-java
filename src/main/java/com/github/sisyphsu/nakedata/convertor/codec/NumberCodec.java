@@ -3,13 +3,20 @@ package com.github.sisyphsu.nakedata.convertor.codec;
 import com.github.sisyphsu.nakedata.convertor.Codec;
 import com.github.sisyphsu.nakedata.convertor.Converter;
 
+import java.text.DecimalFormat;
+
 /**
  * Codec for Number and its descendants, include Boolean
+ * <p>
+ * TODO support primary
  *
  * @author sulin
  * @since 2019-05-13 18:14:18
  */
 public class NumberCodec extends Codec {
+
+    private static final DecimalFormat F_F = new DecimalFormat("0.#######");
+    private static final DecimalFormat D_F = new DecimalFormat("0.################");
 
     /**
      * Convert String to Long
@@ -76,6 +83,14 @@ public class NumberCodec extends Codec {
     }
 
     /**
+     * Convert Float to String
+     */
+    @Converter
+    public String toString(Float f) {
+        return F_F.format(f);
+    }
+
+    /**
      * Convert String to Double
      */
     @Converter
@@ -89,6 +104,22 @@ public class NumberCodec extends Codec {
     @Converter
     public Double toDouble(Long l) {
         return l.doubleValue();
+    }
+
+    /**
+     * Convert Double to Long
+     */
+    @Converter
+    public Long toLong(Double d) {
+        return d.longValue();
+    }
+
+    /**
+     * Convert Double to String
+     */
+    @Converter
+    public String toString(Double d) {
+        return D_F.format(d);
     }
 
     /**
@@ -108,9 +139,7 @@ public class NumberCodec extends Codec {
     }
 
     /**
-     * Convert Integer to Boolean
-     * 0 => false
-     * !0 => true
+     * Convert Integer to Boolean; 0 => false; !0 => true
      */
     @Converter
     public Boolean toBoolean(Long l) {

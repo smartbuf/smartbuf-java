@@ -1,11 +1,9 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
-import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.Codec;
+import com.github.sisyphsu.nakedata.convertor.Converter;
 
 import java.net.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Codec for `java.net` package
@@ -14,8 +12,6 @@ import java.util.regex.Pattern;
  * @since 2019-07-25 20:44:11
  */
 public class NetCodec extends Codec {
-
-    private static final Pattern PATTERN = Pattern.compile("(.*)[:(\\d+)]?");
 
     /**
      * Convert String to URI
@@ -50,52 +46,25 @@ public class NetCodec extends Codec {
     }
 
     /**
-     * Convert String to Inet4Address
+     * Convert String to InetAddress, support Inet4Address and Inet6Address
      */
-    @Converter
-    public Inet4Address toInet4Address(String s) throws UnknownHostException {
-        return (Inet4Address) InetAddress.getByName(s);
-    }
-
-    /**
-     * Convert Inet4Address to String
-     */
-    @Converter
-    public String toString(Inet4Address addr) {
-        return addr.getHostAddress();
-    }
-
-    /**
-     * Convert String to Inet6Address
-     */
-    @Converter
-    public Inet6Address toInet6Address(String s) throws UnknownHostException {
-        return (Inet6Address) InetAddress.getByName(s);
-    }
-
-    /**
-     * Convert Inet6Address to String
-     */
-    @Converter
-    public String toString(Inet6Address addr) {
-        return addr.toString();
-    }
-
-
-    /**
-     * Convert String to InetAddress
-     */
-    @Converter
+    @Converter(extensible = true)
     public InetAddress toInetAddress(String s) throws UnknownHostException {
+        int off = s.indexOf('/');
+        if (off > 0) {
+            String hostname = s.substring(0, off);
+            String address = s.substring(off + 1);
+            s = hostname.length() == 0 ? address : hostname;
+        }
         return InetAddress.getByName(s);
     }
 
     /**
-     * Convert InetAddress to String
+     * Convert InetAddress to String, support Inet4Address and Inet6Address
      */
     @Converter
     public String toString(InetAddress addr) {
-        return addr.toString();
+        return addr.getHostName();
     }
 
     /**
@@ -103,15 +72,19 @@ public class NetCodec extends Codec {
      */
     @Converter
     public InetSocketAddress toInetSocketAddress(String s) {
-        Matcher matcher = PATTERN.matcher(s);
-        if (!matcher.matches()) {
-            throw new RuntimeException("Cant convert String to InetSocketAddress" + s);
+        String host, port = null;
+        int off = s.indexOf(':');
+        if (off > 0) {
+            host = s.substring(0, off);
+            port = s.substring(off + 1);
+        } else {
+            host = s;
         }
-        InetAddress addr = convert(matcher.group(1), InetAddress.class);
-        if (matcher.groupCount() < 2) {
+        InetAddress addr = convert(host, InetAddress.class);
+        if (port == null) {
             return new InetSocketAddress(addr, -1);
         }
-        return new InetSocketAddress(addr, Integer.parseInt(matcher.group(2)));
+        return new InetSocketAddress(addr, Integer.parseInt(port));
     }
 
     /**
