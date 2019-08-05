@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
-import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.Codec;
+import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.convertor.reflect.XType;
 
 import java.util.*;
@@ -69,7 +69,38 @@ public class UtilCodec extends Codec {
      */
     @Converter
     public UUID toUUID(String s) {
-        return UUID.fromString(s);
+        Long[] components = new Long[5];
+        try {
+            if (s.length() == 36) {
+                String[] parts = s.split("-");
+                if (parts.length == 5) {
+                    for (int i = 0; i < 5; i++) {
+                        components[i] = Long.valueOf(parts[i], 16);
+                    }
+                }
+            } else if (s.length() == 32) {
+                components[0] = Long.valueOf(s.substring(0, 8), 16);
+                components[1] = Long.valueOf(s.substring(8, 12), 16);
+                components[2] = Long.valueOf(s.substring(12, 16), 16);
+                components[3] = Long.valueOf(s.substring(16, 20), 16);
+                components[4] = Long.valueOf(s.substring(20, 32), 16);
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid UUID string: " + s);
+        }
+        if (components[0] == null) {
+            throw new IllegalArgumentException("Invalid UUID string: " + s);
+        }
+        long mostSigBits = components[0];
+        mostSigBits <<= 16;
+        mostSigBits |= components[1];
+        mostSigBits <<= 16;
+        mostSigBits |= components[2];
+
+        long leastSigBits = components[3];
+        leastSigBits <<= 48;
+        leastSigBits |= components[4];
+        return new UUID(mostSigBits, leastSigBits);
     }
 
     /**
