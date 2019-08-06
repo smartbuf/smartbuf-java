@@ -1,10 +1,15 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
 import com.github.sisyphsu.nakedata.convertor.CodecFactory;
+import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.Period;
+import org.joda.time.format.DateTimeFormat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.time.*;
+import java.util.TimeZone;
 
 /**
  * @author sulin
@@ -20,7 +25,46 @@ public class JodaCodecTest {
     }
 
     @Test
-    public void test() {
+    public void testDateTime() {
+        // Instant
+        Instant instant = Instant.now();
+        System.out.println(instant);
+        System.out.println(codec.toInstant(instant));
+        assert instant.equals(codec.toInstant(codec.toInstant(instant)));
+
+        // Duration
+        Duration duration = Duration.ofMillis(System.currentTimeMillis());
+        System.out.println(duration);
+        System.out.println(codec.toDuration(duration));
+        assert duration.equals(codec.toDuration(codec.toDuration(duration)));
+
+        // LocalTime
+        LocalTime localTime = LocalTime.now();
+        System.out.println(localTime);
+        System.out.println(codec.toLocalTime(localTime));
+        assert localTime.equals(codec.toLocalTime(codec.toLocalTime(localTime)));
+
+        // LocalDate
+        LocalDate localDate = LocalDate.now();
+        System.out.println(localDate);
+        System.out.println(codec.toLocalDate(localDate));
+        assert localDate.equals(codec.toLocalDate(codec.toLocalDate(localDate)));
+
+        // DateTime
+        DateTime dateTime = DateTime.now();
+        System.out.println(dateTime);
+        System.out.println(codec.toLocalDateTime(dateTime));
+        assert dateTime.equals(codec.toDateTime(codec.toLocalDateTime(dateTime)));
+
+        // LocalDateTime
+        LocalDateTime localDateTime = LocalDateTime.now();
+        System.out.println(localDateTime);
+        System.out.println(codec.toLocalDateTime(localDateTime));
+        assert localDateTime.equals(codec.toLocalDateTime(codec.toLocalDateTime(localDateTime)));
+    }
+
+    @Test
+    public void testOthers() {
         // interval
         Interval interval = new Interval(0, 365 * 24 * 60 * 60 * 1000L);
         String str = codec.toString(interval);
@@ -34,12 +78,19 @@ public class JodaCodecTest {
         assert period.equals(codec.toPeriod(periodStr));
 
         // DateTimeFormatter
-//        DateTimeFormatter formatter = DateTimeFormat.fullDateTime();
-//        String formatterStr = codec.toString(formatter);
-//        System.out.println(formatterStr);
-//        assert formatter.equals(codec.toDateTimeFormatter(formatterStr));
+        assert codec.toDateTimeFormatter("yyyy-MM-dd") != null;
+        try {
+            codec.toString(DateTimeFormat.fullDateTime());
+        } catch (Exception e) {
+            assert e instanceof UnsupportedOperationException;
+        }
 
-        // TODO date/time
+        // DateTimeZone
+        TimeZone zone = TimeZone.getDefault();
+        TimeZone newZone = codec.toTimeZone(codec.toDateTimeZone(zone));
+        System.out.println(zone);
+        System.out.println(newZone);
+        assert zone.equals(codec.toTimeZone(codec.toDateTimeZone(zone)));
     }
 
 }

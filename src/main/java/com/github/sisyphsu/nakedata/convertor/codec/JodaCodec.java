@@ -24,16 +24,16 @@ public class JodaCodec extends Codec {
     @Converter
     public LocalDateTime toLocalDateTime(java.time.LocalDateTime dt) {
         return new LocalDateTime(dt.getYear(), dt.getMonthValue(), dt.getDayOfMonth(),
-                dt.getHour(), dt.getMinute(), dt.getSecond());
+                dt.getHour(), dt.getMinute(), dt.getSecond(), dt.getNano() / 1000000);
     }
 
     /**
      * Convert joda.LocalDateTime to java.LocalDateTime
      */
     @Converter
-    public java.time.LocalDateTime toZonedDateTime(LocalDateTime dt) {
+    public java.time.LocalDateTime toLocalDateTime(LocalDateTime dt) {
         return java.time.LocalDateTime.of(dt.getYear(), dt.getMonthOfYear(), dt.getDayOfMonth(),
-                dt.getHourOfDay(), dt.getMinuteOfHour(), dt.getSecondOfMinute());
+                dt.getHourOfDay(), dt.getMinuteOfHour(), dt.getSecondOfMinute(), dt.getMillisOfSecond() * 1000000);
     }
 
     /**
@@ -48,7 +48,7 @@ public class JodaCodec extends Codec {
      * Convert joda.DateTime to joda.LocalDateTime
      */
     @Converter
-    public LocalDateTime toOffsetDateTime(DateTime dt) {
+    public LocalDateTime toLocalDateTime(DateTime dt) {
         return dt.toLocalDateTime();
     }
 
