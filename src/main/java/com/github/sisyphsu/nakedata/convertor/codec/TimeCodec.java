@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
+import com.github.sisyphsu.dateparser.DateParserUtils;
 import com.github.sisyphsu.nakedata.convertor.Codec;
 import com.github.sisyphsu.nakedata.convertor.Converter;
 
@@ -24,7 +25,7 @@ import java.util.TimeZone;
 public class TimeCodec extends Codec {
 
     private static DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
-    private static final ZoneOffset DEFAULT = OffsetDateTime.now().getOffset();
+    private static final ZoneOffset DEFAULT = ZoneOffset.ofTotalSeconds(TimeZone.getDefault().getRawOffset() / 1000);
 
     /**
      * Convert Long to Date
@@ -242,24 +243,6 @@ public class TimeCodec extends Codec {
         return localDate.atStartOfDay();
     }
 
-    // ---------------------------------------- LocalDateTime
-
-    /**
-     * Convert ZonedDateTime to LocalDateTime
-     */
-    @Converter
-    public LocalDateTime toLocalDateTime(OffsetDateTime zdt) {
-        return zdt.toLocalDateTime();
-    }
-
-    /**
-     * Convert LocalDateTime to ZonedDateTime
-     */
-    @Converter
-    public OffsetDateTime toOffsetDateTime(LocalDateTime ldt) {
-        return ldt.atOffset(DEFAULT);
-    }
-
     // ---------------------------------------- ZonedDateTime <==> OffsetDateTime
 
     /**
@@ -278,15 +261,26 @@ public class TimeCodec extends Codec {
         return zdt.toOffsetDateTime();
     }
 
-    // ---------------------------------------- OffsetDateTime, could be converted to/from String and Instant etc.
+    // ---------------------------------------- LocalDateTime <==> OffsetDateTime
 
     /**
-     * Convert String to OffsetDateTime
+     * Convert ZonedDateTime to LocalDateTime
      */
     @Converter
-    public OffsetDateTime toOffsetDateTime(String s) {
-        return OffsetDateTime.parse(s, FORMATTER);
+    public LocalDateTime toLocalDateTime(OffsetDateTime zdt) {
+        Instant instant = zdt.toInstant();
+        return LocalDateTime.ofEpochSecond(instant.getEpochSecond(), instant.getNano(), ZoneOffset.UTC);
     }
+
+    /**
+     * Convert LocalDateTime to ZonedDateTime
+     */
+    @Converter
+    public OffsetDateTime toOffsetDateTime(LocalDateTime ldt) {
+        return ldt.atOffset(DEFAULT);
+    }
+
+    // ---------------------------------------- OffsetDateTime, could be converted to/from String and Instant etc.
 
     /**
      * Convert OffsetDateTime to String
@@ -294,6 +288,14 @@ public class TimeCodec extends Codec {
     @Converter
     public String toString(OffsetDateTime odt) {
         return odt.format(FORMATTER);
+    }
+
+    /**
+     * Convert String to OffsetDateTime
+     */
+    @Converter
+    public OffsetDateTime toOffsetDateTime(String s) {
+        return DateParserUtils.parseOffsetDateTime(s);
     }
 
 }
