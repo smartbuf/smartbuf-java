@@ -4,6 +4,7 @@ import com.github.sisyphsu.dateparser.DateParserUtils;
 import com.github.sisyphsu.nakedata.convertor.Codec;
 import com.github.sisyphsu.nakedata.convertor.Converter;
 
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -24,15 +25,26 @@ import java.util.TimeZone;
  */
 public class TimeCodec extends Codec {
 
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
     private static DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
-    private static final ZoneOffset DEFAULT = ZoneOffset.ofTotalSeconds(TimeZone.getDefault().getRawOffset() / 1000);
+    private static final ZoneOffset LOCAL_OFFSET = ZoneOffset.ofTotalSeconds(TimeZone.getDefault().getRawOffset() / 1000);
+
+    // ------------------ Date <==> String | Long
 
     /**
      * Convert Long to Date
      */
     @Converter
-    public Date toDate(Long l) {
-        return new Date(l);
+    public Date toDate(Long ms) {
+        return new Date(ms);
+    }
+
+    /**
+     * Convert String to Date
+     */
+    @Converter
+    public Date toDate(String str) {
+        return DateParserUtils.parseDate(str);
     }
 
     /**
@@ -44,22 +56,50 @@ public class TimeCodec extends Codec {
     }
 
     /**
+     * Convert Date to String
+     */
+    @Converter
+    public String toString(Date d) {
+        return DATE_FORMAT.format(d);
+    }
+
+    // ------------------- Calendar <==> String | Long
+
+    /**
      * Convert Long to Calendar
      */
     @Converter
-    public Calendar toCalendar(ZonedDateTime dateTime) {
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(dateTime.getZone()));
-        calendar.setTimeInMillis(dateTime.toInstant().toEpochMilli());
+    public Calendar toCalendar(Long ms) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(ms);
         return calendar;
+    }
+
+    /**
+     * Convert String to Calendar
+     */
+    @Converter
+    public Calendar toCalendar(String str) {
+        return DateParserUtils.parseCalendar(str);
     }
 
     /**
      * Converter Calendar to ZonedDateTime
      */
     @Converter
-    public ZonedDateTime toZonedDateTime(Calendar calendar) {
-        return ZonedDateTime.ofInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId());
+    public Long toLong(Calendar calendar) {
+        return calendar.getTimeInMillis();
     }
+
+    /**
+     * Convert Calendar to String
+     */
+    @Converter
+    public String toString(Calendar calendar) {
+        return DATE_FORMAT.format(calendar.getTime());
+    }
+
+    // ------------------- ZoneId <==> String
 
     /**
      * Convert String to ZoneId
@@ -80,19 +120,35 @@ public class TimeCodec extends Codec {
     // ---------------------------------------- Instant
 
     /**
-     * Convert Instant to Long
-     */
-    @Converter
-    public Date toLong(Instant instant) {
-        return new Date(instant.toEpochMilli());
-    }
-
-    /**
      * Convert Long to Instant
      */
     @Converter
-    public Instant toInstant(Date date) {
-        return Instant.ofEpochMilli(date.getTime());
+    public Instant toInstant(Long ms) {
+        return Instant.ofEpochMilli(ms);
+    }
+
+    /**
+     * Convert Instant to Long
+     */
+    @Converter
+    public Long toLong(Instant instant) {
+        return instant.toEpochMilli();
+    }
+
+    /**
+     * Convert LocalDateTime to Instant
+     */
+    @Converter
+    public Instant toInstant(LocalDateTime dateTime) {
+        return dateTime.toInstant(ZoneOffset.UTC);
+    }
+
+    /**
+     * Convert Instant to LocalDateTime
+     */
+    @Converter
+    public LocalDateTime toLocalDateTime(Instant instant) {
+        return LocalDateTime.ofEpochSecond(instant.getEpochSecond(), instant.getNano(), ZoneOffset.UTC);
     }
 
     // ---------------------------------------- Duration, could be converted to/from String and Instant
@@ -102,9 +158,9 @@ public class TimeCodec extends Codec {
      */
     @Converter
     public Duration toDuration(String str) {
-        try {
+        if (isDigist(str)) {
             return Duration.ofMillis(Long.parseLong(str)); // support timestamp string
-        } catch (NumberFormatException e) {
+        } else {
             return Duration.parse(str);
         }
     }
@@ -133,18 +189,14 @@ public class TimeCodec extends Codec {
         return Instant.ofEpochMilli(duration.toMillis());
     }
 
-    // ---------------------------------------- Period, could be converted to/from String and Duration
+    // ---------------------------------------- Period, could be converted to/from String
 
     /**
      * Convert String to Period, support timestamp
      */
     @Converter
     public Period toPeriod(String str) {
-        try {
-            return Period.from(Duration.ofMillis(Long.parseLong(str)));
-        } catch (NumberFormatException e) {
-            return Period.parse(str);
-        }
+        return Period.parse(str);
     }
 
     /**
@@ -155,22 +207,6 @@ public class TimeCodec extends Codec {
         return period.toString();
     }
 
-    /**
-     * Convert Duration to Period
-     */
-    @Converter
-    public Period toPeriod(Duration duration) {
-        return Period.from(duration);
-    }
-
-    /**
-     * Convert Period to Duration
-     */
-    @Converter
-    public Duration toDuration(Period period) {
-        return Duration.from(period);
-    }
-
     // ---------------------------------------- OffsetTime, LocalTime
 
     /**
@@ -178,7 +214,8 @@ public class TimeCodec extends Codec {
      */
     @Converter
     public LocalTime toLocalTime(OffsetTime ot) {
-        return ot.toLocalTime();
+        long diffSeconds = LOCAL_OFFSET.getTotalSeconds() - ot.getOffset().getTotalSeconds();
+        return LocalTime.ofNanoOfDay(ot.toLocalTime().toNanoOfDay() + diffSeconds * 1000000000);
     }
 
     /**
@@ -186,7 +223,7 @@ public class TimeCodec extends Codec {
      */
     @Converter
     public OffsetTime toOffsetTime(LocalTime localTime) {
-        return localTime.atOffset(DEFAULT);
+        return localTime.atOffset(LOCAL_OFFSET);
     }
 
     /**
@@ -202,11 +239,8 @@ public class TimeCodec extends Codec {
      */
     @Converter
     public OffsetTime toOffsetTime(String str) {
-        try {
-            return OffsetTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(str)), DEFAULT);
-        } catch (Exception e) {
-            return OffsetTime.parse(str);
-        }
+        OffsetDateTime dateTime = DateParserUtils.parseOffsetDateTime(str);
+        return dateTime.toOffsetTime();
     }
 
     /**
@@ -214,7 +248,7 @@ public class TimeCodec extends Codec {
      */
     @Converter
     public OffsetTime toOffsetTime(Instant instant) {
-        return OffsetTime.ofInstant(instant, DEFAULT);
+        return OffsetTime.ofInstant(instant, ZoneOffset.UTC);
     }
 
     /**
@@ -222,7 +256,24 @@ public class TimeCodec extends Codec {
      */
     @Converter
     public Instant toInstant(OffsetTime offsetTime) {
-        return Instant.from(offsetTime);
+        long second = offsetTime.toLocalTime().toSecondOfDay() - offsetTime.getOffset().getTotalSeconds();
+        return Instant.ofEpochSecond(second, offsetTime.toLocalTime().getNano());
+    }
+
+    /**
+     * Convert OffsetDateTime to OffsetTime
+     */
+    @Converter
+    public OffsetTime toOffsetTime(OffsetDateTime odt) {
+        return odt.toOffsetTime();
+    }
+
+    /**
+     * Convert OffsetTime to OffsetDateTime
+     */
+    @Converter
+    public OffsetDateTime toOffsetDateTime(OffsetTime ot) {
+        return OffsetDateTime.of(1970, 1, 1, ot.getHour(), ot.getMinute(), ot.getSecond(), ot.getNano(), ot.getOffset());
     }
 
     // ---------------------------------------- LocalDate <==> LocalDateTime
@@ -243,6 +294,25 @@ public class TimeCodec extends Codec {
         return localDate.atStartOfDay();
     }
 
+    // ---------------------------------------- LocalDateTime <==> OffsetDateTime
+
+    /**
+     * Convert ZonedDateTime to LocalDateTime
+     */
+    @Converter
+    public LocalDateTime toLocalDateTime(OffsetDateTime zdt) {
+        Instant instant = zdt.toInstant();
+        return LocalDateTime.ofEpochSecond(instant.getEpochSecond(), instant.getNano(), LOCAL_OFFSET);
+    }
+
+    /**
+     * Convert LocalDateTime to ZonedDateTime
+     */
+    @Converter
+    public OffsetDateTime toOffsetDateTime(LocalDateTime ldt) {
+        return ldt.atOffset(LOCAL_OFFSET);
+    }
+
     // ---------------------------------------- ZonedDateTime <==> OffsetDateTime
 
     /**
@@ -261,25 +331,6 @@ public class TimeCodec extends Codec {
         return zdt.toOffsetDateTime();
     }
 
-    // ---------------------------------------- LocalDateTime <==> OffsetDateTime
-
-    /**
-     * Convert ZonedDateTime to LocalDateTime
-     */
-    @Converter
-    public LocalDateTime toLocalDateTime(OffsetDateTime zdt) {
-        Instant instant = zdt.toInstant();
-        return LocalDateTime.ofEpochSecond(instant.getEpochSecond(), instant.getNano(), ZoneOffset.UTC);
-    }
-
-    /**
-     * Convert LocalDateTime to ZonedDateTime
-     */
-    @Converter
-    public OffsetDateTime toOffsetDateTime(LocalDateTime ldt) {
-        return ldt.atOffset(DEFAULT);
-    }
-
     // ---------------------------------------- OffsetDateTime, could be converted to/from String and Instant etc.
 
     /**
@@ -296,6 +347,15 @@ public class TimeCodec extends Codec {
     @Converter
     public OffsetDateTime toOffsetDateTime(String s) {
         return DateParserUtils.parseOffsetDateTime(s);
+    }
+
+    private boolean isDigist(String str) {
+        boolean allDigit = str.length() > 0;
+        for (int i = 0; allDigit && i < str.length(); i++) {
+            char ch = str.charAt(i);
+            allDigit = ch >= '0' && ch <= '9';
+        }
+        return allDigit;
     }
 
 }
