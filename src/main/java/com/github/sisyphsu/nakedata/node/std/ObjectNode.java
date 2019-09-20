@@ -2,7 +2,7 @@ package com.github.sisyphsu.nakedata.node.std;
 
 import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.node.Node;
-import com.github.sisyphsu.nakedata.type.DataType;
+import com.github.sisyphsu.nakedata.DataType;
 import lombok.Getter;
 import lombok.Setter;
 

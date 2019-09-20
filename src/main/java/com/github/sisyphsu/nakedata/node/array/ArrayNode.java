@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.node.array;
 
 import com.github.sisyphsu.nakedata.node.Node;
-import com.github.sisyphsu.nakedata.type.DataType;
+import com.github.sisyphsu.nakedata.DataType;
 
 import java.util.*;
 import java.util.function.Consumer;

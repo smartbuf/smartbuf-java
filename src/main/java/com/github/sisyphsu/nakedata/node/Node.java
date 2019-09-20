@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.node;
 
-import com.github.sisyphsu.nakedata.type.DataType;
+import com.github.sisyphsu.nakedata.DataType;
 
 /**
  * 属性树节点

@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.io;
 
-import com.github.sisyphsu.nakedata.utils.AssetUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -30,20 +30,20 @@ public class IOTest {
 
         output.writeString("hello world");
 
-        AssetUtils.assetEqual(input.readVarInt(), 0L);
-        AssetUtils.assetEqual(input.readVarInt(), (long) Byte.MAX_VALUE);
-        AssetUtils.assetEqual(input.readVarInt(), (long) Byte.MIN_VALUE);
-        AssetUtils.assetEqual(input.readVarInt(), (long) Short.MAX_VALUE);
-        AssetUtils.assetEqual(input.readVarInt(), (long) Short.MIN_VALUE);
-        AssetUtils.assetEqual(input.readVarInt(), (long) Integer.MAX_VALUE);
-        AssetUtils.assetEqual(input.readVarInt(), (long) Integer.MIN_VALUE);
-        AssetUtils.assetEqual(input.readVarInt(), Long.MAX_VALUE);
-        AssetUtils.assetEqual(input.readVarInt(), Long.MIN_VALUE);
+        Assertions.assertEquals(input.readVarInt(), 0L);
+        Assertions.assertEquals(input.readVarInt(), (long) Byte.MAX_VALUE);
+        Assertions.assertEquals(input.readVarInt(), (long) Byte.MIN_VALUE);
+        Assertions.assertEquals(input.readVarInt(), (long) Short.MAX_VALUE);
+        Assertions.assertEquals(input.readVarInt(), (long) Short.MIN_VALUE);
+        Assertions.assertEquals(input.readVarInt(), (long) Integer.MAX_VALUE);
+        Assertions.assertEquals(input.readVarInt(), (long) Integer.MIN_VALUE);
+        Assertions.assertEquals(input.readVarInt(), Long.MAX_VALUE);
+        Assertions.assertEquals(input.readVarInt(), Long.MIN_VALUE);
 
-        AssetUtils.assetEqual(input.readFloat(), 0.123f);
-        AssetUtils.assetEqual(input.readDouble(), 0.123456);
+        Assertions.assertEquals(input.readFloat(), 0.123f);
+        Assertions.assertEquals(input.readDouble(), 0.123456);
 
-        AssetUtils.assetEqual(input.readString(), "hello world");
+        Assertions.assertEquals(input.readString(), "hello world");
     }
 
     @Test

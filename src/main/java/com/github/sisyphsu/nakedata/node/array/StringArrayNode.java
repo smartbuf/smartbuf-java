@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.node.array;
 
-import com.github.sisyphsu.nakedata.type.DataType;
+import com.github.sisyphsu.nakedata.DataType;
 
 import java.util.List;
 

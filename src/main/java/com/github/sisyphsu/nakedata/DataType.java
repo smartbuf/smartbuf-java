@@ -1,68 +1,32 @@
 package com.github.sisyphsu.nakedata;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import lombok.Getter;
 
 /**
- * JSON's primary type
- *
  * @author sulin
- * @since 2019-04-25 15:22:52
+ * @since 2019-05-08 20:25:32
  */
-public interface DataType {
+@Getter
+public enum DataType {
 
-    /**
-     * Represent null value
-     */
-    byte NULL = 0x00;
+    NULL(0x00),
+    BOOL(0x01),
+    FLOAT(0x02),
+    DOUBLE(0x03),
+    BYTE(0x04),
+    SHORT(0x05),
+    INT(0x06),
+    LONG(0x07),
+    VARINT(0x08),
+    STRING(0x09),
+    SYMBOL(0x10),
+    ARRAY(0x11),
+    OBJECT(0x12);
 
-    byte TRUE = 0x01;
+    private final byte code;
 
-    byte FALSE = 0x02;
-    /**
-     * Represent 4-byte's float
-     */
-    byte FLOAT = 0x03;
-    /**
-     * Represent 8-byte's double
-     */
-    byte DOUBLE = 0x04;
-    /**
-     * Represent [1,8] byte's varint, could be byte/short/int/long
-     */
-    byte NUMBER = 0x05;
-    /**
-     * Represent string
-     */
-    byte STRING = 0x06;
-    /**
-     * Represent byte[], used for convenience.
-     */
-    byte BINARY = 0x07;
-    /**
-     * Represent array, the DataType of items could be different.
-     * If same, DataType could be UnionType.
-     * If different, DataType should be seperated.
-     */
-    byte ARRAY = 0x08;
-    /**
-     * Represent object, Should be UnionType.
-     */
-    byte OBJECT = 0x09;
-
-    /**
-     * 获取指定node的标准类型代码
-     *
-     * @param node JSON节点
-     * @return 标准类型代码
-     */
-    static byte parseType(JsonNode node) {
-        if (node instanceof DataType) {
-            return ((DataType) node).getTypeCode();
-        } else {
-            return DataType.NULL;
-        }
+    DataType(int code) {
+        this.code = (byte) code;
     }
-
-    byte getTypeCode();
 
 }

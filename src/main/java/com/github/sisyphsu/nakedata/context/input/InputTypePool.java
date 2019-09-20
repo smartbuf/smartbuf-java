@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.context.input;
 
-import com.github.sisyphsu.nakedata.common.IDAllocator;
+import com.github.sisyphsu.nakedata.utils.IDAllocator;
 
 import java.util.List;
 

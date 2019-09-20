@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.node.std;
 
 import com.github.sisyphsu.nakedata.node.Node;
-import com.github.sisyphsu.nakedata.type.DataType;
+import com.github.sisyphsu.nakedata.DataType;
 
 /**
  * @author sulin

@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.context.output;
 
-import com.github.sisyphsu.nakedata.common.IDAllocator;
+import com.github.sisyphsu.nakedata.utils.IDAllocator;
 
 /**
  * @author sulin
