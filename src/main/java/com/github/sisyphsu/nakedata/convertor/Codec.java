@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.convertor;
 
-import com.github.sisyphsu.nakedata.convertor.reflect.XType;
-import com.github.sisyphsu.nakedata.convertor.reflect.XTypeUtils;
+import com.github.sisyphsu.nakedata.reflect.XType;
+import com.github.sisyphsu.nakedata.reflect.XTypeUtils;
 
 /**
  * Codec's base class.

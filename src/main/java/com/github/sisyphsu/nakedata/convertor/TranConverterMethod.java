@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor;
 
-import com.github.sisyphsu.nakedata.convertor.reflect.XType;
+import com.github.sisyphsu.nakedata.reflect.XType;
 
 /**
  * Simple convert data from subclass to class

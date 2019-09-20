@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.convertor.reflect;
+package com.github.sisyphsu.nakedata.reflect;
 
 import java.io.InputStream;
 import java.lang.ref.Reference;

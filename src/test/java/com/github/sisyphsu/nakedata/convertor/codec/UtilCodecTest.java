@@ -1,9 +1,9 @@
 package com.github.sisyphsu.nakedata.convertor.codec;
 
 import com.github.sisyphsu.nakedata.convertor.CodecFactory;
-import com.github.sisyphsu.nakedata.convertor.reflect.TypeRef;
-import com.github.sisyphsu.nakedata.convertor.reflect.XType;
-import com.github.sisyphsu.nakedata.convertor.reflect.XTypeUtils;
+import com.github.sisyphsu.nakedata.reflect.TypeRef;
+import com.github.sisyphsu.nakedata.reflect.XType;
+import com.github.sisyphsu.nakedata.reflect.XTypeUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

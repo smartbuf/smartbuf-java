@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.convertor;
 
-import com.github.sisyphsu.nakedata.convertor.reflect.XType;
+import com.github.sisyphsu.nakedata.reflect.XType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

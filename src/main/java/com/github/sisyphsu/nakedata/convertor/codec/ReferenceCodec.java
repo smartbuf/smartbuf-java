@@ -2,7 +2,7 @@ package com.github.sisyphsu.nakedata.convertor.codec;
 
 import com.github.sisyphsu.nakedata.convertor.Codec;
 import com.github.sisyphsu.nakedata.convertor.Converter;
-import com.github.sisyphsu.nakedata.convertor.reflect.XType;
+import com.github.sisyphsu.nakedata.reflect.XType;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;

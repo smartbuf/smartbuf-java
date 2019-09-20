@@ -2,8 +2,8 @@ package com.github.sisyphsu.nakedata.convertor.codec;
 
 import com.github.sisyphsu.nakedata.convertor.Codec;
 import com.github.sisyphsu.nakedata.convertor.Converter;
-import com.github.sisyphsu.nakedata.convertor.reflect.XType;
-import com.github.sisyphsu.nakedata.convertor.reflect.XTypeUtils;
+import com.github.sisyphsu.nakedata.reflect.XType;
+import com.github.sisyphsu.nakedata.reflect.XTypeUtils;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;

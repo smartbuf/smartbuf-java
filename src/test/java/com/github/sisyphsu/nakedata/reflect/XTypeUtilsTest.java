@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.convertor.reflect;
+package com.github.sisyphsu.nakedata.reflect;
 
 import org.junit.jupiter.api.Test;
 
