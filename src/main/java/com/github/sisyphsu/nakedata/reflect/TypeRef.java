@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
  * @author sulin
  * @since 2019-07-22 15:38:53
  */
-public abstract class TypeRef<T> implements Comparable<TypeRef> {
+public abstract class TypeRef<T> {
 
     private final Type type;
 
@@ -37,16 +37,6 @@ public abstract class TypeRef<T> implements Comparable<TypeRef> {
      */
     public Type getType() {
         return type;
-    }
-
-    @Override
-    public int compareTo(TypeRef o) {
-        if (o == null || o.getType() == null)
-            return -1;
-        if (o.getType() == this.getType()) {
-            return 0;
-        }
-        return this.getType().hashCode() - o.getType().hashCode();
     }
 
 }

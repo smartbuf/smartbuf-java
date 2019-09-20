@@ -39,7 +39,12 @@ public class XTypeFactory {
      * @return XType
      */
     public XType<?> toXType(Type type) {
-        return cacheMap.computeIfAbsent(type, (t) -> toXType(null, t));
+        XType<?> result = cacheMap.get(type);
+        if (result == null) {
+            result = toXType(null, type);
+            cacheMap.put(type, result);
+        }
+        return result;
     }
 
     /**
@@ -64,7 +69,7 @@ public class XTypeFactory {
         } else if (type instanceof Class) {
             xType = convertClass((Class<?>) type);
         } else {
-            throw new IllegalArgumentException("Unsupport Type: " + type);
+            throw new UnsupportedOperationException("Unsupport Type: " + type);
         }
         return xType;
     }
@@ -155,9 +160,9 @@ public class XTypeFactory {
      * Convert Class to XType
      */
     private <T> XType<T> convertClass(Class<T> cls) {
+        XType<T> result;
         TypeVariable[] vars = cls.getTypeParameters();
-        XType<T> xt;
-        if (vars != null && vars.length > 0) {
+        if (vars.length > 0) {
             // Class supports generic type, but caller didn't use it, like `List l`
             String[] names = new String[vars.length];
             XType<?>[] types = new XType[vars.length];
@@ -166,13 +171,13 @@ public class XTypeFactory {
                 names[i] = var.getName();
                 types[i] = convertTypeVariable(null, var);// no owner
             }
-            xt = new XType<>(cls, names, types);
+            result = new XType<>(cls, names, types);
         } else {
             // Class dont support generic type
-            xt = new XType<>(cls);
+            result = new XType<>(cls);
         }
-        parseFields(xt);
-        return xt;
+        parseFields(result);
+        return result;
     }
 
     /**

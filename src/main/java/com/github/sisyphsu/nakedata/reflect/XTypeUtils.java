@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author sulin
  * @since 2019-07-22 14:46:05
  */
-public class XTypeUtils {
+public final class XTypeUtils {
 
     // Global default XTypeFactory
     private static final XTypeFactory factory;
@@ -40,6 +40,9 @@ public class XTypeUtils {
                 Reference.class, // TODO why stackoverflow
                 AtomicReference.class
         ));
+    }
+
+    private XTypeUtils() {
     }
 
     /**

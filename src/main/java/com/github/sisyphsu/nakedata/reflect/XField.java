@@ -1,6 +1,7 @@
 package com.github.sisyphsu.nakedata.reflect;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.lang.reflect.Field;
 
@@ -10,7 +11,8 @@ import java.lang.reflect.Field;
  * @author sulin
  * @since 2019-07-15 20:42:17
  */
-@Data
+@Getter
+@Setter
 public class XField<T> {
 
     /**

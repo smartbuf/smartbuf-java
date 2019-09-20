@@ -56,7 +56,7 @@ public class XType<T> {
      */
     public XType<?> getParameterizedType() {
         if (this.parameteriedTypes == null || this.parameteriedTypes.length != 1) {
-            throw new UnsupportedOperationException("Can't getParameterizedType from " + this.toString());
+            throw new RuntimeException("Can't getParameterizedType from " + this.toString());
         }
         return this.parameteriedTypes[0];
     }
@@ -93,9 +93,10 @@ public class XType<T> {
      * @return Pure type or not
      */
     public boolean isPure() {
-        boolean noBodyGeneric = componentType == null;
-        boolean noParamGeneric = parameteriedNames == null || parameteriedNames.length == 0;
-        return noBodyGeneric && noParamGeneric;
+        if (componentType != null) {
+            return false;
+        }
+        return parameteriedNames == null;
     }
 
     public Class<T> getRawType() {
@@ -107,8 +108,6 @@ public class XType<T> {
     }
 
     public XField<?> getField(String name) {
-        if (this.fields == null)
-            return null;
         return this.fields.get(name);
     }
 
