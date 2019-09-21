@@ -12,7 +12,7 @@ import java.math.BigInteger;
  * @author sulin
  * @since 2019-07-25 12:17:16
  */
-public class MathCodec extends Codec {
+public final class MathCodec extends Codec {
 
     /**
      * Convert String to BigDecimal

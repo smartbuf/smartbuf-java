@@ -8,7 +8,7 @@ import com.github.sisyphsu.nakedata.reflect.XType;
  * @author sulin
  * @since 2019-08-01 20:13:39
  */
-public class TranConverterMethod extends ConverterMethod {
+public final class TranConverterMethod extends ConverterMethod {
 
     public TranConverterMethod(Class<?> srcClass, Class<?> tgtClass) {
         super(srcClass, tgtClass);

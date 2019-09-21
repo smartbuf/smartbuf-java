@@ -16,7 +16,10 @@ import java.util.*;
  */
 @Slf4j
 @SuppressWarnings("unchecked")
-public class CodecScanner {
+public final class CodecScanner {
+
+    private CodecScanner() {
+    }
 
     /**
      * Scan all Codec classes from current package.

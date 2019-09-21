@@ -11,7 +11,7 @@ import java.nio.*;
  * @author sulin
  * @since 2019-07-25 17:32:41
  */
-public class BufferCodec extends Codec {
+public final class BufferCodec extends Codec {
 
     /**
      * Convert ByteBuffer to byte[]

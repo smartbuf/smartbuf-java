@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  * @since 2019-05-13 18:15:18
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class UtilCodec extends Codec {
+public final class UtilCodec extends Codec {
 
     /**
      * Convert byte[] to BitSet

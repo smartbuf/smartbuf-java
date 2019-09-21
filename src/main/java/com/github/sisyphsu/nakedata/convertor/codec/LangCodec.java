@@ -16,7 +16,7 @@ import java.util.Map;
  * @since 2019-07-26 10:55:47
  */
 @SuppressWarnings("unchecked")
-public class LangCodec extends Codec {
+public final class LangCodec extends Codec {
 
     /**
      * Convert Map to Object

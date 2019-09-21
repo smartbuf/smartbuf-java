@@ -11,7 +11,7 @@ import java.text.DecimalFormat;
  * @author sulin
  * @since 2019-05-13 18:14:18
  */
-public class NumberCodec extends Codec {
+public final class NumberCodec extends Codec {
 
     private static final DecimalFormat F_F = new DecimalFormat("0.#######");
     private static final DecimalFormat D_F = new DecimalFormat("0.################");

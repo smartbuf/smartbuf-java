@@ -11,7 +11,7 @@ import java.text.StringCharacterIterator;
  * @author sulin
  * @since 2019-05-13 18:14:25
  */
-public class StringCodec extends Codec {
+public final class StringCodec extends Codec {
 
     /**
      * Convert StringBuffer to String

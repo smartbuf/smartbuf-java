@@ -14,7 +14,7 @@ import java.util.concurrent.*;
  * @since 2019-05-13 18:40:23
  */
 @SuppressWarnings("unchecked")
-public class CollectionCodec extends Codec {
+public final class CollectionCodec extends Codec {
 
     /**
      * Convert Collection to Iterable

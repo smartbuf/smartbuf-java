@@ -15,7 +15,7 @@ import java.util.Map;
  * @since 2019-05-13 20:43:35
  */
 @Slf4j
-public class ThrowableCodec extends Codec {
+public final class ThrowableCodec extends Codec {
 
     private static final String F_DECLARER = "declarer";
     private static final String F_METHOD = "method";

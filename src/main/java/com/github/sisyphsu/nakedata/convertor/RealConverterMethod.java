@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
  * @since 2019-06-06 12:19:53
  */
 @Slf4j
-public class RealConverterMethod extends ConverterMethod {
+public final class RealConverterMethod extends ConverterMethod {
 
     private Codec codec;
     private boolean hasTypeArg;

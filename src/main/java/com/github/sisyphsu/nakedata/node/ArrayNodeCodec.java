@@ -18,7 +18,7 @@ import java.util.List;
  * @since 2019-06-05 19:53:57
  */
 @SuppressWarnings("unchecked")
-public final class ArrayCodec extends Codec {
+public final class ArrayNodeCodec extends Codec {
 
     @Converter
     public Node toNode(boolean[] arr) {

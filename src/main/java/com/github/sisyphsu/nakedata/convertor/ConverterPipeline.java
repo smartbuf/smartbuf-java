@@ -14,7 +14,7 @@ import java.util.List;
  * @author sulin
  * @since 2019-05-20 15:24:12
  */
-public class ConverterPipeline {
+public final class ConverterPipeline {
 
     private final Class srcClass;
     private final Class tgtClass;

@@ -14,7 +14,7 @@ import java.nio.charset.Charset;
  * @author sulin
  * @since 2019-07-25 14:40:12
  */
-public class IOCodec extends Codec {
+public final class IOCodec extends Codec {
 
     /**
      * Convert String to Charset

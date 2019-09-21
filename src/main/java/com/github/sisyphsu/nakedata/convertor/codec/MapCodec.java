@@ -16,7 +16,7 @@ import java.util.jar.Attributes;
  * @since 2019-05-13 18:30:41
  */
 @SuppressWarnings("unchecked")
-public class MapCodec extends Codec {
+public final class MapCodec extends Codec {
 
     /**
      * Convert Map to Map with the specified generic type

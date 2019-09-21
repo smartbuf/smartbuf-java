@@ -18,13 +18,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2019-05-20 16:14:54
  */
 @Slf4j
-public class CodecFactory {
+public final class CodecFactory {
 
     public static final CodecFactory Instance = new CodecFactory(null);
 
     private final Set<Codec> codecs = ConcurrentHashMap.newKeySet();
     private final ConverterMap converterMap = new ConverterMap();
     private final Map<PKey, ConverterPipeline> pipelineMap = new ConcurrentHashMap<>();
+
+    public CodecFactory() {
+    }
 
     /**
      * Initialize CodecFactory with the specified Codec type.

@@ -18,7 +18,7 @@ import java.time.LocalTime;
  * @author sulin
  * @since 2019-07-25 20:49:12
  */
-public class SqlCodec extends Codec {
+public final class SqlCodec extends Codec {
 
     /**
      * Convert byte[] to Blob

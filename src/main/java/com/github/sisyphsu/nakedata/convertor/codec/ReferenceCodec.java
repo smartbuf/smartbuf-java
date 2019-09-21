@@ -14,7 +14,7 @@ import java.lang.ref.WeakReference;
  * @author sulin
  * @since 2019-05-13 18:39:05
  */
-public class ReferenceCodec extends Codec {
+public final class ReferenceCodec extends Codec {
 
     /**
      * Convert Any Object to Reference

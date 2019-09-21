@@ -10,7 +10,7 @@ import com.github.sisyphsu.nakedata.node.std.*;
  * @author sulin
  * @since 2019-06-10 21:02:55
  */
-public final class BasicCodec extends Codec {
+public final class BasicNodeCodec extends Codec {
 
     @Converter
     public Node toNode(Boolean b) {

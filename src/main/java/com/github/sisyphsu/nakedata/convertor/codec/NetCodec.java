@@ -11,7 +11,7 @@ import java.net.*;
  * @author sulin
  * @since 2019-07-25 20:44:11
  */
-public class NetCodec extends Codec {
+public final class NetCodec extends Codec {
 
     /**
      * Convert String to URI

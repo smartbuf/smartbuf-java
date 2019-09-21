@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.*;
  * @author sulin
  * @since 2019-07-25 12:00:54
  */
-public class AtomicCodec extends Codec {
+public final class AtomicCodec extends Codec {
 
     /**
      * Convert Boolean to AtomicBoolean

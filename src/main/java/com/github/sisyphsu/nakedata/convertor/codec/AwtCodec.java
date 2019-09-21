@@ -15,7 +15,7 @@ import java.util.Map;
  * @since 2019-07-25 14:28:03
  */
 @SuppressWarnings({"MagicConstant"})
-public class AwtCodec extends Codec {
+public final class AwtCodec extends Codec {
 
     private final String FONT_NAME = "name";
     private final String FONT_STYLE = "style";

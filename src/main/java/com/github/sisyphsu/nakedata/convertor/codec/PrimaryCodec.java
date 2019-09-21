@@ -9,7 +9,7 @@ import com.github.sisyphsu.nakedata.convertor.Converter;
  * @author sulin
  * @since 2019-08-05 19:44:37
  */
-public class PrimaryCodec extends Codec {
+public final class PrimaryCodec extends Codec {
 
     @Converter
     public boolean toBoolean(Boolean b) {

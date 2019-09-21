@@ -23,7 +23,7 @@ import java.util.TimeZone;
  * @author sulin
  * @since 2019-05-13 18:05:26
  */
-public class TimeCodec extends Codec {
+public final class TimeCodec extends Codec {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
     private static DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_DATE_TIME;

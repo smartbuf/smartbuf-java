@@ -16,7 +16,7 @@ import java.util.TimeZone;
  * @author sulin
  * @since 2019-07-26 11:56:20
  */
-public class JodaCodec extends Codec {
+public final class JodaCodec extends Codec {
 
     /**
      * Convert java.LocalDateTime to joda.LocalDateTime

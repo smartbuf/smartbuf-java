@@ -12,7 +12,7 @@ import java.util.Calendar;
  * @author sulin
  * @since 2019-05-13 18:25:17
  */
-public class JavaxCodec extends Codec {
+public final class JavaxCodec extends Codec {
 
     /**
      * Convert XMLGregorianCalendar to Calendar
