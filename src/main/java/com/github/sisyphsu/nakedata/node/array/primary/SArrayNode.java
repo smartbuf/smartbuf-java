@@ -9,7 +9,7 @@ import com.github.sisyphsu.nakedata.DataType;
  * @author sulin
  * @since 2019-06-05 15:54:42
  */
-public class SArrayNode extends Node {
+public final class SArrayNode extends Node {
 
     private short[] items;
 

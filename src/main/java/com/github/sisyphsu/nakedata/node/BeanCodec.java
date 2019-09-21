@@ -1,8 +1,7 @@
-package com.github.sisyphsu.nakedata.node.codec;
+package com.github.sisyphsu.nakedata.node;
 
 import com.github.sisyphsu.nakedata.convertor.Codec;
 import com.github.sisyphsu.nakedata.convertor.Converter;
-import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.std.ObjectNode;
 
 import java.util.HashMap;
@@ -15,7 +14,7 @@ import java.util.TreeMap;
  * @author sulin
  * @since 2019-06-05 20:29:40
  */
-public class ObjectCodec extends Codec {
+public final class BeanCodec extends Codec {
 
     /**
      * encode map to ObjectNode, pojo should be encoded as map first.

@@ -9,7 +9,7 @@ import com.github.sisyphsu.nakedata.DataType;
  * @author sulin
  * @since 2019-06-04 16:34:25
  */
-public class FArrayNode extends Node {
+public final class FArrayNode extends Node {
 
     private float[] items;
 

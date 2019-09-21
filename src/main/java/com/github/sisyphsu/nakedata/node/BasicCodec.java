@@ -1,8 +1,7 @@
-package com.github.sisyphsu.nakedata.node.codec;
+package com.github.sisyphsu.nakedata.node;
 
 import com.github.sisyphsu.nakedata.convertor.Codec;
 import com.github.sisyphsu.nakedata.convertor.Converter;
-import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.std.*;
 
 /**
@@ -11,7 +10,7 @@ import com.github.sisyphsu.nakedata.node.std.*;
  * @author sulin
  * @since 2019-06-10 21:02:55
  */
-public class NodeCodec extends Codec {
+public final class BasicCodec extends Codec {
 
     @Converter
     public Node toNode(Boolean b) {
@@ -53,18 +52,6 @@ public class NodeCodec extends Codec {
         return StringNode.valueOf(s);
     }
 
-    /**
-     * enum could be encoded to symble directly, but don't need decoded directly.
-     *
-     * @param e enum
-     * @return SymbolNode
-     */
-    @Converter
-    public Node toNode(Enum e) {
-        String name = e.name();
-        return SymbolNode.valueOf(name);
-    }
-
     @Converter
     public Boolean toBoolean(BooleanNode node) {
         return node.value();
@@ -72,57 +59,36 @@ public class NodeCodec extends Codec {
 
     @Converter
     public Byte toByte(VarintNode node) {
-        if (node.isNull()) {
-            return null;
-        }
-        return (byte) node.getValue();
+        return node.isNull() ? null : (byte) node.getValue();
     }
 
     @Converter
     public Short toShort(VarintNode node) {
-        if (node.isNull()) {
-            return null;
-        }
-        return (short) node.getValue();
+        return node.isNull() ? null : (short) node.getValue();
     }
 
     @Converter
     public Integer toInt(VarintNode node) {
-        if (node.isNull()) {
-            return null;
-        }
-        return (int) node.getValue();
+        return node.isNull() ? null : (int) node.getValue();
     }
 
     @Converter
     public Long toLong(VarintNode node) {
-        if (node.isNull()) {
-            return null;
-        }
-        return node.getValue();
+        return node.isNull() ? null : node.getValue();
     }
 
     @Converter
     public Float toFloat(FloatNode node) {
-        if (node.isNull()) {
-            return null;
-        }
-        return node.getValue();
+        return node.isNull() ? null : node.getValue();
     }
 
     @Converter
     public Double toDouble(DoubleNode node) {
-        if (node.isNull()) {
-            return null;
-        }
-        return node.getValue();
+        return node.isNull() ? null : node.getValue();
     }
 
     @Converter
     public String toString(StringNode node) {
-        if (node.isNull()) {
-            return null;
-        }
         return node.getValue();
     }
 
@@ -131,4 +97,14 @@ public class NodeCodec extends Codec {
         return node.getData();
     }
 
+    /**
+     * enum could be encoded to symble directly, but don't need decoded directly.
+     *
+     * @param e enum
+     * @return SymbolNode
+     */
+    @Converter
+    public Node toNode(Enum e) {
+        return SymbolNode.valueOf(e.name());
+    }
 }

@@ -1,17 +1,15 @@
 package com.github.sisyphsu.nakedata.node.std;
 
-import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.DataType;
-import lombok.Getter;
-import lombok.Setter;
+import com.github.sisyphsu.nakedata.node.Node;
 
 /**
+ * StringNode represents String.
+ *
  * @author sulin
  * @since 2019-05-08 21:00:34
  */
-@Getter
-@Setter
-public class StringNode extends Node {
+public final class StringNode extends Node {
 
     public final static StringNode NULL = new StringNode(null);
     public final static StringNode EMPTY = new StringNode("");
@@ -30,6 +28,10 @@ public class StringNode extends Node {
             return EMPTY;
         }
         return new StringNode(str);
+    }
+
+    public String getValue() {
+        return value;
     }
 
     @Override

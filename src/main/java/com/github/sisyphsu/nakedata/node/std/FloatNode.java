@@ -1,17 +1,15 @@
 package com.github.sisyphsu.nakedata.node.std;
 
-import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.DataType;
-import lombok.Getter;
-import lombok.Setter;
+import com.github.sisyphsu.nakedata.node.Node;
 
 /**
+ * FloatNode represents float and Float.
+ *
  * @author sulin
  * @since 2019-05-08 21:00:21
  */
-@Getter
-@Setter
-public class FloatNode extends Node {
+public final class FloatNode extends Node {
 
     public final static FloatNode NULL = new FloatNode(0);
     public final static FloatNode ZERO = new FloatNode(0);
@@ -34,6 +32,10 @@ public class FloatNode extends Node {
             return NULL;
         }
         return valueOf(f.floatValue());
+    }
+
+    public float getValue() {
+        return value;
     }
 
     @Override

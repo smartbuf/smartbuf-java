@@ -10,7 +10,7 @@ import java.util.List;
  * @author sulin
  * @since 2019-06-04 16:52:57
  */
-public class StringArrayNode extends ArrayNode {
+public final class StringArrayNode extends ArrayNode {
 
     public StringArrayNode(List items) {
         super(items);

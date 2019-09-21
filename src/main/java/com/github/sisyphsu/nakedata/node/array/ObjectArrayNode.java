@@ -11,7 +11,7 @@ import java.util.List;
  * @author sulin
  * @since 2019-06-05 16:06:44
  */
-public class ObjectArrayNode extends ArrayNode {
+public final class ObjectArrayNode extends ArrayNode {
 
     private DataType elType;
 

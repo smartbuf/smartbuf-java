@@ -10,7 +10,7 @@ import java.util.List;
  * @author sulin
  * @since 2019-06-11 20:32:34
  */
-public class FloatArrayNode extends ArrayNode {
+public final class FloatArrayNode extends ArrayNode {
 
     public FloatArrayNode(List items) {
         super(items);

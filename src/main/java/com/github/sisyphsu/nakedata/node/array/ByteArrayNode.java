@@ -10,7 +10,7 @@ import java.util.List;
  * @author sulin
  * @since 2019-07-03 20:41:07
  */
-public class ByteArrayNode extends ArrayNode {
+public final class ByteArrayNode extends ArrayNode {
 
     public ByteArrayNode(List items) {
         super(items);

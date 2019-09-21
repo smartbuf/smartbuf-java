@@ -1,18 +1,16 @@
 package com.github.sisyphsu.nakedata.node.std;
 
-import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.DataType;
+import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.utils.NumberUtils;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
+ * VarintNode represents all number like byte/short/int/long.
+ *
  * @author sulin
  * @since 2019-05-08 21:00:46
  */
-@Getter
-@Setter
-public class VarintNode extends Node {
+public final class VarintNode extends Node {
 
     public final static VarintNode NULL = new VarintNode(0);
 
@@ -78,4 +76,7 @@ public class VarintNode extends Node {
         return this == NULL;
     }
 
+    public long getValue() {
+        return value;
+    }
 }

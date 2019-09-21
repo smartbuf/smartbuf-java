@@ -1,15 +1,15 @@
 package com.github.sisyphsu.nakedata.node.std;
 
-import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.DataType;
-import lombok.Getter;
+import com.github.sisyphsu.nakedata.node.Node;
 
 /**
+ * SymbolNode represents constant String or Enum etc.
+ *
  * @author sulin
  * @since 2019-06-04 20:23:31
  */
-@Getter
-public class SymbolNode extends Node {
+public final class SymbolNode extends Node {
 
     private String data;
 
@@ -20,6 +20,10 @@ public class SymbolNode extends Node {
     public static SymbolNode valueOf(String data) {
         // TODO should cache
         return new SymbolNode(data);
+    }
+
+    public String getData() {
+        return data;
     }
 
     @Override

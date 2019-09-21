@@ -1,17 +1,15 @@
 package com.github.sisyphsu.nakedata.node.std;
 
-import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.DataType;
-import lombok.Getter;
-import lombok.Setter;
+import com.github.sisyphsu.nakedata.node.Node;
 
 /**
+ * DoubleNode represents double and Double.
+ *
  * @author sulin
  * @since 2019-05-08 21:00:27
  */
-@Getter
-@Setter
-public class DoubleNode extends Node {
+public final class DoubleNode extends Node {
 
     public final static DoubleNode NULL = new DoubleNode(0);
     public final static DoubleNode ZERO = new DoubleNode(0);
@@ -34,6 +32,10 @@ public class DoubleNode extends Node {
             return NULL;
         }
         return valueOf(d.doubleValue());
+    }
+
+    public double getValue() {
+        return value;
     }
 
     @Override

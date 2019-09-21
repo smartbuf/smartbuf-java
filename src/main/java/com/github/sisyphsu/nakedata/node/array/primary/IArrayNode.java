@@ -9,7 +9,7 @@ import com.github.sisyphsu.nakedata.DataType;
  * @author sulin
  * @since 2019-06-05 15:54:27
  */
-public class IArrayNode extends Node {
+public final class IArrayNode extends Node {
 
     private int[] items;
 

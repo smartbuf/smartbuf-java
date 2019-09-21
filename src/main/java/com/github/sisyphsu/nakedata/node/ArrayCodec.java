@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.node.codec;
+package com.github.sisyphsu.nakedata.node;
 
 import com.github.sisyphsu.nakedata.convertor.Codec;
 import com.github.sisyphsu.nakedata.convertor.Converter;
@@ -19,7 +19,7 @@ import java.util.List;
  * @since 2019-06-05 19:53:57
  */
 @SuppressWarnings("unchecked")
-public class ArrayCodec extends Codec {
+public final class ArrayCodec extends Codec {
 
     @Converter
     public Node toNode(boolean[] arr) {

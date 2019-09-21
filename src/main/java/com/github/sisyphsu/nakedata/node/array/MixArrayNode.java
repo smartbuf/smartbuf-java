@@ -8,7 +8,7 @@ import java.util.List;
  * @author sulin
  * @since 2019-05-08 21:02:18
  */
-public class MixArrayNode extends ArrayNode {
+public final class MixArrayNode extends ArrayNode {
 
     public MixArrayNode(List<ArrayNode> items) {
         super(items);

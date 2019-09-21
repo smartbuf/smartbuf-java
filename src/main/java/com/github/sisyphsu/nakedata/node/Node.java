@@ -10,14 +10,6 @@ import com.github.sisyphsu.nakedata.DataType;
  */
 public abstract class Node {
 
-    // 序列化
-    public void serialize() {
-    }
-
-    // 反序列化
-    public void deserialize() {
-    }
-
     /**
      * 是否是null值
      *

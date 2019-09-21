@@ -9,7 +9,7 @@ import com.github.sisyphsu.nakedata.DataType;
  * @author sulin
  * @since 2019-06-04 19:53:42
  */
-public class ZArrayNode extends Node {
+public final class ZArrayNode extends Node {
 
     private boolean[] items;
 

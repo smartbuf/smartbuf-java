@@ -9,7 +9,7 @@ import com.github.sisyphsu.nakedata.DataType;
  * @author sulin
  * @since 2019-06-04 16:51:04
  */
-public class DArrayNode extends Node {
+public final class DArrayNode extends Node {
 
     private double[] items;
 

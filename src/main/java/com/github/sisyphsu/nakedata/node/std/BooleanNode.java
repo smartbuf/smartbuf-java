@@ -4,10 +4,12 @@ import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.DataType;
 
 /**
+ * BooleanNode represents boolean and Boolean.
+ *
  * @author sulin
  * @since 2019-05-08 21:00:07
  */
-public class BooleanNode extends Node {
+public final class BooleanNode extends Node {
 
     public final static BooleanNode NULL = new BooleanNode();
 

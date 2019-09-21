@@ -10,7 +10,7 @@ import java.util.List;
  * @author sulin
  * @since 2019-06-11 20:32:06
  */
-public class BooleanArrayNode extends ArrayNode {
+public final class BooleanArrayNode extends ArrayNode {
 
     public BooleanArrayNode(List items) {
         super(items);
