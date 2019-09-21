@@ -20,26 +20,18 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public final class CodecFactory {
 
-    public static final CodecFactory Instance = new CodecFactory(null);
+    public static final CodecFactory Instance = new CodecFactory();
 
     private final Set<Codec> codecs = ConcurrentHashMap.newKeySet();
     private final ConverterMap converterMap = new ConverterMap();
     private final Map<PKey, ConverterPipeline> pipelineMap = new ConcurrentHashMap<>();
 
-    public CodecFactory() {
-    }
-
     /**
      * Initialize CodecFactory with the specified Codec type.
-     *
-     * @param codecs Codec type
      */
-    public CodecFactory(Set<Codec> codecs) {
+    public CodecFactory() {
         for (Class<? extends Codec> codecCls : CodecScanner.scanCodecs()) {
             this.installCodec(codecCls);
-        }
-        if (codecs != null) {
-            this.installCodec(codecs); // init index
         }
     }
 

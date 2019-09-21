@@ -7,7 +7,7 @@ import com.github.sisyphsu.nakedata.reflect.XTypeUtils;
  * @author sulin
  * @since 2019-09-21 13:50:31
  */
-public class NodeMapper {
+public final class NodeMapper {
 
     private static final CodecFactory CODEC_FACTORY = new CodecFactory();
 

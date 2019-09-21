@@ -118,21 +118,22 @@ public final class ArrayNodeCodec extends Codec {
         List<ArrayNode> multiSliceResult = null;
         // iterate list and generate slices.
         Class sliceType = null;
-        for (int i = 0, sliceOff = 0, size = list.size(); i < size; i++) {
-            Object curr = list.get(i);
+        int sliceOff = 0;
+        for (int off = 0, size = list.size(); off < size; off++) {
+            Object curr = list.get(off);
             Class type = curr == null ? null : curr.getClass();
             // do nothing for first item
-            if (i == 0) {
+            if (off == 0) {
                 sliceType = type;
                 continue;
             }
             // continue if continuously and not end
-            if (sliceType == type && i < size - 1) {
+            if (sliceType == type && off < size - 1) {
                 continue;
             }
             // generate ArrayNode as slice
             ArrayNode slice;
-            List subList = list.subList(sliceOff, i);
+            List subList = list.subList(sliceOff, off + 1);
             if (sliceType == null) {
                 slice = new NullArrayNode(subList);
             } else if (sliceType == Boolean.class) {
@@ -159,7 +160,7 @@ public final class ArrayNodeCodec extends Codec {
                 slice = new ObjectArrayNode(nodes);
             }
             // update arrays and last
-            if (i == size - 1 && multiSliceResult == null) {
+            if (off == size - 1 && multiSliceResult == null) {
                 singleSliceResult = slice;
             } else {
                 if (multiSliceResult == null) {
@@ -168,7 +169,7 @@ public final class ArrayNodeCodec extends Codec {
                 multiSliceResult.add(slice);
             }
             // update next slice
-            sliceOff = i;
+            sliceOff = off;
             sliceType = type;
         }
         if (singleSliceResult != null) {
