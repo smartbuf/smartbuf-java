@@ -4,6 +4,7 @@ import com.github.sisyphsu.nakedata.context.ContextUtils;
 import com.github.sisyphsu.nakedata.context.model.ContextVersion;
 import com.github.sisyphsu.nakedata.context.output.OutputContext;
 import com.github.sisyphsu.nakedata.io.OutputWriter;
+import com.github.sisyphsu.nakedata.node.NodeMapper;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.array.MixArrayNode;
 import com.github.sisyphsu.nakedata.node.std.ObjectNode;
@@ -34,7 +35,7 @@ public class DataSerializer {
      * @throws IOException IO异常
      */
     public void serialize(Object obj) throws IOException {
-        Node root = DateUtils.convertNodeTree(obj);
+        Node root = NodeMapper.convertNodeTree(obj);
         // step1. 扫描元数据变化
         ContextVersion version = context.scan(root);
         byte dataType = root.dataType().getCode();
