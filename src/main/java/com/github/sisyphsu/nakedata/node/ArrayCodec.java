@@ -2,7 +2,6 @@ package com.github.sisyphsu.nakedata.node;
 
 import com.github.sisyphsu.nakedata.convertor.Codec;
 import com.github.sisyphsu.nakedata.convertor.Converter;
-import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.array.*;
 import com.github.sisyphsu.nakedata.node.array.primary.*;
 import com.github.sisyphsu.nakedata.node.std.StringNode;
