@@ -6,7 +6,7 @@ import com.github.sisyphsu.nakedata.utils.IDAllocator;
  * @author sulin
  * @since 2019-05-03 16:51:32
  */
-public class BasePool {
+public abstract class BasePool {
 
     private static final long INIT_TIME = System.currentTimeMillis();
 

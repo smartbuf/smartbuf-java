@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.node.array.primary;
 
-import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.DataType;
+import com.github.sisyphsu.nakedata.node.Node;
 
 /**
  * boolean[] array
@@ -30,7 +30,7 @@ public final class ZArrayNode extends Node {
 
     @Override
     public DataType dataType() {
-        return DataType.BOOL;
+        return DataType.ARRAY;
     }
 
     @Override

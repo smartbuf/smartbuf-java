@@ -30,7 +30,7 @@ public final class SArrayNode extends Node {
 
     @Override
     public DataType dataType() {
-        return DataType.SHORT;
+        return DataType.ARRAY;
     }
 
     @Override

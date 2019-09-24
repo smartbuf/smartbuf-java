@@ -1,11 +1,10 @@
 package com.github.sisyphsu.nakedata.context.output;
 
 import com.github.sisyphsu.nakedata.context.model.ContextStruct;
-import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.context.model.ContextVersion;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.array.MixArrayNode;
-import com.github.sisyphsu.nakedata.node.std.ObjectNode;
+import com.github.sisyphsu.nakedata.node.std.*;
 
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -21,17 +20,18 @@ public class OutputContext {
     private static final Pattern NAME = Pattern.compile("^[A-Za-z_$][\\w$]{0,63}$");
 
     private long version;
+    private boolean streamMode;
     private ContextVersion versionCache;
 
     private OutputNamePool namePool;
     private OutputStructPool structPool;
-    private OutputTypePool typePool;
+
+    private OutputDataPool dataArea = new OutputDataPool();
 
     public OutputContext() {
         this.versionCache = new ContextVersion();
         this.namePool = new OutputNamePool(1 << 16);
         this.structPool = new OutputStructPool(1 << 16);
-        this.typePool = new OutputTypePool(1 << 16);
     }
 
     /**
@@ -42,7 +42,7 @@ public class OutputContext {
      */
     public ContextVersion scan(Node node) {
         if (node == null) {
-            throw new IllegalStateException("node can't be null");
+            throw new IllegalArgumentException("node can't be null");
         }
         ContextVersion version = this.versionCache.reset();
         // 执行扫描
@@ -50,7 +50,6 @@ public class OutputContext {
         // 执行垃圾回收
         this.namePool.release(version);
         this.structPool.release(version);
-        this.typePool.release(version);
         // 处理版本
         if (version.isEmpty()) {
             version = null;
@@ -62,18 +61,37 @@ public class OutputContext {
 
     // 扫描元数据
     private void doScan(Node node) {
+        if (node.isNull()) {
+            return;
+        }
         switch (node.dataType()) {
+            case NULL:
+            case BOOL:
+                break;
+            case FLOAT:
+                dataArea.registerFloat(((FloatNode) node).getValue());
+                break;
+            case DOUBLE:
+                dataArea.registerDouble(((DoubleNode) node).getValue());
+                break;
+            case VARINT:
+                dataArea.registerVarint(((VarintNode) node).getValue());
+                break;
+            case STRING:
+                dataArea.registerString(((StringNode) node).getValue());
+                break;
+            case SYMBOL:
+                if (streamMode) {
+                    // TODO Stream模式则需要注册入context中的symbol里面
+                } else {
+                    dataArea.registerString(((SymbolNode) node).getData());
+                }
+                break;
             case ARRAY:
                 this.doScanArrayNode((MixArrayNode) node);
                 break;
             case OBJECT:
                 this.doScanObjectNode((ObjectNode) node);
-                break;
-            case NULL:
-            case BOOL:
-            case STRING:
-//            case BINARY:
-            case VARINT:
                 break;
             default:
                 throw new IllegalArgumentException("Unsupport data: " + node);
@@ -100,7 +118,7 @@ public class OutputContext {
                 offset++;
             }
             ContextStruct struct = structPool.buildTmpStruct(versionCache, nameIds);
-            node.setContextType(typePool.buildTmpType(versionCache, struct.getId(), types));
+//            node.setContextType(typePool.buildTmpType(versionCache, struct.getId(), types));
         } else {
             // 处理上下文元数据
             int offset = 0;
@@ -110,7 +128,7 @@ public class OutputContext {
                 offset++;
             }
             ContextStruct struct = structPool.buildCxtStruct(versionCache, nameIds);
-            node.setContextType(typePool.buildCxtType(versionCache, struct.getId(), types));
+//            node.setContextType(typePool.buildCxtType(versionCache, struct.getId(), types));
         }
     }
 

@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.node.array;
 
+import com.github.sisyphsu.nakedata.ArrayType;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.DataType;
 
@@ -55,7 +56,7 @@ public class ArrayNode extends Node {
      *
      * @return DataType of element
      */
-    public DataType elementType() {
+    public ArrayType elementType() {
         return null;
     }
 

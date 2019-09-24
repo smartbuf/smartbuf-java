@@ -27,10 +27,6 @@ public class ContextVersion {
      */
     private List<Integer> structExpired = new ArrayList<>();
     /**
-     * 已过期的数据类型
-     */
-    private List<Integer> typeExpired = new ArrayList<>();
-    /**
      * 新增的变量名
      */
     private List<String> nameAdded = new ArrayList<>();
@@ -39,10 +35,6 @@ public class ContextVersion {
      */
     private List<ContextStruct> structAdded = new ArrayList<>();
     /**
-     * 新增的数据类型
-     */
-    private List<ContextType> typeAdded = new ArrayList<>();
-    /**
      * 临时使用的变量名
      */
     private List<String> nameTemp = new ArrayList<>();
@@ -50,10 +42,8 @@ public class ContextVersion {
      * 临时使用的数据框架
      */
     private List<ContextStruct> structTemp = new ArrayList<>();
-    /**
-     * 临时使用的数据类型
-     */
-    private List<ContextType> typeTemp = new ArrayList<>();
+
+
 
     /**
      * 重置Log, 用于支持复用
@@ -62,13 +52,10 @@ public class ContextVersion {
         this.version = 0;
         this.nameExpired.clear();
         this.structExpired.clear();
-        this.typeExpired.clear();
         this.nameAdded.clear();
         this.structAdded.clear();
-        this.typeAdded.clear();
         this.nameTemp.clear();
         this.structTemp.clear();
-        this.typeTemp.clear();
         return this;
     }
 
@@ -84,25 +71,16 @@ public class ContextVersion {
         if (!structExpired.isEmpty()) {
             return false;
         }
-        if (!typeExpired.isEmpty()) {
-            return false;
-        }
         if (!nameAdded.isEmpty()) {
             return false;
         }
         if (!structAdded.isEmpty()) {
             return false;
         }
-        if (!typeAdded.isEmpty()) {
-            return false;
-        }
         if (!nameTemp.isEmpty()) {
             return false;
         }
         if (!structTemp.isEmpty()) {
-            return false;
-        }
-        if (!typeTemp.isEmpty()) {
             return false;
         }
 

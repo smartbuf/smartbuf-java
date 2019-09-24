@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.node.array;
 
-import com.github.sisyphsu.nakedata.DataType;
+import com.github.sisyphsu.nakedata.ArrayType;
 
 import java.util.List;
 
@@ -17,8 +17,8 @@ public final class ByteArrayNode extends ArrayNode {
     }
 
     @Override
-    public DataType elementType() {
-        return DataType.BYTE;
+    public ArrayType elementType() {
+        return ArrayType.BYTE;
     }
 
 }

@@ -15,7 +15,6 @@ public abstract class Node {
      *
      * @return true表示null值
      */
-    @Deprecated
     public abstract boolean isNull();
 
     /**

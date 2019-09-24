@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.node.array;
 
-import com.github.sisyphsu.nakedata.DataType;
+import com.github.sisyphsu.nakedata.ArrayType;
 
 import java.util.List;
 
@@ -17,8 +17,8 @@ public final class FloatArrayNode extends ArrayNode {
     }
 
     @Override
-    public DataType elementType() {
-        return DataType.FLOAT;
+    public ArrayType elementType() {
+        return ArrayType.FLOAT;
     }
 
 }

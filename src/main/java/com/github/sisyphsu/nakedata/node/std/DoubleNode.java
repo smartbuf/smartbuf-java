@@ -34,7 +34,10 @@ public final class DoubleNode extends Node {
         return valueOf(d.doubleValue());
     }
 
-    public double getValue() {
+    public Double getValue() {
+        if (this == NULL) {
+            return null;
+        }
         return value;
     }
 

@@ -30,7 +30,7 @@ public final class LArrayNode extends Node {
 
     @Override
     public DataType dataType() {
-        return DataType.LONG;
+        return DataType.ARRAY;
     }
 
     @Override

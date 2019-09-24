@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.node.array;
 
-import com.github.sisyphsu.nakedata.DataType;
+import com.github.sisyphsu.nakedata.ArrayType;
 
 import java.util.List;
 
@@ -17,8 +17,8 @@ public final class ShortArrayNode extends ArrayNode {
     }
 
     @Override
-    public DataType elementType() {
-        return DataType.SHORT;
+    public ArrayType elementType() {
+        return ArrayType.SHORT;
     }
 
 }

@@ -31,6 +31,9 @@ public final class StringNode extends Node {
     }
 
     public String getValue() {
+        if (this == NULL) {
+            return null;
+        }
         return value;
     }
 

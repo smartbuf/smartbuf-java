@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.node.array;
 
+import com.github.sisyphsu.nakedata.ArrayType;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.DataType;
 
@@ -21,8 +22,9 @@ public final class ObjectArrayNode extends ArrayNode {
     }
 
     @Override
-    public DataType elementType() {
-        return this.elType;
+    public ArrayType elementType() {
+        // TODO how?
+        return null;
     }
 
 }

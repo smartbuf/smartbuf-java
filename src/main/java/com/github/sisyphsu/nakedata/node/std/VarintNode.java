@@ -76,7 +76,10 @@ public final class VarintNode extends Node {
         return this == NULL;
     }
 
-    public long getValue() {
+    public Long getValue() {
+        if (this == NULL) {
+            return null;
+        }
         return value;
     }
 }
