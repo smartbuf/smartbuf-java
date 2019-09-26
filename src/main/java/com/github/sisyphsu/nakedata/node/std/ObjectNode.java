@@ -14,7 +14,7 @@ import java.util.TreeMap;
  */
 public final class ObjectNode extends Node {
 
-    public final static ObjectNode NULL = new ObjectNode(null);
+    public final static ObjectNode NULL  = new ObjectNode(null);
     public final static ObjectNode EMPTY = new ObjectNode(new TreeMap<>());
 
     private final TreeMap<String, Node> fields;
