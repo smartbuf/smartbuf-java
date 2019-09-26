@@ -22,15 +22,15 @@ public class OutputContext {
     private boolean        streamMode;
     private ContextVersion versionCache;
 
-    private OutputContextArea cxtArea = new OutputContextArea();
+    private OutputContextArea cxtArea = new OutputContextArea(false);
 
-    private DataArea<String> tmpNameArea   = new DataArea<>();
-    private DataArea<int[]>  tmpStructArea = new DataArea<>();
+    private OutputList<String> tmpNameArea   = new OutputList<>();
+    private OutputList<int[]>  tmpStructArea = new OutputList<>();
 
-    private DataArea<Long>   varintArea = new DataArea<>();
-    private DataArea<Float>  floatArea  = new DataArea<>();
-    private DataArea<Double> doubleArea = new DataArea<>();
-    private DataArea<String> stringArea = new DataArea<>();
+    private OutputList<Long>   varintArea = new OutputList<>();
+    private OutputList<Float>  floatArea  = new OutputList<>();
+    private OutputList<Double> doubleArea = new OutputList<>();
+    private OutputList<String> stringArea = new OutputList<>();
 
     public OutputContext() {
         this.versionCache = new ContextVersion();

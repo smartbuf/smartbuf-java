@@ -16,7 +16,7 @@ public final class OutputContextPool<T> {
     private static final long INIT_TIME = System.currentTimeMillis();
 
     private final IDPool        itemIdPool      = new IDPool();
-    private final CxtList<T>    itemList        = new CxtList<>();
+    private final OutputList<T> itemList        = new OutputList<>();
     private final List<Integer> itemActiveTimes = new ArrayList<>();
 
     final List<T>       itemAdded   = new ArrayList<>();

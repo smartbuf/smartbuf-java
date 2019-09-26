@@ -8,11 +8,10 @@ import java.util.Map;
  * @since 2019-09-26 14:21:44
  */
 @SuppressWarnings("unchecked")
-public final class CxtList<T> {
+public final class OutputList<T> {
 
-    private int      offset;
-    private Object[] items = new Object[4];
-
+    private       int             offset;
+    private       Object[]        items     = new Object[4];
     private final Map<T, Integer> offsetMap = new HashMap<>();
 
     public void add(T t) {
@@ -49,7 +48,11 @@ public final class CxtList<T> {
     }
 
     public Integer getID(T t) {
-        return offsetMap.get(t);
+        Integer index = offsetMap.get(t);
+        if (index == null) {
+            throw new RuntimeException("BUG: unregistered " + t);
+        }
+        return index;
     }
 
     public boolean contains(T t) {
