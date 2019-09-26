@@ -36,45 +36,6 @@ public final class OutputDataPool {
     private Map<String, Integer> stringIndex = new HashMap<>();
 
     /**
-     * 向数据区注册varint，支持byte、short、int、long
-     */
-    public void registerVarint(long varint) {
-        if (varintIndex.containsKey(varint))
-            return;
-        varintIndex.put(varint, varintCount++);
-    }
-
-    /**
-     * 向数据区注册float
-     */
-    public void registerFloat(float f) {
-        if (floatIndex.containsKey(f)) {
-            return;
-        }
-        floatIndex.put(f, floatCount++);
-    }
-
-    /**
-     * 向数据区注册double
-     */
-    public void registerDouble(double d) {
-        if (doubleIndex.containsKey(d)) {
-            return;
-        }
-        doubleIndex.put(d, doubleCount++);
-    }
-
-    /**
-     * 向数据区注册string
-     */
-    public void registerString(String str) {
-        if (stringIndex.containsKey(str)) {
-            return;
-        }
-        stringIndex.put(str, stringCount++);
-    }
-
-    /**
      * 获取指定数据节点在数据区的唯一ID
      */
     public int getDataID(Node node) {

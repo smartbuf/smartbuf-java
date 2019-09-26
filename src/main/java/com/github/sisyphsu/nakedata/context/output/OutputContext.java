@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.context.output;
 
-import com.github.sisyphsu.nakedata.context.model.ContextStruct;
 import com.github.sisyphsu.nakedata.context.model.ContextVersion;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.array.MixArrayNode;
@@ -19,19 +18,22 @@ public class OutputContext {
 
     private static final Pattern NAME = Pattern.compile("^[A-Za-z_$][\\w$]{0,63}$");
 
-    private long version;
-    private boolean streamMode;
+    private long           version;
+    private boolean        streamMode;
     private ContextVersion versionCache;
 
-    private OutputNamePool namePool;
-    private OutputStructPool structPool;
+    private OutputContextArea cxtArea = new OutputContextArea();
 
-    private OutputDataPool dataArea = new OutputDataPool();
+    private DataArea<String> tmpNameArea   = new DataArea<>();
+    private DataArea<int[]>  tmpStructArea = new DataArea<>();
+
+    private DataArea<Long>   varintArea = new DataArea<>();
+    private DataArea<Float>  floatArea  = new DataArea<>();
+    private DataArea<Double> doubleArea = new DataArea<>();
+    private DataArea<String> stringArea = new DataArea<>();
 
     public OutputContext() {
         this.versionCache = new ContextVersion();
-        this.namePool = new OutputNamePool(1 << 16);
-        this.structPool = new OutputStructPool(1 << 16);
     }
 
     /**
@@ -45,11 +47,10 @@ public class OutputContext {
             throw new IllegalArgumentException("node can't be null");
         }
         ContextVersion version = this.versionCache.reset();
+        // 预先执行垃圾回收
+        cxtArea.preRelease();
         // 执行扫描
         this.doScan(node);
-        // 执行垃圾回收
-        this.namePool.release(version);
-        this.structPool.release(version);
         // 处理版本
         if (version.isEmpty()) {
             version = null;
@@ -69,22 +70,22 @@ public class OutputContext {
             case BOOL:
                 break;
             case FLOAT:
-                dataArea.registerFloat(((FloatNode) node).getValue());
+                floatArea.add(((FloatNode) node).getValue());
                 break;
             case DOUBLE:
-                dataArea.registerDouble(((DoubleNode) node).getValue());
+                doubleArea.add(((DoubleNode) node).getValue());
                 break;
             case VARINT:
-                dataArea.registerVarint(((VarintNode) node).getValue());
+                varintArea.add(((VarintNode) node).getValue());
                 break;
             case STRING:
-                dataArea.registerString(((StringNode) node).getValue());
+                stringArea.add(((StringNode) node).getValue());
                 break;
             case SYMBOL:
                 if (streamMode) {
                     // TODO Stream模式则需要注册入context中的symbol里面
                 } else {
-                    dataArea.registerString(((SymbolNode) node).getData());
+                    stringArea.add(((SymbolNode) node).getData());
                 }
                 break;
             case ARRAY:
@@ -113,21 +114,21 @@ public class OutputContext {
             // 处理临时元数据
             int offset = 0;
             for (Map.Entry<String, Node> entry : node.getFields().entrySet()) {
-                nameIds[offset] = namePool.buildTmpName(versionCache, entry.getKey()).getId();
+//                nameIds[offset] = namePool.buildTmpName(versionCache, entry.getKey()).getId();
                 types[offset] = entry.getValue().dataType().getCode();
                 offset++;
             }
-            ContextStruct struct = structPool.buildTmpStruct(versionCache, nameIds);
+//            ContextStruct struct = structPool.buildTmpStruct(versionCache, nameIds);
 //            node.setContextType(typePool.buildTmpType(versionCache, struct.getId(), types));
         } else {
             // 处理上下文元数据
             int offset = 0;
             for (Map.Entry<String, Node> entry : node.getFields().entrySet()) {
-                nameIds[offset] = namePool.buildCxtName(versionCache, entry.getKey()).getId();
+//                nameIds[offset] = namePool.buildCxtName(versionCache, entry.getKey()).getId();
                 types[offset] = entry.getValue().dataType().getCode();
                 offset++;
             }
-            ContextStruct struct = structPool.buildCxtStruct(versionCache, nameIds);
+//            ContextStruct struct = structPool.buildCxtStruct(versionCache, nameIds);
 //            node.setContextType(typePool.buildCxtType(versionCache, struct.getId(), types));
         }
     }

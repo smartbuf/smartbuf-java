@@ -14,11 +14,11 @@ public class Context {
     /**
      * The incremental version of Context.
      */
-    private int version;
+    private int               version;
     /**
      * The max-count of type.
      */
-    private int typeLimit;
+    private int               typeLimit;
     /**
      * Customized field-name table.
      */

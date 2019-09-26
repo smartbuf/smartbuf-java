@@ -16,16 +16,16 @@ import com.github.sisyphsu.nakedata.io.OutputWriter;
 public class ContextUtils {
 
     private static final short NAME_EXPIRED = 1 << 1;
-    private static final short NAME_ADDED = 1 << 2;
-    private static final short NAME_TEMP = 1 << 3;
+    private static final short NAME_ADDED   = 1 << 2;
+    private static final short NAME_TEMP    = 1 << 3;
 
     private static final short STRUCT_EXPIRED = 1 << 4;
-    private static final short STRUCT_ADDED = 1 << 5;
-    private static final short STRUCT_TEMP = 1 << 6;
+    private static final short STRUCT_ADDED   = 1 << 5;
+    private static final short STRUCT_TEMP    = 1 << 6;
 
     private static final short TYPE_EXPIRED = 1 << 7;
-    private static final short TYPE_ADDED = 1 << 8;
-    private static final short TYPE_TEMP = 1 << 9;
+    private static final short TYPE_ADDED   = 1 << 8;
+    private static final short TYPE_TEMP    = 1 << 9;
 
     /**
      * 上下文增量版本输出
@@ -35,14 +35,11 @@ public class ContextUtils {
     public static void doWrite(OutputWriter writer, ContextVersion ver) {
         // 输出Flag
         int flag = (ver.getNameExpired().isEmpty() ? 0 : NAME_EXPIRED)
-                | (ver.getNameAdded().isEmpty() ? 0 : NAME_ADDED)
-                | (ver.getNameTemp().isEmpty() ? 0 : NAME_TEMP)
-                | (ver.getStructExpired().isEmpty() ? 0 : STRUCT_EXPIRED)
-                | (ver.getStructAdded().isEmpty() ? 0 : STRUCT_ADDED)
-                | (ver.getStructTemp().isEmpty() ? 0 : STRUCT_TEMP)
-                | (ver.getTypeExpired().isEmpty() ? 0 : TYPE_EXPIRED)
-                | (ver.getTypeAdded().isEmpty() ? 0 : TYPE_ADDED)
-                | (ver.getTypeTemp().isEmpty() ? 0 : TYPE_TEMP);
+            | (ver.getNameAdded().isEmpty() ? 0 : NAME_ADDED)
+            | (ver.getNameTemp().isEmpty() ? 0 : NAME_TEMP)
+            | (ver.getStructExpired().isEmpty() ? 0 : STRUCT_EXPIRED)
+            | (ver.getStructAdded().isEmpty() ? 0 : STRUCT_ADDED)
+            | (ver.getStructTemp().isEmpty() ? 0 : STRUCT_TEMP);
         int version = ver.getVersion() % (1 << 22);
         writer.writeInt(flag | (version << 9));
         // 变量名
@@ -70,19 +67,6 @@ public class ContextUtils {
         if (!ver.getStructTemp().isEmpty()) {
             writer.writeVarUint(ver.getStructTemp().size());
             ver.getStructTemp().forEach(struct -> doWriteStruct(writer, struct));
-        }
-        // 数据类型
-        if (!ver.getTypeExpired().isEmpty()) {
-            writer.writeVarUint(ver.getTypeExpired().size());
-            ver.getTypeExpired().forEach(writer::writeVarUint);
-        }
-        if (!ver.getTypeAdded().isEmpty()) {
-            writer.writeVarUint(ver.getTypeAdded().size());
-            ver.getTypeAdded().forEach(type -> doWriteType(writer, type));
-        }
-        if (!ver.getTypeTemp().isEmpty()) {
-            writer.writeVarUint(ver.getTypeTemp().size());
-            ver.getTypeTemp().forEach(type -> doWriteType(writer, type));
         }
     }
 
@@ -141,25 +125,6 @@ public class ContextUtils {
             int size = (int) reader.readVarUint();
             for (int i = 0; i < size; i++) {
                 version.getStructAdded().add(doReadStruct(reader));
-            }
-        }
-        // 读取数据类型
-        if (typeExpiredFlag) {
-            int size = (int) reader.readVarUint();
-            for (int i = 0; i < size; i++) {
-                version.getTypeExpired().add((int) reader.readVarUint());
-            }
-        }
-        if (typeAddedFlag) {
-            int size = (int) reader.readVarUint();
-            for (int i = 0; i < size; i++) {
-                version.getTypeAdded().add(doReadType(reader));
-            }
-        }
-        if (typeTempFlag) {
-            int size = (int) reader.readVarUint();
-            for (int i = 0; i < size; i++) {
-                version.getTypeAdded().add(doReadType(reader));
             }
         }
         return version;

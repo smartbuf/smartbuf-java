@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.context.input;
 
-import com.github.sisyphsu.nakedata.utils.IDAllocator;
+import com.github.sisyphsu.nakedata.utils.IDPool;
 
 import java.util.List;
 
@@ -15,15 +15,15 @@ public class InputTypePool {
     /**
      * The pool size of this TypePool, it mainly used for memory attack.
      */
-    private final int limit;
+    private final int     limit;
     /**
      * The IDPool which used for id allocation, it should work exactly same with output-side.
      */
-    private IDAllocator pool;
+    private       IDPool  pool;
     /**
      * The types received from output-side.
      */
-    private CType[] table;
+    private       CType[] table;
 
     /**
      * Initialize type pool for input side.
@@ -32,7 +32,7 @@ public class InputTypePool {
      */
     public InputTypePool(int limit) {
         this.limit = limit;
-        this.pool = new IDAllocator(limit);
+        this.pool = new IDPool(limit);
         this.table = new CType[64];
     }
 
