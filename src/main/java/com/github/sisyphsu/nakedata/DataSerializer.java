@@ -1,11 +1,10 @@
 package com.github.sisyphsu.nakedata;
 
-import com.github.sisyphsu.nakedata.context.ContextUtils;
 import com.github.sisyphsu.nakedata.context.model.FrameMeta;
-import com.github.sisyphsu.nakedata.context.output.OutputContext;
+import com.github.sisyphsu.nakedata.context.output.OutputBuilder;
 import com.github.sisyphsu.nakedata.io.OutputWriter;
-import com.github.sisyphsu.nakedata.node.NodeMapper;
 import com.github.sisyphsu.nakedata.node.Node;
+import com.github.sisyphsu.nakedata.node.NodeMapper;
 import com.github.sisyphsu.nakedata.node.array.MixArrayNode;
 import com.github.sisyphsu.nakedata.node.std.ObjectNode;
 
@@ -26,7 +25,7 @@ public class DataSerializer {
 
     private OutputWriter writer;
 
-    private OutputContext context;
+    private OutputBuilder context;
 
     /**
      * 执行序列化
@@ -37,17 +36,17 @@ public class DataSerializer {
     public void serialize(Object obj) throws IOException {
         Node root = NodeMapper.convertNodeTree(obj);
         // step1. 扫描元数据变化
-        FrameMeta version = context.scan(root);
-        byte dataType = root.dataType().getCode();
-        // step2. 输出头信息, 包括head、version
-        if (version == null) {
-            writer.writeByte(dataType);
-        } else {
-            writer.writeByte((byte) (dataType | CONTEXT_VERSION));
-            ContextUtils.doWrite(writer, version);
-        }
-        // step3. 输出数据体
-        this.writeNode(root);
+//        FrameMeta version = context.scan(root);
+//        byte dataType = root.dataType().getCode();
+//        // step2. 输出头信息, 包括head、version
+//        if (version == null) {
+//            writer.writeByte(dataType);
+//        } else {
+//            writer.writeByte((byte) (dataType | CONTEXT_VERSION));
+////            ContextUtils.doWrite(writer, version);
+//        }
+//        // step3. 输出数据体
+//        this.writeNode(root);
     }
 
     /**

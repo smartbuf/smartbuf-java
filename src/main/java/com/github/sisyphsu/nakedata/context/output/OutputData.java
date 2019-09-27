@@ -37,11 +37,17 @@ public final class OutputData {
         this.enableCxt = enableCxt;
     }
 
-    public void preRelease() {
-        symbolArea.resetContext();
+    public void clear() {
+        this.varintArea.clear();
+        this.floatArea.clear();
+        this.doubleArea.clear();
+        this.stringArea.clear();
         // try release symbol
-        if (symbolArea.size() > cxtSymbolLimit) {
-            symbolArea.release(cxtSymbolLimit / 10);
+        if (enableCxt) {
+            this.symbolArea.resetContext();
+            if (symbolArea.size() >= cxtSymbolLimit) {
+                symbolArea.release(cxtSymbolLimit / 10);
+            }
         }
     }
 

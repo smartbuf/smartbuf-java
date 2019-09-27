@@ -4,6 +4,8 @@ import com.github.sisyphsu.nakedata.node.Node;
 
 /**
  * 报文模型，封装报文的序列化和反序列化
+ * <p>
+ * TODO：实现序列化与反序列化
  *
  * @author sulin
  * @since 2019-09-27 17:51:06

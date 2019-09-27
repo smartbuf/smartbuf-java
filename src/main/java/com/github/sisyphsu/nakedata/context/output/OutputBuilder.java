@@ -1,20 +1,23 @@
 package com.github.sisyphsu.nakedata.context.output;
 
+import com.github.sisyphsu.nakedata.context.model.Frame;
 import com.github.sisyphsu.nakedata.context.model.FrameMeta;
 import com.github.sisyphsu.nakedata.node.Node;
+import com.github.sisyphsu.nakedata.node.array.ArrayNode;
 import com.github.sisyphsu.nakedata.node.array.MixArrayNode;
+import com.github.sisyphsu.nakedata.node.array.StringArrayNode;
 import com.github.sisyphsu.nakedata.node.std.ObjectNode;
 
 import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * 输出上下文
+ * 输出构造器，负责扫描源数据，序列化输出报文
  *
  * @author sulin
  * @since 2019-05-01 14:50:15
  */
-public class OutputContext {
+public class OutputBuilder {
 
     private static final Pattern NAME = Pattern.compile("^[A-Za-z_$][\\w$]{0,63}$");
 
@@ -25,27 +28,34 @@ public class OutputContext {
     private final OutputSchema meta = new OutputSchema(false);
     private final OutputData   data = new OutputData(false);
 
-    public OutputContext() {
+    public OutputBuilder() {
         this.versionCache = new FrameMeta();
     }
 
-    private byte[] buf = new byte[1024];
+    public Frame buildOutput(Node node) {
+        if (node == null) {
+            throw new NullPointerException("node can't be null");
+        }
+        // step1. 构建FrameMeta
+        FrameMeta meta = this.scan(node);
+
+        // step2. 构建OutputFrame
+
+        return null;
+    }
 
     /**
      * 扫描元数据. 数据序列化之前扫描收集"变量名"的增量变化, 用于预处理NamePool以及甄别map与object。
-     *
-     * @param node 原始数据
-     * @return 返回上下文元数据增量版本数据
      */
-    public FrameMeta scan(Node node) {
-        if (node == null) {
-            throw new IllegalArgumentException("node can't be null");
+    private FrameMeta scan(Node node) {
+        data.clear();
+        if (enableCxt) {
+            meta.clear();
         }
-        FrameMeta version = this.versionCache;
-        // 预先执行垃圾回收
-        meta.preRelease();
         // 执行扫描
         this.doScan(node);
+
+        FrameMeta version = new FrameMeta();
         // 处理版本
         if (version.isEmpty()) {
             version = null;
@@ -62,7 +72,7 @@ public class OutputContext {
         }
         switch (node.dataType()) {
             case ARRAY:
-                this.doScanArrayNode((MixArrayNode) node);
+                this.doScanArrayNode((ArrayNode) node);
                 break;
             case OBJECT:
                 this.doScanObjectNode((ObjectNode) node);
@@ -107,7 +117,37 @@ public class OutputContext {
         }
     }
 
-    private void doScanArrayNode(MixArrayNode array) {
+    /**
+     * 扫描数组节点
+     */
+    private void doScanArrayNode(ArrayNode array) {
+        if (array instanceof MixArrayNode) {
+            MixArrayNode man = (MixArrayNode) array;
+            for (Object item : man.getItems()) {
+                this.doScanArrayNode((ArrayNode) item);
+            }
+            return;
+        }
+        // 数组成员是string、symbol、object等，如何处理？
+
+        switch (array.elementType()) {
+            case NULL:
+            case BOOL:
+            case BYTE:
+            case SHORT:
+            case INT:
+            case LONG:
+            case FLOAT:
+            case DOUBLE:
+                break;
+            case STRING:
+                StringArrayNode san = (StringArrayNode) array;
+                for (Object item : san.getItems()) {
+                    data.addData(null);
+                }
+        }
+
+
 //        MixArrayNode.Group group = null;
 //        for (Node node : array.getItems()) {
 //            this.scan(node);

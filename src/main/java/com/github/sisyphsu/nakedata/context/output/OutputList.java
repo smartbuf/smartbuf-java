@@ -67,4 +67,9 @@ public final class OutputList<T> {
         return (T[]) items;
     }
 
+    public void clear() {
+        this.offset = 0;
+        this.offsetMap.clear();
+    }
+
 }

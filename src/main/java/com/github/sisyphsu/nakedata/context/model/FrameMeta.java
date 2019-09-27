@@ -17,21 +17,20 @@ public class FrameMeta {
     private int     version;
     private boolean enableCxt;
 
-    private List<String>  tmpNames;
+    private List<String> tmpNames;
+    private List<int[]>  tmpStructs;
+
+    private List<Float>  tmpFloatData;
+    private List<Double> tmpDoubleData;
+    private List<Long>   tmpVarintData;
+    private List<String> tmpStringData;
+
     private List<String>  cxtNameAdded;
     private List<Integer> cxtNameExpired;
-
-    private List<int[]>   tmpStructs;
     private List<int[]>   cxtStructAdded;
     private List<Integer> cxtStructExpired;
-
     private List<String>  cxtSymbolAdded;
     private List<Integer> cxtSymbolExpired;
-
-    private List<Float>  floatData;
-    private List<Double> doubleData;
-    private List<Long>   varintData;
-    private List<String> stringData;
 
     public boolean isEmpty() {
         if (!cxtNameExpired.isEmpty()) {

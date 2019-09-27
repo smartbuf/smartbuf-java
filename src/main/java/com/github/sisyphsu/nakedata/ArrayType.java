@@ -16,7 +16,8 @@ public enum ArrayType {
     SHORT(0x05),
     INT(0x06),
     LONG(0x07),
-    STRING(0x08);
+    STRING(0x08),
+    SYMBOL(0x09);
 
     private final byte code;
 

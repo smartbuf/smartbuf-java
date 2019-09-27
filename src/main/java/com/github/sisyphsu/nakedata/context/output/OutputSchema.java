@@ -17,7 +17,7 @@ public final class OutputSchema {
 
     private final boolean enableCxt;
 
-    private final OutputList<String>   tmpNameArea   = new OutputList<>();
+    private final OutputList<String>   tmpNames      = new OutputList<>();
     private final OutputList<String[]> tmpStructs    = new OutputList<>();
     private final OutputList<int[]>    tmpStructArea = new OutputList<>();
 
@@ -40,24 +40,29 @@ public final class OutputSchema {
     /**
      * Reset for new round's output.
      */
-    public void preRelease() {
-        this.nameExpired.clear();
-        this.nameAdded.clear();
-        cxtStructArea.resetContext();
-        // try release struct
-        if (cxtStructArea.size() > cxtStructLimit) {
-            long[] releasedItem = cxtStructArea.release(cxtStructLimit / 10);
-            for (long item : releasedItem) {
-                unreference(cxtStructArea.get((int) item));
+    public void clear() {
+        if (enableCxt) {
+            // try release struct
+            if (cxtStructArea.size() > cxtStructLimit) {
+                long[] releasedItem = cxtStructArea.release(cxtStructLimit / 10);
+                for (long item : releasedItem) {
+                    unreference(cxtStructArea.get((int) item));
+                }
             }
-        }
-        // try release name
-        while (names.size() > cxtNameLimit) {
-            long[] releasedItems = cxtStructArea.release(cxtStructLimit / 10);
-            for (long item : releasedItems) {
-                unreference(cxtStructArea.get((int) item));
+            // try release name
+            while (names.size() > cxtNameLimit) {
+                long[] releasedItems = cxtStructArea.release(cxtStructLimit / 10);
+                for (long item : releasedItems) {
+                    unreference(cxtStructArea.get((int) item));
+                }
             }
+            this.nameExpired.clear();
+            this.nameAdded.clear();
+            this.cxtStructArea.resetContext();
         }
+        this.tmpNames.clear();
+        this.tmpStructs.clear();
+        this.tmpStructArea.clear();
     }
 
     /**
@@ -70,8 +75,8 @@ public final class OutputSchema {
         int[] nameIds = new int[fields.length];
         for (int i = 0; i < fields.length; i++) {
             String name = fields[i];
-            tmpNameArea.add(name);
-            nameIds[i] = tmpNameArea.getID(name);
+            tmpNames.add(name);
+            nameIds[i] = tmpNames.getID(name);
         }
         tmpStructArea.add(nameIds);
     }
