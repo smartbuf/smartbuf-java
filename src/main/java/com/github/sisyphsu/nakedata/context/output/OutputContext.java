@@ -3,7 +3,7 @@ package com.github.sisyphsu.nakedata.context.output;
 import com.github.sisyphsu.nakedata.context.model.ContextVersion;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.array.MixArrayNode;
-import com.github.sisyphsu.nakedata.node.std.*;
+import com.github.sisyphsu.nakedata.node.std.ObjectNode;
 
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -22,15 +22,8 @@ public class OutputContext {
     private boolean        streamMode;
     private ContextVersion versionCache;
 
-    private OutputContextArea cxtArea = new OutputContextArea(false);
-
-    private OutputList<String> tmpNameArea   = new OutputList<>();
-    private OutputList<int[]>  tmpStructArea = new OutputList<>();
-
-    private OutputList<Long>   varintArea = new OutputList<>();
-    private OutputList<Float>  floatArea  = new OutputList<>();
-    private OutputList<Double> doubleArea = new OutputList<>();
-    private OutputList<String> stringArea = new OutputList<>();
+    private OutputMeta meta = new OutputMeta();
+    private OutputData data = new OutputData(false);
 
     public OutputContext() {
         this.versionCache = new ContextVersion();
@@ -48,7 +41,7 @@ public class OutputContext {
         }
         ContextVersion version = this.versionCache.reset();
         // 预先执行垃圾回收
-        cxtArea.preRelease();
+        meta.preRelease();
         // 执行扫描
         this.doScan(node);
         // 处理版本
@@ -66,28 +59,6 @@ public class OutputContext {
             return;
         }
         switch (node.dataType()) {
-            case NULL:
-            case BOOL:
-                break;
-            case FLOAT:
-                floatArea.add(((FloatNode) node).getValue());
-                break;
-            case DOUBLE:
-                doubleArea.add(((DoubleNode) node).getValue());
-                break;
-            case VARINT:
-                varintArea.add(((VarintNode) node).getValue());
-                break;
-            case STRING:
-                stringArea.add(((StringNode) node).getValue());
-                break;
-            case SYMBOL:
-                if (streamMode) {
-                    // TODO Stream模式则需要注册入context中的symbol里面
-                } else {
-                    stringArea.add(((SymbolNode) node).getData());
-                }
-                break;
             case ARRAY:
                 this.doScanArrayNode((MixArrayNode) node);
                 break;
@@ -95,7 +66,8 @@ public class OutputContext {
                 this.doScanObjectNode((ObjectNode) node);
                 break;
             default:
-                throw new IllegalArgumentException("Unsupport data: " + node);
+                data.addData(node);
+                break;
         }
     }
 

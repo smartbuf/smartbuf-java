@@ -8,7 +8,7 @@ import java.util.Map;
  * @since 2019-09-26 14:21:44
  */
 @SuppressWarnings("unchecked")
-public final class OutputList<T> {
+public final class OutputArray<T> {
 
     private       int             offset;
     private       Object[]        items     = new Object[4];

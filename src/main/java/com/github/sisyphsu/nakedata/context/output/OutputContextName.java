@@ -13,9 +13,9 @@ import java.util.List;
  */
 public final class OutputContextName {
 
-    private final IDPool             idPool    = new IDPool();
-    private final OutputList<String> names     = new OutputList<>();
-    private       int[]              refCounts = new int[4];
+    private final IDPool              idPool    = new IDPool();
+    private final OutputArray<String> names     = new OutputArray<>();
+    private       int[]               refCounts = new int[4];
 
     final List<String>  nameAdded   = new ArrayList<>();
     final List<Integer> nameExpired = new ArrayList<>();

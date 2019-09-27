@@ -11,13 +11,13 @@ import java.util.List;
  * @author sulin
  * @since 2019-09-25 20:37:51
  */
-public final class OutputContextPool<T> {
+public final class OutputArea<T> {
 
     private static final long INIT_TIME = System.currentTimeMillis();
 
-    private final IDPool        itemIdPool      = new IDPool();
-    private final OutputList<T> itemList        = new OutputList<>();
-    private final List<Integer> itemActiveTimes = new ArrayList<>();
+    private final IDPool         itemIdPool      = new IDPool();
+    private final OutputArray<T> itemList        = new OutputArray<>();
+    private final List<Integer>  itemActiveTimes = new ArrayList<>();
 
     final List<T>       itemAdded   = new ArrayList<>();
     final List<Integer> itemExpired = new ArrayList<>();
