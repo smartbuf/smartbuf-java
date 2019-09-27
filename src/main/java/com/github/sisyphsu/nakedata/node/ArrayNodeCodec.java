@@ -150,8 +150,10 @@ public final class ArrayNodeCodec extends Codec {
                 slice = new FloatArrayNode(subList);
             } else if (sliceType == Double.class) {
                 slice = new DoubleArrayNode(subList);
-            } else if (sliceType == String.class) {
+            } else if (String.class.isAssignableFrom(sliceType)) {
                 slice = new StringArrayNode(subList);
+            } else if (Enum.class.isAssignableFrom(sliceType)) {
+                slice = new SymbolArrayNode(subList);
             } else {
                 List<Node> nodes = new ArrayList<>(subList.size());
                 for (Object o : subList) {

@@ -16,6 +16,8 @@ public final class ObjectArrayNode extends ArrayNode {
 
     private DataType elType;
 
+    private String[] fields;
+
     public ObjectArrayNode(List items) {
         super(items);
         this.elType = ((Node) items.get(0)).dataType();
@@ -23,8 +25,11 @@ public final class ObjectArrayNode extends ArrayNode {
 
     @Override
     public ArrayType elementType() {
-        // TODO how?
-        return null;
+        return ArrayType.OBJECT;
+    }
+
+    public String[] getFields() {
+        return fields;
     }
 
 }

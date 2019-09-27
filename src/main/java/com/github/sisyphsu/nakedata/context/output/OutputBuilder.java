@@ -5,8 +5,7 @@ import com.github.sisyphsu.nakedata.context.model.FrameMeta;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.array.ArrayNode;
 import com.github.sisyphsu.nakedata.node.array.MixArrayNode;
-import com.github.sisyphsu.nakedata.node.array.StringArrayNode;
-import com.github.sisyphsu.nakedata.node.std.ObjectNode;
+import com.github.sisyphsu.nakedata.node.std.*;
 
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -71,6 +70,29 @@ public class OutputBuilder {
             return;
         }
         switch (node.dataType()) {
+            case NULL:
+            case BOOL:
+                break;
+            case FLOAT:
+                data.floatArea.add(((FloatNode) node).getValue());
+                break;
+            case DOUBLE:
+                data.doubleArea.add(((DoubleNode) node).getValue());
+                break;
+            case VARINT:
+                data.varintArea.add(((VarintNode) node).getValue());
+                break;
+            case STRING:
+                data.stringArea.add(((StringNode) node).getValue());
+                break;
+            case SYMBOL:
+                String symbol = ((SymbolNode) node).getData();
+                if (enableCxt) {
+                    data.symbolArea.add(symbol);
+                } else {
+                    data.stringArea.add(symbol);
+                }
+                break;
             case ARRAY:
                 this.doScanArrayNode((ArrayNode) node);
                 break;
@@ -78,12 +100,47 @@ public class OutputBuilder {
                 this.doScanObjectNode((ObjectNode) node);
                 break;
             default:
-                data.addData(node);
+                throw new IllegalArgumentException("Unsupport data: " + node);
+        }
+    }
+
+    /**
+     * 扫描数组节点
+     */
+    private void doScanArrayNode(ArrayNode array) {
+        if (array instanceof MixArrayNode) {
+            for (Object item : array.getItems()) {
+                this.doScanArrayNode((ArrayNode) item);
+            }
+            return;
+        }
+        // 数组成员是string、symbol、object则需要更新元数据
+        switch (array.elementType()) {
+            case STRING:
+                for (Object item : array.getItems()) {
+                    data.stringArea.add((String) item);
+                }
+                break;
+            case SYMBOL:
+                for (Object item : array.getItems()) {
+                    if (enableCxt) {
+                        data.symbolArea.add(String.valueOf(item));
+                    } else {
+                        data.stringArea.add(String.valueOf(item));
+                    }
+                }
+                break;
+            case OBJECT:
+                for (Object item : array.getItems()) {
+                    this.doScanObjectNode((ObjectNode) item);
+                }
                 break;
         }
     }
 
-    // 扫描并整理Object节点的元数据
+    /**
+     * 扫描并整理Object节点的元数据
+     */
     private void doScanObjectNode(ObjectNode node) {
         boolean isTmp = false;
         // 预扫描
@@ -115,58 +172,6 @@ public class OutputBuilder {
 //            ContextStruct struct = structPool.buildCxtStruct(versionCache, nameIds);
 //            node.setContextType(typePool.buildCxtType(versionCache, struct.getId(), types));
         }
-    }
-
-    /**
-     * 扫描数组节点
-     */
-    private void doScanArrayNode(ArrayNode array) {
-        if (array instanceof MixArrayNode) {
-            MixArrayNode man = (MixArrayNode) array;
-            for (Object item : man.getItems()) {
-                this.doScanArrayNode((ArrayNode) item);
-            }
-            return;
-        }
-        // 数组成员是string、symbol、object等，如何处理？
-
-        switch (array.elementType()) {
-            case NULL:
-            case BOOL:
-            case BYTE:
-            case SHORT:
-            case INT:
-            case LONG:
-            case FLOAT:
-            case DOUBLE:
-                break;
-            case STRING:
-                StringArrayNode san = (StringArrayNode) array;
-                for (Object item : san.getItems()) {
-                    data.addData(null);
-                }
-        }
-
-
-//        MixArrayNode.Group group = null;
-//        for (Node node : array.getItems()) {
-//            this.scan(node);
-//            byte typeCode = node.getDataType().getCode();
-//            ContextType type = node.getContextType();
-//            if (group != null && group.getType() != type && group.getTypeCode() != typeCode) {
-//                group.setEnd(false);
-//                group.setCount(group.getCount() + 1);
-//                group = null;
-//            }
-//            if (group == null) {
-//                group = new MixArrayNode.Group();
-//                group.setType(type);
-//                group.setTypeCode(typeCode);
-//                group.setEnd(true);
-//                array.getGroups().add(group);
-//            }
-//            group.setCount(group.getCount() + 1);
-//        }
     }
 
 }

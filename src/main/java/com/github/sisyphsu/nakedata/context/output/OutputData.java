@@ -25,13 +25,13 @@ public final class OutputData {
 
     private final boolean enableCxt;
 
-    private final OutputList<Long>   varintArea = new OutputList<>();
-    private final OutputList<Float>  floatArea  = new OutputList<>();
-    private final OutputList<Double> doubleArea = new OutputList<>();
-    private final OutputList<String> stringArea = new OutputList<>();
+    private final int cxtSymbolLimit = 1 << 16;
 
-    private final int                cxtSymbolLimit = 1 << 16;
-    private final OutputPool<String> symbolArea     = new OutputPool<>();
+    final OutputList<Long>   varintArea = new OutputList<>();
+    final OutputList<Float>  floatArea  = new OutputList<>();
+    final OutputList<Double> doubleArea = new OutputList<>();
+    final OutputList<String> stringArea = new OutputList<>();
+    final OutputPool<String> symbolArea = new OutputPool<>();
 
     public OutputData(boolean enableCxt) {
         this.enableCxt = enableCxt;
@@ -51,37 +51,24 @@ public final class OutputData {
         }
     }
 
-    /**
-     * Register the specified data node into this area.
-     */
-    public void addData(Node node) {
-        switch (node.dataType()) {
-            case NULL:
-            case BOOL:
-                break;
-            case FLOAT:
-                floatArea.add(((FloatNode) node).getValue());
-                break;
-            case DOUBLE:
-                doubleArea.add(((DoubleNode) node).getValue());
-                break;
-            case VARINT:
-                varintArea.add(((VarintNode) node).getValue());
-                break;
-            case STRING:
-                stringArea.add(((StringNode) node).getValue());
-                break;
-            case SYMBOL:
-                String symbol = ((SymbolNode) node).getData();
-                if (enableCxt) {
-                    symbolArea.add(symbol);
-                } else {
-                    stringArea.add(symbol);
-                }
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupport data: " + node);
-        }
+    public void addVarint(long l) {
+        varintArea.add(l);
+    }
+
+    public void addFloat(float f) {
+        floatArea.add(f);
+    }
+
+    public void addDouble(double d) {
+        doubleArea.add(d);
+    }
+
+    public void addString(String str) {
+        stringArea.add(str);
+    }
+
+    public void addSymbol(String symbol) {
+        symbolArea.add(symbol);
     }
 
     /**
