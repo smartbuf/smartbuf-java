@@ -13,7 +13,7 @@ import java.util.List;
  * @author sulin
  * @since 2019-09-26 21:32:54
  */
-public final class OutputMeta {
+public final class OutputSchema {
 
     private final boolean enableCxt;
 
@@ -33,7 +33,7 @@ public final class OutputMeta {
     final List<String>  nameAdded   = new ArrayList<>();
     final List<Integer> nameExpired = new ArrayList<>();
 
-    public OutputMeta(boolean enableCxt) {
+    public OutputSchema(boolean enableCxt) {
         this.enableCxt = enableCxt;
     }
 

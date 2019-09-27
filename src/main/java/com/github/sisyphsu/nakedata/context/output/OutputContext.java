@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.context.output;
 
-import com.github.sisyphsu.nakedata.context.model.ContextVersion;
+import com.github.sisyphsu.nakedata.context.model.FrameMeta;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.array.MixArrayNode;
 import com.github.sisyphsu.nakedata.node.std.ObjectNode;
@@ -18,16 +18,18 @@ public class OutputContext {
 
     private static final Pattern NAME = Pattern.compile("^[A-Za-z_$][\\w$]{0,63}$");
 
-    private long           version;
-    private boolean        enableCxt;
-    private ContextVersion versionCache;
+    private long      version;
+    private boolean   enableCxt;
+    private FrameMeta versionCache;
 
-    private final OutputMeta meta = new OutputMeta(false);
-    private final OutputData data = new OutputData(false);
+    private final OutputSchema meta = new OutputSchema(false);
+    private final OutputData   data = new OutputData(false);
 
     public OutputContext() {
-        this.versionCache = new ContextVersion();
+        this.versionCache = new FrameMeta();
     }
+
+    private byte[] buf = new byte[1024];
 
     /**
      * 扫描元数据. 数据序列化之前扫描收集"变量名"的增量变化, 用于预处理NamePool以及甄别map与object。
@@ -35,11 +37,11 @@ public class OutputContext {
      * @param node 原始数据
      * @return 返回上下文元数据增量版本数据
      */
-    public ContextVersion scan(Node node) {
+    public FrameMeta scan(Node node) {
         if (node == null) {
             throw new IllegalArgumentException("node can't be null");
         }
-        ContextVersion version = this.versionCache.reset();
+        FrameMeta version = this.versionCache;
         // 预先执行垃圾回收
         meta.preRelease();
         // 执行扫描

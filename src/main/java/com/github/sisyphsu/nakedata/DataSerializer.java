@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata;
 
 import com.github.sisyphsu.nakedata.context.ContextUtils;
-import com.github.sisyphsu.nakedata.context.model.ContextVersion;
+import com.github.sisyphsu.nakedata.context.model.FrameMeta;
 import com.github.sisyphsu.nakedata.context.output.OutputContext;
 import com.github.sisyphsu.nakedata.io.OutputWriter;
 import com.github.sisyphsu.nakedata.node.NodeMapper;
@@ -37,7 +37,7 @@ public class DataSerializer {
     public void serialize(Object obj) throws IOException {
         Node root = NodeMapper.convertNodeTree(obj);
         // step1. 扫描元数据变化
-        ContextVersion version = context.scan(root);
+        FrameMeta version = context.scan(root);
         byte dataType = root.dataType().getCode();
         // step2. 输出头信息, 包括head、version
         if (version == null) {

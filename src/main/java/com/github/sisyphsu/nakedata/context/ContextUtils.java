@@ -2,7 +2,7 @@ package com.github.sisyphsu.nakedata.context;
 
 import com.github.sisyphsu.nakedata.context.model.ContextStruct;
 import com.github.sisyphsu.nakedata.context.model.ContextType;
-import com.github.sisyphsu.nakedata.context.model.ContextVersion;
+import com.github.sisyphsu.nakedata.context.model.FrameMeta;
 import com.github.sisyphsu.nakedata.io.InputReader;
 import com.github.sisyphsu.nakedata.io.OutputWriter;
 
@@ -32,20 +32,20 @@ public class ContextUtils {
      *
      * @param writer 底层输出接口
      */
-    public static void doWrite(OutputWriter writer, ContextVersion ver) {
+    public static void doWrite(OutputWriter writer, FrameMeta ver) {
         // 输出Flag
-        int flag = (ver.getNameExpired().isEmpty() ? 0 : NAME_EXPIRED)
+        int flag = (ver.getCxtNameExpired().isEmpty() ? 0 : NAME_EXPIRED)
             | (ver.getNameAdded().isEmpty() ? 0 : NAME_ADDED)
             | (ver.getNameTemp().isEmpty() ? 0 : NAME_TEMP)
-            | (ver.getStructExpired().isEmpty() ? 0 : STRUCT_EXPIRED)
+            | (ver.getCxtStructExpired().isEmpty() ? 0 : STRUCT_EXPIRED)
             | (ver.getStructAdded().isEmpty() ? 0 : STRUCT_ADDED)
             | (ver.getStructTemp().isEmpty() ? 0 : STRUCT_TEMP);
         int version = ver.getVersion() % (1 << 22);
         writer.writeInt(flag | (version << 9));
         // 变量名
-        if (!ver.getNameExpired().isEmpty()) {
-            writer.writeVarUint(ver.getNameExpired().size());
-            ver.getNameExpired().forEach(writer::writeVarUint);
+        if (!ver.getCxtNameExpired().isEmpty()) {
+            writer.writeVarUint(ver.getCxtNameExpired().size());
+            ver.getCxtNameExpired().forEach(writer::writeVarUint);
         }
         if (!ver.getNameAdded().isEmpty()) {
             writer.writeVarUint(ver.getNameAdded().size());
@@ -56,9 +56,9 @@ public class ContextUtils {
             ver.getNameTemp().forEach(writer::writeString);
         }
         // 数据结构
-        if (!ver.getStructExpired().isEmpty()) {
-            writer.writeVarUint(ver.getStructExpired().size());
-            ver.getStructExpired().forEach(writer::writeVarUint);
+        if (!ver.getCxtStructExpired().isEmpty()) {
+            writer.writeVarUint(ver.getCxtStructExpired().size());
+            ver.getCxtStructExpired().forEach(writer::writeVarUint);
         }
         if (!ver.getStructAdded().isEmpty()) {
             writer.writeVarUint(ver.getStructAdded().size());
@@ -75,9 +75,9 @@ public class ContextUtils {
      *
      * @param reader 输入流接口
      */
-    public static ContextVersion doRead(InputReader reader) {
+    public static FrameMeta doRead(InputReader reader) {
         int head = reader.readInt32();
-        ContextVersion version = new ContextVersion();
+        FrameMeta version = new FrameMeta();
         version.setVersion(head >>> 9);
         // 读取Flag
         boolean nameExpiredFlag = (head & NAME_EXPIRED) != 0;
@@ -93,7 +93,7 @@ public class ContextUtils {
         if (nameExpiredFlag) {
             int size = (int) reader.readVarUint();
             for (int i = 0; i < size; i++) {
-                version.getNameExpired().add((int) reader.readVarUint());
+                version.getCxtNameExpired().add((int) reader.readVarUint());
             }
         }
         if (nameAddedFlag) {
@@ -112,7 +112,7 @@ public class ContextUtils {
         if (structExpiredFlag) {
             int size = (int) reader.readVarUint();
             for (int i = 0; i < size; i++) {
-                version.getStructExpired().add((int) reader.readVarUint());
+                version.getCxtStructExpired().add((int) reader.readVarUint());
             }
         }
         if (structAddedFlag) {
