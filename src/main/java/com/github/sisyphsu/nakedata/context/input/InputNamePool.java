@@ -25,7 +25,7 @@ public class InputNamePool {
 
     public InputNamePool(int limit) {
         this.limit = limit;
-        this.pool = new IDPool(limit);
+        this.pool = new IDPool();
         this.table = new String[64];
     }
 

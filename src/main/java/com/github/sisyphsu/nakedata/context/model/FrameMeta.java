@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 上下文日志, 用于Output与Input之间同步元数据变化信息
+ * 报文元数据，在数据包的头部声明报文体的数据模型、数据区等
  *
  * @author sulin
  * @since 2019-05-03 17:43:58

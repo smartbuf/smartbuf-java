@@ -88,7 +88,7 @@ public class DataSerializer {
     // 序列化对象节点
     private void writeObject(ObjectNode node) throws IOException {
         // step1. 输出类型ID
-        writer.writeVarInt(node.getContextType().getId());
+//        writer.writeVarInt(node.getContextType().getId());
         // step2. 输出fields的值
         for (Node field : node.getFields().values()) {
             this.writeNode(field);

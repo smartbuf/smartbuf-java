@@ -22,10 +22,6 @@ public class ContextName {
      */
     private final String name;
 
-    public ContextName(String name) {
-        this(-1, name);
-    }
-
     public ContextName(int id, String name) {
         if (name == null || name.length() == 0) {
             throw new IllegalArgumentException("ContextName's name can't be null or empty");

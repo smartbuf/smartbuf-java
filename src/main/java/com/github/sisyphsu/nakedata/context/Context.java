@@ -1,7 +1,6 @@
 package com.github.sisyphsu.nakedata.context;
 
 import com.github.sisyphsu.nakedata.context.model.ContextName;
-import com.github.sisyphsu.nakedata.context.model.ContextType;
 
 import java.util.List;
 
@@ -23,10 +22,6 @@ public class Context {
      * Customized field-name table.
      */
     private List<ContextName> nameTable;
-    /**
-     * Customized object-type table.
-     */
-    private List<ContextType> typeTable;
 
     /**
      * 添加上下文类型, 用于支持标准bean

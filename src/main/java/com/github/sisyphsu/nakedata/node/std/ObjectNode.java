@@ -1,13 +1,13 @@
 package com.github.sisyphsu.nakedata.node.std;
 
 import com.github.sisyphsu.nakedata.DataType;
-import com.github.sisyphsu.nakedata.context.model.ContextType;
 import com.github.sisyphsu.nakedata.node.Node;
 
 import java.util.TreeMap;
 
 /**
  * ObjectNode represents JavaBean or Map.
+ * TODO 建立与struct的关系
  *
  * @author sulin
  * @since 2019-05-08 21:02:12
@@ -18,8 +18,6 @@ public final class ObjectNode extends Node {
     public final static ObjectNode EMPTY = new ObjectNode(new TreeMap<>());
 
     private final TreeMap<String, Node> fields;
-
-    private ContextType contextType;
 
     private ObjectNode(TreeMap<String, Node> fields) {
         this.fields = fields;
@@ -51,14 +49,6 @@ public final class ObjectNode extends Node {
 
     public TreeMap<String, Node> getFields() {
         return fields;
-    }
-
-    public ContextType getContextType() {
-        return contextType;
-    }
-
-    public void setContextType(ContextType contextType) {
-        this.contextType = contextType;
     }
 
 }
