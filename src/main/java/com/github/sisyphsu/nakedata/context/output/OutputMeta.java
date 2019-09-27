@@ -1,5 +1,10 @@
 package com.github.sisyphsu.nakedata.context.output;
 
+import com.github.sisyphsu.nakedata.utils.IDPool;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 需要为ObjectNode提供一种非常便利的struct-fields-id映射关系。
  * <p>
@@ -10,35 +15,41 @@ package com.github.sisyphsu.nakedata.context.output;
  */
 public final class OutputMeta {
 
-    private final int cxtNameLimit   = 1 << 16;
-    private final int cxtStructLimit = 1 << 12;
-
-    private final OutputContextName     cxtNameArea   = new OutputContextName();
-    private final OutputArray<String[]> cxtStructs    = new OutputArray<>();
-    private final OutputArea<int[]>     cxtStructArea = new OutputArea<>();
-
     private final OutputArray<String>   tmpNameArea   = new OutputArray<>();
     private final OutputArray<String[]> tmpStructs    = new OutputArray<>();
     private final OutputArray<int[]>    tmpStructArea = new OutputArray<>();
+
+    private final int                 cxtNameLimit  = 1 << 16;
+    private final IDPool              nameIdPool    = new IDPool();
+    private       int[]               nameRefCounts = new int[4];
+    private final OutputArray<String> names         = new OutputArray<>();
+
+    private final int                   cxtStructLimit = 1 << 12;
+    private final OutputArray<String[]> cxtStructs     = new OutputArray<>();
+    private final OutputArea<int[]>     cxtStructArea  = new OutputArea<>();
+
+    final List<String>  nameAdded   = new ArrayList<>();
+    final List<Integer> nameExpired = new ArrayList<>();
 
     /**
      * Reset for new round's output.
      */
     public void preRelease() {
-        cxtNameArea.resetContext();
+        this.nameExpired.clear();
+        this.nameAdded.clear();
         cxtStructArea.resetContext();
         // try release struct
         if (cxtStructArea.size() > cxtStructLimit) {
             long[] releasedItem = cxtStructArea.release(cxtStructLimit / 10);
             for (long item : releasedItem) {
-                cxtNameArea.unreference(cxtStructArea.get((int) item));
+                unreference(cxtStructArea.get((int) item));
             }
         }
         // try release name
-        while (cxtNameArea.size() > cxtNameLimit) {
+        while (names.size() > cxtNameLimit) {
             long[] releasedItems = cxtStructArea.release(cxtStructLimit / 10);
             for (long item : releasedItems) {
-                cxtNameArea.unreference(cxtStructArea.get((int) item));
+                unreference(cxtStructArea.get((int) item));
             }
         }
     }
@@ -68,7 +79,9 @@ public final class OutputMeta {
         }
         int[] nameIds = new int[fields.length];
         for (int i = 0; i < fields.length; i++) {
-            nameIds[i] = cxtNameArea.registerName(fields[i]);
+            int nameId = registerName(fields[i]);
+            nameIds[i] = nameId;
+            nameRefCounts[nameId]++;
         }
         cxtStructArea.add(nameIds);
     }
@@ -79,6 +92,34 @@ public final class OutputMeta {
 
     public int findCxtStructID(String[] fields) {
         return cxtStructs.getID(fields);
+    }
+
+    private int registerName(String name) {
+        Integer id = this.names.getID(name);
+        if (id == null) {
+            id = nameIdPool.acquire();
+            if (id >= nameRefCounts.length) {
+                int[] refCounts = new int[this.nameRefCounts.length];
+                System.arraycopy(this.nameRefCounts, 0, refCounts, 0, this.nameRefCounts.length);
+                this.nameRefCounts = refCounts;
+            }
+            nameRefCounts[id] = 0;
+            names.add(id, name);
+            nameAdded.add(name); // record nameAdded for context-sync.
+        }
+        return id;
+    }
+
+    private void unreference(int[] nameIds) {
+        for (int nameId : nameIds) {
+            int refCount = this.nameRefCounts[nameId];
+            if (refCount > 1) {
+                nameRefCounts[nameId] = refCount - 1;
+            }
+            // nameId should be released
+            names.remove(nameId);
+            nameExpired.add(nameId);
+        }
     }
 
 }
