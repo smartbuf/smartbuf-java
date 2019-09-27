@@ -25,13 +25,13 @@ public final class OutputData {
 
     private final boolean enableCxt;
 
-    private final OutputArray<Long>   varintArea = new OutputArray<>();
-    private final OutputArray<Float>  floatArea  = new OutputArray<>();
-    private final OutputArray<Double> doubleArea = new OutputArray<>();
-    private final OutputArray<String> stringArea = new OutputArray<>();
+    private final OutputList<Long>   varintArea = new OutputList<>();
+    private final OutputList<Float>  floatArea  = new OutputList<>();
+    private final OutputList<Double> doubleArea = new OutputList<>();
+    private final OutputList<String> stringArea = new OutputList<>();
 
     private final int                cxtSymbolLimit = 1 << 16;
-    private final OutputArea<String> symbolArea     = new OutputArea<>();
+    private final OutputPool<String> symbolArea     = new OutputPool<>();
 
     public OutputData(boolean enableCxt) {
         this.enableCxt = enableCxt;

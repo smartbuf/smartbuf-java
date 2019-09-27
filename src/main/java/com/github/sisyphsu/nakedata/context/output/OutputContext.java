@@ -19,11 +19,11 @@ public class OutputContext {
     private static final Pattern NAME = Pattern.compile("^[A-Za-z_$][\\w$]{0,63}$");
 
     private long           version;
-    private boolean        streamMode;
+    private boolean        enableCxt;
     private ContextVersion versionCache;
 
-    private OutputMeta meta = new OutputMeta();
-    private OutputData data = new OutputData(false);
+    private final OutputMeta meta = new OutputMeta(false);
+    private final OutputData data = new OutputData(false);
 
     public OutputContext() {
         this.versionCache = new ContextVersion();

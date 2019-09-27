@@ -15,21 +15,27 @@ import java.util.List;
  */
 public final class OutputMeta {
 
-    private final OutputArray<String>   tmpNameArea   = new OutputArray<>();
-    private final OutputArray<String[]> tmpStructs    = new OutputArray<>();
-    private final OutputArray<int[]>    tmpStructArea = new OutputArray<>();
+    private final boolean enableCxt;
 
-    private final int                 cxtNameLimit  = 1 << 16;
-    private final IDPool              nameIdPool    = new IDPool();
-    private       int[]               nameRefCounts = new int[4];
-    private final OutputArray<String> names         = new OutputArray<>();
+    private final OutputList<String>   tmpNameArea   = new OutputList<>();
+    private final OutputList<String[]> tmpStructs    = new OutputList<>();
+    private final OutputList<int[]>    tmpStructArea = new OutputList<>();
 
-    private final int                   cxtStructLimit = 1 << 12;
-    private final OutputArray<String[]> cxtStructs     = new OutputArray<>();
-    private final OutputArea<int[]>     cxtStructArea  = new OutputArea<>();
+    private final int                cxtNameLimit  = 1 << 16;
+    private final IDPool             nameIdPool    = new IDPool();
+    private       int[]              nameRefCounts = new int[4];
+    private final OutputList<String> names         = new OutputList<>();
+
+    private final int                  cxtStructLimit = 1 << 12;
+    private final OutputList<String[]> cxtStructs     = new OutputList<>();
+    private final OutputPool<int[]>    cxtStructArea  = new OutputPool<>();
 
     final List<String>  nameAdded   = new ArrayList<>();
     final List<Integer> nameExpired = new ArrayList<>();
+
+    public OutputMeta(boolean enableCxt) {
+        this.enableCxt = enableCxt;
+    }
 
     /**
      * Reset for new round's output.
