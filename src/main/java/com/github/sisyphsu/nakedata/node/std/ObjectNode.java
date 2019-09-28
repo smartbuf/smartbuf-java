@@ -51,4 +51,8 @@ public final class ObjectNode extends Node {
         return fields;
     }
 
+    public boolean isStable() {
+        return false;
+    }
+
 }

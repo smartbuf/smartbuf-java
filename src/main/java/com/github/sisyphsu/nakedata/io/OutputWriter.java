@@ -19,14 +19,15 @@ public class OutputWriter {
         return this.writeVarUint(n);
     }
 
-    public int writeBoolean(boolean b) {
-        this.output.write((byte) (b ? 1 : 0));
-        return 1;
-    }
-
     public int writeByte(byte b) {
         this.output.write(b);
         return 1;
+    }
+
+    public int writeShort(short s) {
+        output.write((byte) (s & 0xFF));
+        output.write((byte) (s >>> 8 & 0xFF));
+        return 2;
     }
 
     public int writeInt(int i) {

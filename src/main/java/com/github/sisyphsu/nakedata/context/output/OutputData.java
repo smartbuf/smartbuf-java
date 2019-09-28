@@ -19,9 +19,9 @@ import com.github.sisyphsu.nakedata.node.std.*;
  */
 public final class OutputData {
 
-    private static final int ID_NULL  = 0;
-    private static final int ID_FALSE = 1;
-    private static final int ID_TRUE  = 2;
+    public static final byte ID_NULL  = 0x00;
+    public static final byte ID_FALSE = 0x01;
+    public static final byte ID_TRUE  = 0x02;
 
     private final boolean enableCxt;
 
@@ -51,24 +51,24 @@ public final class OutputData {
         }
     }
 
-    public void addVarint(long l) {
-        varintArea.add(l);
+    public int findFloatID(float f) {
+        return 0;
     }
 
-    public void addFloat(float f) {
-        floatArea.add(f);
+    public int findDoubleID(double d) {
+        return 0;
     }
 
-    public void addDouble(double d) {
-        doubleArea.add(d);
+    public int findVarintID(long v) {
+        return 0;
     }
 
-    public void addString(String str) {
-        stringArea.add(str);
+    public int findStringID(String str) {
+        return 0;
     }
 
-    public void addSymbol(String symbol) {
-        symbolArea.add(symbol);
+    public int findSymbolID(String symbol) {
+        return 0;
     }
 
     /**

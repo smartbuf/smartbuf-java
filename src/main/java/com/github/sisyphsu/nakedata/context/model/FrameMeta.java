@@ -33,12 +33,6 @@ public class FrameMeta {
     private List<Integer> cxtSymbolExpired;
 
     public boolean isEmpty() {
-        if (!cxtNameExpired.isEmpty()) {
-            return false;
-        }
-        if (!cxtStructExpired.isEmpty()) {
-            return false;
-        }
         return true;
     }
 
