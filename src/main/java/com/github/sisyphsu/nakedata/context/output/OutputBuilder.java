@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.context.output;
 
-import com.github.sisyphsu.nakedata.context.model.Frame;
+import com.github.sisyphsu.nakedata.ArrayType;
 import com.github.sisyphsu.nakedata.context.model.FrameMeta;
 import com.github.sisyphsu.nakedata.io.OutputWriter;
 import com.github.sisyphsu.nakedata.node.Node;
@@ -38,17 +38,16 @@ public final class OutputBuilder {
         this.frameMeta = new FrameMeta();
     }
 
-    public Frame buildOutput(Node node) {
+    public void buildOutput(Node node, OutputWriter writer) {
         if (node == null) {
             throw new NullPointerException("node can't be null");
         }
         // step1. 构建FrameMeta
         FrameMeta meta = this.scan(node);
 
-        // step2. 构建OutputFrame
-        // TODO 输出数据
 
-        return null;
+        // 输出数据
+        this.writeNode(node, writer);
     }
 
     /**
@@ -79,32 +78,32 @@ public final class OutputBuilder {
                 writer.writeVarInt(data.findSymbolID(node.stringValue()));
                 break;
             case N_BOOL_ARRAY:
-                // write slice head
-                writer.writeBooleans(node.booleansValue());
+                writer.writeArrayMeta(true, ArrayType.BOOL, node.booleansValue().length);
+                writer.writeBooleanArray(node.booleansValue());
                 break;
             case N_BYTE_ARRAY:
-                // write slice head
-                writer.writeBytes(node.bytesValue());
+                writer.writeArrayMeta(true, ArrayType.BYTE, node.bytesValue().length);
+                writer.writeByteArray(node.bytesValue());
                 break;
             case N_SHORT_ARRAY:
-                // write slice head
-                writer.writeShorts(node.shortsValue());
+                writer.writeArrayMeta(true, ArrayType.SHORT, node.shortsValue().length);
+                writer.writeShortArray(node.shortsValue());
                 break;
             case N_INT_ARRAY:
-                // write slice head
-                writer.writeInts(node.intsValue());
+                writer.writeArrayMeta(true, ArrayType.INT, node.intsValue().length);
+                writer.writeIntArray(node.intsValue());
                 break;
             case N_LONG_ARRAY:
-                // write slice head
-                writer.writeLongs(node.longsValue());
+                writer.writeArrayMeta(true, ArrayType.LONG, node.longsValue().length);
+                writer.writeLongArray(node.longsValue());
                 break;
             case N_FLOAT_ARRAY:
-                // write slice head
-                writer.writeFloats(node.floatsValue());
+                writer.writeArrayMeta(true, ArrayType.FLOAT, node.floatsValue().length);
+                writer.writeFloatArray(node.floatsValue());
                 break;
             case N_DOUBLE_ARRAY:
-                // write slice head
-                writer.writeDoubles(node.doublesValue());
+                writer.writeArrayMeta(true, ArrayType.DOUBLE, node.doublesValue().length);
+                writer.writeDoubleArray(node.doublesValue());
                 break;
             case ARRAY:
                 this.writeArrayNode((ArrayNode) node, writer);
@@ -126,52 +125,49 @@ public final class OutputBuilder {
         } else {
             arrayNodes = Collections.singletonList(node);
         }
-        for (int i = 0; i < arrayNodes.size(); i++) {
-            // 1bit：表示Slice是否还有后续，即Array是否完整
-            // 3bit：表示Slice的数据类型，如null、bool、byte、short、int、long、double、float等原生类型，这些array需要特殊处理
-            // Xbit：如果是struct类型，则需要额外描述结构ID
-            // 剩余：表示Slice的真实长度
-            ArrayNode arrayNode = arrayNodes.get(i);
-            writer.writeVarInt(0);
-            switch (arrayNode.elementType()) {
+        for (int i = 0, len = arrayNodes.size(); i < len; i++) {
+            ArrayNode slice = arrayNodes.get(i);
+            writer.writeArrayMeta(i == len - 1, slice.elementType(), slice.size());
+            switch (slice.elementType()) {
                 case BOOL:
-                    writer.writeBooleans(arrayNode.getItems());
+                    writer.writeBooleanArray(slice.getItems());
                     break;
                 case BYTE:
-                    writer.writeBytes(arrayNode.getItems());
+                    writer.writeByteArray(slice.getItems());
                     break;
                 case SHORT:
-                    writer.writeShorts(arrayNode.getItems());
+                    writer.writeShortArray(slice.getItems());
                     break;
                 case INT:
-                    writer.writeInts(arrayNode.getItems());
+                    writer.writeIntArray(slice.getItems());
                     break;
                 case LONG:
-                    writer.writeLongs(arrayNode.getItems());
+                    writer.writeLongArray(slice.getItems());
                     break;
                 case FLOAT:
-                    writer.writeFloats(arrayNode.getItems());
+                    writer.writeFloatArray(slice.getItems());
                     break;
                 case DOUBLE:
-                    writer.writeDoubles(arrayNode.getItems());
+                    writer.writeDoubleArray(slice.getItems());
                     break;
                 case STRING:
-                    for (Object item : arrayNode.getItems()) {
+                    for (Object item : slice.getItems()) {
                         writer.writeVarInt(data.findStringID((String) item));
                     }
                     break;
                 case SYMBOL:
-                    for (Object item : arrayNode.getItems()) {
+                    for (Object item : slice.getItems()) {
                         writer.writeVarInt(data.findSymbolID((String) item));
                     }
                     break;
                 case ARRAY:
-                    for (Object item : arrayNode.getItems()) {
+                    for (Object item : slice.getItems()) {
                         this.writeArrayNode((ArrayNode) item, writer);
                     }
                     break;
                 case OBJECT:
-                    for (Object item : arrayNode.getItems()) {
+                    writer.writeVarInt(0); // structId
+                    for (Object item : slice.getItems()) {
                         this.writeObjectNode((ObjectNode) item, writer);
                     }
                     break;

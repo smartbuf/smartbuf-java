@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.io;
 
+import com.github.sisyphsu.nakedata.ArrayType;
 import com.github.sisyphsu.nakedata.utils.NumberUtils;
 
 import java.util.List;
@@ -72,67 +73,64 @@ public class OutputWriter {
         return 8;
     }
 
-    public int writeBooleans(boolean[] booleans) {
-        return 0;
-    }
-
-    public int writeBooleans(List<Boolean> list) {
-        return 0;
-    }
-
-    public int writeBytes(byte[] bytes) {
-        return 0;
-    }
-
-    public int writeBytes(List<Byte> bytes) {
-        return 0;
-    }
-
-    public int writeShorts(short[] shorts) {
-        return 0;
-    }
-
-    public int writeShorts(List<Short> shorts) {
-        return 0;
-    }
-
-    public int writeInts(int[] ints) {
-        return 0;
-    }
-
-    public int writeInts(List<Integer> integers) {
-        return 0;
-    }
-
-    public int writeLongs(long[] longs) {
-        return 0;
-    }
-
-    public int writeLongs(List<Long> longs) {
-        return 0;
-    }
-
-    public int writeFloats(float[] floats) {
-        return 0;
-    }
-
-    public int writeFloats(List<Float> floats) {
-        return 0;
-    }
-
-    public int writeDoubles(double[] doubles) {
-        return 0;
-    }
-
-    public int writeDoubles(List<Double> doubles) {
-        return 0;
-    }
-
     public int writeString(String str) {
         byte[] bytes = str.getBytes();
         int len = this.writeVarUint(bytes.length);
         output.write(bytes);
         return len + bytes.length;
+    }
+
+    /**
+     * Write the metadata of array/slice into output.
+     *
+     * @param end   Is last slice or not, 1-bit
+     * @param type  Element's standard-type, 4-bit
+     * @param count Element's count
+     */
+    public void writeArrayMeta(boolean end, ArrayType type, int count) {
+
+    }
+
+    public void writeBooleanArray(boolean[] booleans) {
+    }
+
+    public void writeBooleanArray(List<Boolean> booleans) {
+    }
+
+    public void writeByteArray(byte[] bytes) {
+    }
+
+    public void writeByteArray(List<Byte> bytes) {
+    }
+
+    public void writeShortArray(short[] shorts) {
+    }
+
+    public void writeShortArray(List<Short> shorts) {
+    }
+
+    public void writeIntArray(int[] ints) {
+    }
+
+    public void writeIntArray(List<Integer> integers) {
+    }
+
+    public void writeLongArray(long[] longs) {
+    }
+
+    public void writeLongArray(List<Long> longs) {
+    }
+
+    public void writeFloatArray(float[] floats) {
+    }
+
+    public void writeFloatArray(List<Float> floats) {
+    }
+
+    public void writeDoubleArray(double[] doubles) {
+    }
+
+    public void writeDoubleArray(List<Double> doubles) {
     }
 
 }

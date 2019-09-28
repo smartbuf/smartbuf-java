@@ -66,6 +66,8 @@ primary数组的元素不需要放入DataPool里面，包括bool、byte、short�
 
 其他如array、struct等类型的slice需要通过`data`递归解析。
 
+**修正：length值是varint，structId值也是varint，两者不能合并。**
+
 # 上下文元数据
 
 支持stream协议中上下文复用元数据，可复用的元数据包括
