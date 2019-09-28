@@ -19,13 +19,13 @@ public enum DataType {
     ARRAY(0x07),
     OBJECT(0x08),
 
-    ZARRAY(0x10),
-    BARRAY(0x11),
-    SARRAY(0x12),
-    IARRAY(0x13),
-    LARRAY(0x14),
-    FARRAY(0x15),
-    DARRAY(0x16);
+    N_BOOL_ARRAY(0x10),
+    N_BYTE_ARRAY(0x11),
+    N_SHORT_ARRAY(0x12),
+    N_INT_ARRAY(0x13),
+    N_LONG_ARRAY(0x14),
+    N_FLOAT_ARRAY(0x15),
+    N_DOUBLE_ARRAY(0x16);
 
     private final byte code;
 

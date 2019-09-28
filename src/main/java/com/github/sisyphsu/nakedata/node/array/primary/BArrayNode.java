@@ -30,7 +30,7 @@ public final class BArrayNode extends Node {
 
     @Override
     public DataType dataType() {
-        return DataType.BARRAY;
+        return DataType.N_BYTE_ARRAY;
     }
 
     @Override

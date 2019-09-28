@@ -30,7 +30,7 @@ public final class IArrayNode extends Node {
 
     @Override
     public DataType dataType() {
-        return DataType.IARRAY;
+        return DataType.N_INT_ARRAY;
     }
 
     @Override

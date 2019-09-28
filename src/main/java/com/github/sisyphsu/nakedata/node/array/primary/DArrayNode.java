@@ -30,7 +30,7 @@ public final class DArrayNode extends Node {
 
     @Override
     public DataType dataType() {
-        return DataType.DARRAY;
+        return DataType.N_DOUBLE_ARRAY;
     }
 
     @Override

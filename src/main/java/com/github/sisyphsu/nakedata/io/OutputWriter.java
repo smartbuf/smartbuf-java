@@ -2,6 +2,8 @@ package com.github.sisyphsu.nakedata.io;
 
 import com.github.sisyphsu.nakedata.utils.NumberUtils;
 
+import java.util.List;
+
 /**
  * @author sulin
  * @since 2019-04-27 13:02:49
@@ -70,42 +72,67 @@ public class OutputWriter {
         return 8;
     }
 
-    public int write(boolean[] booleans) {
+    public int writeBooleans(boolean[] booleans) {
         return 0;
     }
 
-    public int write(byte[] bytes) {
+    public int writeBooleans(List<Boolean> list) {
         return 0;
     }
 
-    public int write(short[] shorts) {
+    public int writeBytes(byte[] bytes) {
         return 0;
     }
 
-    public int write(int[] ints) {
+    public int writeBytes(List<Byte> bytes) {
         return 0;
     }
 
-    public int write(long[] longs) {
+    public int writeShorts(short[] shorts) {
         return 0;
     }
 
-    public int write(float[] floats) {
+    public int writeShorts(List<Short> shorts) {
         return 0;
     }
 
-    public int write(double[] doubles) {
+    public int writeInts(int[] ints) {
         return 0;
     }
 
-    public int writeBinary(byte[] data) {
-        int len = this.writeVarUint(data.length);
-        output.write(data);
-        return len + data.length;
+    public int writeInts(List<Integer> integers) {
+        return 0;
+    }
+
+    public int writeLongs(long[] longs) {
+        return 0;
+    }
+
+    public int writeLongs(List<Long> longs) {
+        return 0;
+    }
+
+    public int writeFloats(float[] floats) {
+        return 0;
+    }
+
+    public int writeFloats(List<Float> floats) {
+        return 0;
+    }
+
+    public int writeDoubles(double[] doubles) {
+        return 0;
+    }
+
+    public int writeDoubles(List<Double> doubles) {
+        return 0;
     }
 
     public int writeString(String str) {
-        return this.writeBinary(str.getBytes());
+        byte[] bytes = str.getBytes();
+        int len = this.writeVarUint(bytes.length);
+        output.write(bytes);
+        return len + bytes.length;
     }
 
 }

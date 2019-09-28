@@ -8,7 +8,6 @@ import com.github.sisyphsu.nakedata.node.array.ArrayNode;
 import com.github.sisyphsu.nakedata.node.array.MixArrayNode;
 import com.github.sisyphsu.nakedata.node.std.*;
 
-import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -79,33 +78,33 @@ public final class OutputBuilder {
             case SYMBOL:
                 writer.writeVarInt(data.findSymbolID(node.stringValue()));
                 break;
-            case ZARRAY:
+            case N_BOOL_ARRAY:
                 // write slice head
-                writer.write(node.booleansValue());
+                writer.writeBooleans(node.booleansValue());
                 break;
-            case BARRAY:
+            case N_BYTE_ARRAY:
                 // write slice head
-                writer.write(node.bytesValue());
+                writer.writeBytes(node.bytesValue());
                 break;
-            case SARRAY:
+            case N_SHORT_ARRAY:
                 // write slice head
-                writer.write(node.shortsValue());
+                writer.writeShorts(node.shortsValue());
                 break;
-            case IARRAY:
+            case N_INT_ARRAY:
                 // write slice head
-                writer.write(node.intsValue());
+                writer.writeInts(node.intsValue());
                 break;
-            case LARRAY:
+            case N_LONG_ARRAY:
                 // write slice head
-                writer.write(node.longsValue());
+                writer.writeLongs(node.longsValue());
                 break;
-            case FARRAY:
+            case N_FLOAT_ARRAY:
                 // write slice head
-                writer.write(node.floatsValue());
+                writer.writeFloats(node.floatsValue());
                 break;
-            case DARRAY:
+            case N_DOUBLE_ARRAY:
                 // write slice head
-                writer.write(node.doublesValue());
+                writer.writeDoubles(node.doublesValue());
                 break;
             case ARRAY:
                 this.writeArrayNode((ArrayNode) node, writer);
@@ -119,6 +118,7 @@ public final class OutputBuilder {
     /**
      * 输出ArrayNode
      */
+    @SuppressWarnings("unchecked")
     void writeArrayNode(ArrayNode node, OutputWriter writer) {
         List<ArrayNode> arrayNodes;
         if (node instanceof MixArrayNode) {
@@ -135,43 +135,25 @@ public final class OutputBuilder {
             writer.writeVarInt(0);
             switch (arrayNode.elementType()) {
                 case BOOL:
-                    BitSet bs = new BitSet(arrayNode.size());
-                    for (int j = 0; j < arrayNode.getItems().size(); j++) {
-                        bs.set(j, (Boolean) arrayNode.getItems().get(j));
-                    }
-                    for (byte b : bs.toByteArray()) {
-                        writer.writeByte(b);
-                    }
-                    break;
-                case FLOAT:
-                    for (Object item : arrayNode.getItems()) {
-                        writer.writeFloat((Float) item);
-                    }
-                    break;
-                case DOUBLE:
-                    for (Object item : arrayNode.getItems()) {
-                        writer.writeDouble((Double) item);
-                    }
+                    writer.writeBooleans(arrayNode.getItems());
                     break;
                 case BYTE:
-                    for (Object item : arrayNode.getItems()) {
-                        writer.writeByte((Byte) item);
-                    }
+                    writer.writeBytes(arrayNode.getItems());
                     break;
                 case SHORT:
-                    for (Object item : arrayNode.getItems()) {
-                        writer.writeShort((Short) item);
-                    }
+                    writer.writeShorts(arrayNode.getItems());
                     break;
                 case INT:
-                    for (Object item : arrayNode.getItems()) {
-                        writer.writeVarInt((Integer) item);
-                    }
+                    writer.writeInts(arrayNode.getItems());
                     break;
                 case LONG:
-                    for (Object item : arrayNode.getItems()) {
-                        writer.writeVarInt((Long) item);
-                    }
+                    writer.writeLongs(arrayNode.getItems());
+                    break;
+                case FLOAT:
+                    writer.writeFloats(arrayNode.getItems());
+                    break;
+                case DOUBLE:
+                    writer.writeDoubles(arrayNode.getItems());
                     break;
                 case STRING:
                     for (Object item : arrayNode.getItems()) {
