@@ -60,31 +60,52 @@ public final class OutputBuilder {
             writer.writeVarInt(OutputData.ID_NULL);
             return;
         }
-        int dataId;
         switch (node.dataType()) {
             case BOOL:
-                dataId = ((BooleanNode) node).value() ? OutputData.ID_TRUE : OutputData.ID_FALSE;
-                writer.writeVarInt(dataId);
+                writer.writeVarInt(node.booleanValue() ? OutputData.ID_TRUE : OutputData.ID_FALSE);
                 break;
             case FLOAT:
-                dataId = data.findFloatID(((FloatNode) node).getValue());
-                writer.writeVarInt(dataId);
+                writer.writeVarInt(data.findFloatID(node.floatValue()));
                 break;
             case DOUBLE:
-                dataId = data.findDoubleID(((DoubleNode) node).getValue());
-                writer.writeVarInt(dataId);
+                writer.writeVarInt(data.findDoubleID(node.doubleValue()));
                 break;
             case VARINT:
-                dataId = data.findVarintID(((VarintNode) node).getValue());
-                writer.writeVarInt(dataId);
+                writer.writeVarInt(data.findVarintID(node.longValue()));
                 break;
             case STRING:
-                dataId = data.findStringID(((StringNode) node).getValue());
-                writer.writeVarInt(dataId);
+                writer.writeVarInt(data.findStringID(node.stringValue()));
                 break;
             case SYMBOL:
-                dataId = data.findSymbolID(((SymbolNode) node).getData());
-                writer.writeVarInt(dataId);
+                writer.writeVarInt(data.findSymbolID(node.stringValue()));
+                break;
+            case ZARRAY:
+                // write slice head
+                writer.write(node.booleansValue());
+                break;
+            case BARRAY:
+                // write slice head
+                writer.write(node.bytesValue());
+                break;
+            case SARRAY:
+                // write slice head
+                writer.write(node.shortsValue());
+                break;
+            case IARRAY:
+                // write slice head
+                writer.write(node.intsValue());
+                break;
+            case LARRAY:
+                // write slice head
+                writer.write(node.longsValue());
+                break;
+            case FARRAY:
+                // write slice head
+                writer.write(node.floatsValue());
+                break;
+            case DARRAY:
+                // write slice head
+                writer.write(node.doublesValue());
                 break;
             case ARRAY:
                 this.writeArrayNode((ArrayNode) node, writer);
@@ -162,7 +183,15 @@ public final class OutputBuilder {
                         writer.writeVarInt(data.findSymbolID((String) item));
                     }
                     break;
+                case ARRAY:
+                    for (Object item : arrayNode.getItems()) {
+                        this.writeArrayNode((ArrayNode) item, writer);
+                    }
+                    break;
                 case OBJECT:
+                    for (Object item : arrayNode.getItems()) {
+                        this.writeObjectNode((ObjectNode) item, writer);
+                    }
                     break;
             }
         }

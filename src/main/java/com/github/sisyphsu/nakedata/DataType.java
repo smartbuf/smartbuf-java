@@ -17,7 +17,15 @@ public enum DataType {
     STRING(0x05),
     SYMBOL(0x06),
     ARRAY(0x07),
-    OBJECT(0x08);
+    OBJECT(0x08),
+
+    ZARRAY(0x10),
+    BARRAY(0x11),
+    SARRAY(0x12),
+    IARRAY(0x13),
+    LARRAY(0x14),
+    FARRAY(0x15),
+    DARRAY(0x16);
 
     private final byte code;
 

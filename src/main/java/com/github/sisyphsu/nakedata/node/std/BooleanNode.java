@@ -13,7 +13,7 @@ public final class BooleanNode extends Node {
 
     public final static BooleanNode NULL = new BooleanNode();
 
-    public final static BooleanNode TRUE = new BooleanNode();
+    public final static BooleanNode TRUE  = new BooleanNode();
     public final static BooleanNode FALSE = new BooleanNode();
 
     private BooleanNode() {

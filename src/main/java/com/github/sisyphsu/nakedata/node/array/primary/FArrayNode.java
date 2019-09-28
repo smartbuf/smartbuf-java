@@ -30,7 +30,7 @@ public final class FArrayNode extends Node {
 
     @Override
     public DataType dataType() {
-        return DataType.ARRAY;
+        return DataType.FARRAY;
     }
 
     @Override

@@ -24,4 +24,52 @@ public abstract class Node {
      */
     public abstract DataType dataType();
 
+    public boolean booleanValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    public float floatValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    public double doubleValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    public long longValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    public String stringValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean[] booleansValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    public byte[] bytesValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    public short[] shortsValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    public int[] intsValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    public long[] longsValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    public float[] floatsValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    public double[] doublesValue() {
+        throw new UnsupportedOperationException();
+    }
+
 }

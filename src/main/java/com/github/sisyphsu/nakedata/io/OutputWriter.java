@@ -70,6 +70,34 @@ public class OutputWriter {
         return 8;
     }
 
+    public int write(boolean[] booleans) {
+        return 0;
+    }
+
+    public int write(byte[] bytes) {
+        return 0;
+    }
+
+    public int write(short[] shorts) {
+        return 0;
+    }
+
+    public int write(int[] ints) {
+        return 0;
+    }
+
+    public int write(long[] longs) {
+        return 0;
+    }
+
+    public int write(float[] floats) {
+        return 0;
+    }
+
+    public int write(double[] doubles) {
+        return 0;
+    }
+
     public int writeBinary(byte[] data) {
         int len = this.writeVarUint(data.length);
         output.write(data);
