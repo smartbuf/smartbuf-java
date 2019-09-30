@@ -3,7 +3,7 @@ package com.github.sisyphsu.nakedata.context.output;
 import com.github.sisyphsu.nakedata.common.DoubleArray;
 import com.github.sisyphsu.nakedata.common.FloatArray;
 import com.github.sisyphsu.nakedata.common.LongArray;
-import com.github.sisyphsu.nakedata.common.ObjectArray;
+import com.github.sisyphsu.nakedata.common.Array;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.std.*;
 
@@ -31,10 +31,10 @@ public final class OutputData {
 
     private final int cxtSymbolLimit = 1 << 16;
 
-    final LongArray           varintArea = new LongArray(true);
-    final FloatArray          floatArea  = new FloatArray(true);
-    final DoubleArray         doubleArea = new DoubleArray(true);
-    final ObjectArray<String> stringArea = new ObjectArray<>(true);
+    final LongArray     varintArea = new LongArray(true);
+    final FloatArray    floatArea  = new FloatArray(true);
+    final DoubleArray   doubleArea = new DoubleArray(true);
+    final Array<String> stringArea = new Array<>(true);
 
     final OutputPool<String> symbolArea = new OutputPool<>();
 

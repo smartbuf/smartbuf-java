@@ -1,10 +1,11 @@
 package com.github.sisyphsu.nakedata.context.model;
 
+import com.github.sisyphsu.nakedata.common.Array;
+import com.github.sisyphsu.nakedata.common.DoubleArray;
+import com.github.sisyphsu.nakedata.common.FloatArray;
+import com.github.sisyphsu.nakedata.common.LongArray;
 import com.github.sisyphsu.nakedata.io.OutputWriter;
 import lombok.Data;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 报文元数据，在数据包的头部声明报文体的数据模型、数据区等
@@ -36,20 +37,20 @@ public class FrameMeta {
     private int     version;
     private boolean enableCxt;
 
-    private List<Float>  tmpFloatArea  = new ArrayList<>();
-    private List<Double> tmpDoubleArea = new ArrayList<>();
-    private List<Long>   tmpVarintArea = new ArrayList<>();
-    private List<String> tmpStringArea = new ArrayList<>();
+    private FloatArray    tmpFloatArea;
+    private DoubleArray   tmpDoubleArea;
+    private LongArray     tmpVarintArea;
+    private Array<String> tmpStringArea;
 
-    private List<String> tmpNames   = new ArrayList<>();
-    private List<int[]>  tmpStructs = new ArrayList<>();
+    private Array<String> tmpNames;
+    private Array<int[]>  tmpStructs;
 
-    private List<String>  cxtNameAdded     = new ArrayList<>();
-    private List<Integer> cxtNameExpired   = new ArrayList<>();
-    private List<int[]>   cxtStructAdded   = new ArrayList<>();
-    private List<Integer> cxtStructExpired = new ArrayList<>();
-    private List<String>  cxtSymbolAdded   = new ArrayList<>();
-    private List<Integer> cxtSymbolExpired = new ArrayList<>();
+    private Array<String> cxtNameAdded;
+    private LongArray     cxtNameExpired;
+    private Array<int[]>  cxtStructAdded;
+    private LongArray     cxtStructExpired;
+    private Array<String> cxtSymbolAdded;
+    private LongArray     cxtSymbolExpired;
 
     /**
      * 将当前FrameMeta通过writer序列化输出
@@ -59,20 +60,20 @@ public class FrameMeta {
     public void write(OutputWriter writer) {
         int cxtCount = 0;
         if (enableCxt) {
-            if (!cxtNameAdded.isEmpty()) cxtCount++;
-            if (!cxtNameExpired.isEmpty()) cxtCount++;
-            if (!cxtStructAdded.isEmpty()) cxtCount++;
-            if (!cxtStructExpired.isEmpty()) cxtCount++;
-            if (!cxtSymbolAdded.isEmpty()) cxtCount++;
-            if (!cxtSymbolExpired.isEmpty()) cxtCount++;
+            if (cxtNameAdded.size() > 0) cxtCount++;
+            if (cxtNameExpired.size() > 0) cxtCount++;
+            if (cxtStructAdded.size() > 0) cxtCount++;
+            if (cxtStructExpired.size() > 0) cxtCount++;
+            if (cxtSymbolAdded.size() > 0) cxtCount++;
+            if (cxtSymbolExpired.size() > 0) cxtCount++;
         }
         int count = cxtCount;
-        if (!tmpFloatArea.isEmpty()) count++;
-        if (!tmpDoubleArea.isEmpty()) count++;
-        if (!tmpVarintArea.isEmpty()) count++;
-        if (!tmpStringArea.isEmpty()) count++;
-        if (!tmpNames.isEmpty()) count++;
-        if (!tmpStructs.isEmpty()) count++;
+        if (tmpFloatArea.size() > 0) count++;
+        if (tmpDoubleArea.size() > 0) count++;
+        if (tmpVarintArea.size() > 0) count++;
+        if (tmpStringArea.size() > 0) count++;
+        if (tmpNames.size() > 0) count++;
+        if (tmpStructs.size() > 0) count++;
 
         byte head = VERSION;
         if (enableCxt) {
@@ -95,29 +96,30 @@ public class FrameMeta {
      * Output body of metadata.
      */
     private void writeTmpMeta(OutputWriter writer, int count) {
-        if (!tmpFloatArea.isEmpty()) {
+        if (tmpFloatArea.size() > 0) {
             this.writeMetaHead(writer, tmpFloatArea.size(), CODE_FLOAT, --count == 0);
-            writer.writeFloatArray(tmpFloatArea);
+            writer.writeFloatArray(tmpFloatArea.data());
         }
-        if (!tmpDoubleArea.isEmpty()) {
+        if (tmpDoubleArea.size() > 0) {
             this.writeMetaHead(writer, tmpDoubleArea.size(), CODE_DOUBLE, --count == 0);
-            writer.writeDoubleArray(tmpDoubleArea);
+            writer.writeDoubleArray(tmpDoubleArea.data());
         }
-        if (!tmpVarintArea.isEmpty()) {
+        if (tmpVarintArea.size() > 0) {
             this.writeMetaHead(writer, tmpVarintArea.size(), CODE_VARINT, --count == 0);
-            writer.writeLongArray(tmpVarintArea);
+            writer.writeLongArray(tmpVarintArea.data());
         }
-        if (!tmpStringArea.isEmpty()) {
+        if (tmpStringArea.size() > 0) {
             this.writeMetaHead(writer, tmpStringArea.size(), CODE_STRING, --count == 0);
-            writer.writeStringArray(tmpStringArea);
+            writer.writeStringArray(tmpStringArea.data());
         }
-        if (!tmpNames.isEmpty()) {
+        if (tmpNames.size() > 0) {
             this.writeMetaHead(writer, tmpNames.size(), CODE_NAMES, --count == 0);
-            writer.writeStringArray(tmpNames);
+            writer.writeStringArray(tmpNames.data());
         }
-        if (!tmpStructs.isEmpty()) {
+        if (tmpStructs.size() > 0) {
             this.writeMetaHead(writer, tmpStructs.size(), CODE_STRING, --count == 0);
-            for (int[] ints : tmpStructs) {
+            for (int i = 0; i < tmpStructs.size(); i++) {
+                int[] ints = tmpStructs.get(i);
                 writer.writeVarUint(ints.length);
                 writer.writeIntArray(ints);
             }
@@ -128,32 +130,33 @@ public class FrameMeta {
      * Output context metadata
      */
     private void writeCxtMeta(OutputWriter writer, int count) {
-        if (!cxtNameAdded.isEmpty()) {
+        if (cxtNameAdded.size() > 0) {
             writeMetaHead(writer, cxtNameAdded.size(), CODE_NAME_ADDED, --count == 0);
-            writer.writeStringArray(cxtNameAdded);
+            writer.writeStringArray(cxtNameAdded.data());
         }
-        if (!cxtNameExpired.isEmpty()) {
+        if (cxtNameExpired.size() > 0) {
             this.writeMetaHead(writer, cxtNameExpired.size(), CODE_NAME_EXPIRED, --count == 0);
-            writer.writeIntArray(cxtNameExpired);
+            writer.writeLongArray(cxtNameExpired.data());
         }
-        if (!cxtStructAdded.isEmpty()) {
+        if (cxtStructAdded.size() > 0) {
             this.writeMetaHead(writer, cxtStructAdded.size(), CODE_STRUCT_ADDED, --count == 0);
-            for (int[] ints : cxtStructAdded) {
+            for (int i = 0; i < cxtStructAdded.size(); i++) {
+                int[] ints = cxtStructAdded.get(i);
                 writer.writeVarUint(ints.length);
                 writer.writeIntArray(ints);
             }
         }
-        if (!cxtStructExpired.isEmpty()) {
+        if (cxtStructExpired.size() > 0) {
             this.writeMetaHead(writer, cxtStructExpired.size(), CODE_STRUCT_EXPIRED, --count == 0);
-            writer.writeIntArray(cxtStructExpired);
+            writer.writeLongArray(cxtStructExpired.data());
         }
-        if (!cxtSymbolAdded.isEmpty()) {
+        if (cxtSymbolAdded.size() > 0) {
             this.writeMetaHead(writer, cxtSymbolAdded.size(), CODE_SYMBOL_ADDED, --count == 0);
-            writer.writeStringArray(cxtSymbolAdded);
+            writer.writeStringArray(cxtSymbolAdded.data());
         }
-        if (!cxtSymbolExpired.isEmpty()) {
+        if (cxtSymbolExpired.size() > 0) {
             this.writeMetaHead(writer, cxtSymbolExpired.size(), CODE_SYMBOL_EXPIRED, --count == 0);
-            writer.writeIntArray(cxtSymbolExpired);
+            writer.writeLongArray(cxtSymbolExpired.data());
         }
     }
 

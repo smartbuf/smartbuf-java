@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.context.output;
 
-import com.github.sisyphsu.nakedata.common.ObjectArray;
+import com.github.sisyphsu.nakedata.common.Array;
 import com.github.sisyphsu.nakedata.utils.IDPool;
 
 import java.util.ArrayList;
@@ -18,18 +18,18 @@ public final class OutputSchema {
 
     private final boolean enableCxt;
 
-    private final ObjectArray<String>   tmpNames      = new ObjectArray<>(true);
-    private final ObjectArray<String[]> tmpStructs    = new ObjectArray<>(true);
-    private final ObjectArray<int[]>    tmpStructArea = new ObjectArray<>(true);
+    private final Array<String>   tmpNames      = new Array<>(true);
+    private final Array<String[]> tmpStructs    = new Array<>(true);
+    private final Array<int[]>    tmpStructArea = new Array<>(true);
 
-    private final int                 cxtNameLimit  = 1 << 16;
-    private final IDPool              nameIdPool    = new IDPool();
-    private       int[]               nameRefCounts = new int[4];
-    private final ObjectArray<String> names         = new ObjectArray<>(true);
+    private final int           cxtNameLimit  = 1 << 16;
+    private final IDPool        nameIdPool    = new IDPool();
+    private       int[]         nameRefCounts = new int[4];
+    private final Array<String> names         = new Array<>(true);
 
-    private final int                   cxtStructLimit = 1 << 12;
-    private final ObjectArray<String[]> cxtStructs     = new ObjectArray<>(true);
-    private final OutputPool<int[]>     cxtStructArea  = new OutputPool<>();
+    private final int               cxtStructLimit = 1 << 12;
+    private final Array<String[]>   cxtStructs     = new Array<>(true);
+    private final OutputPool<int[]> cxtStructArea  = new OutputPool<>();
 
     final List<String>  nameAdded   = new ArrayList<>();
     final List<Integer> nameExpired = new ArrayList<>();

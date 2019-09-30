@@ -133,6 +133,10 @@ public class OutputWriter {
     public void writeDoubleArray(List<Double> doubles) {
     }
 
+    public void writeStringArray(String[] array) {
+
+    }
+
     public void writeStringArray(List<String> strings) {
 
     }

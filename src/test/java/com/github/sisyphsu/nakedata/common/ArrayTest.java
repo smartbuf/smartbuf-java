@@ -8,11 +8,11 @@ import java.util.Arrays;
  * @author sulin
  * @since 2019-09-29 16:36:47
  */
-public class ObjectArrayTest {
+public class ArrayTest {
 
     @Test
     public void test() {
-        ObjectArray<Long> set = new ObjectArray<>(false);
+        Array<Long> set = new Array<>(false);
         set.add(1L);
         set.add(2L);
         set.add(3L);
@@ -35,7 +35,7 @@ public class ObjectArrayTest {
 
     @Test
     public void testIndexable() {
-        ObjectArray<Long> set = new ObjectArray<>(true);
+        Array<Long> set = new Array<>(true);
         set.add(0L);
         set.add(1L);
         set.add(2L);

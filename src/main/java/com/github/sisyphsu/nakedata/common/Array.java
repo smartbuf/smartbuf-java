@@ -10,7 +10,7 @@ import java.util.Map;
  * @since 2019-09-26 14:21:44
  */
 @SuppressWarnings("unchecked")
-public final class ObjectArray<T> {
+public final class Array<T> {
 
     private int      offset;
     private Object[] data = new Object[4];
@@ -22,7 +22,7 @@ public final class ObjectArray<T> {
      *
      * @param indexable Support value-index or not
      */
-    public ObjectArray(boolean indexable) {
+    public Array(boolean indexable) {
         if (indexable) {
             this.indexMap = new HashMap<>();
         } else {
