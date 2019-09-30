@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.context.output;
 
+import com.github.sisyphsu.nakedata.common.ObjectArray;
 import com.github.sisyphsu.nakedata.utils.IDPool;
 
 import java.util.ArrayList;
@@ -17,18 +18,18 @@ public final class OutputSchema {
 
     private final boolean enableCxt;
 
-    private final OutputList<String>   tmpNames      = new OutputList<>();
-    private final OutputList<String[]> tmpStructs    = new OutputList<>();
-    private final OutputList<int[]>    tmpStructArea = new OutputList<>();
+    private final ObjectArray<String>   tmpNames      = new ObjectArray<>(true);
+    private final ObjectArray<String[]> tmpStructs    = new ObjectArray<>(true);
+    private final ObjectArray<int[]>    tmpStructArea = new ObjectArray<>(true);
 
-    private final int                cxtNameLimit  = 1 << 16;
-    private final IDPool             nameIdPool    = new IDPool();
-    private       int[]              nameRefCounts = new int[4];
-    private final OutputList<String> names         = new OutputList<>();
+    private final int                 cxtNameLimit  = 1 << 16;
+    private final IDPool              nameIdPool    = new IDPool();
+    private       int[]               nameRefCounts = new int[4];
+    private final ObjectArray<String> names         = new ObjectArray<>(true);
 
-    private final int                  cxtStructLimit = 1 << 12;
-    private final OutputList<String[]> cxtStructs     = new OutputList<>();
-    private final OutputPool<int[]>    cxtStructArea  = new OutputPool<>();
+    private final int                   cxtStructLimit = 1 << 12;
+    private final ObjectArray<String[]> cxtStructs     = new ObjectArray<>(true);
+    private final OutputPool<int[]>     cxtStructArea  = new OutputPool<>();
 
     final List<String>  nameAdded   = new ArrayList<>();
     final List<Integer> nameExpired = new ArrayList<>();
@@ -76,7 +77,7 @@ public final class OutputSchema {
         for (int i = 0; i < fields.length; i++) {
             String name = fields[i];
             tmpNames.add(name);
-            nameIds[i] = tmpNames.getID(name);
+            nameIds[i] = tmpNames.offset(name);
         }
         tmpStructArea.add(nameIds);
     }
@@ -98,15 +99,15 @@ public final class OutputSchema {
     }
 
     public int findTmpStructID(String[] fields) {
-        return tmpStructs.getID(fields);
+        return tmpStructs.offset(fields);
     }
 
     public int findCxtStructID(String[] fields) {
-        return cxtStructs.getID(fields);
+        return cxtStructs.offset(fields);
     }
 
     private int registerName(String name) {
-        Integer id = this.names.getID(name);
+        Integer id = this.names.offset(name);
         if (id == null) {
             id = nameIdPool.acquire();
             if (id >= nameRefCounts.length) {

@@ -59,17 +59,17 @@ public final class BasicNodeCodec extends Codec {
 
     @Converter
     public Byte toByte(VarintNode node) {
-        return node.isNull() ? null : (byte) node.getValue();
+        return node.isNull() ? null : node.getValue().byteValue();
     }
 
     @Converter
     public Short toShort(VarintNode node) {
-        return node.isNull() ? null : (short) node.getValue();
+        return node.isNull() ? null : node.getValue().shortValue();
     }
 
     @Converter
     public Integer toInt(VarintNode node) {
-        return node.isNull() ? null : (int) node.getValue();
+        return node.isNull() ? null : node.getValue().intValue();
     }
 
     @Converter

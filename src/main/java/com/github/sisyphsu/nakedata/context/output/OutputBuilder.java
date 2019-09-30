@@ -42,9 +42,9 @@ public final class OutputBuilder {
         if (node == null) {
             throw new NullPointerException("node can't be null");
         }
-        // step1. 构建FrameMeta
+        // 构建FrameMeta
         FrameMeta meta = this.scan(node);
-
+        meta.write(writer);
 
         // 输出数据
         this.writeNode(node, writer);

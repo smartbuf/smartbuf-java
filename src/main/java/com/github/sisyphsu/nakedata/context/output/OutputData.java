@@ -1,5 +1,9 @@
 package com.github.sisyphsu.nakedata.context.output;
 
+import com.github.sisyphsu.nakedata.common.DoubleArray;
+import com.github.sisyphsu.nakedata.common.FloatArray;
+import com.github.sisyphsu.nakedata.common.LongArray;
+import com.github.sisyphsu.nakedata.common.ObjectArray;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.std.*;
 
@@ -27,10 +31,11 @@ public final class OutputData {
 
     private final int cxtSymbolLimit = 1 << 16;
 
-    final OutputList<Long>   varintArea = new OutputList<>();
-    final OutputList<Float>  floatArea  = new OutputList<>();
-    final OutputList<Double> doubleArea = new OutputList<>();
-    final OutputList<String> stringArea = new OutputList<>();
+    final LongArray           varintArea = new LongArray(true);
+    final FloatArray          floatArea  = new FloatArray(true);
+    final DoubleArray         doubleArea = new DoubleArray(true);
+    final ObjectArray<String> stringArea = new ObjectArray<>(true);
+
     final OutputPool<String> symbolArea = new OutputPool<>();
 
     public OutputData(boolean enableCxt) {
@@ -88,22 +93,22 @@ public final class OutputData {
 
             case VARINT:
                 long l = ((VarintNode) node).getValue();
-                index = varintArea.getID(l);
+                index = varintArea.offset(l);
                 return index + 3 + symbolCount;
 
             case FLOAT:
                 float f = ((FloatNode) node).getValue();
-                index = floatArea.getID(f);
+                index = floatArea.offset(f);
                 return index + 3 + symbolCount + varintArea.size();
 
             case DOUBLE:
                 double d = ((DoubleNode) node).getValue();
-                index = doubleArea.getID(d);
+                index = doubleArea.offset(d);
                 return index + 3 + symbolCount + varintArea.size() + floatArea.size();
 
             case STRING:
                 String str = ((StringNode) node).getValue();
-                index = stringArea.getID(str);
+                index = stringArea.offset(str);
                 return index + 3 + symbolCount + varintArea.size() + floatArea.size() + doubleArea.size();
 
             case SYMBOL:
@@ -111,7 +116,7 @@ public final class OutputData {
                 if (enableCxt) {
                     return symbolArea.findID(symbol);
                 } else {
-                    return stringArea.getID(symbol);
+                    return stringArea.offset(symbol);
                 }
         }
         throw new IllegalArgumentException("The specified String not registered: " + node);

@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.context.output;
 
+import com.github.sisyphsu.nakedata.common.ObjectArray;
 import com.github.sisyphsu.nakedata.utils.IDPool;
 
 import java.util.ArrayList;
@@ -15,16 +16,16 @@ public final class OutputPool<T> {
 
     private static final long INIT_TIME = System.currentTimeMillis();
 
-    private final IDPool        itemIdPool      = new IDPool();
-    private final OutputList<T> itemList        = new OutputList<>();
-    private final List<Integer> itemActiveTimes = new ArrayList<>();
+    private final IDPool         itemIdPool      = new IDPool();
+    private final ObjectArray<T> itemList        = new ObjectArray<>(true);
+    private final List<Integer>  itemActiveTimes = new ArrayList<>();
 
     final List<T>       itemAdded   = new ArrayList<>();
     final List<Integer> itemExpired = new ArrayList<>();
 
     public void add(T t) {
         int now = (int) ((System.currentTimeMillis() - INIT_TIME));
-        Integer offset = itemList.getID(t);
+        Integer offset = itemList.offset(t);
         if (offset == null) {
             offset = itemIdPool.acquire();
             itemList.add(offset, t);
@@ -55,7 +56,7 @@ public final class OutputPool<T> {
      * @return ID
      */
     public int findID(T t) {
-        return itemList.getID(t);
+        return itemList.offset(t);
     }
 
     /**
