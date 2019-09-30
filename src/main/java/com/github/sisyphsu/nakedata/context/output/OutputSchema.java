@@ -1,10 +1,9 @@
 package com.github.sisyphsu.nakedata.context.output;
 
 import com.github.sisyphsu.nakedata.common.Array;
+import com.github.sisyphsu.nakedata.common.LongArray;
+import com.github.sisyphsu.nakedata.common.PoolArray;
 import com.github.sisyphsu.nakedata.utils.IDPool;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 需要为ObjectNode提供一种非常便利的struct-fields-id映射关系。
@@ -27,12 +26,16 @@ public final class OutputSchema {
     private       int[]         nameRefCounts = new int[4];
     private final Array<String> names         = new Array<>(true);
 
-    private final int               cxtStructLimit = 1 << 12;
-    private final Array<String[]>   cxtStructs     = new Array<>(true);
-    private final OutputPool<int[]> cxtStructArea  = new OutputPool<>();
+    final Array<String>  nameAdded   = new Array<>(true);
+    final Array<Integer> nameExpired = new Array<>(true);
 
-    final List<String>  nameAdded   = new ArrayList<>();
-    final List<Integer> nameExpired = new ArrayList<>();
+    private final int              cxtStructLimit = 1 << 12;
+    private final Array<String[]>  cxtStructs     = new Array<>(true);
+    private final PoolArray<int[]> cxtStructArea  = new PoolArray<>();
+
+    final Array<int[]> structAdded   = new Array<>(true);
+    final LongArray    structExpired = new LongArray(true);
+
 
     public OutputSchema(boolean enableCxt) {
         this.enableCxt = enableCxt;
@@ -42,28 +45,36 @@ public final class OutputSchema {
      * Reset for new round's output.
      */
     public void clear() {
-        if (enableCxt) {
-            // try release struct
-            if (cxtStructArea.size() > cxtStructLimit) {
-                long[] releasedItem = cxtStructArea.release(cxtStructLimit / 10);
-                for (long item : releasedItem) {
-                    unreference(cxtStructArea.get((int) item));
-                }
-            }
-            // try release name
-            while (names.size() > cxtNameLimit) {
-                long[] releasedItems = cxtStructArea.release(cxtStructLimit / 10);
-                for (long item : releasedItems) {
-                    unreference(cxtStructArea.get((int) item));
-                }
-            }
-            this.nameExpired.clear();
-            this.nameAdded.clear();
-            this.cxtStructArea.resetContext();
-        }
         this.tmpNames.clear();
         this.tmpStructs.clear();
         this.tmpStructArea.clear();
+        if (!enableCxt) {
+            return;
+        }
+        this.nameExpired.clear();
+        this.nameAdded.clear();
+        this.structAdded.clear();
+        this.structExpired.clear();
+        // try release struct
+        if (cxtStructArea.size() > cxtStructLimit) {
+            long[] releasedItem = cxtStructArea.release(cxtStructLimit / 10);
+            for (long l : releasedItem) {
+                structExpired.add((int) l);
+            }
+            for (long item : releasedItem) {
+                unreference(cxtStructArea.get((int) item));
+            }
+        }
+        // try release name
+        while (names.size() > cxtNameLimit) {
+            long[] releasedItems = cxtStructArea.release(cxtStructLimit / 10);
+            for (long l : releasedItems) {
+                structExpired.add((int) l);
+            }
+            for (long item : releasedItems) {
+                unreference(cxtStructArea.get((int) item));
+            }
+        }
     }
 
     /**
@@ -95,7 +106,9 @@ public final class OutputSchema {
             nameIds[i] = nameId;
             nameRefCounts[nameId]++;
         }
-        cxtStructArea.add(nameIds);
+        if (cxtStructArea.add(nameIds)) {
+            structAdded.add(nameIds);
+        }
     }
 
     public int findTmpStructID(String[] fields) {

@@ -1,18 +1,15 @@
-package com.github.sisyphsu.nakedata.context.output;
+package com.github.sisyphsu.nakedata.common;
 
-import com.github.sisyphsu.nakedata.common.Array;
 import com.github.sisyphsu.nakedata.utils.IDPool;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 支持add，同时根据活跃度清理旧的数据
- *
  * @author sulin
  * @since 2019-09-25 20:37:51
  */
-public final class OutputPool<T> {
+public final class PoolArray<T> {
 
     private static final long INIT_TIME = System.currentTimeMillis();
 
@@ -20,23 +17,21 @@ public final class OutputPool<T> {
     private final Array<T>      itemList        = new Array<>(true);
     private final List<Integer> itemActiveTimes = new ArrayList<>();
 
-    final List<T>       itemAdded   = new ArrayList<>();
-    final List<Integer> itemExpired = new ArrayList<>();
-
-    public void add(T t) {
+    public boolean add(T t) {
         int now = (int) ((System.currentTimeMillis() - INIT_TIME));
         Integer offset = itemList.offset(t);
         if (offset == null) {
             offset = itemIdPool.acquire();
             itemList.add(offset, t);
-            itemAdded.add(t);
             if (itemActiveTimes.size() <= offset) {
                 itemActiveTimes.add(now);
             } else {
                 itemActiveTimes.set(offset, now);
             }
+            return true;
         } else {
             itemActiveTimes.set(offset, now);
+            return false;
         }
     }
 
@@ -66,11 +61,6 @@ public final class OutputPool<T> {
      */
     public int size() {
         return itemList.size();
-    }
-
-    public void resetContext() {
-        this.itemAdded.clear();
-        this.itemExpired.clear();
     }
 
     /**
@@ -116,7 +106,6 @@ public final class OutputPool<T> {
         for (long l : heap) {
             int id = (int) (l);
             itemIdPool.release(id);
-            itemExpired.add(id);
         }
         return heap;
     }

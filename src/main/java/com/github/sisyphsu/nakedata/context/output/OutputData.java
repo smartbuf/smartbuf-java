@@ -1,9 +1,6 @@
 package com.github.sisyphsu.nakedata.context.output;
 
-import com.github.sisyphsu.nakedata.common.DoubleArray;
-import com.github.sisyphsu.nakedata.common.FloatArray;
-import com.github.sisyphsu.nakedata.common.LongArray;
-import com.github.sisyphsu.nakedata.common.Array;
+import com.github.sisyphsu.nakedata.common.*;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.std.*;
 
@@ -36,7 +33,9 @@ public final class OutputData {
     final DoubleArray   doubleArea = new DoubleArray(true);
     final Array<String> stringArea = new Array<>(true);
 
-    final OutputPool<String> symbolArea = new OutputPool<>();
+    final PoolArray<String> symbolArea    = new PoolArray<>();
+    final Array<String>     symbolAdded   = new Array<>(true);
+    final LongArray         symbolExpired = new LongArray(true);
 
     public OutputData(boolean enableCxt) {
         this.enableCxt = enableCxt;
@@ -47,11 +46,15 @@ public final class OutputData {
         this.floatArea.clear();
         this.doubleArea.clear();
         this.stringArea.clear();
-        // try release symbol
-        if (enableCxt) {
-            this.symbolArea.resetContext();
-            if (symbolArea.size() >= cxtSymbolLimit) {
-                symbolArea.release(cxtSymbolLimit / 10);
+        if (!enableCxt) {
+            return;
+        }
+        this.symbolAdded.clear();
+        this.symbolExpired.clear();
+        if (symbolArea.size() >= cxtSymbolLimit) {
+            long[] heap = symbolArea.release(cxtSymbolLimit / 10);
+            for (long l : heap) {
+                symbolExpired.add((int) l);
             }
         }
     }
