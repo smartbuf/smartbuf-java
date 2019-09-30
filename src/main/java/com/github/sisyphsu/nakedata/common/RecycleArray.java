@@ -1,38 +1,42 @@
 package com.github.sisyphsu.nakedata.common;
 
-import com.github.sisyphsu.nakedata.utils.IDPool;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
+ * Array that support recycling.
+ *
  * @author sulin
  * @since 2019-09-25 20:37:51
  */
-public final class PoolArray<T> {
+public final class RecycleArray<T> {
 
     private static final long INIT_TIME = System.currentTimeMillis();
 
-    private final IDPool        itemIdPool      = new IDPool();
-    private final Array<T>      itemList        = new Array<>(true);
-    private final List<Integer> itemActiveTimes = new ArrayList<>();
+    private int[] activeTimes = new int[4];
 
+    private final IDAllocator idAllocator = new IDAllocator();
+    private final Array<T>    array       = new Array<>(true);
+
+    /**
+     * Add new item into this array.
+     *
+     * @param t New item
+     * @return Added or not
+     */
     public boolean add(T t) {
         int now = (int) ((System.currentTimeMillis() - INIT_TIME));
-        Integer offset = itemList.offset(t);
+        Integer offset = array.offset(t);
+        boolean isNew = false;
         if (offset == null) {
-            offset = itemIdPool.acquire();
-            itemList.add(offset, t);
-            if (itemActiveTimes.size() <= offset) {
-                itemActiveTimes.add(now);
-            } else {
-                itemActiveTimes.set(offset, now);
+            offset = idAllocator.acquire();
+            array.add(offset, t);
+            if (offset >= activeTimes.length) {
+                int[] tmp = new int[activeTimes.length * 2];
+                System.arraycopy(activeTimes, 0, tmp, 0, activeTimes.length);
+                activeTimes = tmp;
             }
-            return true;
-        } else {
-            itemActiveTimes.set(offset, now);
-            return false;
+            isNew = true;
         }
+        activeTimes[offset] = now;
+        return isNew;
     }
 
     /**
@@ -41,7 +45,7 @@ public final class PoolArray<T> {
      * @param id Item's id
      */
     public T get(int id) {
-        return itemList.get(id);
+        return array.get(id);
     }
 
     /**
@@ -50,8 +54,8 @@ public final class PoolArray<T> {
      * @param t Item
      * @return ID
      */
-    public int findID(T t) {
-        return itemList.offset(t);
+    public int offset(T t) {
+        return array.offset(t);
     }
 
     /**
@@ -60,7 +64,7 @@ public final class PoolArray<T> {
      * @return item's count
      */
     public int size() {
-        return itemList.size();
+        return array.size();
     }
 
     /**
@@ -75,13 +79,13 @@ public final class PoolArray<T> {
 
         // 0 means init, 1 means stable, -1 means not-stable.
         int heapStatus = 0;
-        int itemSize = itemList.size();
-        T[] items = itemList.data();
+        int itemSize = array.size();
+        T[] items = array.data();
         for (int itemId = 0; itemId < itemSize; itemId++) {
             if (items[itemId] == null) {
                 continue;
             }
-            int itemTime = itemActiveTimes.get(itemId);
+            int itemTime = activeTimes[itemId];
             if (offset < count) {
                 heap[offset++] = ((long) itemTime) << 32 | itemId;
                 continue;
@@ -105,7 +109,8 @@ public final class PoolArray<T> {
         // release all items in heap
         for (long l : heap) {
             int id = (int) (l);
-            itemIdPool.release(id);
+            idAllocator.release(id);
+            array.remove(id);
         }
         return heap;
     }

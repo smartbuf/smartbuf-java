@@ -3,7 +3,7 @@ package com.github.sisyphsu.nakedata.context.model;
 import com.github.sisyphsu.nakedata.common.Array;
 import com.github.sisyphsu.nakedata.common.DoubleArray;
 import com.github.sisyphsu.nakedata.common.FloatArray;
-import com.github.sisyphsu.nakedata.common.LongArray;
+import com.github.sisyphsu.nakedata.common.VarintArray;
 import com.github.sisyphsu.nakedata.io.OutputWriter;
 import lombok.Data;
 
@@ -39,18 +39,18 @@ public class FrameMeta {
 
     private FloatArray    tmpFloatArea;
     private DoubleArray   tmpDoubleArea;
-    private LongArray     tmpVarintArea;
+    private VarintArray   tmpVarintArea;
     private Array<String> tmpStringArea;
 
     private Array<String> tmpNames;
     private Array<int[]>  tmpStructs;
 
     private Array<String> cxtNameAdded;
-    private LongArray     cxtNameExpired;
+    private VarintArray   cxtNameExpired;
     private Array<int[]>  cxtStructAdded;
-    private LongArray     cxtStructExpired;
+    private VarintArray   cxtStructExpired;
     private Array<String> cxtSymbolAdded;
-    private LongArray     cxtSymbolExpired;
+    private VarintArray   cxtSymbolExpired;
 
     /**
      * 将当前FrameMeta通过writer序列化输出

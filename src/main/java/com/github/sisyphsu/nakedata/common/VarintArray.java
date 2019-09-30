@@ -9,7 +9,7 @@ import java.util.Map;
  * @author sulin
  * @since 2019-09-29 15:41:35
  */
-public final class LongArray {
+public final class VarintArray {
 
     private int    offset;
     private long[] data = new long[4];
@@ -21,7 +21,7 @@ public final class LongArray {
      *
      * @param indexable Support value-index or not
      */
-    public LongArray(boolean indexable) {
+    public VarintArray(boolean indexable) {
         if (indexable) {
             this.indexMap = new HashMap<>();
         } else {

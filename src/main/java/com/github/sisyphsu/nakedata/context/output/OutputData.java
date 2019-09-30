@@ -28,14 +28,14 @@ public final class OutputData {
 
     private final int cxtSymbolLimit = 1 << 16;
 
-    final LongArray     varintArea = new LongArray(true);
+    final VarintArray   varintArea = new VarintArray(true);
     final FloatArray    floatArea  = new FloatArray(true);
     final DoubleArray   doubleArea = new DoubleArray(true);
     final Array<String> stringArea = new Array<>(true);
 
-    final PoolArray<String> symbolArea    = new PoolArray<>();
-    final Array<String>     symbolAdded   = new Array<>(true);
-    final LongArray         symbolExpired = new LongArray(true);
+    final RecycleArray<String> symbolArea    = new RecycleArray<>();
+    final Array<String>        symbolAdded   = new Array<>(true);
+    final VarintArray          symbolExpired = new VarintArray(true);
 
     public OutputData(boolean enableCxt) {
         this.enableCxt = enableCxt;
@@ -117,7 +117,7 @@ public final class OutputData {
             case SYMBOL:
                 String symbol = ((SymbolNode) node).getData();
                 if (enableCxt) {
-                    return symbolArea.findID(symbol);
+                    return symbolArea.offset(symbol);
                 } else {
                     return stringArea.offset(symbol);
                 }

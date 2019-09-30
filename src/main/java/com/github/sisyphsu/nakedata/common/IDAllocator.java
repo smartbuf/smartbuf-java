@@ -1,4 +1,6 @@
-package com.github.sisyphsu.nakedata.utils;
+package com.github.sisyphsu.nakedata.common;
+
+import com.github.sisyphsu.nakedata.utils.ArrayUtils;
 
 /**
  * allocate [0, max] id
@@ -6,7 +8,7 @@ package com.github.sisyphsu.nakedata.utils;
  * @author sulin
  * @since 2019-04-29 17:37:20
  */
-public class IDPool {
+public class IDAllocator {
 
     /**
      * The next incremental id, if no reuseIds, it should be used at next time.

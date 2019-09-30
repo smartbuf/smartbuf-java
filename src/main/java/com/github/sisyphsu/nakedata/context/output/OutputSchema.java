@@ -1,9 +1,9 @@
 package com.github.sisyphsu.nakedata.context.output;
 
 import com.github.sisyphsu.nakedata.common.Array;
-import com.github.sisyphsu.nakedata.common.LongArray;
-import com.github.sisyphsu.nakedata.common.PoolArray;
-import com.github.sisyphsu.nakedata.utils.IDPool;
+import com.github.sisyphsu.nakedata.common.VarintArray;
+import com.github.sisyphsu.nakedata.common.RecycleArray;
+import com.github.sisyphsu.nakedata.common.IDAllocator;
 
 /**
  * 需要为ObjectNode提供一种非常便利的struct-fields-id映射关系。
@@ -21,20 +21,20 @@ public final class OutputSchema {
     private final Array<String[]> tmpStructs    = new Array<>(true);
     private final Array<int[]>    tmpStructArea = new Array<>(true);
 
-    private final int           cxtNameLimit  = 1 << 16;
-    private final IDPool        nameIdPool    = new IDPool();
-    private       int[]         nameRefCounts = new int[4];
-    private final Array<String> names         = new Array<>(true);
+    private final int           cxtNameLimit    = 1 << 16;
+    private final IDAllocator   nameIdAllocator = new IDAllocator();
+    private       int[]         nameRefCounts   = new int[4];
+    private final Array<String> names           = new Array<>(true);
 
     final Array<String>  nameAdded   = new Array<>(true);
     final Array<Integer> nameExpired = new Array<>(true);
 
-    private final int              cxtStructLimit = 1 << 12;
-    private final Array<String[]>  cxtStructs     = new Array<>(true);
-    private final PoolArray<int[]> cxtStructArea  = new PoolArray<>();
+    private final int                 cxtStructLimit = 1 << 12;
+    private final Array<String[]>     cxtStructs     = new Array<>(true);
+    private final RecycleArray<int[]> cxtStructArea  = new RecycleArray<>();
 
     final Array<int[]> structAdded   = new Array<>(true);
-    final LongArray    structExpired = new LongArray(true);
+    final VarintArray  structExpired = new VarintArray(true);
 
 
     public OutputSchema(boolean enableCxt) {
@@ -122,7 +122,7 @@ public final class OutputSchema {
     private int registerName(String name) {
         Integer id = this.names.offset(name);
         if (id == null) {
-            id = nameIdPool.acquire();
+            id = nameIdAllocator.acquire();
             if (id >= nameRefCounts.length) {
                 int[] refCounts = new int[this.nameRefCounts.length];
                 System.arraycopy(this.nameRefCounts, 0, refCounts, 0, this.nameRefCounts.length);
@@ -143,6 +143,7 @@ public final class OutputSchema {
             }
             // nameId should be released
             names.remove(nameId);
+            nameIdAllocator.release(nameId);
             nameExpired.add(nameId);
         }
     }

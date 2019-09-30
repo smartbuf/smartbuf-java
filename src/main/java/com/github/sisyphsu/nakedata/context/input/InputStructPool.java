@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.context.input;
 
-import com.github.sisyphsu.nakedata.utils.IDPool;
+import com.github.sisyphsu.nakedata.common.IDAllocator;
 
 /**
  * Maintain type pool for input side.
@@ -13,11 +13,11 @@ public class InputStructPool {
     /**
      * The pool size of this TypePool, it mainly used for memory attack.
      */
-    private final int    limit;
+    private final int         limit;
     /**
      * The IDPool which used for id allocation, it should work exactly same with output-side.
      */
-    private       IDPool pool;
+    private       IDAllocator pool;
 
     /**
      * Initialize type pool for input side.
@@ -26,7 +26,7 @@ public class InputStructPool {
      */
     public InputStructPool(int limit) {
         this.limit = limit;
-        this.pool = new IDPool();
+        this.pool = new IDAllocator();
     }
 
 }
