@@ -280,11 +280,7 @@ public final class OutputBuilder {
         for (int i = 0; i < fields.length && !isTmp; i++) {
             isTmp = NAME.matcher(fields[i]).matches();
         }
-        if (isTmp) {
-            schema.addTmpStruct(fields);
-        } else {
-            schema.addCxtStruct(fields);
-        }
+        schema.addStruct(fields);
         // 扫描子节点
         for (Node subNode : node.getFields().values()) {
             this.doScan(subNode);

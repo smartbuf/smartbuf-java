@@ -1,6 +1,8 @@
 package com.github.sisyphsu.nakedata.context.output;
 
-import com.github.sisyphsu.nakedata.common.*;
+import com.github.sisyphsu.nakedata.common.Array;
+import com.github.sisyphsu.nakedata.common.IDAllocator;
+import com.github.sisyphsu.nakedata.common.RecycleArray;
 import com.github.sisyphsu.nakedata.context.model.FrameMeta;
 
 import java.util.HashMap;
@@ -71,40 +73,6 @@ public final class OutputSchema {
     }
 
     /**
-     * Add an struct into schema.
-     */
-    public void addTmpStruct(String[] fields) {
-        if (structMap.containsKey(fields)) {
-            return;
-        }
-        int[] nameIds = new int[fields.length];
-        for (int i = 0; i < fields.length; i++) {
-            String name = fields[i];
-            meta.getTmpNames().add(name);
-            nameIds[i] = meta.getTmpNames().offset(name);
-        }
-        meta.getTmpStructs().add(nameIds);
-    }
-
-    /**
-     * Register struct for context sharing, could repeat.
-     */
-    public void addCxtStruct(String[] fields) {
-        if (cxtStructs.contains(fields)) {
-            return;
-        }
-        int[] nameIds = new int[fields.length];
-        for (int i = 0; i < fields.length; i++) {
-            int nameId = registerName(fields[i]);
-            nameIds[i] = nameId;
-            nameRefCounts[nameId]++;
-        }
-        if (cxtStructArea.add(nameIds)) {
-            meta.getCxtStructAdded().add(nameIds);
-        }
-    }
-
-    /**
      * Register symbol for context sharing, could repeat
      */
     public void addSymbol(String symbol) {
@@ -114,6 +82,33 @@ public final class OutputSchema {
             }
         } else {
             meta.getTmpStringArea().add(symbol);
+        }
+    }
+
+    /**
+     * Register struct for sharing, coud repeat
+     */
+    public void addStruct(String[] fields) {
+        if (cxtStructs.contains(fields)) {
+            return;
+        }
+        int[] nameIds = new int[fields.length];
+        if (meta.isEnableCxt()) {
+            for (int i = 0; i < fields.length; i++) {
+                int nameId = registerName(fields[i]);
+                nameIds[i] = nameId;
+                nameRefCounts[nameId]++;
+            }
+            if (cxtStructArea.add(nameIds)) {
+                meta.getCxtStructAdded().add(nameIds);
+            }
+        } else {
+            for (int i = 0; i < fields.length; i++) {
+                String name = fields[i];
+                meta.getTmpNames().add(name);
+                nameIds[i] = meta.getTmpNames().offset(name);
+            }
+            meta.getTmpStructs().add(nameIds);
         }
     }
 
