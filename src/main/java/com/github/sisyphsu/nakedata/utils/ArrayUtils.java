@@ -1,21 +1,27 @@
 package com.github.sisyphsu.nakedata.utils;
 
 /**
- * array's util functions
+ * Some utils for array, meanly sort
  *
  * @author sulin
- * @since 2019-04-29 17:56:43
+ * @since 2019-10-02 15:16:34
  */
-public class ArrayUtils {
+public final class ArrayUtils {
+
+    private ArrayUtils() {
+    }
 
     /**
-     * Fast-Sort arithmetic which support descend sort
+     * Fast-Sort arithmetic which support descend sort for int[]
      *
      * @param arr  Source array
      * @param from start offset, include
      * @param to   end offset, include
      */
-    public static void descSort(int[] arr, int from, int to) {
+    public static void descFastSort(final int[] arr, final int from, final int to) {
+        if (to - from < 1) {
+            return;
+        }
         int low = from;
         int high = to;
         int baseVal = arr[low];
@@ -39,30 +45,81 @@ public class ArrayUtils {
 
         arr[low] = baseVal;
         if (low - from > 1) {
-            descSort(arr, from, low - 1);
+            descFastSort(arr, from, low - 1);
         }
         if (to - low > 1) {
-            descSort(arr, low + 1, to);
+            descFastSort(arr, low + 1, to);
         }
     }
 
-    private static void headMax(int[] list, int len, int i) {
-        int k = i, root = list[i], index = 2 * k + 1;
-        while (index < len) {
-            if (index + 1 < len) {
-                if (list[index] < list[index + 1]) {
-                    index = index + 1;
+    /**
+     * Fast-Sort arithmetic which support descend sort for long[]
+     *
+     * @param arr  Source array
+     * @param from start offset, include
+     * @param to   end offset, include
+     */
+    public static void descFastSort(final long[] arr, final int from, final int to) {
+        if (to - from < 1) {
+            return;
+        }
+        int low = from;
+        int high = to;
+        long baseVal = arr[low];
+
+        while (low < high) {
+            for (; high > low; high--) {
+                if (arr[high] > baseVal) {
+                    arr[low] = arr[high];
+                    low++;
+                    break;
                 }
             }
-            if (list[index] > root) {
-                list[k] = list[index];
-                k = index;
-                index = 2 * k + 1;
-            } else {
-                break;
+            for (; high > low; low++) {
+                if (arr[low] < baseVal) {
+                    arr[high] = arr[low];
+                    high--;
+                    break;
+                }
             }
         }
-        list[k] = root;
+
+        arr[low] = baseVal;
+        if (low - from > 1) {
+            descFastSort(arr, from, low - 1);
+        }
+        if (to - low > 1) {
+            descFastSort(arr, low + 1, to);
+        }
+    }
+
+    /**
+     * Adjust the specified heap from root, make sure that heap[root] is the largest item at [root, last).
+     *
+     * @param heap Array that represents heap
+     * @param root Root offset of heap
+     * @param last Last offset
+     */
+    public static void maxHeapAdjust(final long[] heap, final int root, final int last) {
+        final long rootVal = heap[root];
+        int parent = root;
+        int child1, child2;
+        while (true) {
+            child1 = 2 * parent + 1;
+            child2 = child1 + 1;
+            if (child1 >= last) {
+                break; // no children
+            }
+            if (child2 < last && heap[child2] > heap[child1]) {
+                child1 = child2; // choice the bigger child
+            }
+            if (heap[child1] <= rootVal) {
+                break; // this branch is smaller
+            }
+            heap[parent] = heap[child1]; // switch root to smaller position
+            parent = child1;
+        }
+        heap[parent] = rootVal;
     }
 
 }

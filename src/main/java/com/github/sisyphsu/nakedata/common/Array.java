@@ -36,7 +36,7 @@ public final class Array<T> {
      * @param val New object of T
      */
     public void add(T val) {
-        this.add(this.offset, val);
+        this.set(this.offset, val);
     }
 
 
@@ -46,7 +46,7 @@ public final class Array<T> {
      * @param pos The specified offset
      * @param val New instance of T
      */
-    public void add(int pos, T val) {
+    public void set(int pos, T val) {
         if (val == null) {
             throw new NullPointerException("val cannot be null");
         }
@@ -55,7 +55,7 @@ public final class Array<T> {
             System.arraycopy(data, 0, newItems, 0, data.length);
             data = newItems;
         }
-        if (this.offset <= pos) {
+        if (pos >= this.offset) {
             this.offset = pos + 1;
         }
         if (indexMap != null && indexMap.put(val, pos) != null) {

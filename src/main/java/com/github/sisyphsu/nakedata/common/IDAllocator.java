@@ -8,7 +8,7 @@ import com.github.sisyphsu.nakedata.utils.ArrayUtils;
  * @author sulin
  * @since 2019-04-29 17:37:20
  */
-public class IDAllocator {
+public final class IDAllocator {
 
     /**
      * The next incremental id, if no reuseIds, it should be used at next time.
@@ -41,19 +41,29 @@ public class IDAllocator {
      * @param id ID was released
      */
     public void release(int id) {
+        if (id >= nextId) {
+            throw new IllegalArgumentException(id + " is not acquired");
+        }
         if (reuseIds == null) {
-            // init
-            reuseIds = new int[64];
-        } else if (reuseIds.length >= reuseCount) {
-            // expansion
-            int[] tmp = this.reuseIds;
-            reuseIds = new int[reuseIds.length * 2];
-            System.arraycopy(tmp, 0, reuseIds, 0, tmp.length);
+            reuseIds = new int[4];
+        } else if (reuseCount >= reuseIds.length) {
+            int[] tmp = new int[reuseIds.length * 2];
+            System.arraycopy(reuseIds, 0, tmp, 0, reuseIds.length);
+            this.reuseIds = tmp;
         }
         this.reuseIds[this.reuseCount] = id;
-        ArrayUtils.descSort(this.reuseIds, 0, this.reuseCount);
+        ArrayUtils.descFastSort(this.reuseIds, 0, this.reuseCount);
 
         this.reuseCount++;
+    }
+
+    /**
+     * The total count of id that has been allocated.
+     *
+     * @return total count include released
+     */
+    public int count() {
+        return nextId;
     }
 
 }

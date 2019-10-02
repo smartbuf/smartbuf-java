@@ -129,7 +129,7 @@ public final class OutputSchema {
                 this.nameRefCounts = refCounts;
             }
             nameRefCounts[id] = 0;
-            names.add(id, name);
+            names.set(id, name);
             nameAdded.add(name); // record nameAdded for context-sync.
         }
         return id;

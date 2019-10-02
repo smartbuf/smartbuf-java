@@ -35,7 +35,7 @@ public final class DoubleArray {
      * @param val New double value
      */
     public void add(double val) {
-        this.add(this.offset, val);
+        this.set(this.offset, val);
     }
 
     /**
@@ -44,13 +44,13 @@ public final class DoubleArray {
      * @param pos The specified offset
      * @param val New double value
      */
-    public void add(int pos, double val) {
+    public void set(int pos, double val) {
         if (pos >= data.length) {
             double[] newItems = new double[data.length * 2];
             System.arraycopy(data, 0, newItems, 0, data.length);
             data = newItems;
         }
-        if (this.offset <= pos) {
+        if (pos >= this.offset) {
             this.offset = pos + 1;
         }
         if (indexMap != null && indexMap.put(val, pos) != null) {

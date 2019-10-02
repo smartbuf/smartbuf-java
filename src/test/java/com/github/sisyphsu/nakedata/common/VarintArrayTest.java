@@ -12,58 +12,78 @@ public class VarintArrayTest {
 
     @Test
     public void test() {
-        VarintArray set = new VarintArray(false);
-        set.add(1);
-        set.add(2);
-        set.add(3);
-        set.add(4);
+        VarintArray array = new VarintArray(false);
+        array.add(1);
+        array.add(2);
+        array.add(3);
+        array.add(4);
 
         try {
-            set.remove(1);
+            array.remove(1);
             assert false;
         } catch (Exception e) {
             assert e instanceof UnsupportedOperationException;
         }
 
-        assert set.size() == 4;
+        assert array.size() == 4;
 
-        assert Arrays.equals(set.data(), new long[]{1L, 2L, 3L, 4L});
+        assert Arrays.equals(array.data(), new long[]{1L, 2L, 3L, 4L});
 
-        set.clear();
-        assert set.size() == 0;
+        array.clear();
+        assert array.size() == 0;
+
+        try {
+            array.contains(1);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof UnsupportedOperationException;
+        }
+
+        try {
+            array.offset(1);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof UnsupportedOperationException;
+        }
+
+        array.set(6, 6);
+        assert array.size() == 7;
+
+        array.set(1, 1);
+        assert array.get(1) == 1;
     }
 
     @Test
     public void testIndexable() {
-        VarintArray set = new VarintArray(true);
-        set.add(0);
-        set.add(1);
-        set.add(2);
-        set.add(3);
-        set.add(4);
-        assert set.size() == 5;
+        VarintArray array = new VarintArray(true);
+        array.add(0);
+        array.add(1);
+        array.add(2);
+        array.add(3);
+        array.add(4);
+        assert array.size() == 5;
 
         try {
-            set.add(4);
+            array.add(4);
             assert false;
         } catch (Exception e) {
             assert e instanceof IllegalArgumentException;
         }
 
-        assert set.contains(2);
-        set.remove(2);
-        assert set.size() == 4;
+        assert array.contains(2);
+        array.remove(2);
+        assert array.size() == 4;
 
-        assert !set.contains(2);
-        set.add(2);
-        assert set.size() == 5;
+        assert !array.contains(2);
+        array.add(2);
+        assert array.size() == 5;
 
-        System.out.println(set.offset(3));
-        assert set.offset(3) == 3;
-        assert set.offset(10) == null;
+        System.out.println(array.offset(3));
+        assert array.offset(3) == 3;
+        assert array.offset(10) == null;
 
-        set.clear();
-        assert set.size() == 0;
+        array.clear();
+        assert array.size() == 0;
     }
 
 }

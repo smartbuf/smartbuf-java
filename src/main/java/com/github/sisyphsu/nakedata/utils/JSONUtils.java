@@ -9,9 +9,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author sulin
  * @since 2019-04-25 11:48:24
  */
+@Deprecated
 public class JSONUtils {
 
     public static ObjectMapper MAPPER = new ObjectMapper();
+
+    private JSONUtils() {
+    }
 
     /**
      * Parse Object to JsonNode

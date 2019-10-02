@@ -35,7 +35,7 @@ public final class VarintArray {
      * @param val New long value
      */
     public void add(long val) {
-        this.add(this.offset, val);
+        this.set(this.offset, val);
     }
 
     /**
@@ -44,13 +44,13 @@ public final class VarintArray {
      * @param pos The specified offset
      * @param val New long value
      */
-    public void add(int pos, long val) {
+    public void set(int pos, long val) {
         if (pos >= data.length) {
             long[] newItems = new long[data.length * 2];
             System.arraycopy(data, 0, newItems, 0, data.length);
             data = newItems;
         }
-        if (this.offset <= pos) {
+        if (pos >= this.offset) {
             this.offset = pos + 1;
         }
         if (indexMap != null && indexMap.put(val, pos) != null) {

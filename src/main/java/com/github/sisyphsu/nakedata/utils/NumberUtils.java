@@ -6,6 +6,9 @@ package com.github.sisyphsu.nakedata.utils;
  */
 public class NumberUtils {
 
+    private NumberUtils() {
+    }
+
     public static long intToUint(long l) {
         return (l << 1) ^ (l >> 63);
     }

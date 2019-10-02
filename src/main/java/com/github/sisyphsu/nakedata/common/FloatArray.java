@@ -35,7 +35,7 @@ public final class FloatArray {
      * @param val New float value
      */
     public void add(float val) {
-        this.add(this.offset, val);
+        this.set(this.offset, val);
     }
 
     /**
@@ -44,13 +44,13 @@ public final class FloatArray {
      * @param pos The specified offset
      * @param val New float value
      */
-    public void add(int pos, float val) {
+    public void set(int pos, float val) {
         if (pos >= data.length) {
             float[] newItems = new float[data.length * 2];
             System.arraycopy(data, 0, newItems, 0, data.length);
             data = newItems;
         }
-        if (this.offset <= pos) {
+        if (pos >= this.offset) {
             this.offset = pos + 1;
         }
         if (indexMap != null && indexMap.put(val, pos) != null) {

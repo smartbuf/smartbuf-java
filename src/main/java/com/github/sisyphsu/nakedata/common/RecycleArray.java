@@ -1,38 +1,53 @@
 package com.github.sisyphsu.nakedata.common;
 
+import com.github.sisyphsu.nakedata.utils.ArrayUtils;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Array that support recycling.
  *
  * @author sulin
  * @since 2019-09-25 20:37:51
  */
+@SuppressWarnings("unchecked")
 public final class RecycleArray<T> {
 
     private static final long INIT_TIME = System.currentTimeMillis();
 
-    private int[] activeTimes = new int[4];
+    private int[]    activeTimes = new int[4];
+    private Object[] data        = new Object[4];
 
-    private final IDAllocator idAllocator = new IDAllocator();
-    private final Array<T>    array       = new Array<>(true);
+    private final IDAllocator     idAllocator = new IDAllocator();
+    private final Map<T, Integer> indexMap    = new HashMap<>();
 
     /**
      * Add new item into this array.
      *
      * @param t New item
-     * @return Added or not
+     * @return t is new or not
      */
     public boolean add(T t) {
+        if (t == null) {
+            throw new NullPointerException();
+        }
         int now = (int) ((System.currentTimeMillis() - INIT_TIME));
-        Integer offset = array.offset(t);
         boolean isNew = false;
+        Integer offset = indexMap.get(t);
         if (offset == null) {
             offset = idAllocator.acquire();
-            array.add(offset, t);
-            if (offset >= activeTimes.length) {
-                int[] tmp = new int[activeTimes.length * 2];
-                System.arraycopy(activeTimes, 0, tmp, 0, activeTimes.length);
+            if (offset >= data.length) {
+                int len = data.length;
+                Object[] newItems = new Object[len * 2];
+                System.arraycopy(data, 0, newItems, 0, len);
+                data = newItems;
+                int[] tmp = new int[len * 2];
+                System.arraycopy(activeTimes, 0, tmp, 0, len);
                 activeTimes = tmp;
             }
+            this.data[offset] = t;
+            this.indexMap.put(t, offset);
             isNew = true;
         }
         activeTimes[offset] = now;
@@ -42,10 +57,10 @@ public final class RecycleArray<T> {
     /**
      * Get the specified data by id(offset).
      *
-     * @param id Item's id
+     * @param offset Item's id
      */
-    public T get(int id) {
-        return array.get(id);
+    public T get(int offset) {
+        return (T) data[offset];
     }
 
     /**
@@ -55,7 +70,17 @@ public final class RecycleArray<T> {
      * @return ID
      */
     public int offset(T t) {
-        return array.offset(t);
+        return indexMap.get(t);
+    }
+
+    /**
+     * Check this array contains t or not.
+     *
+     * @param t Item
+     * @return This array contains t or not
+     */
+    public boolean contains(T t) {
+        return indexMap.containsKey(t);
     }
 
     /**
@@ -64,7 +89,7 @@ public final class RecycleArray<T> {
      * @return item's count
      */
     public int size() {
-        return array.size();
+        return indexMap.size();
     }
 
     /**
@@ -74,65 +99,43 @@ public final class RecycleArray<T> {
      * @return The id of items which were released.
      */
     public long[] release(int count) {
-        int offset = 0;
         long[] heap = new long[count];
 
         // 0 means init, 1 means stable, -1 means not-stable.
         int heapStatus = 0;
-        int itemSize = array.size();
-        T[] items = array.data();
-        for (int itemId = 0; itemId < itemSize; itemId++) {
-            if (items[itemId] == null) {
+        T[] items = (T[]) data;
+        int itemCount = idAllocator.count();
+        for (int itemOffset = 0, heapOffset = 0; itemOffset < itemCount; itemOffset++) {
+            if (items[itemOffset] == null) {
                 continue;
             }
-            int itemTime = activeTimes[itemId];
-            if (offset < count) {
-                heap[offset++] = ((long) itemTime) << 32 | itemId;
+            int itemTime = activeTimes[itemOffset];
+            if (heapOffset < count) {
+                heap[heapOffset++] = ((long) itemTime) << 32 | (long) itemOffset;
                 continue;
             }
             if (heapStatus == 0) {
-                for (int i = count / 2; i >= 0; i--) {
-                    this.headAdjust(heap, i, count); // adjuest all
-                }
+                ArrayUtils.descFastSort(heap, 0, count - 1); // sort by activeTime, heap[0] has biggest activeTime
                 heapStatus = 1;
             } else if (heapStatus == -1) {
-                this.headAdjust(heap, 0, count); // max-heap adjust, make sure heap[0] has smallest time
+                ArrayUtils.maxHeapAdjust(heap, 0, count); // make sure heap[0] has biggest activeTime
                 heapStatus = 1;
             }
             if (itemTime > (int) (heap[0] >>> 32)) {
                 continue; // item is newer than all items in heap
             }
-            heap[0] = ((long) itemTime) << 32 | itemId;
+            heap[0] = ((long) itemTime) << 32 | (long) itemOffset;
             heapStatus = -1;
         }
 
         // release all items in heap
         for (long l : heap) {
-            int id = (int) (l);
-            idAllocator.release(id);
-            array.remove(id);
+            int off = (int) (l);
+            idAllocator.release(off);
+            indexMap.remove(items[off]);
+            items[off] = null;
         }
         return heap;
-    }
-
-    // Adjust the specified heap from root, make sure the largest item at first.
-    private void headAdjust(long[] heap, int root, int len) {
-        int parent = root;
-        int child = 2 * parent + 1;
-        for (; child < len; parent = child, child = 2 * parent + 1) {
-            // select the bigger child
-            if (child + 1 < len && heap[child] < heap[child + 1]) {
-                child = child + 1;
-            }
-            // break on stable heap
-            if (heap[parent] >= heap[child]) {
-                break;
-            }
-            // exchange father and child
-            long tmp = heap[child];
-            heap[child] = heap[parent];
-            heap[parent] = tmp;
-        }
     }
 
 }
