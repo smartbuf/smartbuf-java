@@ -1,9 +1,10 @@
 package com.github.sisyphsu.nakedata.context.output;
 
-import com.github.sisyphsu.nakedata.common.Array;
-import com.github.sisyphsu.nakedata.common.VarintArray;
-import com.github.sisyphsu.nakedata.common.RecycleArray;
-import com.github.sisyphsu.nakedata.common.IDAllocator;
+import com.github.sisyphsu.nakedata.common.*;
+import com.github.sisyphsu.nakedata.context.model.FrameMeta;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 需要为ObjectNode提供一种非常便利的struct-fields-id映射关系。
@@ -15,51 +16,43 @@ import com.github.sisyphsu.nakedata.common.IDAllocator;
  */
 public final class OutputSchema {
 
-    private final boolean enableCxt;
+    private final boolean   enableCxt;
+    private final FrameMeta meta;
 
-    private final Array<String>   tmpNames      = new Array<>(true);
-    private final Array<String[]> tmpStructs    = new Array<>(true);
-    private final Array<int[]>    tmpStructArea = new Array<>(true);
+    private final Map<String[], Integer> structMap = new HashMap<>();
 
     private final int           cxtNameLimit    = 1 << 16;
     private final IDAllocator   nameIdAllocator = new IDAllocator();
     private       int[]         nameRefCounts   = new int[4];
     private final Array<String> names           = new Array<>(true);
 
-    final Array<String>  nameAdded   = new Array<>(true);
-    final Array<Integer> nameExpired = new Array<>(true);
-
     private final int                 cxtStructLimit = 1 << 12;
     private final Array<String[]>     cxtStructs     = new Array<>(true);
     private final RecycleArray<int[]> cxtStructArea  = new RecycleArray<>();
 
-    final Array<int[]> structAdded   = new Array<>(true);
-    final VarintArray  structExpired = new VarintArray(true);
+    private final int                  cxtSymbolLimit = 1 << 16;
+    private final RecycleArray<String> cxtSymbolArea  = new RecycleArray<>();
 
-
-    public OutputSchema(boolean enableCxt) {
-        this.enableCxt = enableCxt;
+    /**
+     * Initialize
+     */
+    public OutputSchema(FrameMeta meta) {
+        this.meta = meta;
+        this.enableCxt = meta.isEnableCxt();
     }
 
     /**
      * Reset for new round's output.
      */
-    public void clear() {
-        this.tmpNames.clear();
-        this.tmpStructs.clear();
-        this.tmpStructArea.clear();
+    public void tryRelease() {
         if (!enableCxt) {
             return;
         }
-        this.nameExpired.clear();
-        this.nameAdded.clear();
-        this.structAdded.clear();
-        this.structExpired.clear();
         // try release struct
         if (cxtStructArea.size() > cxtStructLimit) {
             long[] releasedItem = cxtStructArea.release(cxtStructLimit / 10);
             for (long l : releasedItem) {
-                structExpired.add((int) l);
+                meta.getCxtStructExpired().add((int) l);
             }
             for (long item : releasedItem) {
                 unreference(cxtStructArea.get((int) item));
@@ -69,7 +62,7 @@ public final class OutputSchema {
         while (names.size() > cxtNameLimit) {
             long[] releasedItems = cxtStructArea.release(cxtStructLimit / 10);
             for (long l : releasedItems) {
-                structExpired.add((int) l);
+                meta.getCxtStructExpired().add((int) l);
             }
             for (long item : releasedItems) {
                 unreference(cxtStructArea.get((int) item));
@@ -81,16 +74,16 @@ public final class OutputSchema {
      * Add an struct into schema.
      */
     public void addTmpStruct(String[] fields) {
-        if (tmpStructs.contains(fields)) {
+        if (structMap.containsKey(fields)) {
             return;
         }
         int[] nameIds = new int[fields.length];
         for (int i = 0; i < fields.length; i++) {
             String name = fields[i];
-            tmpNames.add(name);
-            nameIds[i] = tmpNames.offset(name);
+            meta.getTmpNames().add(name);
+            nameIds[i] = meta.getTmpNames().offset(name);
         }
-        tmpStructArea.add(nameIds);
+        meta.getTmpStructs().add(nameIds);
     }
 
     /**
@@ -107,14 +100,68 @@ public final class OutputSchema {
             nameRefCounts[nameId]++;
         }
         if (cxtStructArea.add(nameIds)) {
-            structAdded.add(nameIds);
+            meta.getCxtStructAdded().add(nameIds);
         }
     }
 
-    public int findTmpStructID(String[] fields) {
-        return tmpStructs.offset(fields);
+    /**
+     * Register symbol for context sharing, could repeat
+     */
+    public void addSymbol(String symbol) {
+        if (meta.isEnableCxt()) {
+            if (cxtSymbolArea.add(symbol)) {
+                meta.getCxtSymbolAdded().add(symbol);
+            }
+        } else {
+            meta.getTmpStringArea().add(symbol);
+        }
     }
 
+    /**
+     * Find the specified float's id
+     */
+    public int findFloatID(float val) {
+        return 0;
+    }
+
+    /**
+     * Find the specified double's id
+     */
+    public int findDoubleID(double val) {
+        return 0;
+    }
+
+    /**
+     * Find the specified varint's id
+     */
+    public int findVarintID(long val) {
+        return 0;
+    }
+
+    /**
+     * Find the specified string's id
+     */
+    public int findStringID(String str) {
+        return 0;
+    }
+
+    /**
+     * Find the specified symbol's id
+     */
+    public int findSymbolID(String symbol) {
+        return 0;
+    }
+
+    /**
+     * Find the specified temparary struct's id
+     */
+    public int findTmpStructID(String[] fields) {
+        return structMap.get(fields);
+    }
+
+    /**
+     * Find the specified context struct's id
+     */
     public int findCxtStructID(String[] fields) {
         return cxtStructs.offset(fields);
     }
@@ -130,7 +177,7 @@ public final class OutputSchema {
             }
             nameRefCounts[id] = 0;
             names.set(id, name);
-            nameAdded.add(name); // record nameAdded for context-sync.
+            meta.getCxtNameAdded().add(name); // record nameAdded for context-sync.
         }
         return id;
     }
@@ -144,7 +191,7 @@ public final class OutputSchema {
             // nameId should be released
             names.remove(nameId);
             nameIdAllocator.release(nameId);
-            nameExpired.add(nameId);
+            meta.getCxtNameExpired().add(nameId);
         }
     }
 

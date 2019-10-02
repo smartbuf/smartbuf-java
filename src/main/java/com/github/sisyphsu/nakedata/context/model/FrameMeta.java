@@ -5,7 +5,7 @@ import com.github.sisyphsu.nakedata.common.DoubleArray;
 import com.github.sisyphsu.nakedata.common.FloatArray;
 import com.github.sisyphsu.nakedata.common.VarintArray;
 import com.github.sisyphsu.nakedata.io.OutputWriter;
-import lombok.Data;
+import lombok.Getter;
 
 /**
  * 报文元数据，在数据包的头部声明报文体的数据模型、数据区等
@@ -13,8 +13,8 @@ import lombok.Data;
  * @author sulin
  * @since 2019-05-03 17:43:58
  */
-@Data
-public class FrameMeta {
+@Getter
+public final class FrameMeta {
 
     private static final byte VERSION     = (byte) 0b0100_0000;
     private static final byte FLAG_STREAM = (byte) 0b0010_0000;
@@ -33,24 +33,66 @@ public class FrameMeta {
     private static final byte CODE_SYMBOL_ADDED   = (byte) 11;
     private static final byte CODE_SYMBOL_EXPIRED = (byte) 12;
 
-    private long    id;
-    private int     version;
-    private boolean enableCxt;
+    private final boolean output;
+    private final boolean enableCxt;
 
-    private FloatArray    tmpFloatArea;
-    private DoubleArray   tmpDoubleArea;
-    private VarintArray   tmpVarintArea;
-    private Array<String> tmpStringArea;
+    private final FloatArray    tmpFloatArea;
+    private final DoubleArray   tmpDoubleArea;
+    private final VarintArray   tmpVarintArea;
+    private final Array<String> tmpStringArea;
 
-    private Array<String> tmpNames;
-    private Array<int[]>  tmpStructs;
+    private final Array<String> tmpNames;
+    private final Array<int[]>  tmpStructs;
 
-    private Array<String> cxtNameAdded;
-    private VarintArray   cxtNameExpired;
-    private Array<int[]>  cxtStructAdded;
-    private VarintArray   cxtStructExpired;
-    private Array<String> cxtSymbolAdded;
-    private VarintArray   cxtSymbolExpired;
+    private final Array<String> cxtNameAdded;
+    private final Array<int[]>  cxtStructAdded;
+    private final Array<String> cxtSymbolAdded;
+
+    private final VarintArray cxtNameExpired;
+    private final VarintArray cxtStructExpired;
+    private final VarintArray cxtSymbolExpired;
+
+    private int version;
+
+    /**
+     * Initialize frame's metadata, it should be reused for every context.
+     *
+     * @param output Used for output side or not
+     */
+    public FrameMeta(boolean output, boolean enableCxt) {
+        this.output = output;
+        this.enableCxt = enableCxt;
+        this.tmpFloatArea = new FloatArray(output);
+        this.tmpDoubleArea = new DoubleArray(output);
+        this.tmpVarintArea = new VarintArray(output);
+        this.tmpStringArea = new Array<>(output);
+        this.tmpNames = new Array<>(output);
+        this.tmpStructs = new Array<>(output);
+        this.cxtNameAdded = new Array<>(output);
+        this.cxtStructAdded = new Array<>(output);
+        this.cxtSymbolAdded = new Array<>(output);
+        this.cxtNameExpired = new VarintArray(output);
+        this.cxtStructExpired = new VarintArray(output);
+        this.cxtSymbolExpired = new VarintArray(output);
+    }
+
+    public void reset(int version) {
+        this.version = version;
+        this.tmpFloatArea.clear();
+        this.tmpDoubleArea.clear();
+        this.tmpVarintArea.clear();
+        this.tmpStringArea.clear();
+        this.tmpNames.clear();
+        this.tmpStructs.clear();
+        if (enableCxt) {
+            this.cxtSymbolAdded.clear();
+            this.cxtNameAdded.clear();
+            this.cxtStructAdded.clear();
+            this.cxtSymbolExpired.clear();
+            this.cxtNameExpired.clear();
+            this.cxtStructExpired.clear();
+        }
+    }
 
     /**
      * 将当前FrameMeta通过writer序列化输出
