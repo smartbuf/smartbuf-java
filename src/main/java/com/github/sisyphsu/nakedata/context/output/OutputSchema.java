@@ -1,8 +1,8 @@
 package com.github.sisyphsu.nakedata.context.output;
 
-import com.github.sisyphsu.nakedata.common.Array;
-import com.github.sisyphsu.nakedata.common.RefExpireArray;
-import com.github.sisyphsu.nakedata.common.TimeExpireArray;
+import com.github.sisyphsu.nakedata.context.common.Array;
+import com.github.sisyphsu.nakedata.context.common.RefExpireArray;
+import com.github.sisyphsu.nakedata.context.common.TimeExpireArray;
 import com.github.sisyphsu.nakedata.context.model.FrameMeta;
 
 /**

@@ -3,7 +3,8 @@ package com.github.sisyphsu.nakedata.node.std;
 import com.github.sisyphsu.nakedata.DataType;
 import com.github.sisyphsu.nakedata.node.Node;
 
-import java.util.TreeMap;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * ObjectNode represents JavaBean or Map.
@@ -12,25 +13,28 @@ import java.util.TreeMap;
  * @author sulin
  * @since 2019-05-08 21:02:12
  */
+@SuppressWarnings("unchecked")
 public final class ObjectNode extends Node {
 
-    public final static ObjectNode NULL  = new ObjectNode(null);
-    public final static ObjectNode EMPTY = new ObjectNode(new TreeMap<>());
+    public final static ObjectNode NULL  = new ObjectNode(null, null);
+    public final static ObjectNode EMPTY = new ObjectNode(new String[0], Collections.EMPTY_MAP);
 
-    private final TreeMap<String, Node> fields;
+    private final String[]          fields;
+    private final Map<String, Node> data;
 
-    private ObjectNode(TreeMap<String, Node> fields) {
+    private ObjectNode(String[] fields, Map<String, Node> map) {
         this.fields = fields;
+        this.data = map;
     }
 
-    public static ObjectNode valueOf(TreeMap<String, Node> fields) {
-        if (fields == null) {
+    public static ObjectNode valueOf(String[] fields, Map<String, Node> map) {
+        if (map == null) {
             return NULL;
         }
-        if (fields.isEmpty()) {
+        if (map.isEmpty()) {
             return EMPTY;
         }
-        return new ObjectNode(fields);
+        return new ObjectNode(fields, map);
     }
 
     @Override
@@ -44,15 +48,15 @@ public final class ObjectNode extends Node {
     }
 
     public int size() {
-        return fields.size();
+        return data.size();
     }
 
-    public TreeMap<String, Node> getFields() {
+    public Map<String, Node> getData() {
+        return data;
+    }
+
+    public String[] getFields() {
         return fields;
-    }
-
-    public boolean isStable() {
-        return false;
     }
 
 }

@@ -1,9 +1,9 @@
 package com.github.sisyphsu.nakedata.context.model;
 
-import com.github.sisyphsu.nakedata.common.Array;
-import com.github.sisyphsu.nakedata.common.DoubleArray;
-import com.github.sisyphsu.nakedata.common.FloatArray;
-import com.github.sisyphsu.nakedata.common.LongArray;
+import com.github.sisyphsu.nakedata.context.common.Array;
+import com.github.sisyphsu.nakedata.context.common.DoubleArray;
+import com.github.sisyphsu.nakedata.context.common.FloatArray;
+import com.github.sisyphsu.nakedata.context.common.LongArray;
 import com.github.sisyphsu.nakedata.io.OutputWriter;
 import lombok.Getter;
 

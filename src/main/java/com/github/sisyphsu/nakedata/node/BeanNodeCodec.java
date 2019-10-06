@@ -3,10 +3,10 @@ package com.github.sisyphsu.nakedata.node;
 import com.github.sisyphsu.nakedata.convertor.Codec;
 import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.node.std.ObjectNode;
+import net.sf.cglib.beans.BeanMap;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Object's Codec
@@ -16,6 +16,8 @@ import java.util.TreeMap;
  */
 public final class BeanNodeCodec extends Codec {
 
+    private static final Map<Class, String[]> FIELDS_MAP = new ConcurrentHashMap<>();
+
     /**
      * encode map to ObjectNode, pojo should be encoded as map first.
      *
@@ -23,14 +25,15 @@ public final class BeanNodeCodec extends Codec {
      * @return ObjectNode
      */
     @Converter
-    public Node toNode(Map map) {
+    public Node toNode(Map<?, ?> map) {
         if (map == null) {
             return ObjectNode.NULL;
         }
         if (map.isEmpty()) {
             return ObjectNode.EMPTY;
         }
-        TreeMap<String, Node> fields = new TreeMap<>();
+        final String[] fieldNames = getFieldNames(map);
+        final HashMap<String, Node> fields = new HashMap<>();
         for (Object item : map.entrySet()) {
             Map.Entry entry = (Map.Entry) item;
             String key;
@@ -43,7 +46,7 @@ public final class BeanNodeCodec extends Codec {
 
             fields.put(key, value);
         }
-        return ObjectNode.valueOf(fields);
+        return ObjectNode.valueOf(fieldNames, fields);
     }
 
     /**
@@ -60,7 +63,34 @@ public final class BeanNodeCodec extends Codec {
         if (node == ObjectNode.EMPTY) {
             return new HashMap();
         }
-        return node.getFields();
+        return node.getData();
+    }
+
+    /**
+     * Get the sorted names from the specified Map, which maybe BeanMap
+     *
+     * @param map Map
+     * @return names as array
+     */
+    public static String[] getFieldNames(Map map) {
+        Class beanCls = null;
+        if (map instanceof BeanMap) {
+            beanCls = ((BeanMap) map).getBean().getClass();
+            String[] fieldNames = FIELDS_MAP.get(beanCls);
+            if (fieldNames != null) {
+                return fieldNames;
+            }
+        }
+        String[] fieldNames = new String[map.size()];
+        int i = 0;
+        for (Object key : map.keySet()) {
+            fieldNames[i++] = String.valueOf(key);
+        }
+        Arrays.sort(fieldNames);
+        if (beanCls != null) {
+            FIELDS_MAP.put(beanCls, fieldNames);
+        }
+        return fieldNames;
     }
 
 }

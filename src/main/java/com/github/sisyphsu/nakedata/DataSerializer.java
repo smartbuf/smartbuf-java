@@ -89,9 +89,9 @@ public class DataSerializer {
         // step1. 输出类型ID
 //        writer.writeVarInt(node.getContextType().getId());
         // step2. 输出fields的值
-        for (Node field : node.getFields().values()) {
-            this.writeNode(field);
-        }
+//        for (Node field : node.getFields().values()) {
+//            this.writeNode(field);
+//        }
     }
 
     // 序列化数组节点

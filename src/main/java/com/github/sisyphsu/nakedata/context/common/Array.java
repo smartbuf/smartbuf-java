@@ -1,27 +1,28 @@
-package com.github.sisyphsu.nakedata.common;
+package com.github.sisyphsu.nakedata.context.common;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * DoubleArray like double[], but support auto-scale and value-index.
+ * ObjectArray like T[], but support auto-scale and value-index.
  *
  * @author sulin
- * @since 2019-09-29 15:41:35
+ * @since 2019-09-26 14:21:44
  */
-public final class DoubleArray {
+@SuppressWarnings("unchecked")
+public final class Array<T> {
 
     private int      offset;
-    private double[] data = new double[4];
+    private Object[] data = new Object[4];
 
-    private final Map<Double, Integer> indexMap;
+    private final Map<T, Integer> indexMap;
 
     /**
      * Initialize with indexable.
      *
      * @param indexable Support value-index or not
      */
-    public DoubleArray(boolean indexable) {
+    public Array(boolean indexable) {
         if (indexable) {
             this.indexMap = new HashMap<>();
         } else {
@@ -30,23 +31,27 @@ public final class DoubleArray {
     }
 
     /**
-     * Add new double into the final offset of this List
+     * Add new object into the final offset of this List
      *
-     * @param val New double value
+     * @param val New object of T
      */
-    public void add(double val) {
+    public void add(T val) {
         this.set(this.offset, val);
     }
 
+
     /**
-     * Set new double item into the specified offset of this List
+     * Set new object into the specified offset of this List
      *
      * @param pos The specified offset
-     * @param val New double value
+     * @param val New instance of T
      */
-    public void set(int pos, double val) {
+    public void set(int pos, T val) {
+        if (val == null) {
+            throw new NullPointerException("val cannot be null");
+        }
         if (pos >= data.length) {
-            double[] newItems = new double[data.length * 2];
+            Object[] newItems = new Object[data.length * 2];
             System.arraycopy(data, 0, newItems, 0, data.length);
             data = newItems;
         }
@@ -60,17 +65,17 @@ public final class DoubleArray {
     }
 
     /**
-     * Get double value from the specified offset
+     * Get T value from the specified offset
      *
      * @param offset The specified offset to fetch
      * @return Value at offsetd
      */
-    public double get(int offset) {
-        return data[offset];
+    public T get(int offset) {
+        return (T) data[offset];
     }
 
     /**
-     * Remove double value at the specified offset, not support if indexable is false.
+     * Remove T value at the specified offset, not support if indexable is false.
      * <p>
      * This operation will not delete offset for real, it only delete the associated index.
      *
@@ -80,17 +85,17 @@ public final class DoubleArray {
         if (indexMap == null) {
             throw new UnsupportedOperationException();
         }
-        double t = data[offset];
+        T t = (T) data[offset];
         indexMap.remove(t);
     }
 
     /**
-     * Check this list contains the specified double of not, not support if indexable is false.
+     * Check this array contains the specified T of not, not support if indexable is false.
      *
-     * @param val The specified double value
+     * @param val The specified T value
      * @return Contains or not
      */
-    public boolean contains(double val) {
+    public boolean contains(T val) {
         if (indexMap == null) {
             throw new UnsupportedOperationException();
         }
@@ -103,7 +108,7 @@ public final class DoubleArray {
      * @param val The specified double value
      * @return The array postion of val
      */
-    public Integer offset(double val) {
+    public Integer offset(T val) {
         if (indexMap == null) {
             throw new UnsupportedOperationException();
         }
@@ -111,7 +116,7 @@ public final class DoubleArray {
     }
 
     /**
-     * Fetch real size of this List
+     * Fetch real size of this Array
      */
     public int size() {
         if (indexMap != null) {
@@ -122,10 +127,10 @@ public final class DoubleArray {
     }
 
     /**
-     * Fetch the underline double[] of this List
+     * Fetch the underline T[] of this Array
      */
-    public double[] data() {
-        return data;
+    public T[] data() {
+        return (T[]) data;
     }
 
     /**

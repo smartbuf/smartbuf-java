@@ -1,28 +1,27 @@
-package com.github.sisyphsu.nakedata.common;
+package com.github.sisyphsu.nakedata.context.common;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * ObjectArray like T[], but support auto-scale and value-index.
+ * FloatArray like float[], but support auto-scale and value-index.
  *
  * @author sulin
- * @since 2019-09-26 14:21:44
+ * @since 2019-09-29 15:41:35
  */
-@SuppressWarnings("unchecked")
-public final class Array<T> {
+public final class FloatArray {
 
-    private int      offset;
-    private Object[] data = new Object[4];
+    private int     offset;
+    private float[] data = new float[4];
 
-    private final Map<T, Integer> indexMap;
+    private final Map<Float, Integer> indexMap;
 
     /**
      * Initialize with indexable.
      *
      * @param indexable Support value-index or not
      */
-    public Array(boolean indexable) {
+    public FloatArray(boolean indexable) {
         if (indexable) {
             this.indexMap = new HashMap<>();
         } else {
@@ -31,27 +30,23 @@ public final class Array<T> {
     }
 
     /**
-     * Add new object into the final offset of this List
+     * Add new float into the final offset of this List
      *
-     * @param val New object of T
+     * @param val New float value
      */
-    public void add(T val) {
+    public void add(float val) {
         this.set(this.offset, val);
     }
 
-
     /**
-     * Set new object into the specified offset of this List
+     * Set new float item into the specified offset of this List
      *
      * @param pos The specified offset
-     * @param val New instance of T
+     * @param val New float value
      */
-    public void set(int pos, T val) {
-        if (val == null) {
-            throw new NullPointerException("val cannot be null");
-        }
+    public void set(int pos, float val) {
         if (pos >= data.length) {
-            Object[] newItems = new Object[data.length * 2];
+            float[] newItems = new float[data.length * 2];
             System.arraycopy(data, 0, newItems, 0, data.length);
             data = newItems;
         }
@@ -65,17 +60,17 @@ public final class Array<T> {
     }
 
     /**
-     * Get T value from the specified offset
+     * Get float value from the specified offset
      *
      * @param offset The specified offset to fetch
      * @return Value at offsetd
      */
-    public T get(int offset) {
-        return (T) data[offset];
+    public float get(int offset) {
+        return data[offset];
     }
 
     /**
-     * Remove T value at the specified offset, not support if indexable is false.
+     * Remove float value at the specified offset, not support if indexable is false.
      * <p>
      * This operation will not delete offset for real, it only delete the associated index.
      *
@@ -85,17 +80,17 @@ public final class Array<T> {
         if (indexMap == null) {
             throw new UnsupportedOperationException();
         }
-        T t = (T) data[offset];
+        float t = data[offset];
         indexMap.remove(t);
     }
 
     /**
-     * Check this array contains the specified T of not, not support if indexable is false.
+     * Check this list contains the specified float of not, not support if indexable is false.
      *
-     * @param val The specified T value
+     * @param val The specified float value
      * @return Contains or not
      */
-    public boolean contains(T val) {
+    public boolean contains(float val) {
         if (indexMap == null) {
             throw new UnsupportedOperationException();
         }
@@ -103,12 +98,12 @@ public final class Array<T> {
     }
 
     /**
-     * Find the specified double value's position in this List, not support if indexable is false.
+     * Find the specified float value's position in this List, not support if indexable is false.
      *
-     * @param val The specified double value
+     * @param val The specified float value
      * @return The array postion of val
      */
-    public Integer offset(T val) {
+    public Integer offset(float val) {
         if (indexMap == null) {
             throw new UnsupportedOperationException();
         }
@@ -116,7 +111,7 @@ public final class Array<T> {
     }
 
     /**
-     * Fetch real size of this Array
+     * Fetch real size of this List
      */
     public int size() {
         if (indexMap != null) {
@@ -127,10 +122,10 @@ public final class Array<T> {
     }
 
     /**
-     * Fetch the underline T[] of this Array
+     * Fetch the underline float[] of this List
      */
-    public T[] data() {
-        return (T[]) data;
+    public float[] data() {
+        return data;
     }
 
     /**

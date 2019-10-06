@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.common;
+package com.github.sisyphsu.nakedata.context.common;
 
 import org.junit.jupiter.api.Test;
 

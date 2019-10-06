@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.common;
+package com.github.sisyphsu.nakedata.context.common;
 
 import org.junit.jupiter.api.Test;
 
@@ -8,11 +8,11 @@ import java.util.Arrays;
  * @author sulin
  * @since 2019-09-29 16:36:47
  */
-public class DoubleArrayTest {
+public class LongArrayTest {
 
     @Test
     public void test() {
-        DoubleArray array = new DoubleArray(false);
+        LongArray array = new LongArray(false);
         array.add(1);
         array.add(2);
         array.add(3);
@@ -27,7 +27,7 @@ public class DoubleArrayTest {
 
         assert array.size() == 4;
 
-        assert Arrays.equals(array.data(), new double[]{1.0, 2.0, 3.0, 4.0});
+        assert Arrays.equals(array.data(), new long[]{1L, 2L, 3L, 4L});
 
         array.clear();
         assert array.size() == 0;
@@ -55,7 +55,7 @@ public class DoubleArrayTest {
 
     @Test
     public void testIndexable() {
-        DoubleArray array = new DoubleArray(true);
+        LongArray array = new LongArray(true);
         array.add(0);
         array.add(1);
         array.add(2);
@@ -78,6 +78,7 @@ public class DoubleArrayTest {
         array.add(2);
         assert array.size() == 5;
 
+        System.out.println(array.offset(3));
         assert array.offset(3) == 3;
         assert array.offset(10) == null;
 

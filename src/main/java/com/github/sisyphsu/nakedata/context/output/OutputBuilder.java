@@ -179,12 +179,12 @@ public final class OutputBuilder {
      * 输出ObjectNode，按照fields固定顺序，依次输出。
      */
     void writeObjectNode(ObjectNode node, OutputWriter writer) {
-        String[] fields = node.getFields().keySet().toArray(new String[0]);
+        String[] fields = node.getFields();
         // 输出structId
         writer.writeVarUint(schema.findStructID(fields));
         // 输出fields，此处不care各个字段的数据类型
         for (String field : fields) {
-            Node subNode = node.getFields().get(field);
+            Node subNode = node.getData().get(field);
             this.writeNode(subNode, writer);
         }
     }
@@ -275,7 +275,7 @@ public final class OutputBuilder {
      * 扫描并整理Object节点的元数据
      */
     private void doScanObjectNode(ObjectNode node) {
-        String[] fields = node.getFields().keySet().toArray(new String[0]);
+        String[] fields = node.getFields();
         // 注册struct
         boolean isTmp = !enableCxt;
         for (int i = 0; i < fields.length && !isTmp; i++) {
@@ -283,7 +283,7 @@ public final class OutputBuilder {
         }
         schema.addStruct(fields);
         // 扫描子节点
-        for (Node subNode : node.getFields().values()) {
+        for (Node subNode : node.getData().values()) {
             this.doScan(subNode);
         }
     }
