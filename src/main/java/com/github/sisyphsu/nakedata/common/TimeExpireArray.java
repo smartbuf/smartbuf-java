@@ -12,7 +12,7 @@ import java.util.Map;
  * @since 2019-09-25 20:37:51
  */
 @SuppressWarnings("unchecked")
-public final class RecycleArray<T> {
+public final class TimeExpireArray<T> {
 
     private static final long INIT_TIME = System.currentTimeMillis();
 

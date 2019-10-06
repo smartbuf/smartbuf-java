@@ -2,7 +2,7 @@ package com.github.sisyphsu.nakedata.context.output;
 
 import com.github.sisyphsu.nakedata.common.Array;
 import com.github.sisyphsu.nakedata.common.IDAllocator;
-import com.github.sisyphsu.nakedata.common.RecycleArray;
+import com.github.sisyphsu.nakedata.common.TimeExpireArray;
 import com.github.sisyphsu.nakedata.context.model.FrameMeta;
 
 import java.util.HashMap;
@@ -28,12 +28,12 @@ public final class OutputSchema {
     private       int[]         nameRefCounts   = new int[4];
     private final Array<String> names           = new Array<>(true);
 
-    private final int                 cxtStructLimit = 1 << 12;
-    private final Array<String[]>     cxtStructs     = new Array<>(true);
-    private final RecycleArray<int[]> cxtStructArea  = new RecycleArray<>();
+    private final int                    cxtStructLimit = 1 << 12;
+    private final Array<String[]>        cxtStructs     = new Array<>(true);
+    private final TimeExpireArray<int[]> cxtStructArea  = new TimeExpireArray<>();
 
-    private final int                  cxtSymbolLimit = 1 << 16;
-    private final RecycleArray<String> cxtSymbolArea  = new RecycleArray<>();
+    private final int                     cxtSymbolLimit = 1 << 16;
+    private final TimeExpireArray<String> cxtSymbolArea  = new TimeExpireArray<>();
 
     /**
      * Initialize

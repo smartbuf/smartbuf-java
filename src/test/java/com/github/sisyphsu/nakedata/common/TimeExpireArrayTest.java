@@ -10,11 +10,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author sulin
  * @since 2019-10-02 11:10:47
  */
-public class RecycleArrayTest {
+public class TimeExpireArrayTest {
 
     @Test
     public void test() throws InterruptedException {
-        RecycleArray<String> array = new RecycleArray<>();
+        TimeExpireArray<String> array = new TimeExpireArray<>();
 
         Thread.sleep(10);
         array.add("1");
