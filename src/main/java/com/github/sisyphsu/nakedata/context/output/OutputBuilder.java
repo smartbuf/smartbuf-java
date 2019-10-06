@@ -263,6 +263,11 @@ public final class OutputBuilder {
                     this.doScanObjectNode((ObjectNode) item);
                 }
                 break;
+            case ARRAY:
+                for (Object item : array.getItems()) {
+                    this.doScanArrayNode((ArrayNode) item);
+                }
+                break;
         }
     }
 
