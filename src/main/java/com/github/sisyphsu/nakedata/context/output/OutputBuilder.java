@@ -181,11 +181,7 @@ public final class OutputBuilder {
     void writeObjectNode(ObjectNode node, OutputWriter writer) {
         String[] fields = node.getFields().keySet().toArray(new String[0]);
         // 输出structId
-        if (enableCxt && node.isStable()) {
-            writer.writeVarInt(schema.findCxtStructID(fields));
-        } else {
-            writer.writeVarInt(schema.findTmpStructID(fields));
-        }
+        writer.writeVarUint(schema.findStructID(fields));
         // 输出fields，此处不care各个字段的数据类型
         for (String field : fields) {
             Node subNode = node.getFields().get(field);
@@ -198,7 +194,7 @@ public final class OutputBuilder {
      */
     FrameMeta scan(Node node) {
         if (enableCxt) {
-            schema.tryRelease();
+            schema.preRelease();
         }
         this.frameMeta.reset((int) ((this.version++) % Integer.MAX_VALUE));
 
