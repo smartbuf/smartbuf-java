@@ -8,11 +8,11 @@ import java.util.Arrays;
  * @author sulin
  * @since 2019-09-29 16:36:47
  */
-public class VarintArrayTest {
+public class LongArrayTest {
 
     @Test
     public void test() {
-        VarintArray array = new VarintArray(false);
+        LongArray array = new LongArray(false);
         array.add(1);
         array.add(2);
         array.add(3);
@@ -55,7 +55,7 @@ public class VarintArrayTest {
 
     @Test
     public void testIndexable() {
-        VarintArray array = new VarintArray(true);
+        LongArray array = new LongArray(true);
         array.add(0);
         array.add(1);
         array.add(2);

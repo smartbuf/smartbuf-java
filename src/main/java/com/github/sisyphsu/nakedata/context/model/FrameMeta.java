@@ -3,7 +3,7 @@ package com.github.sisyphsu.nakedata.context.model;
 import com.github.sisyphsu.nakedata.common.Array;
 import com.github.sisyphsu.nakedata.common.DoubleArray;
 import com.github.sisyphsu.nakedata.common.FloatArray;
-import com.github.sisyphsu.nakedata.common.VarintArray;
+import com.github.sisyphsu.nakedata.common.LongArray;
 import com.github.sisyphsu.nakedata.io.OutputWriter;
 import lombok.Getter;
 
@@ -38,7 +38,7 @@ public final class FrameMeta {
 
     private final FloatArray    tmpFloatArea;
     private final DoubleArray   tmpDoubleArea;
-    private final VarintArray   tmpVarintArea;
+    private final LongArray     tmpVarintArea;
     private final Array<String> tmpStringArea;
 
     private final Array<String> tmpNames;
@@ -48,9 +48,9 @@ public final class FrameMeta {
     private final Array<int[]>  cxtStructAdded;
     private final Array<String> cxtSymbolAdded;
 
-    private final VarintArray cxtNameExpired;
-    private final VarintArray cxtStructExpired;
-    private final VarintArray cxtSymbolExpired;
+    private final LongArray cxtNameExpired;
+    private final LongArray cxtStructExpired;
+    private final LongArray cxtSymbolExpired;
 
     private int version;
 
@@ -64,16 +64,16 @@ public final class FrameMeta {
         this.enableCxt = enableCxt;
         this.tmpFloatArea = new FloatArray(output);
         this.tmpDoubleArea = new DoubleArray(output);
-        this.tmpVarintArea = new VarintArray(output);
+        this.tmpVarintArea = new LongArray(output);
         this.tmpStringArea = new Array<>(output);
         this.tmpNames = new Array<>(output);
         this.tmpStructs = new Array<>(output);
         this.cxtNameAdded = new Array<>(output);
         this.cxtStructAdded = new Array<>(output);
         this.cxtSymbolAdded = new Array<>(output);
-        this.cxtNameExpired = new VarintArray(output);
-        this.cxtStructExpired = new VarintArray(output);
-        this.cxtSymbolExpired = new VarintArray(output);
+        this.cxtNameExpired = new LongArray(output);
+        this.cxtStructExpired = new LongArray(output);
+        this.cxtSymbolExpired = new LongArray(output);
     }
 
     public void reset(int version) {
