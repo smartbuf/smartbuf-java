@@ -4,6 +4,7 @@ import com.github.sisyphsu.nakedata.context.common.Array;
 import com.github.sisyphsu.nakedata.context.common.RefExpireArray;
 import com.github.sisyphsu.nakedata.context.common.TimeExpireArray;
 import com.github.sisyphsu.nakedata.context.model.FrameMeta;
+import com.github.sisyphsu.nakedata.node.std.ObjectNode;
 
 /**
  * 需要为ObjectNode提供一种非常便利的struct-fields-id映射关系。
@@ -77,7 +78,8 @@ public final class OutputSchema {
     /**
      * Register struct for sharing, coud repeat
      */
-    public void addStruct(String[] fields) {
+    public void addStruct(ObjectNode.Key key) {
+        String[] fields = key.getFields();
         // TODO 判断struct是否需要进入cxt
         int[] nameIds = new int[fields.length];
         if (meta.isEnableCxt()) {
@@ -139,7 +141,7 @@ public final class OutputSchema {
     /**
      * Find the specified temparary struct's id
      */
-    public int findStructID(String[] fields) {
+    public int findStructID(ObjectNode.Key objectKey) {
         return 0;
     }
 

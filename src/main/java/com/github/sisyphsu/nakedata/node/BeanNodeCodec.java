@@ -5,7 +5,9 @@ import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.node.std.ObjectNode;
 import net.sf.cglib.beans.BeanMap;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -16,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class BeanNodeCodec extends Codec {
 
-    private static final Map<Class, String[]> FIELDS_MAP = new ConcurrentHashMap<>();
+    private static final Map<Class, ObjectNode.Key> FIELDS_MAP = new ConcurrentHashMap<>();
 
     /**
      * encode map to ObjectNode, pojo should be encoded as map first.
@@ -26,13 +28,9 @@ public final class BeanNodeCodec extends Codec {
      */
     @Converter
     public Node toNode(Map<?, ?> map) {
-        if (map == null) {
-            return ObjectNode.NULL;
-        }
         if (map.isEmpty()) {
             return ObjectNode.EMPTY;
         }
-        final String[] fieldNames = getFieldNames(map);
         final HashMap<String, Node> fields = new HashMap<>();
         for (Object item : map.entrySet()) {
             Map.Entry entry = (Map.Entry) item;
@@ -42,11 +40,16 @@ public final class BeanNodeCodec extends Codec {
             } else {
                 key = convert(entry.getKey(), String.class);
             }
-            Node value = convert(entry.getValue(), Node.class);
-
-            fields.put(key, value);
+            fields.put(key, convert(entry.getValue(), Node.class));
         }
-        return ObjectNode.valueOf(fieldNames, fields);
+        ObjectNode.Key objectKey;
+        if (map instanceof BeanMap) {
+            objectKey = parseBeanMapKey((BeanMap) map);
+        } else {
+            String[] fieldNames = fields.keySet().toArray(new String[0]);
+            objectKey = new ObjectNode.Key(false, fieldNames);
+        }
+        return ObjectNode.valueOf(objectKey, fields);
     }
 
     /**
@@ -72,25 +75,21 @@ public final class BeanNodeCodec extends Codec {
      * @param map Map
      * @return names as array
      */
-    public static String[] getFieldNames(Map map) {
-        Class beanCls = null;
-        if (map instanceof BeanMap) {
-            beanCls = ((BeanMap) map).getBean().getClass();
-            String[] fieldNames = FIELDS_MAP.get(beanCls);
-            if (fieldNames != null) {
-                return fieldNames;
+    public static ObjectNode.Key parseBeanMapKey(BeanMap map) {
+        Class beanCls = map.getBean().getClass();
+        ObjectNode.Key objectKey = FIELDS_MAP.get(beanCls);
+        if (objectKey == null) {
+            String[] fieldNames = new String[map.size()];
+            int i = 0;
+            for (Object key : map.keySet()) {
+                String fieldName = String.valueOf(key);
+                fieldNames[i++] = fieldName;
             }
+            Arrays.sort(fieldNames);
+            objectKey = new ObjectNode.Key(true, fieldNames);
+            FIELDS_MAP.put(beanCls, objectKey);
         }
-        String[] fieldNames = new String[map.size()];
-        int i = 0;
-        for (Object key : map.keySet()) {
-            fieldNames[i++] = String.valueOf(key);
-        }
-        Arrays.sort(fieldNames);
-        if (beanCls != null) {
-            FIELDS_MAP.put(beanCls, fieldNames);
-        }
-        return fieldNames;
+        return objectKey;
     }
 
 }

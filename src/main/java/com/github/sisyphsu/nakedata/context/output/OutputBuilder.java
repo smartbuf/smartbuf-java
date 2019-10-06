@@ -10,7 +10,6 @@ import com.github.sisyphsu.nakedata.node.std.ObjectNode;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import static com.github.sisyphsu.nakedata.context.Proto.*;
 
@@ -21,8 +20,6 @@ import static com.github.sisyphsu.nakedata.context.Proto.*;
  * @since 2019-05-01 14:50:15
  */
 public final class OutputBuilder {
-
-    private static final Pattern NAME = Pattern.compile("^[A-Za-z_$][\\w$]{0,63}$");
 
     private long version;
 
@@ -179,11 +176,11 @@ public final class OutputBuilder {
      * 输出ObjectNode，按照fields固定顺序，依次输出。
      */
     void writeObjectNode(ObjectNode node, OutputWriter writer) {
-        String[] fields = node.getFields();
+        ObjectNode.Key key = node.getKey();
         // 输出structId
-        writer.writeVarUint(schema.findStructID(fields));
+        writer.writeVarUint(schema.findStructID(key));
         // 输出fields，此处不care各个字段的数据类型
-        for (String field : fields) {
+        for (String field : key.getFields()) {
             Node subNode = node.getData().get(field);
             this.writeNode(subNode, writer);
         }
@@ -275,13 +272,8 @@ public final class OutputBuilder {
      * 扫描并整理Object节点的元数据
      */
     private void doScanObjectNode(ObjectNode node) {
-        String[] fields = node.getFields();
         // 注册struct
-        boolean isTmp = !enableCxt;
-        for (int i = 0; i < fields.length && !isTmp; i++) {
-            isTmp = NAME.matcher(fields[i]).matches();
-        }
-        schema.addStruct(fields);
+        schema.addStruct(node.getKey());
         // 扫描子节点
         for (Node subNode : node.getData().values()) {
             this.doScan(subNode);

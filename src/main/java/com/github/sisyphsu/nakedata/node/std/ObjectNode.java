@@ -17,24 +17,24 @@ import java.util.Map;
 public final class ObjectNode extends Node {
 
     public final static ObjectNode NULL  = new ObjectNode(null, null);
-    public final static ObjectNode EMPTY = new ObjectNode(new String[0], Collections.EMPTY_MAP);
+    public final static ObjectNode EMPTY = new ObjectNode(new Key(true, new String[0]), Collections.EMPTY_MAP);
 
-    private final String[]          fields;
+    private final Key               key;
     private final Map<String, Node> data;
 
-    private ObjectNode(String[] fields, Map<String, Node> map) {
-        this.fields = fields;
+    private ObjectNode(Key key, Map<String, Node> map) {
+        this.key = key;
         this.data = map;
     }
 
-    public static ObjectNode valueOf(String[] fields, Map<String, Node> map) {
+    public static ObjectNode valueOf(Key key, Map<String, Node> map) {
         if (map == null) {
             return NULL;
         }
         if (map.isEmpty()) {
             return EMPTY;
         }
-        return new ObjectNode(fields, map);
+        return new ObjectNode(key, map);
     }
 
     @Override
@@ -55,8 +55,27 @@ public final class ObjectNode extends Node {
         return data;
     }
 
-    public String[] getFields() {
-        return fields;
+    public Key getKey() {
+        return key;
+    }
+
+    public static final class Key {
+
+        private final boolean  stable;
+        private final String[] fields;
+
+        public Key(boolean stable, String[] fields) {
+            this.stable = stable;
+            this.fields = fields;
+        }
+
+        public boolean isStable() {
+            return stable;
+        }
+
+        public String[] getFields() {
+            return fields;
+        }
     }
 
 }
