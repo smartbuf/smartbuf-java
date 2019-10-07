@@ -80,9 +80,9 @@ public final class OutputSchema {
      */
     public void addStruct(ObjectNode.Key key) {
         String[] fields = key.getFields();
-        // TODO 判断struct是否需要进入cxt
         int[] nameIds = new int[fields.length];
-        if (meta.isEnableCxt()) {
+        // 不能在此时分配nameId，因为tmpName和cxtName此时是不完整的
+        if (enableCxt && key.isStable()) {
             for (int i = 0; i < fields.length; i++) {
                 String fieldName = fields[i];
                 if (cxtNameArea.add(fieldName)) {
