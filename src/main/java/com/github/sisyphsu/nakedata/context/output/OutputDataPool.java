@@ -45,10 +45,16 @@ public final class OutputDataPool {
     }
 
     public void registerString(String str) {
+        if (str == null) {
+            throw new NullPointerException();
+        }
         tmpStrings.add(str);
     }
 
     public void registerSymbol(String symbol) {
+        if (symbol == null) {
+            throw new NullPointerException();
+        }
         Integer offset = cxtSymbolIndex.get(symbol);
         if (offset == null) {
             offset = cxtSymbolID.acquire();
