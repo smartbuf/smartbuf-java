@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.context.output;
 
+import com.github.sisyphsu.nakedata.utils.TimeUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -98,32 +99,35 @@ public class OutputStructPoolTest {
 
     @Test
     public void testExpire() throws InterruptedException {
+        TimeUtils.INTERVAL = 8;
+        Thread.sleep(1000);
+
         OutputStructPool pool = new OutputStructPool(8);
 
-        Thread.sleep(1);
+        Thread.sleep(10);
         pool.register(false, new String[]{"id1", "name"});
-        Thread.sleep(1);
+        Thread.sleep(10);
         pool.register(false, new String[]{"id2", "name"});
-        Thread.sleep(1);
+        Thread.sleep(10);
         pool.register(false, new String[]{"id3", "name"});
-        Thread.sleep(1);
+        Thread.sleep(10);
         pool.register(false, new String[]{"id4", "name"});
-        Thread.sleep(1);
+        Thread.sleep(10);
         pool.register(false, new String[]{"id5", "name"});
-        Thread.sleep(1);
+        Thread.sleep(10);
         pool.register(false, new String[]{"id1", "name"});
-        Thread.sleep(1);
+        Thread.sleep(10);
 
         pool.register(false, new String[]{"id6", "name"});
-        Thread.sleep(1);
+        Thread.sleep(10);
         pool.register(false, new String[]{"id7", "name"});
-        Thread.sleep(1);
+        Thread.sleep(10);
         pool.register(false, new String[]{"id8", "name"});
-        Thread.sleep(1);
+        Thread.sleep(10);
         pool.register(false, new String[]{"id9", "name"});
-        Thread.sleep(1);
+        Thread.sleep(10);
         pool.register(false, new String[]{"id0", "name"});
-        Thread.sleep(1);
+        Thread.sleep(10);
 
         pool.reset();
         assert pool.size() == 8;
@@ -142,11 +146,11 @@ public class OutputStructPoolTest {
         }
 
         pool.register(false, new String[]{"id5", "name"});
-        Thread.sleep(1);
+        Thread.sleep(10);
         pool.register(false, new String[]{"id10", "name"});
-        Thread.sleep(1);
+        Thread.sleep(10);
         pool.register(false, new String[]{"id11", "name"});
-        Thread.sleep(1);
+        Thread.sleep(10);
 
         pool.reset();
         assert pool.size() == 8;

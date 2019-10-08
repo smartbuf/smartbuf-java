@@ -2,6 +2,7 @@ package com.github.sisyphsu.nakedata.context.output;
 
 import com.github.sisyphsu.nakedata.context.common.IDAllocator;
 import com.github.sisyphsu.nakedata.utils.ArrayUtils;
+import com.github.sisyphsu.nakedata.utils.TimeUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,8 +17,6 @@ import java.util.Map;
  * @since 2019-10-07 21:29:36
  */
 public final class OutputStructPool {
-
-    private static final long INIT_TIME = System.currentTimeMillis();
 
     private int      tmpStructCount;
     private Struct[] tmpStructs;
@@ -47,7 +46,7 @@ public final class OutputStructPool {
         if (names == null) {
             throw new NullPointerException();
         }
-        int now = (int) (System.currentTimeMillis() - INIT_TIME);
+        int now = (int) TimeUtils.fastUpTime();
         Struct struct = index.get(reuseKey.wrap(names));
         if (struct != null) {
             if (temporary || !struct.temporary) {
@@ -64,12 +63,12 @@ public final class OutputStructPool {
         }
         if (temporary) {
             struct = new Struct(true, tmpStructCount, now, names);
-            this.tmpStructs = this.put(tmpStructs, tmpStructCount++, struct);
+            this.tmpStructs = ArrayUtils.put(tmpStructs, tmpStructCount++, struct);
         } else {
             int offset = cxtIdAlloc.acquire();
             struct = new Struct(false, offset, now, names);
-            this.cxtStructs = put(cxtStructs, offset, struct);
-            this.cxtStructAdded = put(cxtStructAdded, cxtStructAddedCount++, struct);
+            this.cxtStructs = ArrayUtils.put(cxtStructs, offset, struct);
+            this.cxtStructAdded = ArrayUtils.put(cxtStructAdded, cxtStructAddedCount++, struct);
         }
         this.index.put(struct, struct);
     }
@@ -179,22 +178,8 @@ public final class OutputStructPool {
             cxtIdAlloc.release(expiredStruct.offset);
             cxtStructs[expiredStruct.offset] = null;
 
-            this.cxtStructExpired = put(cxtStructExpired, cxtStructExpiredCount++, expiredStruct);
+            this.cxtStructExpired = ArrayUtils.put(cxtStructExpired, cxtStructExpiredCount++, expiredStruct);
         }
-    }
-
-    // put value into array's specified position
-    Struct[] put(Struct[] arr, int pos, Struct val) {
-        if (arr == null) {
-            arr = new Struct[4];
-        }
-        if (arr.length <= pos) {
-            Struct[] newArr = new Struct[arr.length * 2];
-            System.arraycopy(arr, 0, newArr, 0, arr.length);
-            arr = newArr;
-        }
-        arr[pos] = val;
-        return arr;
     }
 
     static final class Struct {

@@ -1,5 +1,7 @@
 package com.github.sisyphsu.nakedata.utils;
 
+import org.omg.CORBA.Object;
+
 /**
  * Some utils for array, meanly sort
  *
@@ -120,6 +122,29 @@ public final class ArrayUtils {
             parent = child1;
         }
         heap[parent] = rootVal;
+    }
+
+    /**
+     * put value into array's specified position, execute expansion automatically.
+     *
+     * @param arr Source array
+     * @param pos Put position
+     * @param val New item
+     * @param <T> T
+     * @return Put result
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T[] put(T[] arr, int pos, T val) {
+        if (arr == null) {
+            arr = (T[]) new Object[4];
+        }
+        if (arr.length <= pos) {
+            T[] newArr = (T[]) new Object[arr.length * 2];
+            System.arraycopy(arr, 0, newArr, 0, arr.length);
+            arr = newArr;
+        }
+        arr[pos] = val;
+        return arr;
     }
 
 }

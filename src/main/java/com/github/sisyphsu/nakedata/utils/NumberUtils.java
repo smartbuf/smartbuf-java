@@ -4,7 +4,7 @@ package com.github.sisyphsu.nakedata.utils;
  * @author sulin
  * @since 2019-04-27 16:03:53
  */
-public class NumberUtils {
+public final class NumberUtils {
 
     private NumberUtils() {
     }

@@ -1,6 +1,7 @@
 package com.github.sisyphsu.nakedata.context.output;
 
 import com.github.sisyphsu.nakedata.context.common.IDAllocator;
+import com.github.sisyphsu.nakedata.utils.ArrayUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,12 +53,12 @@ public final class OutputNamePool {
             }
             if (temporary) {
                 meta = new NameMeta(true, tmpNameCount);
-                this.tmpNames = put(tmpNames, tmpNameCount++, name);
+                this.tmpNames = ArrayUtils.put(tmpNames, tmpNameCount++, name);
             } else {
                 int offset = cxtIdAlloc.acquire();
                 meta = new NameMeta(false, offset);
-                this.cxtNames = put(cxtNames, offset, name);
-                this.cxtNameAdded = put(cxtNameAdded, cxtNameAddedCount++, name); // record for outter using
+                this.cxtNames = ArrayUtils.put(cxtNames, offset, name);
+                this.cxtNameAdded = ArrayUtils.put(cxtNameAdded, cxtNameAddedCount++, name); // record for outter using
             }
             index.put(name, meta);
         }
@@ -142,17 +143,6 @@ public final class OutputNamePool {
         }
         this.tmpNameCount = 0;
         this.cxtNameAddedCount = 0;
-    }
-
-    // put value into array's specified position
-    private String[] put(String[] arr, int pos, String val) {
-        if (arr.length <= pos) {
-            String[] newArr = new String[arr.length * 2];
-            System.arraycopy(arr, 0, newArr, 0, arr.length);
-            arr = newArr;
-        }
-        arr[pos] = val;
-        return arr;
     }
 
     // field-name's metadata

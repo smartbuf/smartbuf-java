@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.context.output;
 
-import com.github.sisyphsu.nakedata.context.common.Array;
 import com.github.sisyphsu.nakedata.context.common.RefExpireArray;
 import com.github.sisyphsu.nakedata.context.common.TimeExpireArray;
 import com.github.sisyphsu.nakedata.context.model.FrameMeta;
@@ -18,9 +17,6 @@ public final class OutputSchema {
 
     private final FrameMeta meta;
     private final boolean   enableCxt;
-
-    private final Array<String[]> tmpStructs = new Array<>(true);
-    private final Array<String[]> cxtStructs = new Array<>(true);
 
     private final int                    cxtNameLimit = 1 << 16;
     private final RefExpireArray<String> cxtNameArea  = new RefExpireArray<>();
