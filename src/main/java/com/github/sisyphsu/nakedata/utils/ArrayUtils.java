@@ -1,5 +1,7 @@
 package com.github.sisyphsu.nakedata.utils;
 
+import java.lang.reflect.Array;
+
 /**
  * Some utils for array, meanly sort
  *
@@ -137,7 +139,7 @@ public final class ArrayUtils {
             arr = (T[]) new Object[4];
         }
         if (arr.length <= pos) {
-            T[] newArr = (T[]) new Object[arr.length * 2];
+            T[] newArr = (T[]) Array.newInstance(arr.getClass().getComponentType(), arr.length * 2);
             System.arraycopy(arr, 0, newArr, 0, arr.length);
             arr = newArr;
         }

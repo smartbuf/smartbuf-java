@@ -19,11 +19,11 @@ import java.util.Map;
 public final class OutputStructPool {
 
     private int      tmpStructCount;
-    private Struct[] tmpStructs;
+    private Struct[] tmpStructs       = new Struct[4];
     private int      cxtStructAddedCount;
-    private Struct[] cxtStructAdded;
+    private Struct[] cxtStructAdded   = new Struct[4];
     private int      cxtStructExpiredCount;
-    private Struct[] cxtStructExpired;
+    private Struct[] cxtStructExpired = new Struct[4];
 
     private       Struct[]    cxtStructs = new Struct[4];
     private final IDAllocator cxtIdAlloc = new IDAllocator();
