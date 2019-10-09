@@ -207,13 +207,13 @@ public final class OutputDataPool {
         }
         long[] heap = new long[expireNum];
         int heapStatus = 0; // 0 means init, 1 means stable, -1 means not-stable.
-        for (int itemOffset = 0, heapOffset = 0; itemOffset < symbols.size(); itemOffset++) {
-            if (symbols.get(itemOffset) == null) {
+        for (int i = 0, heapOffset = 0; i < symbols.size(); i++) {
+            if (symbols.get(i) == null) {
                 continue;
             }
-            int itemTime = symbolTimes.get(itemOffset);
+            int itemTime = symbolTimes.get(i);
             if (heapOffset < expireNum) {
-                heap[heapOffset++] = ((long) itemTime) << 32 | (long) itemOffset;
+                heap[heapOffset++] = ((long) itemTime) << 32 | (long) i;
                 continue;
             }
             if (heapStatus == 0) {
@@ -226,7 +226,7 @@ public final class OutputDataPool {
             if (itemTime > (int) (heap[0] >>> 32)) {
                 continue; // item is newer than all items in heap
             }
-            heap[0] = ((long) itemTime) << 32 | (long) itemOffset;
+            heap[0] = ((long) itemTime) << 32 | (long) i;
             heapStatus = -1;
         }
 
