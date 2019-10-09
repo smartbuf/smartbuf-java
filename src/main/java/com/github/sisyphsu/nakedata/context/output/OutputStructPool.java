@@ -141,7 +141,7 @@ public final class OutputStructPool {
     }
 
     // execute automatically expire for context-struct
-    void autoRelease(int count) {
+    private void autoRelease(int count) {
         long[] heap = new long[count];
 
         // 0 means init, 1 means stable, -1 means not-stable.
@@ -171,7 +171,6 @@ public final class OutputStructPool {
             heapStatus = -1;
         }
 
-        // release all items in heap
         for (long l : heap) {
             Struct expiredStruct = cxtStructs[(int) (l)];
             index.remove(expiredStruct);
@@ -182,6 +181,9 @@ public final class OutputStructPool {
         }
     }
 
+    /**
+     * Struct model for inner usage
+     */
     static final class Struct {
         boolean  temporary;
         int      offset;

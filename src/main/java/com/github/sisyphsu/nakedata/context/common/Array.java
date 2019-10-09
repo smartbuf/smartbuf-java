@@ -39,7 +39,6 @@ public final class Array<T> {
         this.set(this.offset, val);
     }
 
-
     /**
      * Set new object into the specified offset of this List
      *

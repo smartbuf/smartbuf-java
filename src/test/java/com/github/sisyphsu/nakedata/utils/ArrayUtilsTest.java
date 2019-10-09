@@ -101,4 +101,14 @@ public class ArrayUtilsTest {
         }
     }
 
+    @Test
+    public void testAr() {
+        Object[] arr = new Object[4];
+        arr[0] = "1";
+        assert arr[0] == "1";
+
+        arr = ArrayUtils.put(null, 0, "1");
+        assert arr[0] == "1";
+    }
+
 }

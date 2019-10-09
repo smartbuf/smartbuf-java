@@ -1,7 +1,5 @@
 package com.github.sisyphsu.nakedata.utils;
 
-import org.omg.CORBA.Object;
-
 /**
  * Some utils for array, meanly sort
  *
