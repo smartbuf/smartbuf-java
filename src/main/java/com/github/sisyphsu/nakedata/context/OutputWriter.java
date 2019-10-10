@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class OutputWriter {
 
-    private OutputStream stream;
+    private final OutputStream stream;
 
     public OutputWriter(OutputStream stream) {
         this.stream = stream;

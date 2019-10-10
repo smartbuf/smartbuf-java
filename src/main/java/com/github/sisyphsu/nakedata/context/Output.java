@@ -26,7 +26,6 @@ public final class Output {
     private final OutputStructPool structPool = new OutputStructPool(1 << 12);
     private final OutputDataPool   dataPool   = new OutputDataPool(1 << 16);
 
-
     public Output(boolean enableCxt) {
         this.version = 0L;
         this.stream = enableCxt;
