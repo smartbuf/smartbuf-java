@@ -16,7 +16,7 @@ import java.util.function.UnaryOperator;
  */
 public class ArrayNode extends Node {
 
-    public static final ArrayNode NULL = new ArrayNode(new ArrayList());
+    public static final ArrayNode NULL  = new ArrayNode(new ArrayList());
     public static final ArrayNode EMPTY = new ArrayNode(new ArrayList());
 
     protected final List items;
@@ -62,6 +62,10 @@ public class ArrayNode extends Node {
 
     public List getItems() {
         return items;
+    }
+
+    public void forEach(Consumer<Object> consumer) {
+        items.forEach(consumer);
     }
 
     /**

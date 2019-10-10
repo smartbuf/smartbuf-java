@@ -23,16 +23,18 @@ public final class OutputBuilder {
 
     private long version;
 
-    private final boolean      enableCxt;
-    private final OutputSchema schema;
-    private final FrameMeta    frameMeta;
+    private final boolean   enableCxt;
+    private final FrameMeta frameMeta;
+
+    private final OutputNamePool   namePool   = new OutputNamePool();
+    private final OutputStructPool structPool = new OutputStructPool(1 << 12);
+    private final OutputDataPool   dataPool   = new OutputDataPool(1 << 16);
 
     public OutputBuilder(boolean enableCxt) {
         this.version = 0L;
         this.enableCxt = enableCxt;
 
         this.frameMeta = new FrameMeta(true, enableCxt);
-        this.schema = new OutputSchema(frameMeta);
     }
 
     public void buildOutput(Node node, OutputWriter writer) {
@@ -60,19 +62,23 @@ public final class OutputBuilder {
                 writer.writeVarInt(node.booleanValue() ? ID_TRUE : ID_FALSE);
                 break;
             case FLOAT:
-                writer.writeVarInt(schema.findFloatID(node.floatValue()));
+                writer.writeVarInt(dataPool.findFloatID(node.floatValue()));
                 break;
             case DOUBLE:
-                writer.writeVarInt(schema.findDoubleID(node.doubleValue()));
+                writer.writeVarInt(dataPool.findDoubleID(node.doubleValue()));
                 break;
             case VARINT:
-                writer.writeVarInt(schema.findVarintID(node.longValue()));
+                writer.writeVarInt(dataPool.findVarintID(node.longValue()));
                 break;
             case STRING:
-                writer.writeVarInt(schema.findStringID(node.stringValue()));
+                writer.writeVarInt(dataPool.findStringID(node.stringValue()));
                 break;
             case SYMBOL:
-                writer.writeVarInt(schema.findSymbolID(node.stringValue()));
+                if (enableCxt) {
+                    writer.writeVarInt(dataPool.findSymbolID(node.stringValue()));
+                } else {
+                    writer.writeVarInt(dataPool.findStringID(node.stringValue()));
+                }
                 break;
             case N_BOOL_ARRAY:
                 writer.writeArrayMeta(true, ArrayType.BOOL, node.booleansValue().length);
@@ -149,12 +155,14 @@ public final class OutputBuilder {
                     break;
                 case STRING:
                     for (Object item : slice.getItems()) {
-                        writer.writeVarInt(schema.findStringID((String) item));
+                        writer.writeVarInt(dataPool.findStringID((String) item));
                     }
                     break;
                 case SYMBOL:
-                    for (Object item : slice.getItems()) {
-                        writer.writeVarInt(schema.findSymbolID((String) item));
+                    if (enableCxt) {
+                        slice.getItems().forEach(item -> writer.writeVarInt(dataPool.findSymbolID((String) item)));
+                    } else {
+                        slice.getItems().forEach(item -> writer.writeVarInt(dataPool.findStringID((String) item)));
                     }
                     break;
                 case ARRAY:
@@ -178,7 +186,7 @@ public final class OutputBuilder {
     void writeObjectNode(ObjectNode node, OutputWriter writer) {
         ObjectNode.Key key = node.getKey();
         // 输出structId
-        writer.writeVarUint(schema.findStructID(key));
+        writer.writeVarUint(structPool.findStructID(key.getFields()));
         // 输出fields，此处不care各个字段的数据类型
         for (String field : key.getFields()) {
             Node subNode = node.getData().get(field);
@@ -190,9 +198,6 @@ public final class OutputBuilder {
      * 扫描元数据. 数据序列化之前扫描收集"变量名"的增量变化, 用于预处理NamePool以及甄别map与object。
      */
     FrameMeta scan(Node node) {
-        if (enableCxt) {
-            schema.preRelease();
-        }
         this.frameMeta.reset((int) ((this.version++) % Integer.MAX_VALUE));
 
         // 执行扫描
@@ -210,19 +215,23 @@ public final class OutputBuilder {
         }
         switch (node.dataType()) {
             case FLOAT:
-                frameMeta.getTmpFloatArea().add(node.floatValue());
+                dataPool.registerFloat(node.floatValue());
                 break;
             case DOUBLE:
-                frameMeta.getTmpDoubleArea().add(node.doubleValue());
+                dataPool.registerDouble(node.doubleValue());
                 break;
             case VARINT:
-                frameMeta.getTmpVarintArea().add(node.longValue());
+                dataPool.registerVarint(node.longValue());
                 break;
             case STRING:
-                frameMeta.getTmpStringArea().add(node.stringValue());
+                dataPool.registerString(node.stringValue());
                 break;
             case SYMBOL:
-                schema.addSymbol(node.stringValue());
+                if (enableCxt) {
+                    dataPool.registerSymbol(node.stringValue());
+                } else {
+                    dataPool.registerString(node.stringValue());
+                }
                 break;
             case ARRAY:
                 this.doScanArrayNode((ArrayNode) node);
@@ -238,32 +247,26 @@ public final class OutputBuilder {
      */
     private void doScanArrayNode(ArrayNode array) {
         if (array instanceof MixArrayNode) {
-            for (Object item : array.getItems()) {
-                this.doScanArrayNode((ArrayNode) item);
-            }
+            array.forEach(item -> this.doScanArrayNode((ArrayNode) item));
             return;
         }
         // 数组成员是string、symbol、object则需要更新元数据
         switch (array.elementType()) {
             case STRING:
-                for (Object item : array.getItems()) {
-                    frameMeta.getTmpStringArea().add((String) item);
-                }
+                array.forEach(item -> dataPool.registerString(String.valueOf(item)));
                 break;
             case SYMBOL:
-                for (Object item : array.getItems()) {
-                    schema.addSymbol(String.valueOf(item));
+                if (enableCxt) {
+                    array.forEach(item -> dataPool.registerSymbol(String.valueOf(item)));
+                } else {
+                    array.forEach(item -> dataPool.registerSymbol(String.valueOf(item)));
                 }
                 break;
             case OBJECT:
-                for (Object item : array.getItems()) {
-                    this.doScanObjectNode((ObjectNode) item);
-                }
+                array.forEach(item -> this.doScanObjectNode((ObjectNode) item));
                 break;
             case ARRAY:
-                for (Object item : array.getItems()) {
-                    this.doScanArrayNode((ArrayNode) item);
-                }
+                array.forEach(item -> this.doScanArrayNode((ArrayNode) item));
                 break;
         }
     }
@@ -273,7 +276,8 @@ public final class OutputBuilder {
      */
     private void doScanObjectNode(ObjectNode node) {
         // 注册struct
-        schema.addStruct(node.getKey());
+        boolean temporary = !enableCxt || !node.getKey().isStable();
+        structPool.register(temporary, node.getKey().getFields());
         // 扫描子节点
         for (Node subNode : node.getData().values()) {
             this.doScan(subNode);
