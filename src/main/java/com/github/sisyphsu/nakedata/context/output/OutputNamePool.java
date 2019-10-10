@@ -40,16 +40,15 @@ public final class OutputNamePool {
                     name.refCount++;
                     continue;
                 }
-                tmpNames.size--;
-                if (name.offset < tmpNames.size) {
-                    Name lastName = tmpNames.get(tmpNames.size);
+                Name lastName = tmpNames.popLast();
+                if (lastName != name) {
                     lastName.offset = name.offset;
                     tmpNames.put(name.offset, lastName);
                 }
                 this.index.remove(nameStr);
             }
             if (temporary) {
-                name = new Name(true, tmpNames.size, nameStr);
+                name = new Name(true, tmpNames.size(), nameStr);
                 this.tmpNames.add(name);
             } else {
                 int offset = cxtIdAlloc.acquire();
@@ -95,7 +94,7 @@ public final class OutputNamePool {
         if (meta.temporary) {
             return meta.offset;
         }
-        return tmpNames.size + meta.offset;
+        return tmpNames.size() + meta.offset;
     }
 
     /**
@@ -108,10 +107,10 @@ public final class OutputNamePool {
         if (id < 0) {
             throw new IllegalArgumentException("negative id: " + id);
         }
-        if (id < tmpNames.size) {
+        if (id < tmpNames.size()) {
             return tmpNames.get(id).name;
         }
-        id -= tmpNames.size;
+        id -= tmpNames.size();
         if (id > cxtIdAlloc.count()) {
             throw new IllegalArgumentException("invalid id: " + id);
         }
@@ -135,11 +134,11 @@ public final class OutputNamePool {
      * Reset this pool, clear all temporary data, and keep context status.
      */
     public void reset() {
-        for (int i = 0; i < tmpNames.size; i++) {
+        for (int i = 0, len = tmpNames.size(); i < len; i++) {
             index.remove(tmpNames.get(i).name);
         }
-        this.tmpNames.size = 0;
-        this.cxtNameAdded.size = 0;
+        this.tmpNames.clear();
+        this.cxtNameAdded.clear();
     }
 
     /**

@@ -133,7 +133,7 @@ public final class OutputDataPool {
         if (offset == null) {
             throw new IllegalArgumentException("double not exists: " + d);
         }
-        return FIX_HEAD + floatArea.size + offset;
+        return FIX_HEAD + floatArea.size() + offset;
     }
 
     /**
@@ -147,7 +147,7 @@ public final class OutputDataPool {
         if (offset == null) {
             throw new IllegalArgumentException("varint not exists: " + l);
         }
-        return FIX_HEAD + floatArea.size + doubleArea.size + offset;
+        return FIX_HEAD + floatArea.size() + doubleArea.size() + offset;
     }
 
     /**
@@ -161,7 +161,7 @@ public final class OutputDataPool {
         if (offset == null) {
             throw new IllegalArgumentException("string not exists: " + str);
         }
-        return FIX_HEAD + floatArea.size + doubleArea.size + varintArea.size + offset;
+        return FIX_HEAD + floatArea.size() + doubleArea.size() + varintArea.size() + offset;
     }
 
     /**
@@ -191,23 +191,24 @@ public final class OutputDataPool {
      * Reset this data pool, and execute context data's expiring automatically
      */
     public void reset() {
-        floatArea.size = 0;
-        doubleArea.size = 0;
-        varintArea.size = 0;
-        stringArea.size = 0;
+        floatArea.clear();
+        doubleArea.clear();
+        varintArea.clear();
+        stringArea.clear();
         dataIndex.clear();
 
-        symbolAdded.size = 0;
-        symbolExpired.size = 0;
+        symbolAdded.clear();
+        symbolExpired.clear();
 
         // execute context symbol's expiring automatically
         int expireNum = symbolIndex.size() - symbolLimit;
         if (expireNum <= 0) {
             return;
         }
-        long[] heap = new long[expireNum];
         int heapStatus = 0; // 0 means init, 1 means stable, -1 means not-stable.
-        for (int i = 0, heapOffset = 0; i < symbols.size; i++) {
+        int heapOffset = 0;
+        long[] heap = new long[expireNum];
+        for (int i = 0, size = symbols.cap(); i < size; i++) {
             if (symbols.get(i) == null) {
                 continue;
             }

@@ -55,16 +55,15 @@ public final class OutputStructPool {
                 struct.lastTime = now;
                 return;
             }
-            tmpStructs.size--;
-            if (struct.offset < tmpStructs.size) {
-                Struct lastStruct = tmpStructs.get(tmpStructs.size);
+            Struct lastStruct = tmpStructs.popLast();
+            if (lastStruct != struct) {
                 lastStruct.offset = struct.offset;
                 tmpStructs.put(struct.offset, lastStruct);
             }
             this.index.remove(struct);
         }
         if (temporary) {
-            struct = new Struct(true, tmpStructs.size, now, names);
+            struct = new Struct(true, tmpStructs.size(), now, names);
             this.tmpStructs.add(struct);
         } else {
             int offset = cxtIdAlloc.acquire();
@@ -89,7 +88,7 @@ public final class OutputStructPool {
         if (struct.temporary) {
             return struct.offset;
         }
-        return tmpStructs.size + struct.offset;
+        return tmpStructs.size() + struct.offset;
     }
 
     /**
@@ -102,11 +101,11 @@ public final class OutputStructPool {
         if (id < 0) {
             throw new IllegalArgumentException("negative id: " + id);
         }
-        if (id < tmpStructs.size) {
+        if (id < tmpStructs.size()) {
             return tmpStructs.get(id).names;
         }
-        id -= tmpStructs.size;
-        if (id > cxtStructs.size) {
+        id -= tmpStructs.size();
+        if (id > cxtStructs.size()) {
             throw new IllegalArgumentException("invalid id: " + id);
         }
         Struct struct = cxtStructs.get(id);
@@ -129,41 +128,36 @@ public final class OutputStructPool {
      * Reset this struct pool, and execute struct-expire automatically
      */
     public void reset() {
-        for (int i = 0; i < tmpStructs.size; i++) {
+        for (int i = 0, len = tmpStructs.size(); i < len; i++) {
             index.remove(tmpStructs.get(i));
         }
-        this.tmpStructs.size = 0;
-        this.cxtStructAdded.size = 0;
-        this.cxtStructExpired.size = 0;
-        // auto expire
-        int size = index.size();
-        if (size > cxtLimit) {
-            this.autoRelease(size - cxtLimit);
+        this.tmpStructs.clear();
+        this.cxtStructAdded.clear();
+        this.cxtStructExpired.clear();
+
+        // execute automatically expire for context-struct
+        int expireCount = index.size() - cxtLimit;
+        if (expireCount <= 0) {
+            return;
         }
-    }
-
-    // execute automatically expire for context-struct
-    private void autoRelease(int count) {
-        long[] heap = new long[count];
-
-        // 0 means init, 1 means stable, -1 means not-stable.
-        int heapStatus = 0;
-        int itemCount = cxtStructs.size;
-        for (int i = 0, heapOffset = 0; i < itemCount; i++) {
+        int heapStatus = 0; // 0 means init, 1 means stable, -1 means not-stable.
+        int heapOffset = 0;
+        long[] heap = new long[expireCount];
+        for (int i = 0, size = cxtStructs.cap(); i < size; i++) {
             if (cxtStructs.get(i) == null) {
                 continue;
             }
             int itemTime = cxtStructs.get(i).lastTime;
             int itemOffset = cxtStructs.get(i).offset;
-            if (heapOffset < count) {
+            if (heapOffset < expireCount) {
                 heap[heapOffset++] = ((long) itemTime) << 32 | (long) itemOffset;
                 continue;
             }
             if (heapStatus == 0) {
-                ArrayUtils.descFastSort(heap, 0, count - 1); // sort by activeTime, heap[0] has biggest activeTime
+                ArrayUtils.descFastSort(heap, 0, expireCount - 1); // sort by activeTime, heap[0] has biggest activeTime
                 heapStatus = 1;
             } else if (heapStatus == -1) {
-                ArrayUtils.maxHeapAdjust(heap, 0, count); // make sure heap[0] has biggest activeTime
+                ArrayUtils.maxHeapAdjust(heap, 0, expireCount); // make sure heap[0] has biggest activeTime
                 heapStatus = 1;
             }
             if (itemTime > (int) (heap[0] >>> 32)) {
@@ -172,13 +166,11 @@ public final class OutputStructPool {
             heap[0] = ((long) itemTime) << 32 | (long) itemOffset;
             heapStatus = -1;
         }
-
         for (long l : heap) {
             Struct expiredStruct = cxtStructs.get((int) (l));
             index.remove(expiredStruct);
             cxtIdAlloc.release(expiredStruct.offset);
             cxtStructs.put(expiredStruct.offset, null);
-
             this.cxtStructExpired.add(expiredStruct);
         }
     }

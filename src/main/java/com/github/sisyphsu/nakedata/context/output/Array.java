@@ -8,7 +8,7 @@ package com.github.sisyphsu.nakedata.context.output;
 @SuppressWarnings("unchecked")
 final class Array<T> {
 
-    int size;
+    private int size;
     private T[] data;
 
     int add(T val) {
@@ -34,6 +34,22 @@ final class Array<T> {
 
     T get(int offset) {
         return data[offset];
+    }
+
+    T popLast() {
+        return data[--size];
+    }
+
+    int size() {
+        return size;
+    }
+
+    int cap() {
+        return data.length;
+    }
+
+    void clear() {
+        size = 0;
     }
 
 }

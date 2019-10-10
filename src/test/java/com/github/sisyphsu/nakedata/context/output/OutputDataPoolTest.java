@@ -108,6 +108,7 @@ public class OutputDataPoolTest {
     @Test
     public void testExpire() throws InterruptedException {
         TimeUtils.INTERVAL = 5;
+        Thread.sleep(1000);
 
         OutputDataPool dataPool = new OutputDataPool(4);
         Thread.sleep(10);
