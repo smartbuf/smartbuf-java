@@ -19,19 +19,22 @@ public final class OutputDataPool {
 
     private static final int FIX_HEAD = 4;
 
-    private final Array<Float>         floatArea  = new Array<>();
-    private final Array<Double>        doubleArea = new Array<>();
-    private final Array<Long>          varintArea = new Array<>();
-    private final Array<String>        stringArea = new Array<>();
-    private final Map<Object, Integer> dataIndex  = new HashMap<>();
+    final Array<String>  symbolAdded   = new Array<>();
+    final Array<Integer> symbolExpired = new Array<>();
 
-    private final int                  symbolLimit;
-    private final IDAllocator          symbolID      = new IDAllocator();
-    private final Array<String>        symbols       = new Array<>();
-    private final Array<Integer>       symbolTimes   = new Array<>();
-    private final Array<String>        symbolAdded   = new Array<>();
-    private final Array<String>        symbolExpired = new Array<>();
-    private final Map<String, Integer> symbolIndex   = new HashMap<>();
+    final Array<Float>  floatArea  = new Array<>();
+    final Array<Double> doubleArea = new Array<>();
+    final Array<Long>   varintArea = new Array<>();
+    final Array<String> stringArea = new Array<>();
+
+    private final Map<Object, Integer> dataIndex = new HashMap<>();
+
+    private final int            symbolLimit;
+    private final IDAllocator    symbolID    = new IDAllocator();
+    private final Array<String>  symbols     = new Array<>();
+    private final Array<Integer> symbolTimes = new Array<>();
+
+    private final Map<String, Integer> symbolIndex = new HashMap<>();
 
     /**
      * Initialize DataPool, outter need specify the max number of symbol-area
@@ -238,7 +241,7 @@ public final class OutputDataPool {
             this.symbolID.release(offset);
             this.symbols.put(offset, null);
 
-            this.symbolExpired.add(expiredSymbol);
+            this.symbolExpired.add(offset);
         }
     }
 

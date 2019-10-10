@@ -15,8 +15,8 @@ import java.util.Map;
  */
 public final class OutputNamePool {
 
-    private final Array<Name> tmpNames     = new Array<>();
-    private final Array<Name> cxtNameAdded = new Array<>();
+    final Array<Name> tmpNames     = new Array<>();
+    final Array<Name> cxtNameAdded = new Array<>();
 
     private final IDAllocator cxtIdAlloc = new IDAllocator();
     private final Array<Name> cxtNames   = new Array<>();
@@ -144,7 +144,7 @@ public final class OutputNamePool {
     /**
      * field-name's metadata
      */
-    private final static class Name {
+    final static class Name {
         String  name;
         boolean temporary;
         int     offset;

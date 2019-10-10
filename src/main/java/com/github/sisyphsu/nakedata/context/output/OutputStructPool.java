@@ -18,13 +18,13 @@ import java.util.Map;
  */
 public final class OutputStructPool {
 
-    private final int           cxtLimit;
-    private final IDAllocator   cxtIdAlloc       = new IDAllocator();
-    private final Array<Struct> cxtStructs       = new Array<>();
-    private final Array<Struct> cxtStructAdded   = new Array<>();
-    private final Array<Struct> cxtStructExpired = new Array<>();
+    final Array<Struct> tmpStructs       = new Array<>();
+    final Array<Struct> cxtStructAdded   = new Array<>();
+    final Array<Struct> cxtStructExpired = new Array<>();
 
-    private final Array<Struct>       tmpStructs = new Array<>();
+    private final int                 cxtLimit;
+    private final IDAllocator         cxtIdAlloc = new IDAllocator();
+    private final Array<Struct>       cxtStructs = new Array<>();
     private final Map<Struct, Struct> index      = new HashMap<>();
 
     private final Struct reuseKey = new Struct(false, 0, 0, null);

@@ -14,6 +14,7 @@ import lombok.Getter;
  * @since 2019-05-03 17:43:58
  */
 @Getter
+@Deprecated
 public final class FrameMeta {
 
     private static final byte VERSION     = (byte) 0b0100_0000;
@@ -159,7 +160,7 @@ public final class FrameMeta {
             writer.writeStringArray(tmpNames.data());
         }
         if (tmpStructs.size() > 0) {
-            this.writeMetaHead(writer, tmpStructs.size(), CODE_STRING, --count == 0);
+            this.writeMetaHead(writer, tmpStructs.size(), CODE_STRUCTS, --count == 0);
             for (int i = 0; i < tmpStructs.size(); i++) {
                 int[] ints = tmpStructs.get(i);
                 writer.writeVarUint(ints.length);

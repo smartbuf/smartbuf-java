@@ -1,7 +1,6 @@
 package com.github.sisyphsu.nakedata.context.output;
 
 import com.github.sisyphsu.nakedata.ArrayType;
-import com.github.sisyphsu.nakedata.context.model.FrameMeta;
 import com.github.sisyphsu.nakedata.io.OutputWriter;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.array.ArrayNode;
@@ -23,9 +22,7 @@ public final class OutputBuilder {
 
     private long version;
 
-    private final boolean   enableCxt;
-    private final FrameMeta frameMeta;
-
+    private final boolean          enableCxt;
     private final OutputNamePool   namePool   = new OutputNamePool();
     private final OutputStructPool structPool = new OutputStructPool(1 << 12);
     private final OutputDataPool   dataPool   = new OutputDataPool(1 << 16);
@@ -33,26 +30,167 @@ public final class OutputBuilder {
     public OutputBuilder(boolean enableCxt) {
         this.version = 0L;
         this.enableCxt = enableCxt;
-
-        this.frameMeta = new FrameMeta(true, enableCxt);
     }
 
-    public void buildOutput(Node node, OutputWriter writer) {
+    public void write(Node node, OutputWriter writer) {
         if (node == null) {
             throw new NullPointerException("node can't be null");
         }
-        // 构建FrameMeta
-        FrameMeta meta = this.scan(node);
-        meta.write(writer);
+        namePool.reset();
+        dataPool.reset();
+        structPool.reset();
 
-        // 输出数据
+        this.scan(node);
+
+        this.writeMeta(writer);
         this.writeNode(node, writer);
+    }
+
+    /**
+     * 将当前FrameMeta通过writer序列化输出
+     */
+    private void writeMeta(OutputWriter writer) {
+        int cxtCount = 0;
+        if (enableCxt) {
+            if (namePool.cxtNameAdded.size() > 0) cxtCount++;
+            if (structPool.cxtStructAdded.size() > 0) cxtCount++;
+            if (structPool.cxtStructExpired.size() > 0) cxtCount++;
+            if (dataPool.symbolAdded.size() > 0) cxtCount++;
+            if (dataPool.symbolExpired.size() > 0) cxtCount++;
+        }
+        int count = cxtCount;
+        if (dataPool.floatArea.size() > 0) count++;
+        if (dataPool.doubleArea.size() > 0) count++;
+        if (dataPool.varintArea.size() > 0) count++;
+        if (dataPool.stringArea.size() > 0) count++;
+        if (namePool.tmpNames.size() > 0) count++;
+        if (structPool.tmpStructs.size() > 0) count++;
+
+        byte head = VERSION;
+        if (enableCxt) {
+            head |= FLAG_STREAM;
+        }
+        if (count == 0) {
+            head |= FLAG_HEAD;
+        }
+        writer.writeByte(head);
+        writer.writeByte((byte) version);
+        if (count > 0) {
+            this.writeTmpMeta(writer, count);
+        }
+        if (enableCxt && cxtCount > 0) {
+            this.writeCxtMeta(writer, cxtCount);
+        }
+    }
+
+    /**
+     * Output body of metadata.
+     */
+    private void writeTmpMeta(OutputWriter writer, int count) {
+        int len = dataPool.floatArea.size();
+        if (len > 0) {
+            this.writeMetaHead(writer, len, CODE_FLOAT, --count == 0);
+            for (int i = 0; i < len; i++) {
+                writer.writeFloat(dataPool.floatArea.get(i));
+            }
+        }
+        len = dataPool.doubleArea.size();
+        if (len > 0) {
+            this.writeMetaHead(writer, len, CODE_DOUBLE, --count == 0);
+            for (int i = 0; i < len; i++) {
+                writer.writeDouble(dataPool.doubleArea.get(i));
+            }
+        }
+        len = dataPool.varintArea.size();
+        if (len > 0) {
+            this.writeMetaHead(writer, len, CODE_VARINT, --count == 0);
+            for (int i = 0; i < len; i++) {
+                writer.writeVarInt(dataPool.varintArea.get(i));
+            }
+        }
+        len = dataPool.stringArea.size();
+        if (len > 0) {
+            this.writeMetaHead(writer, len, CODE_STRING, --count == 0);
+            for (int i = 0; i < len; i++) {
+                writer.writeString(dataPool.stringArea.get(i));
+            }
+        }
+        len = namePool.tmpNames.size();
+        if (len > 0) {
+            this.writeMetaHead(writer, len, CODE_NAMES, --count == 0);
+            for (int i = 0; i < len; i++) {
+                writer.writeString(namePool.tmpNames.get(i).name);
+            }
+        }
+        len = structPool.tmpStructs.size();
+        if (len > 0) {
+            this.writeMetaHead(writer, len, CODE_STRUCTS, --count == 0);
+            for (int i = 0; i < len; i++) {
+                String[] fieldNames = structPool.tmpStructs.get(i).names;
+                writer.writeVarUint(fieldNames.length);
+                for (String fieldName : fieldNames) {
+                    writer.writeVarUint(namePool.findNameID(fieldName));
+                }
+            }
+        }
+    }
+
+    /**
+     * Output context metadata
+     */
+    private void writeCxtMeta(OutputWriter writer, int count) {
+        int len = namePool.cxtNameAdded.size();
+        if (len > 0) {
+            writeMetaHead(writer, len, CODE_NAME_ADDED, --count == 0);
+            for (int i = 0; i < len; i++) {
+                writer.writeString(namePool.cxtNameAdded.get(i).name);
+            }
+        }
+        len = structPool.cxtStructAdded.size();
+        if (len > 0) {
+            this.writeMetaHead(writer, len, CODE_STRUCT_ADDED, --count == 0);
+            for (int i = 0; i < len; i++) {
+                String[] fieldNames = structPool.cxtStructAdded.get(i).names;
+                writer.writeVarUint(fieldNames.length);
+                for (String fieldName : fieldNames) {
+                    writer.writeVarUint(namePool.findNameID(fieldName));
+                }
+            }
+        }
+        len = structPool.cxtStructExpired.size();
+        if (len > 0) {
+            this.writeMetaHead(writer, len, CODE_STRUCT_EXPIRED, --count == 0);
+            for (int i = 0; i < len; i++) {
+                writer.writeVarUint(structPool.cxtStructExpired.get(i).offset);
+            }
+        }
+        len = dataPool.symbolAdded.size();
+        if (len > 0) {
+            this.writeMetaHead(writer, len, CODE_SYMBOL_ADDED, --count == 0);
+            for (int i = 0; i < len; i++) {
+                writer.writeString(dataPool.symbolAdded.get(i));
+            }
+        }
+        len = dataPool.symbolExpired.size();
+        if (len > 0) {
+            this.writeMetaHead(writer, len, CODE_SYMBOL_EXPIRED, --count == 0);
+            for (int i = 0; i < len; i++) {
+                writer.writeVarUint(dataPool.symbolExpired.get(i));
+            }
+        }
+    }
+
+    /**
+     * Output the head of one schema area.
+     */
+    private void writeMetaHead(OutputWriter writer, long size, int code, boolean hasMore) {
+        writer.writeVarUint((size << 5) | (code << 1) | (hasMore ? 1 : 0));
     }
 
     /**
      * 输出报文的body区
      */
-    public void writeNode(Node node, OutputWriter writer) {
+    private void writeNode(Node node, OutputWriter writer) {
         if (node.isNull()) {
             writer.writeVarInt(ID_NULL);
             return;
@@ -121,7 +259,7 @@ public final class OutputBuilder {
      * 输出ArrayNode
      */
     @SuppressWarnings("unchecked")
-    void writeArrayNode(ArrayNode node, OutputWriter writer) {
+    private void writeArrayNode(ArrayNode node, OutputWriter writer) {
         List<ArrayNode> arrayNodes;
         if (node instanceof MixArrayNode) {
             arrayNodes = node.getItems();
@@ -183,7 +321,7 @@ public final class OutputBuilder {
     /**
      * 输出ObjectNode，按照fields固定顺序，依次输出。
      */
-    void writeObjectNode(ObjectNode node, OutputWriter writer) {
+    private void writeObjectNode(ObjectNode node, OutputWriter writer) {
         ObjectNode.Key key = node.getKey();
         // 输出structId
         writer.writeVarUint(structPool.findStructID(key.getFields()));
@@ -195,21 +333,9 @@ public final class OutputBuilder {
     }
 
     /**
-     * 扫描元数据. 数据序列化之前扫描收集"变量名"的增量变化, 用于预处理NamePool以及甄别map与object。
-     */
-    FrameMeta scan(Node node) {
-        this.frameMeta.reset((int) ((this.version++) % Integer.MAX_VALUE));
-
-        // 执行扫描
-        this.doScan(node);
-
-        return frameMeta;
-    }
-
-    /**
      * 扫描元数据
      */
-    private void doScan(Node node) {
+    private void scan(Node node) {
         if (node.isNull()) {
             return;
         }
@@ -234,10 +360,10 @@ public final class OutputBuilder {
                 }
                 break;
             case ARRAY:
-                this.doScanArrayNode((ArrayNode) node);
+                this.scanArrayNode((ArrayNode) node);
                 break;
             case OBJECT:
-                this.doScanObjectNode((ObjectNode) node);
+                this.scanObjectNode((ObjectNode) node);
                 break;
         }
     }
@@ -245,9 +371,9 @@ public final class OutputBuilder {
     /**
      * 扫描数组节点
      */
-    private void doScanArrayNode(ArrayNode array) {
+    private void scanArrayNode(ArrayNode array) {
         if (array instanceof MixArrayNode) {
-            array.forEach(item -> this.doScanArrayNode((ArrayNode) item));
+            array.forEach(item -> this.scanArrayNode((ArrayNode) item));
             return;
         }
         // 数组成员是string、symbol、object则需要更新元数据
@@ -263,10 +389,10 @@ public final class OutputBuilder {
                 }
                 break;
             case OBJECT:
-                array.forEach(item -> this.doScanObjectNode((ObjectNode) item));
+                array.forEach(item -> this.scanObjectNode((ObjectNode) item));
                 break;
             case ARRAY:
-                array.forEach(item -> this.doScanArrayNode((ArrayNode) item));
+                array.forEach(item -> this.scanArrayNode((ArrayNode) item));
                 break;
         }
     }
@@ -274,7 +400,7 @@ public final class OutputBuilder {
     /**
      * 扫描并整理Object节点的元数据
      */
-    private void doScanObjectNode(ObjectNode node) {
+    private void scanObjectNode(ObjectNode node) {
         String[] fieldNames = node.getKey().getFields();
         boolean stable = node.getKey().isStable();
         // 注册struct
@@ -282,7 +408,7 @@ public final class OutputBuilder {
         structPool.register(!enableCxt || !stable, fieldNames);
         // 扫描子节点
         for (Node subNode : node.getData().values()) {
-            this.doScan(subNode);
+            this.scan(subNode);
         }
     }
 
