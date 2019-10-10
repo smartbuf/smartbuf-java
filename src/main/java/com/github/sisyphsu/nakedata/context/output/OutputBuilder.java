@@ -275,9 +275,11 @@ public final class OutputBuilder {
      * 扫描并整理Object节点的元数据
      */
     private void doScanObjectNode(ObjectNode node) {
+        String[] fieldNames = node.getKey().getFields();
+        boolean stable = node.getKey().isStable();
         // 注册struct
-        boolean temporary = !enableCxt || !node.getKey().isStable();
-        structPool.register(temporary, node.getKey().getFields());
+        namePool.register(!enableCxt || !stable, fieldNames);
+        structPool.register(!enableCxt || !stable, fieldNames);
         // 扫描子节点
         for (Node subNode : node.getData().values()) {
             this.doScan(subNode);

@@ -1,7 +1,6 @@
 package com.github.sisyphsu.nakedata.context.output;
 
 import com.github.sisyphsu.nakedata.context.common.IDAllocator;
-import com.github.sisyphsu.nakedata.utils.ArrayUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,15 +15,13 @@ import java.util.Map;
  */
 public final class OutputNamePool {
 
-    private int      tmpNameCount      = 0;
-    private String[] tmpNames          = new String[4];
-    private int      cxtNameAddedCount = 0;
-    private String[] cxtNameAdded      = new String[4];
+    private final Array<String> tmpNames     = new Array<>();
+    private final Array<String> cxtNameAdded = new Array<>();
 
-    private       String[]    cxtNames   = new String[4];
-    private final IDAllocator cxtIdAlloc = new IDAllocator();
+    private final IDAllocator   cxtIdAlloc = new IDAllocator();
+    private final Array<String> cxtNames   = new Array<>();
 
-    private final Map<String, NameMeta> index = new HashMap<>();
+    private final Map<String, Name> index = new HashMap<>();
 
     /**
      * Register the specified names into this pool, could repeat.
@@ -34,7 +31,7 @@ public final class OutputNamePool {
      */
     public void register(boolean temporary, String... names) {
         for (String name : names) {
-            NameMeta meta = index.get(name);
+            Name meta = index.get(name);
             if (meta != null) {
                 if (temporary) {
                     continue;
@@ -43,22 +40,22 @@ public final class OutputNamePool {
                     meta.refCount++;
                     continue;
                 }
-                tmpNameCount--;
-                if (meta.offset < tmpNameCount) {
-                    String lastTmp = tmpNames[tmpNameCount];
-                    tmpNames[meta.offset] = lastTmp;
+                tmpNames.size--;
+                if (meta.offset < tmpNames.size) {
+                    String lastTmp = tmpNames.get(tmpNames.size);
+                    tmpNames.put(meta.offset, lastTmp);
                     index.get(lastTmp).offset = meta.offset;
                 }
                 this.index.remove(name);
             }
             if (temporary) {
-                meta = new NameMeta(true, tmpNameCount);
-                this.tmpNames = ArrayUtils.put(tmpNames, tmpNameCount++, name);
+                meta = new Name(true, tmpNames.size, name);
+                this.tmpNames.add(name);
             } else {
                 int offset = cxtIdAlloc.acquire();
-                meta = new NameMeta(false, offset);
-                this.cxtNames = ArrayUtils.put(cxtNames, offset, name);
-                this.cxtNameAdded = ArrayUtils.put(cxtNameAdded, cxtNameAddedCount++, name); // record for outter using
+                meta = new Name(false, offset, name);
+                this.cxtNames.put(offset, name);
+                this.cxtNameAdded.add(name); // record for outter using
             }
             index.put(name, meta);
         }
@@ -71,12 +68,12 @@ public final class OutputNamePool {
      */
     public void unregister(String... names) {
         for (String name : names) {
-            NameMeta meta = index.get(name);
+            Name meta = index.get(name);
             if (meta == null || meta.temporary) {
                 continue;
             }
             if (--meta.refCount <= 0) {
-                cxtNames[meta.offset] = null;
+                cxtNames.put(meta.offset, null);
                 cxtIdAlloc.release(meta.offset);
                 index.remove(name);
             }
@@ -91,14 +88,14 @@ public final class OutputNamePool {
      * @return unique id
      */
     public int findNameID(String name) {
-        NameMeta meta = index.get(name);
+        Name meta = index.get(name);
         if (meta == null) {
             throw new IllegalArgumentException("not exists: " + name);
         }
         if (meta.temporary) {
             return meta.offset;
         }
-        return tmpNameCount + meta.offset;
+        return tmpNames.size + meta.offset;
     }
 
     /**
@@ -111,14 +108,14 @@ public final class OutputNamePool {
         if (id < 0) {
             throw new IllegalArgumentException("negative id: " + id);
         }
-        if (id < tmpNameCount) {
-            return tmpNames[id];
+        if (id < tmpNames.size) {
+            return tmpNames.get(id);
         }
-        id -= tmpNameCount;
+        id -= tmpNames.size;
         if (id > cxtIdAlloc.count()) {
             throw new IllegalArgumentException("invalid id: " + id);
         }
-        String result = cxtNames[id];
+        String result = cxtNames.get(id);
         if (result == null) {
             throw new IllegalArgumentException("invalid id: " + id);
         }
@@ -138,24 +135,25 @@ public final class OutputNamePool {
      * Reset this pool, clear all temporary data, and keep context status.
      */
     public void reset() {
-        for (int i = 0; i < tmpNameCount; i++) {
-            index.remove(tmpNames[i]);
+        for (int i = 0; i < tmpNames.size; i++) {
+            index.remove(tmpNames.get(i));
         }
-        this.tmpNameCount = 0;
-        this.cxtNameAddedCount = 0;
+        this.tmpNames.size = 0;
+        this.cxtNameAdded.size = 0;
     }
 
     // field-name's metadata
-    private final static class NameMeta {
-
+    private final static class Name {
+        String  name;
         boolean temporary;
         int     offset;
         int     refCount;
 
-        public NameMeta(boolean temporary, int offset) {
+        public Name(boolean temporary, int offset, String name) {
             this.temporary = temporary;
             this.offset = offset;
             this.refCount = 1;
+            this.name = name;
         }
     }
 

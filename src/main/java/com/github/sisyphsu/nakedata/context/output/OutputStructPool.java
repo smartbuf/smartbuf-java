@@ -18,22 +18,24 @@ import java.util.Map;
  */
 public final class OutputStructPool {
 
-    private int      tmpStructCount;
-    private Struct[] tmpStructs       = new Struct[4];
-    private int      cxtStructAddedCount;
-    private Struct[] cxtStructAdded   = new Struct[4];
-    private int      cxtStructExpiredCount;
-    private Struct[] cxtStructExpired = new Struct[4];
+    private final int           cxtLimit;
+    private final IDAllocator   cxtIdAlloc       = new IDAllocator();
+    private final Array<Struct> cxtStructs       = new Array<>();
+    private final Array<Struct> cxtStructAdded   = new Array<>();
+    private final Array<Struct> cxtStructExpired = new Array<>();
 
-    private       Struct[]    cxtStructs = new Struct[4];
-    private final IDAllocator cxtIdAlloc = new IDAllocator();
+    private final Array<Struct>       tmpStructs = new Array<>();
+    private final Map<Struct, Struct> index      = new HashMap<>();
 
-    private final int                 limit;
-    private final Map<Struct, Struct> index    = new HashMap<>();
-    private final Struct              reuseKey = new Struct(false, 0, 0, null);
+    private final Struct reuseKey = new Struct(false, 0, 0, null);
 
+    /**
+     * Initialize StructPool with the specified limit of context-struct
+     *
+     * @param limit Max number of context-struct
+     */
     public OutputStructPool(int limit) {
-        this.limit = limit;
+        this.cxtLimit = limit;
     }
 
     /**
@@ -53,22 +55,22 @@ public final class OutputStructPool {
                 struct.lastTime = now;
                 return;
             }
-            tmpStructCount--;
-            if (struct.offset < tmpStructCount) {
-                Struct lastStruct = tmpStructs[tmpStructCount];
+            tmpStructs.size--;
+            if (struct.offset < tmpStructs.size) {
+                Struct lastStruct = tmpStructs.get(tmpStructs.size);
                 lastStruct.offset = struct.offset;
-                tmpStructs[struct.offset] = lastStruct;
+                tmpStructs.put(struct.offset, lastStruct);
             }
             this.index.remove(struct);
         }
         if (temporary) {
-            struct = new Struct(true, tmpStructCount, now, names);
-            this.tmpStructs = ArrayUtils.put(tmpStructs, tmpStructCount++, struct);
+            struct = new Struct(true, tmpStructs.size, now, names);
+            this.tmpStructs.add(struct);
         } else {
             int offset = cxtIdAlloc.acquire();
             struct = new Struct(false, offset, now, names);
-            this.cxtStructs = ArrayUtils.put(cxtStructs, offset, struct);
-            this.cxtStructAdded = ArrayUtils.put(cxtStructAdded, cxtStructAddedCount++, struct);
+            this.cxtStructs.put(offset, struct);
+            this.cxtStructAdded.add(struct);
         }
         this.index.put(struct, struct);
     }
@@ -87,7 +89,7 @@ public final class OutputStructPool {
         if (struct.temporary) {
             return struct.offset;
         }
-        return tmpStructCount + struct.offset;
+        return tmpStructs.size + struct.offset;
     }
 
     /**
@@ -100,14 +102,14 @@ public final class OutputStructPool {
         if (id < 0) {
             throw new IllegalArgumentException("negative id: " + id);
         }
-        if (id < tmpStructCount) {
-            return tmpStructs[id].names;
+        if (id < tmpStructs.size) {
+            return tmpStructs.get(id).names;
         }
-        id -= tmpStructCount;
-        if (id > cxtStructs.length) {
+        id -= tmpStructs.size;
+        if (id > cxtStructs.size) {
             throw new IllegalArgumentException("invalid id: " + id);
         }
-        Struct struct = cxtStructs[id];
+        Struct struct = cxtStructs.get(id);
         if (struct == null) {
             throw new IllegalArgumentException("invalid id: " + id);
         }
@@ -127,16 +129,16 @@ public final class OutputStructPool {
      * Reset this struct pool, and execute struct-expire automatically
      */
     public void reset() {
-        for (int i = 0; i < tmpStructCount; i++) {
-            index.remove(tmpStructs[i]);
+        for (int i = 0; i < tmpStructs.size; i++) {
+            index.remove(tmpStructs.get(i));
         }
-        this.tmpStructCount = 0;
-        this.cxtStructAddedCount = 0;
-        this.cxtStructExpiredCount = 0;
+        this.tmpStructs.size = 0;
+        this.cxtStructAdded.size = 0;
+        this.cxtStructExpired.size = 0;
         // auto expire
         int size = index.size();
-        if (size > limit) {
-            this.autoRelease(size - limit);
+        if (size > cxtLimit) {
+            this.autoRelease(size - cxtLimit);
         }
     }
 
@@ -146,13 +148,13 @@ public final class OutputStructPool {
 
         // 0 means init, 1 means stable, -1 means not-stable.
         int heapStatus = 0;
-        int itemCount = cxtStructs.length;
+        int itemCount = cxtStructs.size;
         for (int i = 0, heapOffset = 0; i < itemCount; i++) {
-            if (cxtStructs[i] == null) {
+            if (cxtStructs.get(i) == null) {
                 continue;
             }
-            int itemTime = cxtStructs[i].lastTime;
-            int itemOffset = cxtStructs[i].offset;
+            int itemTime = cxtStructs.get(i).lastTime;
+            int itemOffset = cxtStructs.get(i).offset;
             if (heapOffset < count) {
                 heap[heapOffset++] = ((long) itemTime) << 32 | (long) itemOffset;
                 continue;
@@ -172,12 +174,12 @@ public final class OutputStructPool {
         }
 
         for (long l : heap) {
-            Struct expiredStruct = cxtStructs[(int) (l)];
+            Struct expiredStruct = cxtStructs.get((int) (l));
             index.remove(expiredStruct);
             cxtIdAlloc.release(expiredStruct.offset);
-            cxtStructs[expiredStruct.offset] = null;
+            cxtStructs.put(expiredStruct.offset, null);
 
-            this.cxtStructExpired = ArrayUtils.put(cxtStructExpired, cxtStructExpiredCount++, expiredStruct);
+            this.cxtStructExpired.add(expiredStruct);
         }
     }
 

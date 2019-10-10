@@ -191,14 +191,14 @@ public final class OutputDataPool {
      * Reset this data pool, and execute context data's expiring automatically
      */
     public void reset() {
-        floatArea.clear();
-        doubleArea.clear();
-        varintArea.clear();
-        stringArea.clear();
+        floatArea.size = 0;
+        doubleArea.size = 0;
+        varintArea.size = 0;
+        stringArea.size = 0;
         dataIndex.clear();
 
-        symbolAdded.clear();
-        symbolExpired.clear();
+        symbolAdded.size = 0;
+        symbolExpired.size = 0;
 
         // execute context symbol's expiring automatically
         int expireNum = symbolIndex.size() - symbolLimit;
@@ -207,7 +207,7 @@ public final class OutputDataPool {
         }
         long[] heap = new long[expireNum];
         int heapStatus = 0; // 0 means init, 1 means stable, -1 means not-stable.
-        for (int i = 0, heapOffset = 0; i < symbols.size(); i++) {
+        for (int i = 0, heapOffset = 0; i < symbols.size; i++) {
             if (symbols.get(i) == null) {
                 continue;
             }
@@ -239,48 +239,6 @@ public final class OutputDataPool {
 
             this.symbolExpired.add(expiredSymbol);
         }
-    }
-
-    // Array is an simple array implementation which support auto-expansion.
-    @SuppressWarnings("unchecked")
-    static final class Array<T> {
-
-        int size;
-        T[] data;
-
-        int add(T val) {
-            int offset = this.size;
-            this.put(offset, val);
-            return offset;
-        }
-
-        void put(int pos, T val) {
-            if (data == null) {
-                data = (T[]) new Object[4];
-            }
-            if (pos >= data.length) {
-                T[] newArr = (T[]) new Object[data.length * 2];
-                System.arraycopy(data, 0, newArr, 0, data.length);
-                data = newArr;
-            }
-            if (pos >= this.size) {
-                size = pos + 1;
-            }
-            data[pos] = val;
-        }
-
-        T get(int offset) {
-            return data[offset];
-        }
-
-        void clear() {
-            this.size = 0;
-        }
-
-        int size() {
-            return size;
-        }
-
     }
 
 }
