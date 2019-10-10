@@ -17,7 +17,7 @@ import static com.github.sisyphsu.nakedata.context.Proto.*;
  * @author sulin
  * @since 2019-05-01 14:50:15
  */
-public final class OutputBuilder {
+public final class Output {
 
     private long version;
 
@@ -26,7 +26,7 @@ public final class OutputBuilder {
     private final OutputStructPool structPool = new OutputStructPool(1 << 12);
     private final OutputDataPool   dataPool   = new OutputDataPool(1 << 16);
 
-    public OutputBuilder(boolean enableCxt) {
+    public Output(boolean enableCxt) {
         this.version = 0L;
         this.enableCxt = enableCxt;
     }

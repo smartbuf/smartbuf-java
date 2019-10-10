@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata;
 
-import com.github.sisyphsu.nakedata.context.OutputBuilder;
+import com.github.sisyphsu.nakedata.context.Output;
 import com.github.sisyphsu.nakedata.context.OutputWriter;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.NodeMapper;
@@ -24,7 +24,7 @@ public class DataSerializer {
 
     private OutputWriter writer;
 
-    private OutputBuilder context;
+    private Output context;
 
     /**
      * 执行序列化
