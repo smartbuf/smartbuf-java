@@ -2,7 +2,7 @@ package com.github.sisyphsu.nakedata.context;
 
 import com.github.sisyphsu.nakedata.context.model.ContextStruct;
 import com.github.sisyphsu.nakedata.io.InputReader;
-import com.github.sisyphsu.nakedata.io.OutputWriter;
+import com.github.sisyphsu.nakedata.context.output.OutputWriter;
 
 /**
  * 上下文同步工具, 封装序列化与反序列化的相关操作

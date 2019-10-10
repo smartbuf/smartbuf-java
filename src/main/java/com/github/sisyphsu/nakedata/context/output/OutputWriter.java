@@ -1,6 +1,7 @@
-package com.github.sisyphsu.nakedata.io;
+package com.github.sisyphsu.nakedata.context.output;
 
 import com.github.sisyphsu.nakedata.ArrayType;
+import com.github.sisyphsu.nakedata.io.Output;
 import com.github.sisyphsu.nakedata.utils.NumberUtils;
 
 import java.util.List;
