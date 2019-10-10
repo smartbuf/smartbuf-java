@@ -17,7 +17,6 @@ public class IOTest {
     public void test() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024);
         OutputWriter output = new OutputWriter(outputStream);
-        InputReader input = new InputReader(new ByteArrayInput(outputStream.toByteArray()));
 
         output.writeVarInt(0L);
         output.writeVarInt(Byte.MAX_VALUE);
@@ -33,6 +32,8 @@ public class IOTest {
         output.writeDouble(0.123456);
 
         output.writeString("hello world");
+
+        InputReader input = new InputReader(new ByteArrayInput(outputStream.toByteArray()));
 
         Assertions.assertEquals(input.readVarInt(), 0L);
         Assertions.assertEquals(input.readVarInt(), (long) Byte.MAX_VALUE);

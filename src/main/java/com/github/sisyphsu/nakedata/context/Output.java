@@ -5,6 +5,7 @@ import com.github.sisyphsu.nakedata.node.array.ArrayNode;
 import com.github.sisyphsu.nakedata.node.array.MixArrayNode;
 import com.github.sisyphsu.nakedata.node.std.ObjectNode;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public final class Output {
         this.stream = enableCxt;
     }
 
-    public void write(Node node, OutputWriter writer) {
+    public void write(Node node, OutputWriter writer) throws IOException {
         if (node == null) {
             throw new NullPointerException("node can't be null");
         }
@@ -48,7 +49,7 @@ public final class Output {
     /**
      * 将当前FrameMeta通过writer序列化输出
      */
-    private void writeMeta(OutputWriter writer) {
+    private void writeMeta(OutputWriter writer) throws IOException {
         // prepare the first byte to identify metadata
         byte head = VERSION;
         int cxtCount = 0, tmpCount = 0;
@@ -157,7 +158,7 @@ public final class Output {
     /**
      * 输出报文的body区
      */
-    private void writeNode(Node node, OutputWriter writer) {
+    private void writeNode(Node node, OutputWriter writer) throws IOException {
         if (node.isNull()) {
             writer.writeVarInt(ID_NULL);
             return;
@@ -219,7 +220,7 @@ public final class Output {
      * 输出ArrayNode
      */
     @SuppressWarnings("unchecked")
-    private void writeArrayNode(ArrayNode node, OutputWriter writer) {
+    private void writeArrayNode(ArrayNode node, OutputWriter writer) throws IOException {
         List<ArrayNode> arrayNodes;
         if (node instanceof MixArrayNode) {
             arrayNodes = node.getItems();
@@ -260,9 +261,13 @@ public final class Output {
                     break;
                 case SYMBOL:
                     if (stream) {
-                        slice.getItems().forEach(item -> writer.writeVarInt(dataPool.findSymbolID((String) item)));
+                        for (Object item : slice.getItems()) {
+                            writer.writeVarInt(dataPool.findSymbolID((String) item));
+                        }
                     } else {
-                        slice.getItems().forEach(item -> writer.writeVarInt(dataPool.findStringID((String) item)));
+                        for (Object item : slice.getItems()) {
+                            writer.writeVarInt(dataPool.findStringID((String) item));
+                        }
                     }
                     break;
                 case ARRAY:
@@ -283,7 +288,7 @@ public final class Output {
     /**
      * 输出ObjectNode，按照fields固定顺序，依次输出。
      */
-    private void writeObjectNode(ObjectNode node, OutputWriter writer) {
+    private void writeObjectNode(ObjectNode node, OutputWriter writer) throws IOException {
         ObjectNode.Key key = node.getKey();
         // 输出structId
         writer.writeVarUint(structPool.findStructID(key.getFields()));
