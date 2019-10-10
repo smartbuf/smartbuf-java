@@ -15,11 +15,11 @@ import java.util.Map;
  */
 public final class OutputNamePool {
 
-    private final Array<String> tmpNames     = new Array<>();
-    private final Array<String> cxtNameAdded = new Array<>();
+    private final Array<Name> tmpNames     = new Array<>();
+    private final Array<Name> cxtNameAdded = new Array<>();
 
-    private final IDAllocator   cxtIdAlloc = new IDAllocator();
-    private final Array<String> cxtNames   = new Array<>();
+    private final IDAllocator cxtIdAlloc = new IDAllocator();
+    private final Array<Name> cxtNames   = new Array<>();
 
     private final Map<String, Name> index = new HashMap<>();
 
@@ -30,34 +30,34 @@ public final class OutputNamePool {
      * @param names     The names to register
      */
     public void register(boolean temporary, String... names) {
-        for (String name : names) {
-            Name meta = index.get(name);
-            if (meta != null) {
+        for (String nameStr : names) {
+            Name name = index.get(nameStr);
+            if (name != null) {
                 if (temporary) {
                     continue;
                 }
-                if (!meta.temporary) {
-                    meta.refCount++;
+                if (!name.temporary) {
+                    name.refCount++;
                     continue;
                 }
                 tmpNames.size--;
-                if (meta.offset < tmpNames.size) {
-                    String lastTmp = tmpNames.get(tmpNames.size);
-                    tmpNames.put(meta.offset, lastTmp);
-                    index.get(lastTmp).offset = meta.offset;
+                if (name.offset < tmpNames.size) {
+                    Name lastName = tmpNames.get(tmpNames.size);
+                    lastName.offset = name.offset;
+                    tmpNames.put(name.offset, lastName);
                 }
-                this.index.remove(name);
+                this.index.remove(nameStr);
             }
             if (temporary) {
-                meta = new Name(true, tmpNames.size, name);
+                name = new Name(true, tmpNames.size, nameStr);
                 this.tmpNames.add(name);
             } else {
                 int offset = cxtIdAlloc.acquire();
-                meta = new Name(false, offset, name);
+                name = new Name(false, offset, nameStr);
                 this.cxtNames.put(offset, name);
                 this.cxtNameAdded.add(name); // record for outter using
             }
-            index.put(name, meta);
+            index.put(nameStr, name);
         }
     }
 
@@ -109,17 +109,17 @@ public final class OutputNamePool {
             throw new IllegalArgumentException("negative id: " + id);
         }
         if (id < tmpNames.size) {
-            return tmpNames.get(id);
+            return tmpNames.get(id).name;
         }
         id -= tmpNames.size;
         if (id > cxtIdAlloc.count()) {
             throw new IllegalArgumentException("invalid id: " + id);
         }
-        String result = cxtNames.get(id);
+        Name result = cxtNames.get(id);
         if (result == null) {
             throw new IllegalArgumentException("invalid id: " + id);
         }
-        return result;
+        return result.name;
     }
 
     /**
@@ -136,13 +136,15 @@ public final class OutputNamePool {
      */
     public void reset() {
         for (int i = 0; i < tmpNames.size; i++) {
-            index.remove(tmpNames.get(i));
+            index.remove(tmpNames.get(i).name);
         }
         this.tmpNames.size = 0;
         this.cxtNameAdded.size = 0;
     }
 
-    // field-name's metadata
+    /**
+     * field-name's metadata
+     */
     private final static class Name {
         String  name;
         boolean temporary;
