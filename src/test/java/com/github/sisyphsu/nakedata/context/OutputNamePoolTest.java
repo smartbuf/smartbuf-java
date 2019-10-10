@@ -1,5 +1,6 @@
-package com.github.sisyphsu.nakedata.context.output;
+package com.github.sisyphsu.nakedata.context;
 
+import com.github.sisyphsu.nakedata.context.OutputNamePool;
 import org.junit.jupiter.api.Test;
 
 import java.util.Objects;

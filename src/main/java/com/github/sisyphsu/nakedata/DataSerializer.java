@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata;
 
-import com.github.sisyphsu.nakedata.context.output.OutputBuilder;
-import com.github.sisyphsu.nakedata.context.output.OutputWriter;
+import com.github.sisyphsu.nakedata.context.OutputBuilder;
+import com.github.sisyphsu.nakedata.context.OutputWriter;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.NodeMapper;
 import com.github.sisyphsu.nakedata.node.array.MixArrayNode;

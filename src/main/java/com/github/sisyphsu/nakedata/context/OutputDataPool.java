@@ -1,6 +1,5 @@
-package com.github.sisyphsu.nakedata.context.output;
+package com.github.sisyphsu.nakedata.context;
 
-import com.github.sisyphsu.nakedata.context.common.IDAllocator;
 import com.github.sisyphsu.nakedata.utils.ArrayUtils;
 import com.github.sisyphsu.nakedata.utils.TimeUtils;
 

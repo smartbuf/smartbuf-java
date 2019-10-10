@@ -1,6 +1,4 @@
-package com.github.sisyphsu.nakedata.context.output;
-
-import com.github.sisyphsu.nakedata.context.common.IDAllocator;
+package com.github.sisyphsu.nakedata.context;
 
 import java.util.HashMap;
 import java.util.Map;

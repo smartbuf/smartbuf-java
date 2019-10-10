@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.context.input;
 
-import com.github.sisyphsu.nakedata.context.common.IDAllocator;
+import com.github.sisyphsu.nakedata.context.IDAllocator;
 
 /**
  * Context's name pool for input side.

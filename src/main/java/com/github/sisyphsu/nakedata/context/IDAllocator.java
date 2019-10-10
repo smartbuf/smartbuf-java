@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.context.common;
+package com.github.sisyphsu.nakedata.context;
 
 import com.github.sisyphsu.nakedata.utils.ArrayUtils;
 

@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.io;
 
-import com.github.sisyphsu.nakedata.context.output.OutputWriter;
+import com.github.sisyphsu.nakedata.context.OutputWriter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
