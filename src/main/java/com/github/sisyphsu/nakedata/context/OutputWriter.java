@@ -1,9 +1,11 @@
 package com.github.sisyphsu.nakedata.context;
 
 import com.github.sisyphsu.nakedata.ArrayType;
-import com.github.sisyphsu.nakedata.io.Output;
 import com.github.sisyphsu.nakedata.utils.NumberUtils;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.BitSet;
 import java.util.List;
 
 /**
@@ -12,134 +14,183 @@ import java.util.List;
  */
 public class OutputWriter {
 
-    private Output output;
+    private OutputStream stream;
 
-    public OutputWriter(Output output) {
-        this.output = output;
+    public OutputWriter(OutputStream stream) {
+        this.stream = stream;
     }
 
-    public int writeVarInt(long n) {
-        n = NumberUtils.intToUint(n);
-        return this.writeVarUint(n);
+    public void writeByte(byte b) throws IOException {
+        stream.write(b);
     }
 
-    public int writeByte(byte b) {
-        this.output.write(b);
-        return 1;
+    public void writeVarInt(long n) throws IOException {
+        this.writeVarUint(NumberUtils.intToUint(n));
     }
 
-    public int writeShort(short s) {
-        output.write((byte) (s & 0xFF));
-        output.write((byte) (s >>> 8 & 0xFF));
-        return 2;
-    }
-
-    public int writeInt(int i) {
-        output.write((byte) (i & 0xFF));
-        output.write((byte) (i >>> 8 & 0xFF));
-        output.write((byte) (i >>> 16 & 0xFF));
-        output.write((byte) (i >>> 24 & 0xFF));
-        return 4;
-    }
-
-    public int writeVarUint(long n) {
-        int count = 0;
+    public void writeVarUint(long n) throws IOException {
         do {
             if (n <= 0x7F) {
-                output.write((byte) n);
+                stream.write((byte) n);
             } else {
-                output.write((byte) ((n | 0x80) & 0xFF));
+                stream.write((byte) ((n | 0x80) & 0xFF));
             }
-            count++;
             n >>>= 7;
         } while (n > 0);
-        return count;
     }
 
-    public int writeFloat(float f) {
+    public void writeFloat(float f) throws IOException {
         int bits = NumberUtils.floatToBits(f);
         for (int i = 0; i < 4; i++) {
-            output.write((byte) (bits & 0xFF));
+            stream.write((byte) (bits & 0xFF));
             bits >>>= 8;
         }
-        return 4;
     }
 
-    public int writeDouble(double d) {
+    public void writeDouble(double d) throws IOException {
         long bits = NumberUtils.doubleToBits(d);
         for (int i = 0; i < 8; i++) {
-            output.write((byte) (bits & 0xFF));
+            stream.write((byte) (bits & 0xFF));
             bits >>>= 8;
         }
-        return 8;
     }
 
-    public int writeString(String str) {
+    public void writeString(String str) throws IOException {
         byte[] bytes = str.getBytes();
-        int len = this.writeVarUint(bytes.length);
-        output.write(bytes);
-        return len + bytes.length;
+        this.writeVarUint(bytes.length);
+        for (byte b : bytes) {
+            stream.write(b);
+        }
     }
 
-    /**
-     * Write the metadata of array/slice into output.
-     *
-     * @param end   Is last slice or not, 1-bit
-     * @param type  Element's standard-type, 4-bit
-     * @param count Element's count
-     */
-    public void writeArrayMeta(boolean end, ArrayType type, int count) {
-
+    public void writeNullSlice(List booleans, boolean end) throws IOException {
+        writeVarUint((booleans.size() << 5) | (ArrayType.NULL.getCode() << 1) | (end ? 0 : 1));
     }
 
-    public void writeBooleanArray(boolean[] booleans) {
+    public void writeBooleanArray(boolean[] booleans) throws IOException {
+        int len = booleans.length;
+        BitSet set = new BitSet();
+        for (int i = 0; i < len; i++) {
+            set.set(i, booleans[i]);
+        }
+        writeVarUint((len << 5) | (ArrayType.BOOL.getCode() << 1));
+        for (byte b : set.toByteArray()) {
+            stream.write(b);
+        }
     }
 
-    public void writeBooleanArray(List<Boolean> booleans) {
+    public void writeBooleanSlice(List<Boolean> booleans, boolean end) throws IOException {
+        int len = booleans.size();
+        BitSet set = new BitSet();
+        for (int i = 0; i < len; i++) {
+            set.set(i, booleans.get(i));
+        }
+        writeVarUint((len << 5) | (ArrayType.BOOL.getCode() << 1) | (end ? 0 : 1));
+        for (byte b : set.toByteArray()) {
+            stream.write(b);
+        }
     }
 
-    public void writeByteArray(byte[] bytes) {
+    public void writeByteArray(byte[] bytes) throws IOException {
+        int len = bytes.length;
+        writeVarUint((len << 5) | (ArrayType.BYTE.getCode() << 1));
+        for (byte b : bytes) {
+            stream.write(b);
+        }
     }
 
-    public void writeByteArray(List<Byte> bytes) {
+    public void writeByteSlice(List<Byte> bytes, boolean end) throws IOException {
+        int len = bytes.size();
+        writeVarUint((len << 5) | (ArrayType.BYTE.getCode() << 1) | (end ? 0 : 1));
+        for (byte b : bytes) {
+            stream.write(b);
+        }
     }
 
-    public void writeShortArray(short[] shorts) {
+    public void writeShortArray(short[] shorts) throws IOException {
+        int len = shorts.length;
+        writeVarUint((len << 5) | (ArrayType.SHORT.getCode() << 1));
+        for (short s : shorts) {
+            stream.write((byte) (s >> 8));
+            stream.write((byte) s);
+        }
     }
 
-    public void writeShortArray(List<Short> shorts) {
+    public void writeShortSlice(List<Short> shorts, boolean end) throws IOException {
+        int len = shorts.size();
+        writeVarUint((len << 5) | (ArrayType.SHORT.getCode() << 1) | (end ? 0 : 1));
+        for (short s : shorts) {
+            stream.write((byte) (s >> 8));
+            stream.write((byte) s);
+        }
     }
 
-    public void writeIntArray(int[] ints) {
+    public void writeIntArray(int[] ints) throws IOException {
+        int len = ints.length;
+        writeVarUint((len << 5) | (ArrayType.INT.getCode() << 1));
+        for (int i : ints) {
+            writeVarInt(i);
+        }
     }
 
-    public void writeIntArray(List<Integer> integers) {
+    public void writeIntSlice(List<Integer> ints, boolean end) throws IOException {
+        int len = ints.size();
+        writeVarUint((len << 5) | (ArrayType.INT.getCode() << 1) | (end ? 0 : 1));
+        for (int i : ints) {
+            writeVarInt(i);
+        }
     }
 
-    public void writeLongArray(long[] longs) {
+    public void writeLongArray(long[] longs) throws IOException {
+        int len = longs.length;
+        writeVarUint((len << 5) | (ArrayType.LONG.getCode() << 1));
+        for (long l : longs) {
+            writeVarInt(l);
+        }
     }
 
-    public void writeLongArray(List<Long> longs) {
+    public void writeLongArray(List<Long> longs, boolean end) throws IOException {
+        int len = longs.size();
+        writeVarUint((len << 5) | (ArrayType.LONG.getCode() << 1) | (end ? 0 : 1));
+        for (long l : longs) {
+            writeVarInt(l);
+        }
     }
 
-    public void writeFloatArray(float[] floats) {
+    public void writeFloatArray(float[] floats) throws IOException {
+        int len = floats.length;
+        writeVarUint((len << 5) | (ArrayType.FLOAT.getCode() << 1) | 1);
+        for (float f : floats) {
+            writeFloat(f);
+        }
     }
 
-    public void writeFloatArray(List<Float> floats) {
+    public void writeFloatArray(List<Float> floats, boolean end) throws IOException {
+        int len = floats.size();
+        writeVarUint((len << 5) | (ArrayType.FLOAT.getCode() << 1) | (end ? 0 : 1));
+        for (float f : floats) {
+            writeFloat(f);
+        }
     }
 
-    public void writeDoubleArray(double[] doubles) {
+    public void writeDoubleArray(double[] doubles) throws IOException {
+        int len = doubles.length;
+        writeVarUint((len << 5) | (ArrayType.DOUBLE.getCode() << 1));
+        for (double d : doubles) {
+            writeDouble(d);
+        }
     }
 
-    public void writeDoubleArray(List<Double> doubles) {
+    public void writeDoubleArray(List<Double> doubles, boolean end) throws IOException {
+        int len = doubles.size();
+        writeVarUint((len << 5) | (ArrayType.DOUBLE.getCode() << 1) | (end ? 0 : 1));
+        for (double d : doubles) {
+            writeDouble(d);
+        }
     }
 
-    public void writeStringArray(String[] array) {
-
-    }
-
-    public void writeStringArray(List<String> strings) {
-
+    public void writeMetaHead(long size, int code, boolean hasMore) throws IOException {
+        this.writeVarUint((size << 4) | (code << 1) | (hasMore ? 1 : 0));
     }
 
 }

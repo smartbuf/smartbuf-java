@@ -18,13 +18,13 @@ public final class OutputDataPool {
 
     private static final int FIX_HEAD = 4;
 
-    final Array<String>  symbolAdded   = new Array<>();
-    final Array<Integer> symbolExpired = new Array<>();
+    final Array<String>  cxtSymbolAdded   = new Array<>();
+    final Array<Integer> cxtSymbolExpired = new Array<>();
 
-    final Array<Float>  floatArea  = new Array<>();
-    final Array<Double> doubleArea = new Array<>();
-    final Array<Long>   varintArea = new Array<>();
-    final Array<String> stringArea = new Array<>();
+    final Array<Float>  tmpFloats  = new Array<>();
+    final Array<Double> tmpDoubles = new Array<>();
+    final Array<Long>   tmpVarints = new Array<>();
+    final Array<String> tmpStrings = new Array<>();
 
     private final Map<Object, Integer> dataIndex = new HashMap<>();
 
@@ -51,7 +51,7 @@ public final class OutputDataPool {
      */
     public void registerFloat(float f) {
         if (!dataIndex.containsKey(f)) {
-            dataIndex.put(f, floatArea.add(f));
+            dataIndex.put(f, tmpFloats.add(f));
         }
     }
 
@@ -62,7 +62,7 @@ public final class OutputDataPool {
      */
     public void registerDouble(double d) {
         if (!dataIndex.containsKey(d)) {
-            dataIndex.put(d, doubleArea.add(d));
+            dataIndex.put(d, tmpDoubles.add(d));
         }
     }
 
@@ -73,7 +73,7 @@ public final class OutputDataPool {
      */
     public void registerVarint(long l) {
         if (!dataIndex.containsKey(l)) {
-            dataIndex.put(l, varintArea.add(l));
+            dataIndex.put(l, tmpVarints.add(l));
         }
     }
 
@@ -87,7 +87,7 @@ public final class OutputDataPool {
             throw new NullPointerException();
         }
         if (!dataIndex.containsKey(str)) {
-            dataIndex.put(str, stringArea.add(str));
+            dataIndex.put(str, tmpStrings.add(str));
         }
     }
 
@@ -104,7 +104,7 @@ public final class OutputDataPool {
         if (offset == null) {
             offset = symbolID.acquire();
             this.symbols.put(offset, symbol);
-            this.symbolAdded.add(symbol);
+            this.cxtSymbolAdded.add(symbol);
             this.symbolIndex.put(symbol, offset);
         }
         this.symbolTimes.put(offset, (int) TimeUtils.fastUpTime());
@@ -135,7 +135,7 @@ public final class OutputDataPool {
         if (offset == null) {
             throw new IllegalArgumentException("double not exists: " + d);
         }
-        return FIX_HEAD + floatArea.size() + offset;
+        return FIX_HEAD + tmpFloats.size() + offset;
     }
 
     /**
@@ -149,7 +149,7 @@ public final class OutputDataPool {
         if (offset == null) {
             throw new IllegalArgumentException("varint not exists: " + l);
         }
-        return FIX_HEAD + floatArea.size() + doubleArea.size() + offset;
+        return FIX_HEAD + tmpFloats.size() + tmpDoubles.size() + offset;
     }
 
     /**
@@ -163,7 +163,7 @@ public final class OutputDataPool {
         if (offset == null) {
             throw new IllegalArgumentException("string not exists: " + str);
         }
-        return FIX_HEAD + floatArea.size() + doubleArea.size() + varintArea.size() + offset;
+        return FIX_HEAD + tmpFloats.size() + tmpDoubles.size() + tmpVarints.size() + offset;
     }
 
     /**
@@ -193,14 +193,14 @@ public final class OutputDataPool {
      * Reset this data pool, and execute context data's expiring automatically
      */
     public void reset() {
-        floatArea.clear();
-        doubleArea.clear();
-        varintArea.clear();
-        stringArea.clear();
+        tmpFloats.clear();
+        tmpDoubles.clear();
+        tmpVarints.clear();
+        tmpStrings.clear();
         dataIndex.clear();
 
-        symbolAdded.clear();
-        symbolExpired.clear();
+        cxtSymbolAdded.clear();
+        cxtSymbolExpired.clear();
 
         // execute context symbol's expiring automatically
         int expireNum = symbolIndex.size() - symbolLimit;
@@ -240,7 +240,7 @@ public final class OutputDataPool {
             this.symbolID.release(offset);
             this.symbols.put(offset, null);
 
-            this.symbolExpired.add(offset);
+            this.cxtSymbolExpired.add(offset);
         }
     }
 

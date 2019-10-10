@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.context;
 
-import com.github.sisyphsu.nakedata.ArrayType;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.array.ArrayNode;
 import com.github.sisyphsu.nakedata.node.array.MixArrayNode;
@@ -21,14 +20,15 @@ public final class Output {
 
     private long version;
 
-    private final boolean          enableCxt;
+    private final boolean          stream;
     private final OutputNamePool   namePool   = new OutputNamePool();
     private final OutputStructPool structPool = new OutputStructPool(1 << 12);
     private final OutputDataPool   dataPool   = new OutputDataPool(1 << 16);
 
+
     public Output(boolean enableCxt) {
         this.version = 0L;
-        this.enableCxt = enableCxt;
+        this.stream = enableCxt;
     }
 
     public void write(Node node, OutputWriter writer) {
@@ -49,81 +49,66 @@ public final class Output {
      * 将当前FrameMeta通过writer序列化输出
      */
     private void writeMeta(OutputWriter writer) {
-        int cxtCount = 0;
-        if (enableCxt) {
+        // prepare the first byte to identify metadata
+        byte head = VERSION;
+        int cxtCount = 0, tmpCount = 0;
+        if (stream) {
+            head |= FLAG_STREAM;
             if (namePool.cxtNameAdded.size() > 0) cxtCount++;
             if (structPool.cxtStructAdded.size() > 0) cxtCount++;
             if (structPool.cxtStructExpired.size() > 0) cxtCount++;
-            if (dataPool.symbolAdded.size() > 0) cxtCount++;
-            if (dataPool.symbolExpired.size() > 0) cxtCount++;
+            if (dataPool.cxtSymbolAdded.size() > 0) cxtCount++;
+            if (dataPool.cxtSymbolExpired.size() > 0) cxtCount++;
+            if (cxtCount > 0) head |= FLAG_CXT_META;
         }
-        int count = cxtCount;
-        if (dataPool.floatArea.size() > 0) count++;
-        if (dataPool.doubleArea.size() > 0) count++;
-        if (dataPool.varintArea.size() > 0) count++;
-        if (dataPool.stringArea.size() > 0) count++;
-        if (namePool.tmpNames.size() > 0) count++;
-        if (structPool.tmpStructs.size() > 0) count++;
+        if (dataPool.tmpFloats.size() > 0) tmpCount++;
+        if (dataPool.tmpDoubles.size() > 0) tmpCount++;
+        if (dataPool.tmpVarints.size() > 0) tmpCount++;
+        if (dataPool.tmpStrings.size() > 0) tmpCount++;
+        if (namePool.tmpNames.size() > 0) tmpCount++;
+        if (structPool.tmpStructs.size() > 0) tmpCount++;
+        if (tmpCount > 0) head |= FLAG_TMP_META;
 
-        byte head = VERSION;
-        if (enableCxt) {
-            head |= FLAG_STREAM;
-        }
-        if (count == 0) {
-            head |= FLAG_HEAD;
-        }
+        // 1-byte for summary
         writer.writeByte(head);
-        writer.writeByte((byte) version);
-        if (count > 0) {
-            this.writeTmpMeta(writer, count);
+        // 1-byte for context sequence, optional
+        if (stream) {
+            writer.writeByte((byte) version);
         }
-        if (enableCxt && cxtCount > 0) {
-            this.writeCxtMeta(writer, cxtCount);
-        }
-    }
-
-    /**
-     * Output body of metadata.
-     */
-    private void writeTmpMeta(OutputWriter writer, int count) {
-        int len = dataPool.floatArea.size();
-        if (len > 0) {
-            this.writeMetaHead(writer, len, CODE_FLOAT, --count == 0);
+        int len;
+        // output temporary metadata
+        if (tmpCount > 0 && (len = dataPool.tmpFloats.size()) > 0) {
+            writer.writeMetaHead(len, TMP_FLOAT, --tmpCount == 0);
             for (int i = 0; i < len; i++) {
-                writer.writeFloat(dataPool.floatArea.get(i));
+                writer.writeFloat(dataPool.tmpFloats.get(i));
             }
         }
-        len = dataPool.doubleArea.size();
-        if (len > 0) {
-            this.writeMetaHead(writer, len, CODE_DOUBLE, --count == 0);
+        if (tmpCount > 0 && (len = dataPool.tmpDoubles.size()) > 0) {
+            writer.writeMetaHead(len, TMP_DOUBLE, --tmpCount == 0);
             for (int i = 0; i < len; i++) {
-                writer.writeDouble(dataPool.doubleArea.get(i));
+                writer.writeDouble(dataPool.tmpDoubles.get(i));
             }
         }
-        len = dataPool.varintArea.size();
-        if (len > 0) {
-            this.writeMetaHead(writer, len, CODE_VARINT, --count == 0);
+        if (tmpCount > 0 && (len = dataPool.tmpVarints.size()) > 0) {
+            writer.writeMetaHead(len, TMP_VARINT, --tmpCount == 0);
             for (int i = 0; i < len; i++) {
-                writer.writeVarInt(dataPool.varintArea.get(i));
+                writer.writeVarInt(dataPool.tmpVarints.get(i));
             }
         }
-        len = dataPool.stringArea.size();
-        if (len > 0) {
-            this.writeMetaHead(writer, len, CODE_STRING, --count == 0);
+        if (tmpCount > 0 && (len = dataPool.tmpStrings.size()) > 0) {
+            writer.writeMetaHead(len, TMP_STRING, --tmpCount == 0);
             for (int i = 0; i < len; i++) {
-                writer.writeString(dataPool.stringArea.get(i));
+                writer.writeString(dataPool.tmpStrings.get(i));
             }
         }
-        len = namePool.tmpNames.size();
-        if (len > 0) {
-            this.writeMetaHead(writer, len, CODE_NAMES, --count == 0);
+        if (tmpCount > 0 && (len = namePool.tmpNames.size()) > 0) {
+            writer.writeMetaHead(len, TMP_NAMES, --tmpCount == 0);
             for (int i = 0; i < len; i++) {
                 writer.writeString(namePool.tmpNames.get(i).name);
             }
         }
-        len = structPool.tmpStructs.size();
-        if (len > 0) {
-            this.writeMetaHead(writer, len, CODE_STRUCTS, --count == 0);
+        if (tmpCount > 0 && (len = structPool.tmpStructs.size()) > 0) {
+            writer.writeMetaHead(len, TMP_STRUCTS, --tmpCount == 0);
             for (int i = 0; i < len; i++) {
                 String[] fieldNames = structPool.tmpStructs.get(i).names;
                 writer.writeVarUint(fieldNames.length);
@@ -132,22 +117,15 @@ public final class Output {
                 }
             }
         }
-    }
-
-    /**
-     * Output context metadata
-     */
-    private void writeCxtMeta(OutputWriter writer, int count) {
-        int len = namePool.cxtNameAdded.size();
-        if (len > 0) {
-            writeMetaHead(writer, len, CODE_NAME_ADDED, --count == 0);
+        // output context metadata
+        if (cxtCount > 0 && (len = namePool.cxtNameAdded.size()) > 0) {
+            writer.writeMetaHead(len, CXT_NAME_ADDED, --cxtCount == 0);
             for (int i = 0; i < len; i++) {
                 writer.writeString(namePool.cxtNameAdded.get(i).name);
             }
         }
-        len = structPool.cxtStructAdded.size();
-        if (len > 0) {
-            this.writeMetaHead(writer, len, CODE_STRUCT_ADDED, --count == 0);
+        if (cxtCount > 0 && (len = structPool.cxtStructAdded.size()) > 0) {
+            writer.writeMetaHead(len, CXT_STRUCT_ADDED, --cxtCount == 0);
             for (int i = 0; i < len; i++) {
                 String[] fieldNames = structPool.cxtStructAdded.get(i).names;
                 writer.writeVarUint(fieldNames.length);
@@ -156,34 +134,24 @@ public final class Output {
                 }
             }
         }
-        len = structPool.cxtStructExpired.size();
-        if (len > 0) {
-            this.writeMetaHead(writer, len, CODE_STRUCT_EXPIRED, --count == 0);
+        if (cxtCount > 0 && (len = structPool.cxtStructExpired.size()) > 0) {
+            writer.writeMetaHead(len, CXT_STRUCT_EXPIRED, --cxtCount == 0);
             for (int i = 0; i < len; i++) {
                 writer.writeVarUint(structPool.cxtStructExpired.get(i).offset);
             }
         }
-        len = dataPool.symbolAdded.size();
-        if (len > 0) {
-            this.writeMetaHead(writer, len, CODE_SYMBOL_ADDED, --count == 0);
+        if (cxtCount > 0 && (len = dataPool.cxtSymbolAdded.size()) > 0) {
+            writer.writeMetaHead(len, CXT_SYMBOL_ADDED, --cxtCount == 0);
             for (int i = 0; i < len; i++) {
-                writer.writeString(dataPool.symbolAdded.get(i));
+                writer.writeString(dataPool.cxtSymbolAdded.get(i));
             }
         }
-        len = dataPool.symbolExpired.size();
-        if (len > 0) {
-            this.writeMetaHead(writer, len, CODE_SYMBOL_EXPIRED, --count == 0);
+        if (cxtCount > 0 && (len = dataPool.cxtSymbolExpired.size()) > 0) {
+            writer.writeMetaHead(len, CXT_SYMBOL_EXPIRED, --cxtCount == 0);
             for (int i = 0; i < len; i++) {
-                writer.writeVarUint(dataPool.symbolExpired.get(i));
+                writer.writeVarUint(dataPool.cxtSymbolExpired.get(i));
             }
         }
-    }
-
-    /**
-     * Output the head of one schema area.
-     */
-    private void writeMetaHead(OutputWriter writer, long size, int code, boolean hasMore) {
-        writer.writeVarUint((size << 5) | (code << 1) | (hasMore ? 1 : 0));
     }
 
     /**
@@ -211,38 +179,31 @@ public final class Output {
                 writer.writeVarInt(dataPool.findStringID(node.stringValue()));
                 break;
             case SYMBOL:
-                if (enableCxt) {
+                if (stream) {
                     writer.writeVarInt(dataPool.findSymbolID(node.stringValue()));
                 } else {
                     writer.writeVarInt(dataPool.findStringID(node.stringValue()));
                 }
                 break;
             case N_BOOL_ARRAY:
-                writer.writeArrayMeta(true, ArrayType.BOOL, node.booleansValue().length);
                 writer.writeBooleanArray(node.booleansValue());
                 break;
             case N_BYTE_ARRAY:
-                writer.writeArrayMeta(true, ArrayType.BYTE, node.bytesValue().length);
                 writer.writeByteArray(node.bytesValue());
                 break;
             case N_SHORT_ARRAY:
-                writer.writeArrayMeta(true, ArrayType.SHORT, node.shortsValue().length);
                 writer.writeShortArray(node.shortsValue());
                 break;
             case N_INT_ARRAY:
-                writer.writeArrayMeta(true, ArrayType.INT, node.intsValue().length);
                 writer.writeIntArray(node.intsValue());
                 break;
             case N_LONG_ARRAY:
-                writer.writeArrayMeta(true, ArrayType.LONG, node.longsValue().length);
                 writer.writeLongArray(node.longsValue());
                 break;
             case N_FLOAT_ARRAY:
-                writer.writeArrayMeta(true, ArrayType.FLOAT, node.floatsValue().length);
                 writer.writeFloatArray(node.floatsValue());
                 break;
             case N_DOUBLE_ARRAY:
-                writer.writeArrayMeta(true, ArrayType.DOUBLE, node.doublesValue().length);
                 writer.writeDoubleArray(node.doublesValue());
                 break;
             case ARRAY:
@@ -267,28 +228,30 @@ public final class Output {
         }
         for (int i = 0, len = arrayNodes.size(); i < len; i++) {
             ArrayNode slice = arrayNodes.get(i);
-            writer.writeArrayMeta(i == len - 1, slice.elementType(), slice.size());
             switch (slice.elementType()) {
+                case NULL:
+                    writer.writeNullSlice(slice.getItems(), i == len - 1);
+                    break;
                 case BOOL:
-                    writer.writeBooleanArray(slice.getItems());
+                    writer.writeBooleanSlice(slice.getItems(), i == len - 1);
                     break;
                 case BYTE:
-                    writer.writeByteArray(slice.getItems());
+                    writer.writeByteSlice(slice.getItems(), i == len - 1);
                     break;
                 case SHORT:
-                    writer.writeShortArray(slice.getItems());
+                    writer.writeShortSlice(slice.getItems(), i == len - 1);
                     break;
                 case INT:
-                    writer.writeIntArray(slice.getItems());
+                    writer.writeIntSlice(slice.getItems(), i == len - 1);
                     break;
                 case LONG:
-                    writer.writeLongArray(slice.getItems());
+                    writer.writeLongArray(slice.getItems(), i == len - 1);
                     break;
                 case FLOAT:
-                    writer.writeFloatArray(slice.getItems());
+                    writer.writeFloatArray(slice.getItems(), i == len - 1);
                     break;
                 case DOUBLE:
-                    writer.writeDoubleArray(slice.getItems());
+                    writer.writeDoubleArray(slice.getItems(), i == len - 1);
                     break;
                 case STRING:
                     for (Object item : slice.getItems()) {
@@ -296,7 +259,7 @@ public final class Output {
                     }
                     break;
                 case SYMBOL:
-                    if (enableCxt) {
+                    if (stream) {
                         slice.getItems().forEach(item -> writer.writeVarInt(dataPool.findSymbolID((String) item)));
                     } else {
                         slice.getItems().forEach(item -> writer.writeVarInt(dataPool.findStringID((String) item)));
@@ -352,7 +315,7 @@ public final class Output {
                 dataPool.registerString(node.stringValue());
                 break;
             case SYMBOL:
-                if (enableCxt) {
+                if (stream) {
                     dataPool.registerSymbol(node.stringValue());
                 } else {
                     dataPool.registerString(node.stringValue());
@@ -381,7 +344,7 @@ public final class Output {
                 array.forEach(item -> dataPool.registerString(String.valueOf(item)));
                 break;
             case SYMBOL:
-                if (enableCxt) {
+                if (stream) {
                     array.forEach(item -> dataPool.registerSymbol(String.valueOf(item)));
                 } else {
                     array.forEach(item -> dataPool.registerSymbol(String.valueOf(item)));
@@ -403,8 +366,8 @@ public final class Output {
         String[] fieldNames = node.getKey().getFields();
         boolean stable = node.getKey().isStable();
         // 注册struct
-        namePool.register(!enableCxt || !stable, fieldNames);
-        structPool.register(!enableCxt || !stable, fieldNames);
+        namePool.register(!stream || !stable, fieldNames);
+        structPool.register(!stream || !stable, fieldNames);
         // 扫描子节点
         for (Node subNode : node.getData().values()) {
             this.scan(subNode);

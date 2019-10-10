@@ -10,21 +10,22 @@ public interface Proto {
     byte ID_FALSE = 0x01;
     byte ID_TRUE  = 0x02;
 
-    byte VERSION     = (byte) 0b0100_0000;
-    byte FLAG_STREAM = (byte) 0b0010_0000;
-    byte FLAG_HEAD   = (byte) 0b0001_0000;
+    byte VERSION       = (byte) 0b0001_0000;
+    byte FLAG_STREAM   = (byte) 0b0000_1000;
+    byte FLAG_TMP_META = (byte) 0b0000_0100;
+    byte FLAG_CXT_META = (byte) 0b0000_0010;
 
-    byte CODE_FLOAT          = (byte) 1;
-    byte CODE_DOUBLE         = (byte) 2;
-    byte CODE_VARINT         = (byte) 3;
-    byte CODE_STRING         = (byte) 4;
-    byte CODE_NAMES          = (byte) 5;
-    byte CODE_STRUCTS        = (byte) 6;
-    byte CODE_NAME_ADDED     = (byte) 7;
-    byte CODE_NAME_EXPIRED   = (byte) 8;
-    byte CODE_STRUCT_ADDED   = (byte) 9;
-    byte CODE_STRUCT_EXPIRED = (byte) 10;
-    byte CODE_SYMBOL_ADDED   = (byte) 11;
-    byte CODE_SYMBOL_EXPIRED = (byte) 12;
+    byte TMP_FLOAT   = (byte) 1;
+    byte TMP_DOUBLE  = (byte) 2;
+    byte TMP_VARINT  = (byte) 3;
+    byte TMP_STRING  = (byte) 4;
+    byte TMP_NAMES   = (byte) 5;
+    byte TMP_STRUCTS = (byte) 6;
+
+    byte CXT_NAME_ADDED     = (byte) 1;
+    byte CXT_STRUCT_ADDED   = (byte) 2;
+    byte CXT_STRUCT_EXPIRED = (byte) 3;
+    byte CXT_SYMBOL_ADDED   = (byte) 4;
+    byte CXT_SYMBOL_EXPIRED = (byte) 5;
 
 }

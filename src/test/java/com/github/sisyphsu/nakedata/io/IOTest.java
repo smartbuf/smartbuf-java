@@ -4,6 +4,9 @@ import com.github.sisyphsu.nakedata.context.OutputWriter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 /**
  * @author sulin
  * @since 2019-04-27 14:34:12
@@ -11,10 +14,10 @@ import org.junit.jupiter.api.Test;
 public class IOTest {
 
     @Test
-    public void test() {
-        byte[] data = new byte[1024];
-        OutputWriter output = new OutputWriter(new ByteArrayOutput(data));
-        InputReader input = new InputReader(new ByteArrayInput(data));
+    public void test() throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024);
+        OutputWriter output = new OutputWriter(outputStream);
+        InputReader input = new InputReader(new ByteArrayInput(outputStream.toByteArray()));
 
         output.writeVarInt(0L);
         output.writeVarInt(Byte.MAX_VALUE);
