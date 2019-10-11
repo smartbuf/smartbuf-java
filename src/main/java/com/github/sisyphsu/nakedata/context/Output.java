@@ -20,144 +20,62 @@ import static com.github.sisyphsu.nakedata.context.Proto.*;
  */
 public final class Output {
 
-    private long version;
+    private final Schema schema;
 
     private final boolean          stream;
+    private final OutputDataPool   dataPool;
     private final OutputNamePool   namePool   = new OutputNamePool();
     private final OutputStructPool structPool = new OutputStructPool(1 << 12);
-    private final OutputDataPool   dataPool   = new OutputDataPool(1 << 16);
 
     public Output(boolean enableCxt) {
-        this.version = 0L;
         this.stream = enableCxt;
+        this.schema = new Schema(enableCxt);
+        this.dataPool = new OutputDataPool(1 << 16, schema);
     }
 
     public void write(Node node, OutputWriter writer) throws IOException {
         if (node == null) {
             throw new NullPointerException("node can't be null");
         }
-        namePool.reset();
-        dataPool.reset();
-        structPool.reset();
+        this.schema.reset();
+        this.namePool.reset();
+        this.dataPool.reset();
+        this.structPool.reset();
 
         this.scan(node);
 
-        this.writeMeta(writer);
+        for (int i = 0, len = namePool.tmpNames.size(); i < len; i++) {
+            schema.tmpNames.add(namePool.tmpNames.get(i).name);
+        }
+        for (int i = 0, len = namePool.cxtNameAdded.size(); i < len; i++) {
+            schema.cxtNameAdded.add(namePool.cxtNameAdded.get(i).name);
+        }
+        for (int i = 0, len = structPool.tmpStructs.size(); i < len; i++) {
+            String[] names = structPool.tmpStructs.get(i).names;
+            int[] nameIds = new int[names.length];
+            for (int j = 0; j < names.length; j++) {
+                nameIds[j] = namePool.findNameID(names[j]);
+            }
+            schema.tmpStructs.add(nameIds);
+        }
+        for (int i = 0, len = structPool.cxtStructAdded.size(); i < len; i++) {
+            String[] names = structPool.cxtStructAdded.get(i).names;
+            int[] nameIds = new int[names.length];
+            for (int j = 0; j < names.length; j++) {
+                nameIds[j] = namePool.findNameID(names[j]);
+            }
+            schema.cxtStructAdded.add(nameIds);
+        }
+        for (int i = 0, len = structPool.cxtStructExpired.size(); i < len; i++) {
+            schema.cxtStructExpired.add(structPool.cxtStructExpired.get(i).offset);
+        }
+
+        schema.output(writer);
         this.writeNode(node, writer);
     }
 
     /**
-     * 将当前FrameMeta通过writer序列化输出
-     */
-    private void writeMeta(OutputWriter writer) throws IOException {
-        // prepare the first byte to identify metadata
-        byte head = VERSION;
-        int cxtCount = 0, tmpCount = 0;
-        if (stream) {
-            head |= FLAG_STREAM;
-            if (namePool.cxtNameAdded.size() > 0) cxtCount++;
-            if (structPool.cxtStructAdded.size() > 0) cxtCount++;
-            if (structPool.cxtStructExpired.size() > 0) cxtCount++;
-            if (dataPool.cxtSymbolAdded.size() > 0) cxtCount++;
-            if (dataPool.cxtSymbolExpired.size() > 0) cxtCount++;
-            if (cxtCount > 0) head |= FLAG_CXT_META;
-        }
-        if (dataPool.tmpFloats.size() > 0) tmpCount++;
-        if (dataPool.tmpDoubles.size() > 0) tmpCount++;
-        if (dataPool.tmpVarints.size() > 0) tmpCount++;
-        if (dataPool.tmpStrings.size() > 0) tmpCount++;
-        if (namePool.tmpNames.size() > 0) tmpCount++;
-        if (structPool.tmpStructs.size() > 0) tmpCount++;
-        if (tmpCount > 0) head |= FLAG_TMP_META;
-
-        // 1-byte for summary
-        writer.writeByte(head);
-        // 1-byte for context sequence, optional
-        if (stream) {
-            writer.writeByte((byte) version);
-        }
-        int len;
-        // output temporary metadata
-        if (tmpCount > 0 && (len = dataPool.tmpFloats.size()) > 0) {
-            writer.writeMetaHead(len, TMP_FLOAT, --tmpCount == 0);
-            for (int i = 0; i < len; i++) {
-                writer.writeFloat(dataPool.tmpFloats.get(i));
-            }
-        }
-        if (tmpCount > 0 && (len = dataPool.tmpDoubles.size()) > 0) {
-            writer.writeMetaHead(len, TMP_DOUBLE, --tmpCount == 0);
-            for (int i = 0; i < len; i++) {
-                writer.writeDouble(dataPool.tmpDoubles.get(i));
-            }
-        }
-        if (tmpCount > 0 && (len = dataPool.tmpVarints.size()) > 0) {
-            writer.writeMetaHead(len, TMP_VARINT, --tmpCount == 0);
-            for (int i = 0; i < len; i++) {
-                writer.writeVarInt(dataPool.tmpVarints.get(i));
-            }
-        }
-        if (tmpCount > 0 && (len = dataPool.tmpStrings.size()) > 0) {
-            writer.writeMetaHead(len, TMP_STRING, --tmpCount == 0);
-            for (int i = 0; i < len; i++) {
-                writer.writeString(dataPool.tmpStrings.get(i));
-            }
-        }
-        if (tmpCount > 0 && (len = namePool.tmpNames.size()) > 0) {
-            writer.writeMetaHead(len, TMP_NAMES, --tmpCount == 0);
-            for (int i = 0; i < len; i++) {
-                writer.writeString(namePool.tmpNames.get(i).name);
-            }
-        }
-        if (tmpCount > 0 && (len = structPool.tmpStructs.size()) > 0) {
-            writer.writeMetaHead(len, TMP_STRUCTS, --tmpCount == 0);
-            for (int i = 0; i < len; i++) {
-                String[] fieldNames = structPool.tmpStructs.get(i).names;
-                writer.writeVarUint(fieldNames.length);
-                for (String fieldName : fieldNames) {
-                    writer.writeVarUint(namePool.findNameID(fieldName));
-                }
-            }
-        }
-        // output context metadata
-        if (cxtCount > 0 && (len = namePool.cxtNameAdded.size()) > 0) {
-            writer.writeMetaHead(len, CXT_NAME_ADDED, --cxtCount == 0);
-            for (int i = 0; i < len; i++) {
-                writer.writeString(namePool.cxtNameAdded.get(i).name);
-            }
-        }
-        if (cxtCount > 0 && (len = structPool.cxtStructAdded.size()) > 0) {
-            writer.writeMetaHead(len, CXT_STRUCT_ADDED, --cxtCount == 0);
-            for (int i = 0; i < len; i++) {
-                String[] fieldNames = structPool.cxtStructAdded.get(i).names;
-                writer.writeVarUint(fieldNames.length);
-                for (String fieldName : fieldNames) {
-                    writer.writeVarUint(namePool.findNameID(fieldName));
-                }
-            }
-        }
-        if (cxtCount > 0 && (len = structPool.cxtStructExpired.size()) > 0) {
-            writer.writeMetaHead(len, CXT_STRUCT_EXPIRED, --cxtCount == 0);
-            for (int i = 0; i < len; i++) {
-                writer.writeVarUint(structPool.cxtStructExpired.get(i).offset);
-            }
-        }
-        if (cxtCount > 0 && (len = dataPool.cxtSymbolAdded.size()) > 0) {
-            writer.writeMetaHead(len, CXT_SYMBOL_ADDED, --cxtCount == 0);
-            for (int i = 0; i < len; i++) {
-                writer.writeString(dataPool.cxtSymbolAdded.get(i));
-            }
-        }
-        if (cxtCount > 0 && (len = dataPool.cxtSymbolExpired.size()) > 0) {
-            writer.writeMetaHead(len, CXT_SYMBOL_EXPIRED, --cxtCount == 0);
-            for (int i = 0; i < len; i++) {
-                writer.writeVarUint(dataPool.cxtSymbolExpired.get(i));
-            }
-        }
-    }
-
-    /**
-     * 输出报文的body区
-     * 节点前缀一个varuint标明：数据类型（普通数据、array、object）
+     * 输出报文的body区，节点前缀一个varuint标明：数据类型（普通数据、array、object）
      */
     private void writeNode(Node node, OutputWriter writer) throws IOException {
         if (node.isNull()) {

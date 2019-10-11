@@ -18,15 +18,15 @@ public final class OutputDataPool {
 
     private static final int FIX_HEAD = 4;
 
-    final Array<String>  cxtSymbolAdded   = new Array<>();
-    final Array<Integer> cxtSymbolExpired = new Array<>();
-
-    final Array<Float>  tmpFloats  = new Array<>();
-    final Array<Double> tmpDoubles = new Array<>();
-    final Array<Long>   tmpVarints = new Array<>();
-    final Array<String> tmpStrings = new Array<>();
+    private final Array<Float>  tmpFloats;
+    private final Array<Double> tmpDoubles;
+    private final Array<Long>   tmpVarints;
+    private final Array<String> tmpStrings;
 
     private final Map<Object, Integer> dataIndex = new HashMap<>();
+
+    private final Array<String>  cxtSymbolAdded;
+    private final Array<Integer> cxtSymbolExpired;
 
     private final int            symbolLimit;
     private final IDAllocator    symbolID    = new IDAllocator();
@@ -36,12 +36,31 @@ public final class OutputDataPool {
     private final Map<String, Integer> symbolIndex = new HashMap<>();
 
     /**
+     * Initialize DataPool, for unit test
+     */
+    OutputDataPool(int symbolLimit) {
+        this.symbolLimit = symbolLimit;
+        this.tmpFloats = new Array<>();
+        this.tmpDoubles = new Array<>();
+        this.tmpVarints = new Array<>();
+        this.tmpStrings = new Array<>();
+        this.cxtSymbolAdded = new Array<>();
+        this.cxtSymbolExpired = new Array<>();
+    }
+
+    /**
      * Initialize DataPool, outter need specify the max number of symbol-area
      *
      * @param symbolLimit Max number of symbols, only for context
      */
-    public OutputDataPool(int symbolLimit) {
+    OutputDataPool(int symbolLimit, Schema schema) {
         this.symbolLimit = symbolLimit;
+        this.tmpFloats = schema.tmpFloats;
+        this.tmpDoubles = schema.tmpDoubles;
+        this.tmpVarints = schema.tmpVarints;
+        this.tmpStrings = schema.tmpStrings;
+        this.cxtSymbolAdded = schema.cxtSymbolAdded;
+        this.cxtSymbolExpired = schema.cxtSymbolExpired;
     }
 
     /**
@@ -190,7 +209,7 @@ public final class OutputDataPool {
     }
 
     /**
-     * Reset this data pool, and execute context data's expiring automatically
+     * Reset this data pool, execute context data's expiring automatically
      */
     public void reset() {
         tmpFloats.clear();
@@ -202,7 +221,6 @@ public final class OutputDataPool {
         cxtSymbolAdded.clear();
         cxtSymbolExpired.clear();
 
-        // execute context symbol's expiring automatically
         int expireNum = symbolIndex.size() - symbolLimit;
         if (expireNum <= 0) {
             return;

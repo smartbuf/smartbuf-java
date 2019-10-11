@@ -5,7 +5,6 @@ import com.github.sisyphsu.nakedata.utils.NumberUtils;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.BitSet;
 import java.util.List;
 
 import static com.github.sisyphsu.nakedata.context.Proto.BODY_FLAG_ARRAY;
@@ -32,6 +31,10 @@ public final class OutputWriter {
      */
     public void writeMetaHead(long size, int type, boolean hasMore) throws IOException {
         this.writeVarUint((size << 4) | (type << 1) | (hasMore ? 1 : 0));
+    }
+
+    public void writeSliceHead(int size, ArrayType elType, boolean hasMore) throws IOException {
+        this.writeVarUint((size << 7) | (elType.getCode() << 3) | (BODY_FLAG_ARRAY << 1) | (hasMore ? 1 : 0));
     }
 
     public void writeByte(byte b) throws IOException {
@@ -79,12 +82,18 @@ public final class OutputWriter {
 
     public void writeBooleanArray(boolean[] booleans) throws IOException {
         int len = booleans.length;
-        BitSet set = new BitSet();
-        for (int i = 0; i < len; i++) {
-            set.set(i, booleans[i]);
-        }
         this.writeSliceHead(len, ArrayType.BOOL, false);
-        for (byte b : set.toByteArray()) {
+        int off;
+        for (int i = 0; i < len; i += 8) {
+            byte b = 0;
+            for (int j = 0; j < 8; j++) {
+                if ((off = i * 8 + j) >= len) {
+                    break;
+                }
+                if (booleans[off]) {
+                    b |= 1 << j;
+                }
+            }
             stream.write(b);
         }
     }
@@ -140,12 +149,18 @@ public final class OutputWriter {
 
     public void writeBooleanSlice(List<Boolean> booleans, boolean hasMore) throws IOException {
         int len = booleans.size();
-        BitSet set = new BitSet();
-        for (int i = 0; i < len; i++) {
-            set.set(i, booleans.get(i));
-        }
         this.writeSliceHead(len, ArrayType.BOOL, hasMore);
-        for (byte b : set.toByteArray()) {
+        int off;
+        for (int i = 0; i < len; i += 8) {
+            byte b = 0;
+            for (int j = 0; j < 8; j++) {
+                if ((off = i * 8 + j) >= len) {
+                    break;
+                }
+                if (booleans.get(off)) {
+                    b |= 1 << j;
+                }
+            }
             stream.write(b);
         }
     }
@@ -197,10 +212,6 @@ public final class OutputWriter {
         for (double d : doubles) {
             writeDouble(d);
         }
-    }
-
-    public void writeSliceHead(int size, ArrayType elType, boolean hasMore) throws IOException {
-        this.writeVarUint((size << 7) | (elType.getCode() << 3) | (BODY_FLAG_ARRAY << 1) | (hasMore ? 1 : 0));
     }
 
 }

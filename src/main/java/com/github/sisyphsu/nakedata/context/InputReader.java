@@ -5,13 +5,12 @@ import com.github.sisyphsu.nakedata.utils.NumberUtils;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 /**
  * @author sulin
  * @since 2019-10-10 21:44:32
  */
-public class InputReader {
+public final class InputReader {
 
     private final InputStream stream;
 
@@ -74,9 +73,102 @@ public class InputReader {
         return builder.toString();
     }
 
-    public boolean[] readBooleanArray() {
+    public boolean[] readBooleanArray(int len) throws IOException {
+        boolean[] result = new boolean[len];
+        int off;
+        for (int i = 0; i < len; i += 8) {
+            byte b = readByte();
+            for (int j = 0; j < 8; j++) {
+                if ((off = i * 8 + j) >= len) {
+                    break;
+                }
+                result[off] = 1 == ((b >>> j) & 1);
+            }
+        }
+        return result;
+    }
 
-        return null;
+    public byte[] readByteArray(int len) throws IOException {
+        byte[] result = new byte[len];
+        for (int i = 0; i < len; i++) {
+            result[i] = readByte();
+        }
+        return result;
+    }
+
+    public short[] readShortArray(int len) throws IOException {
+        short[] result = new short[len];
+        for (int i = 0; i < len; i++) {
+            byte high = readByte();
+            result[i] = (short) ((high << 8) | readByte());
+        }
+        return result;
+    }
+
+    public int[] readIntArray(int len) throws IOException {
+        int[] result = new int[len];
+        for (int i = 0; i < len; i++) {
+            result[i] = (int) readVarInt();
+        }
+        return result;
+    }
+
+    public long[] readLongArray(int len) throws IOException {
+        long[] result = new long[len];
+        for (int i = 0; i < len; i++) {
+            result[i] = readVarInt();
+        }
+        return result;
+    }
+
+    public void readBooleanSlice(Object[] arr, int off, int len) throws IOException {
+        int pos;
+        for (int i = 0; i < len; i += 8) {
+            byte b = readByte();
+            for (int j = 0; j < 8; j++) {
+                if ((pos = i * 8 + j) >= len) {
+                    break;
+                }
+                arr[pos] = ((b >>> j) & 1) == 1;
+            }
+        }
+    }
+
+    public void readByteSlice(Object[] arr, int off, int len) throws IOException {
+        for (int i = 0; i < len; i++) {
+            arr[off + i] = readByte();
+        }
+    }
+
+    public void readShortSlice(Object[] arr, int off, int len) throws IOException {
+        for (int i = 0; i < len; i++) {
+            byte high = readByte();
+            arr[off + i] = (short) ((high << 8) | readByte());
+        }
+    }
+
+    public void readIntSlice(Object[] arr, int off, int len) throws IOException {
+        for (int i = 0; i < len; i++) {
+            arr[off + i] = (int) readVarInt();
+        }
+    }
+
+    public void readLongSlice(Object[] arr, int off, int len) throws IOException {
+        for (int i = 0; i < len; i++) {
+            arr[off + i] = readVarInt();
+        }
+    }
+
+    public void readFloatSlice(Object[] arr, int off, int len) throws IOException {
+        for (int i = 0; i < len; i++) {
+            arr[off + i] = readFloat();
+        }
+    }
+
+    public void readDoubleSlice(Object[] arr, int off, int len) throws IOException {
+        for (int i = 0; i < len; i++) {
+            arr[off + i] = readDouble();
+        }
     }
 
 }
