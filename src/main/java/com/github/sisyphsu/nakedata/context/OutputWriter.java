@@ -8,16 +8,30 @@ import java.io.OutputStream;
 import java.util.BitSet;
 import java.util.List;
 
+import static com.github.sisyphsu.nakedata.context.Proto.BODY_FLAG_ARRAY;
+
 /**
  * @author sulin
  * @since 2019-04-27 13:02:49
  */
-public class OutputWriter {
+public final class OutputWriter {
 
     private final OutputStream stream;
 
     public OutputWriter(OutputStream stream) {
         this.stream = stream;
+    }
+
+    /**
+     * Write metadata area's head value as varuint.
+     *
+     * @param size    Area's size
+     * @param type    Area's type, such as TMP_FLOAT/TMP_DOUBLE/etc.
+     * @param hasMore Does this metadata finished.
+     * @throws IOException Underlying Exception in io level
+     */
+    public void writeMetaHead(long size, int type, boolean hasMore) throws IOException {
+        this.writeVarUint((size << 4) | (type << 1) | (hasMore ? 1 : 0));
     }
 
     public void writeByte(byte b) throws IOException {
@@ -63,29 +77,13 @@ public class OutputWriter {
         }
     }
 
-    public void writeNullSlice(List booleans, boolean end) throws IOException {
-        writeVarUint((booleans.size() << 5) | (ArrayType.NULL.getCode() << 1) | (end ? 0 : 1));
-    }
-
     public void writeBooleanArray(boolean[] booleans) throws IOException {
         int len = booleans.length;
         BitSet set = new BitSet();
         for (int i = 0; i < len; i++) {
             set.set(i, booleans[i]);
         }
-        writeVarUint((len << 5) | (ArrayType.BOOL.getCode() << 1));
-        for (byte b : set.toByteArray()) {
-            stream.write(b);
-        }
-    }
-
-    public void writeBooleanSlice(List<Boolean> booleans, boolean end) throws IOException {
-        int len = booleans.size();
-        BitSet set = new BitSet();
-        for (int i = 0; i < len; i++) {
-            set.set(i, booleans.get(i));
-        }
-        writeVarUint((len << 5) | (ArrayType.BOOL.getCode() << 1) | (end ? 0 : 1));
+        this.writeSliceHead(len, ArrayType.BOOL, false);
         for (byte b : set.toByteArray()) {
             stream.write(b);
         }
@@ -93,15 +91,7 @@ public class OutputWriter {
 
     public void writeByteArray(byte[] bytes) throws IOException {
         int len = bytes.length;
-        writeVarUint((len << 5) | (ArrayType.BYTE.getCode() << 1));
-        for (byte b : bytes) {
-            stream.write(b);
-        }
-    }
-
-    public void writeByteSlice(List<Byte> bytes, boolean end) throws IOException {
-        int len = bytes.size();
-        writeVarUint((len << 5) | (ArrayType.BYTE.getCode() << 1) | (end ? 0 : 1));
+        this.writeSliceHead(len, ArrayType.BYTE, false);
         for (byte b : bytes) {
             stream.write(b);
         }
@@ -109,16 +99,7 @@ public class OutputWriter {
 
     public void writeShortArray(short[] shorts) throws IOException {
         int len = shorts.length;
-        writeVarUint((len << 5) | (ArrayType.SHORT.getCode() << 1));
-        for (short s : shorts) {
-            stream.write((byte) (s >> 8));
-            stream.write((byte) s);
-        }
-    }
-
-    public void writeShortSlice(List<Short> shorts, boolean end) throws IOException {
-        int len = shorts.size();
-        writeVarUint((len << 5) | (ArrayType.SHORT.getCode() << 1) | (end ? 0 : 1));
+        this.writeSliceHead(len, ArrayType.SHORT, false);
         for (short s : shorts) {
             stream.write((byte) (s >> 8));
             stream.write((byte) s);
@@ -127,15 +108,7 @@ public class OutputWriter {
 
     public void writeIntArray(int[] ints) throws IOException {
         int len = ints.length;
-        writeVarUint((len << 5) | (ArrayType.INT.getCode() << 1));
-        for (int i : ints) {
-            writeVarInt(i);
-        }
-    }
-
-    public void writeIntSlice(List<Integer> ints, boolean end) throws IOException {
-        int len = ints.size();
-        writeVarUint((len << 5) | (ArrayType.INT.getCode() << 1) | (end ? 0 : 1));
+        this.writeSliceHead(len, ArrayType.INT, false);
         for (int i : ints) {
             writeVarInt(i);
         }
@@ -143,15 +116,7 @@ public class OutputWriter {
 
     public void writeLongArray(long[] longs) throws IOException {
         int len = longs.length;
-        writeVarUint((len << 5) | (ArrayType.LONG.getCode() << 1));
-        for (long l : longs) {
-            writeVarInt(l);
-        }
-    }
-
-    public void writeLongArray(List<Long> longs, boolean end) throws IOException {
-        int len = longs.size();
-        writeVarUint((len << 5) | (ArrayType.LONG.getCode() << 1) | (end ? 0 : 1));
+        this.writeSliceHead(len, ArrayType.LONG, false);
         for (long l : longs) {
             writeVarInt(l);
         }
@@ -159,15 +124,7 @@ public class OutputWriter {
 
     public void writeFloatArray(float[] floats) throws IOException {
         int len = floats.length;
-        writeVarUint((len << 5) | (ArrayType.FLOAT.getCode() << 1) | 1);
-        for (float f : floats) {
-            writeFloat(f);
-        }
-    }
-
-    public void writeFloatArray(List<Float> floats, boolean end) throws IOException {
-        int len = floats.size();
-        writeVarUint((len << 5) | (ArrayType.FLOAT.getCode() << 1) | (end ? 0 : 1));
+        this.writeSliceHead(len, ArrayType.FLOAT, false);
         for (float f : floats) {
             writeFloat(f);
         }
@@ -175,22 +132,75 @@ public class OutputWriter {
 
     public void writeDoubleArray(double[] doubles) throws IOException {
         int len = doubles.length;
-        writeVarUint((len << 5) | (ArrayType.DOUBLE.getCode() << 1));
+        this.writeSliceHead(len, ArrayType.DOUBLE, false);
         for (double d : doubles) {
             writeDouble(d);
         }
     }
 
-    public void writeDoubleArray(List<Double> doubles, boolean end) throws IOException {
+    public void writeBooleanSlice(List<Boolean> booleans, boolean hasMore) throws IOException {
+        int len = booleans.size();
+        BitSet set = new BitSet();
+        for (int i = 0; i < len; i++) {
+            set.set(i, booleans.get(i));
+        }
+        this.writeSliceHead(len, ArrayType.BOOL, hasMore);
+        for (byte b : set.toByteArray()) {
+            stream.write(b);
+        }
+    }
+
+    public void writeByteSlice(List<Byte> bytes, boolean hasMore) throws IOException {
+        int len = bytes.size();
+        this.writeSliceHead(len, ArrayType.BYTE, hasMore);
+        for (byte b : bytes) {
+            stream.write(b);
+        }
+    }
+
+    public void writeShortSlice(List<Short> shorts, boolean hasMore) throws IOException {
+        int len = shorts.size();
+        this.writeSliceHead(len, ArrayType.SHORT, hasMore);
+        for (short s : shorts) {
+            stream.write((byte) (s >> 8));
+            stream.write((byte) s);
+        }
+    }
+
+    public void writeIntSlice(List<Integer> ints, boolean hasMore) throws IOException {
+        int len = ints.size();
+        this.writeSliceHead(len, ArrayType.INT, hasMore);
+        for (int i : ints) {
+            writeVarInt(i);
+        }
+    }
+
+    public void writeLongSlice(List<Long> longs, boolean hasMore) throws IOException {
+        int len = longs.size();
+        this.writeSliceHead(len, ArrayType.LONG, hasMore);
+        for (long l : longs) {
+            writeVarInt(l);
+        }
+    }
+
+    public void writeFloatSlice(List<Float> floats, boolean hasMore) throws IOException {
+        int len = floats.size();
+        this.writeSliceHead(len, ArrayType.FLOAT, hasMore);
+        for (float f : floats) {
+            writeFloat(f);
+        }
+    }
+
+    public void writeDoubleSlice(List<Double> doubles, boolean hasMore) throws IOException {
         int len = doubles.size();
-        writeVarUint((len << 5) | (ArrayType.DOUBLE.getCode() << 1) | (end ? 0 : 1));
+        this.writeSliceHead(len, ArrayType.DOUBLE, hasMore);
         for (double d : doubles) {
             writeDouble(d);
         }
     }
 
-    public void writeMetaHead(long size, int code, boolean hasMore) throws IOException {
-        this.writeVarUint((size << 4) | (code << 1) | (hasMore ? 1 : 0));
+    public void writeSliceHead(int size, ArrayType elType, boolean hasMore) throws IOException {
+        this.writeVarUint((size << 7) | (elType.getCode() << 3) | (BODY_FLAG_ARRAY << 1) | (hasMore ? 1 : 0));
     }
 
 }

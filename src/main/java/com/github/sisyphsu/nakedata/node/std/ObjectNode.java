@@ -59,6 +59,18 @@ public final class ObjectNode extends Node {
         return key;
     }
 
+    public String[] getFields() {
+        return key.fields;
+    }
+
+    public Node getField(String name) {
+        return data.get(name);
+    }
+
+    public boolean isStable() {
+        return key.stable;
+    }
+
     public static final class Key {
 
         private final boolean  stable;

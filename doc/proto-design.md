@@ -76,6 +76,17 @@ Stream模式更加复杂一些，它需要考虑到上下文元数据：
 + `struct`：此数据项为自定义的结构体类型，需要到`metadata`里面获取它的完整定义，接下来需要进入`struct`的解析逻辑。
 + `slice`：此数据项为复杂的数组类型，接下来需要进入`slice`的解析逻辑。
 
+## NodeID处理
+
+输出端处理任意Node时，需要预先输出一个nodeId(varint)告知接收方，接下来的数据的元数据。
+
+1. 普通数据，即引用自dataPool的数据，支持：null、bool、varint、float、double、string、symbol
+2. 数组区，即后续数据为数组片段，最好在varint中指明第一个片段的属性，包括：hasMore、elementType、size
+3. 对象区，即后续数据为结构体，需要携带structId标明具体的结构体ID
+
+数字的elementType有12种类型，不应该放在nodeId中，让nodeId更加简短，最好短至1byte。
+具体slice的元数据，通过新的sliceId标记。
+
 # 实例分析
 
 通过一些具体实例分析一些此协议对各种不同的数据有什么样的效果。

@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.context;
 
+import com.github.sisyphsu.nakedata.ArrayType;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.array.ArrayNode;
 import com.github.sisyphsu.nakedata.node.array.MixArrayNode;
@@ -156,33 +157,38 @@ public final class Output {
 
     /**
      * 输出报文的body区
+     * 节点前缀一个varuint标明：数据类型（普通数据、array、object）
      */
     private void writeNode(Node node, OutputWriter writer) throws IOException {
         if (node.isNull()) {
-            writer.writeVarInt(ID_NULL);
+            writer.writeVarUint((ID_NULL << 2) | BODY_FLAG_DATA);
             return;
         }
         switch (node.dataType()) {
             case BOOL:
-                writer.writeVarInt(node.booleanValue() ? ID_TRUE : ID_FALSE);
+                if (node.booleanValue()) {
+                    writer.writeVarUint((ID_TRUE << 2) | BODY_FLAG_DATA);
+                } else {
+                    writer.writeVarUint((ID_FALSE << 2) | BODY_FLAG_DATA);
+                }
                 break;
             case FLOAT:
-                writer.writeVarInt(dataPool.findFloatID(node.floatValue()));
+                writer.writeVarUint((dataPool.findFloatID(node.floatValue()) << 2) | BODY_FLAG_DATA);
                 break;
             case DOUBLE:
-                writer.writeVarInt(dataPool.findDoubleID(node.doubleValue()));
+                writer.writeVarUint((dataPool.findDoubleID(node.doubleValue()) << 2) | BODY_FLAG_DATA);
                 break;
             case VARINT:
-                writer.writeVarInt(dataPool.findVarintID(node.longValue()));
+                writer.writeVarUint((dataPool.findVarintID(node.longValue()) << 2) | BODY_FLAG_DATA);
                 break;
             case STRING:
-                writer.writeVarInt(dataPool.findStringID(node.stringValue()));
+                writer.writeVarUint((dataPool.findStringID(node.stringValue()) << 2) | BODY_FLAG_DATA);
                 break;
             case SYMBOL:
                 if (stream) {
-                    writer.writeVarInt(dataPool.findSymbolID(node.stringValue()));
+                    writer.writeVarUint((dataPool.findSymbolID(node.stringValue()) << 2) | BODY_FLAG_DATA);
                 } else {
-                    writer.writeVarInt(dataPool.findStringID(node.stringValue()));
+                    writer.writeVarUint((dataPool.findStringID(node.stringValue()) << 2) | BODY_FLAG_DATA);
                 }
                 break;
             case N_BOOL_ARRAY:
@@ -210,7 +216,12 @@ public final class Output {
                 this.writeArrayNode((ArrayNode) node, writer);
                 break;
             case OBJECT:
-                this.writeObjectNode((ObjectNode) node, writer);
+                ObjectNode objectNode = (ObjectNode) node;
+                String[] fields = objectNode.getFields();
+                writer.writeVarUint((structPool.findStructID(fields) << 2) | BODY_FLAG_STRUCT);
+                for (String field : fields) {
+                    this.writeNode(objectNode.getField(field), writer);
+                }
                 break;
         }
     }
@@ -227,74 +238,71 @@ public final class Output {
             arrayNodes = Collections.singletonList(node);
         }
         for (int i = 0, len = arrayNodes.size(); i < len; i++) {
+            final boolean hasMore = i == len - 1;
             ArrayNode slice = arrayNodes.get(i);
+            List data = slice.getItems();
             switch (slice.elementType()) {
-                case NULL:
-                    writer.writeNullSlice(slice.getItems(), i == len - 1);
-                    break;
                 case BOOL:
-                    writer.writeBooleanSlice(slice.getItems(), i == len - 1);
+                    writer.writeBooleanSlice(data, hasMore);
                     break;
                 case BYTE:
-                    writer.writeByteSlice(slice.getItems(), i == len - 1);
+                    writer.writeByteSlice(data, hasMore);
                     break;
                 case SHORT:
-                    writer.writeShortSlice(slice.getItems(), i == len - 1);
+                    writer.writeShortSlice(data, hasMore);
                     break;
                 case INT:
-                    writer.writeIntSlice(slice.getItems(), i == len - 1);
+                    writer.writeIntSlice(data, hasMore);
                     break;
                 case LONG:
-                    writer.writeLongArray(slice.getItems(), i == len - 1);
+                    writer.writeLongSlice(data, hasMore);
                     break;
                 case FLOAT:
-                    writer.writeFloatArray(slice.getItems(), i == len - 1);
+                    writer.writeFloatSlice(data, hasMore);
                     break;
                 case DOUBLE:
-                    writer.writeDoubleArray(slice.getItems(), i == len - 1);
+                    writer.writeDoubleSlice(data, hasMore);
+                    break;
+                case NULL:
+                    writer.writeSliceHead(data.size(), ArrayType.NULL, hasMore);
                     break;
                 case STRING:
-                    for (Object item : slice.getItems()) {
-                        writer.writeVarInt(dataPool.findStringID((String) item));
+                    writer.writeSliceHead(data.size(), ArrayType.STRING, hasMore);
+                    for (Object datum : data) {
+                        writer.writeVarInt(dataPool.findStringID((String) datum));
                     }
                     break;
                 case SYMBOL:
                     if (stream) {
-                        for (Object item : slice.getItems()) {
+                        writer.writeSliceHead(data.size(), ArrayType.SYMBOL, hasMore);
+                        for (Object item : data) {
                             writer.writeVarInt(dataPool.findSymbolID((String) item));
                         }
                     } else {
-                        for (Object item : slice.getItems()) {
+                        writer.writeSliceHead(data.size(), ArrayType.STRING, hasMore);
+                        for (Object item : data) {
                             writer.writeVarInt(dataPool.findStringID((String) item));
                         }
                     }
                     break;
                 case ARRAY:
-                    for (Object item : slice.getItems()) {
+                    writer.writeSliceHead(data.size(), ArrayType.ARRAY, hasMore);
+                    for (Object item : data) {
                         this.writeArrayNode((ArrayNode) item, writer);
                     }
                     break;
                 case OBJECT:
-                    writer.writeVarInt(0); // structId
-                    for (Object item : slice.getItems()) {
-                        this.writeObjectNode((ObjectNode) item, writer);
+                    String[] fields = ((ObjectNode) data.get(0)).getFields();
+                    writer.writeSliceHead(data.size(), ArrayType.OBJECT, hasMore);
+                    writer.writeVarUint(structPool.findStructID(fields)); // structId
+                    for (Object item : data) {
+                        ObjectNode objectNode = (ObjectNode) item;
+                        for (String field : fields) {
+                            this.writeNode(objectNode.getField(field), writer);
+                        }
                     }
                     break;
             }
-        }
-    }
-
-    /**
-     * 输出ObjectNode，按照fields固定顺序，依次输出。
-     */
-    private void writeObjectNode(ObjectNode node, OutputWriter writer) throws IOException {
-        ObjectNode.Key key = node.getKey();
-        // 输出structId
-        writer.writeVarUint(structPool.findStructID(key.getFields()));
-        // 输出fields，此处不care各个字段的数据类型
-        for (String field : key.getFields()) {
-            Node subNode = node.getData().get(field);
-            this.writeNode(subNode, writer);
         }
     }
 
