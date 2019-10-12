@@ -29,13 +29,13 @@ public class IOTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1 << 16);
 
         List<Object> list = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 100; i++) {
             list.add((byte) RandomUtils.nextInt());
             list.add(RandomUtils.nextLong());
             list.add(new ULong(RandomUtils.nextLong()));
             list.add(RandomUtils.nextFloat());
             list.add(RandomUtils.nextDouble());
-            list.add(RandomStringUtils.randomAlphanumeric(RandomUtils.nextInt(10, 64)));
+            list.add(RandomStringUtils.random(RandomUtils.nextInt(10, 64)));
         }
         list.add(Byte.MIN_VALUE);
         list.add(Byte.MAX_VALUE);
@@ -77,7 +77,6 @@ public class IOTest {
 
         InputReader input = new InputReader(new ByteArrayInputStream(outputStream.toByteArray()));
         for (Object o : list) {
-            System.out.println(o.getClass().getSimpleName() + ": " + o);
             if (o instanceof Byte) {
                 assert input.readByte() == (Byte) o;
             } else if (o instanceof Long) {
