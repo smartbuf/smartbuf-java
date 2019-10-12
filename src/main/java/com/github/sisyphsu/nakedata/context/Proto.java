@@ -10,10 +10,10 @@ public interface Proto {
     byte ID_FALSE = 0x01;
     byte ID_TRUE  = 0x02;
 
-    byte VERSION       = 0b0001_0000;
-    byte FLAG_STREAM   = 0b0000_1000;
-    byte FLAG_TMP_META = 0b0000_0100;
-    byte FLAG_CXT_META = 0b0000_0010;
+    byte VER        = 0b0001_0000;
+    byte F_STREAM   = 0b0000_1000;
+    byte F_TMP_META = 0b0000_0100;
+    byte F_CXT_META = 0b0000_0010;
 
     byte TMP_FLOAT   = 1;
     byte TMP_DOUBLE  = 2;

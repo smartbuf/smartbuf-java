@@ -12,12 +12,11 @@ import static com.github.sisyphsu.nakedata.context.Proto.*;
  */
 public final class Schema {
 
-    private final boolean stream;
-
-    private byte    version;
-    private byte    sequence;
-    private boolean hasTmpMeta;
-    private boolean hasCxtMeta;
+    byte    head;
+    byte    sequence;
+    boolean stream;
+    boolean hasTmpMeta;
+    boolean hasCxtMeta;
 
     final Array<Float>  tmpFloats  = new Array<>();
     final Array<Double> tmpDoubles = new Array<>();
@@ -33,7 +32,14 @@ public final class Schema {
     final Array<Integer> cxtStructExpired = new Array<>();
 
     /**
-     * Initialize Schema
+     * Initialize Schema for input mainly
+     */
+    public Schema() {
+        this(false);
+    }
+
+    /**
+     * Initialize Schema for output mainly
      *
      * @param stream Enable stream-mode or not
      */
@@ -65,16 +71,12 @@ public final class Schema {
      * @param reader Underlying OutputReader
      */
     public void read(InputReader reader) throws IOException {
-        if (((version = reader.readByte()) & VERSION) == 0) {
-            throw new RuntimeException("unknown version");
-        }
-        if (this.stream == ((version & FLAG_STREAM) == 0)) {
-            throw new RuntimeException("unknown version");
-        }
-        this.hasTmpMeta = (version & FLAG_TMP_META) != 0;
-        this.hasCxtMeta = (version & FLAG_CXT_META) != 0;
+        this.head = reader.readByte();
+        this.stream = (head & F_STREAM) != 0;
+        this.hasTmpMeta = (head & F_TMP_META) != 0;
+        this.hasCxtMeta = (head & F_CXT_META) != 0;
         // only stream-mode needs sequence
-        if (stream) {
+        if (stream && hasCxtMeta) {
             this.sequence = reader.readByte();
         }
         // read temporary metadata
@@ -92,11 +94,13 @@ public final class Schema {
      */
     private void readTmpMeta(InputReader reader) throws IOException {
         boolean hasMore = true;
+        byte flag;
         while (hasMore) {
-            long head = reader.readVarInt();
+            long head = reader.readVarUint();
             int size = (int) (head >> 4);
             hasMore = (head & 0b0000_0001) == 1;
-            switch ((byte) ((head >>> 1) & 0b0000_0111)) {
+            flag = (byte) ((head >>> 1) & 0b0000_0111);
+            switch (flag) {
                 case TMP_FLOAT:
                     for (int i = 0; i < size; i++) {
                         tmpFloats.add(reader.readFloat());
@@ -133,7 +137,7 @@ public final class Schema {
                     }
                     break;
                 default:
-                    throw new RuntimeException("invalid flag");
+                    throw new RuntimeException("invalid flag: " + flag);
             }
         }
     }
@@ -144,8 +148,8 @@ public final class Schema {
     private void readCxtMeta(InputReader reader) throws IOException {
         boolean hasMore = true;
         while (hasMore) {
-            long head = reader.readVarInt();
-            int size = (int) (head >> 4);
+            long head = reader.readVarUint();
+            int size = (int) (head >>> 4);
             hasMore = (head & 0b0000_0001) == 1;
             switch ((byte) ((head >>> 1) & 0b0000_0111)) {
                 case CXT_SYMBOL_ADDED:
@@ -191,30 +195,27 @@ public final class Schema {
      */
     public void output(OutputWriter writer) throws IOException {
         int cxtCount = 0, tmpCount = 0;
-        // prepare the first byte to identify metadata
-        byte head = VERSION;
-        if (stream) {
-            head |= FLAG_STREAM;
-            if (cxtNameAdded.size() > 0) cxtCount++;
-            if (cxtStructAdded.size() > 0) cxtCount++;
-            if (cxtStructExpired.size() > 0) cxtCount++;
-            if (cxtSymbolAdded.size() > 0) cxtCount++;
-            if (cxtSymbolExpired.size() > 0) cxtCount++;
-            if (cxtCount > 0) head |= FLAG_CXT_META;
-        }
         if (tmpFloats.size() > 0) tmpCount++;
         if (tmpDoubles.size() > 0) tmpCount++;
         if (tmpVarints.size() > 0) tmpCount++;
         if (tmpStrings.size() > 0) tmpCount++;
         if (tmpNames.size() > 0) tmpCount++;
         if (tmpStructs.size() > 0) tmpCount++;
-        if (tmpCount > 0) head |= FLAG_TMP_META;
+        if (cxtNameAdded.size() > 0) cxtCount++;
+        if (cxtStructAdded.size() > 0) cxtCount++;
+        if (cxtStructExpired.size() > 0) cxtCount++;
+        if (cxtSymbolAdded.size() > 0) cxtCount++;
+        if (cxtSymbolExpired.size() > 0) cxtCount++;
+
+        this.hasTmpMeta = tmpCount > 0;
+        this.hasCxtMeta = cxtCount > 0;
+        this.head = (byte) (VER | (stream ? F_STREAM : 0) | (hasTmpMeta ? F_TMP_META : 0) | (hasCxtMeta ? F_CXT_META : 0));
 
         // 1-byte for summary
         writer.writeByte(head);
         // 1-byte for context sequence, optional
-        if (stream) {
-            writer.writeByte(this.sequence++);
+        if (stream && hasCxtMeta) {
+            writer.writeByte(++this.sequence);
         }
         // output temporary metadata
         if (tmpCount > 0) {
@@ -231,38 +232,39 @@ public final class Schema {
      */
     private void writeTmpMeta(OutputWriter writer, int count) throws IOException {
         int len;
-        if (count > 0 && (len = tmpFloats.size()) > 0) {
-            writer.writeVarUint((len << 4) | (TMP_FLOAT << 1) | ((--count == 0) ? 1 : 0));
+        if ((len = tmpFloats.size()) > 0) {
+            writer.writeVarUint((len << 4) | (TMP_FLOAT << 1) | ((--count == 0) ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 writer.writeFloat(tmpFloats.get(i));
             }
         }
         if (count > 0 && (len = tmpDoubles.size()) > 0) {
-            writer.writeVarUint((len << 4) | (TMP_DOUBLE << 1) | ((--count == 0) ? 1 : 0));
+            writer.writeVarUint((len << 4) | (TMP_DOUBLE << 1) | ((--count == 0) ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 writer.writeDouble(tmpDoubles.get(i));
             }
         }
         if (count > 0 && (len = tmpVarints.size()) > 0) {
-            writer.writeVarUint((len << 4) | (TMP_VARINT << 1) | ((--count == 0) ? 1 : 0));
+            writer.writeVarUint((len << 4) | (TMP_VARINT << 1) | ((--count == 0) ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 writer.writeVarInt(tmpVarints.get(i));
             }
         }
         if (count > 0 && (len = tmpStrings.size()) > 0) {
-            writer.writeVarUint((len << 4) | (TMP_STRING << 1) | ((--count == 0) ? 1 : 0));
+            writer.writeVarUint((len << 4) | (TMP_STRING << 1) | ((--count == 0) ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 writer.writeString(tmpStrings.get(i));
             }
         }
         if (count > 0 && (len = tmpNames.size()) > 0) {
-            writer.writeVarUint((len << 4) | (TMP_NAMES << 1) | ((--count == 0) ? 1 : 0));
+            writer.writeVarUint((len << 4) | (TMP_NAMES << 1) | ((--count == 0) ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 writer.writeString(tmpNames.get(i));
             }
         }
-        if (count > 0 && (len = tmpStructs.size()) > 0) {
-            writer.writeVarUint((len << 4) | (TMP_STRUCTS << 1) | ((--count == 0) ? 1 : 0));
+        if (count > 0) {
+            len = tmpStructs.size();
+            writer.writeVarUint((len << 4) | (TMP_STRUCTS << 1));
             for (int i = 0; i < len; i++) {
                 int[] nameIds = tmpStructs.get(i);
                 writer.writeVarUint(nameIds.length);
@@ -278,14 +280,14 @@ public final class Schema {
      */
     private void writeCxtMeta(OutputWriter writer, int count) throws IOException {
         int len;
-        if (count > 0 && (len = cxtNameAdded.size()) > 0) {
-            writer.writeVarUint((len << 4) | (CXT_NAME_ADDED << 1) | ((--count == 0) ? 1 : 0));
+        if ((len = cxtNameAdded.size()) > 0) {
+            writer.writeVarUint((len << 4) | (CXT_NAME_ADDED << 1) | ((--count == 0) ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 writer.writeString(cxtNameAdded.get(i));
             }
         }
         if (count > 0 && (len = cxtStructAdded.size()) > 0) {
-            writer.writeVarUint((len << 4) | (CXT_STRUCT_ADDED << 1) | ((--count == 0) ? 1 : 0));
+            writer.writeVarUint((len << 4) | (CXT_STRUCT_ADDED << 1) | ((--count == 0) ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 int[] nameIds = cxtStructAdded.get(i);
                 writer.writeVarUint(nameIds.length);
@@ -295,19 +297,20 @@ public final class Schema {
             }
         }
         if (count > 0 && (len = cxtStructExpired.size()) > 0) {
-            writer.writeVarUint((len << 4) | (CXT_STRUCT_EXPIRED << 1) | ((--count == 0) ? 1 : 0));
+            writer.writeVarUint((len << 4) | (CXT_STRUCT_EXPIRED << 1) | ((--count == 0) ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 writer.writeVarUint(cxtStructExpired.get(i));
             }
         }
         if (count > 0 && (len = cxtSymbolAdded.size()) > 0) {
-            writer.writeVarUint((len << 4) | (CXT_SYMBOL_ADDED << 1) | ((--count == 0) ? 1 : 0));
+            writer.writeVarUint((len << 4) | (CXT_SYMBOL_ADDED << 1) | ((--count == 0) ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 writer.writeString(cxtSymbolAdded.get(i));
             }
         }
-        if (count > 0 && (len = cxtSymbolExpired.size()) > 0) {
-            writer.writeVarUint((len << 4) | (CXT_SYMBOL_EXPIRED << 1) | ((--count == 0) ? 1 : 0));
+        if (count > 0) {
+            len = cxtSymbolExpired.size();
+            writer.writeVarUint((len << 4) | (CXT_SYMBOL_EXPIRED << 1));
             for (int i = 0; i < len; i++) {
                 writer.writeVarUint(cxtSymbolExpired.get(i));
             }

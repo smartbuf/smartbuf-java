@@ -1,5 +1,7 @@
 package com.github.sisyphsu.nakedata.context;
 
+import java.util.Objects;
+
 /**
  * Array like T[], but support more features like auto-scale
  *
@@ -80,6 +82,23 @@ public final class Array<T> {
      */
     public void clear() {
         size = 0;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Array)) {
+            return false;
+        }
+        Array objArr = (Array) obj;
+        if (objArr.size != size) {
+            return false;
+        }
+        for (int i = 0; i < size; i++) {
+            if (!Objects.deepEquals(data[i], objArr.data[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

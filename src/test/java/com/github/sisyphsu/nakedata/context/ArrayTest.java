@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.context;
 
-import com.github.sisyphsu.nakedata.context.Array;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -23,6 +22,29 @@ public class ArrayTest {
         array.clear();
         assert array.size() == 0;
         assert array.cap() > 0;
+    }
+
+    @Test
+    public void testEquals() {
+        Array<Long> array1 = new Array<>();
+        Array<Long> array2 = new Array<>();
+
+        assert !array1.equals(new Object());
+        assert array1.equals(array2);
+
+        array1.add(1L);
+        array1.add(2L);
+        assert !array1.equals(array2);
+
+        array2.add(1L);
+        assert !array1.equals(array2);
+
+        array2.add(2L);
+        assert array1.equals(array2);
+
+        array1.add(3L);
+        array2.add(4L);
+        assert !array1.equals(array2);
     }
 
 }
