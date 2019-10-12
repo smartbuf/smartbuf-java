@@ -36,19 +36,6 @@ public final class OutputDataPool {
     private final Map<String, Integer> symbolIndex = new HashMap<>();
 
     /**
-     * Initialize DataPool, for unit test
-     */
-    OutputDataPool(int symbolLimit) {
-        this.symbolLimit = symbolLimit;
-        this.tmpFloats = new Array<>();
-        this.tmpDoubles = new Array<>();
-        this.tmpVarints = new Array<>();
-        this.tmpStrings = new Array<>();
-        this.cxtSymbolAdded = new Array<>();
-        this.cxtSymbolExpired = new Array<>();
-    }
-
-    /**
      * Initialize DataPool, outter need specify the max number of symbol-area
      *
      * @param symbolLimit Max number of symbols, only for context
@@ -212,14 +199,7 @@ public final class OutputDataPool {
      * Reset this data pool, execute context data's expiring automatically
      */
     public void reset() {
-        tmpFloats.clear();
-        tmpDoubles.clear();
-        tmpVarints.clear();
-        tmpStrings.clear();
         dataIndex.clear();
-
-        cxtSymbolAdded.clear();
-        cxtSymbolExpired.clear();
 
         int expireNum = symbolIndex.size() - symbolLimit;
         if (expireNum <= 0) {

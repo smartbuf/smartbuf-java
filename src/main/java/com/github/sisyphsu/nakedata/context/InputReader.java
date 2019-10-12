@@ -33,10 +33,10 @@ public final class InputReader {
 
     public long readVarUint() throws IOException {
         long l = 0;
-        long b;
+        byte b;
         for (int i = 0; i < 10; i++) {
-            b = readByte() & 0xFF;
-            l |= (b & 0x7F) << (i * 7);
+            b = readByte();
+            l |= ((long) (b & 0x7F)) << (i * 7);
             if ((b & 0x80) == 0) {
                 break;
             }
@@ -65,12 +65,12 @@ public final class InputReader {
     }
 
     public String readString() throws IOException {
-        long num = this.readVarUint();
-        StringBuilder builder = new StringBuilder((int) num);
+        int num = (int) this.readVarUint();
+        byte[] bytes = new byte[num];
         for (int i = 0; i < num; i++) {
-            builder.append(readByte());
+            bytes[i] = readByte();
         }
-        return builder.toString();
+        return new String(bytes);
     }
 
     public boolean[] readBooleanArray(int len) throws IOException {

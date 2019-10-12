@@ -9,9 +9,11 @@ import org.junit.jupiter.api.Test;
  */
 public class OutputDataPoolTest {
 
+    private static Schema schema = new Schema(true);
+
     @Test
     public void test() {
-        OutputDataPool dataPool = new OutputDataPool(16);
+        OutputDataPool dataPool = new OutputDataPool(16, schema);
 
         try {
             dataPool.registerSymbol(null);
@@ -99,6 +101,7 @@ public class OutputDataPoolTest {
             assert e instanceof IllegalArgumentException;
         }
 
+        schema.reset();
         dataPool.reset();
         assert dataPool.size() == 2;
         assert dataPool.findSymbolID("1") == 4;
@@ -110,7 +113,7 @@ public class OutputDataPoolTest {
         TimeUtils.INTERVAL = 5;
         Thread.sleep(1000);
 
-        OutputDataPool dataPool = new OutputDataPool(4);
+        OutputDataPool dataPool = new OutputDataPool(4, schema);
         Thread.sleep(10);
         dataPool.registerSymbol("1");
         Thread.sleep(10);
@@ -131,6 +134,7 @@ public class OutputDataPoolTest {
         assert dataPool.findSymbolID("2") == 5;
         assert dataPool.findSymbolID("4") == 7;
 
+        schema.reset();
         dataPool.reset();
         assert dataPool.size() == 4;
         assert dataPool.findSymbolID("1") == 4;
@@ -146,6 +150,7 @@ public class OutputDataPoolTest {
         assert dataPool.findSymbolID("4") == 7;
         assert dataPool.findSymbolID("7") == 5; // new '7' take 2's position
 
+        schema.reset();
         dataPool.reset();
         assert dataPool.size() == 4;
         try {

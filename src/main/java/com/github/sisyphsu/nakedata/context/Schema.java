@@ -5,6 +5,8 @@ import java.io.IOException;
 import static com.github.sisyphsu.nakedata.context.Proto.*;
 
 /**
+ * Schema represents data's meta info, used for discribe and explain data area
+ *
  * @author sulin
  * @since 2019-10-10 21:48:38
  */
@@ -30,11 +32,38 @@ public final class Schema {
     final Array<int[]>   cxtStructAdded   = new Array<>();
     final Array<Integer> cxtStructExpired = new Array<>();
 
+    /**
+     * Initialize Schema
+     *
+     * @param stream Enable stream-mode or not
+     */
     public Schema(boolean stream) {
         this.stream = stream;
         this.sequence = 0;
     }
 
+    /**
+     * Reset scheme for next round's reuse
+     */
+    public void reset() {
+        this.tmpFloats.clear();
+        this.tmpDoubles.clear();
+        this.tmpVarints.clear();
+        this.tmpStrings.clear();
+        this.tmpNames.clear();
+        this.tmpStructs.clear();
+        this.cxtSymbolAdded.clear();
+        this.cxtSymbolExpired.clear();
+        this.cxtNameAdded.clear();
+        this.cxtStructAdded.clear();
+        this.cxtStructExpired.clear();
+    }
+
+    /**
+     * Read schema info into this instance from the specified InputReader
+     *
+     * @param reader Underlying OutputReader
+     */
     public void read(InputReader reader) throws IOException {
         if (((version = reader.readByte()) & VERSION) == 0) {
             throw new RuntimeException("unknown version");
@@ -46,11 +75,7 @@ public final class Schema {
         this.hasCxtMeta = (version & FLAG_CXT_META) != 0;
         // only stream-mode needs sequence
         if (stream) {
-            byte nextSeq = reader.readByte();
-            if (nextSeq != this.sequence + 1) {
-                throw new RuntimeException();
-            }
-            this.sequence = nextSeq;
+            this.sequence = reader.readByte();
         }
         // read temporary metadata
         if (hasTmpMeta) {
@@ -160,7 +185,7 @@ public final class Schema {
     }
 
     /**
-     * Output this schema into the specified writer with the specified sequence, which is only for context-mode.
+     * Output this schema into the specified writer with the specified sequence
      *
      * @param writer Underlying OutputWriter
      */
@@ -207,37 +232,37 @@ public final class Schema {
     private void writeTmpMeta(OutputWriter writer, int count) throws IOException {
         int len;
         if (count > 0 && (len = tmpFloats.size()) > 0) {
-            writer.writeMetaHead(len, TMP_FLOAT, --count == 0);
+            writer.writeVarUint((len << 4) | (TMP_FLOAT << 1) | ((--count == 0) ? 1 : 0));
             for (int i = 0; i < len; i++) {
                 writer.writeFloat(tmpFloats.get(i));
             }
         }
         if (count > 0 && (len = tmpDoubles.size()) > 0) {
-            writer.writeMetaHead(len, TMP_DOUBLE, --count == 0);
+            writer.writeVarUint((len << 4) | (TMP_DOUBLE << 1) | ((--count == 0) ? 1 : 0));
             for (int i = 0; i < len; i++) {
                 writer.writeDouble(tmpDoubles.get(i));
             }
         }
         if (count > 0 && (len = tmpVarints.size()) > 0) {
-            writer.writeMetaHead(len, TMP_VARINT, --count == 0);
+            writer.writeVarUint((len << 4) | (TMP_VARINT << 1) | ((--count == 0) ? 1 : 0));
             for (int i = 0; i < len; i++) {
                 writer.writeVarInt(tmpVarints.get(i));
             }
         }
         if (count > 0 && (len = tmpStrings.size()) > 0) {
-            writer.writeMetaHead(len, TMP_STRING, --count == 0);
+            writer.writeVarUint((len << 4) | (TMP_STRING << 1) | ((--count == 0) ? 1 : 0));
             for (int i = 0; i < len; i++) {
                 writer.writeString(tmpStrings.get(i));
             }
         }
         if (count > 0 && (len = tmpNames.size()) > 0) {
-            writer.writeMetaHead(len, TMP_NAMES, --count == 0);
+            writer.writeVarUint((len << 4) | (TMP_NAMES << 1) | ((--count == 0) ? 1 : 0));
             for (int i = 0; i < len; i++) {
                 writer.writeString(tmpNames.get(i));
             }
         }
         if (count > 0 && (len = tmpStructs.size()) > 0) {
-            writer.writeMetaHead(len, TMP_STRUCTS, --count == 0);
+            writer.writeVarUint((len << 4) | (TMP_STRUCTS << 1) | ((--count == 0) ? 1 : 0));
             for (int i = 0; i < len; i++) {
                 int[] nameIds = tmpStructs.get(i);
                 writer.writeVarUint(nameIds.length);
@@ -254,13 +279,13 @@ public final class Schema {
     private void writeCxtMeta(OutputWriter writer, int count) throws IOException {
         int len;
         if (count > 0 && (len = cxtNameAdded.size()) > 0) {
-            writer.writeMetaHead(len, CXT_NAME_ADDED, --count == 0);
+            writer.writeVarUint((len << 4) | (CXT_NAME_ADDED << 1) | ((--count == 0) ? 1 : 0));
             for (int i = 0; i < len; i++) {
                 writer.writeString(cxtNameAdded.get(i));
             }
         }
         if (count > 0 && (len = cxtStructAdded.size()) > 0) {
-            writer.writeMetaHead(len, CXT_STRUCT_ADDED, --count == 0);
+            writer.writeVarUint((len << 4) | (CXT_STRUCT_ADDED << 1) | ((--count == 0) ? 1 : 0));
             for (int i = 0; i < len; i++) {
                 int[] nameIds = cxtStructAdded.get(i);
                 writer.writeVarUint(nameIds.length);
@@ -270,37 +295,23 @@ public final class Schema {
             }
         }
         if (count > 0 && (len = cxtStructExpired.size()) > 0) {
-            writer.writeMetaHead(len, CXT_STRUCT_EXPIRED, --count == 0);
+            writer.writeVarUint((len << 4) | (CXT_STRUCT_EXPIRED << 1) | ((--count == 0) ? 1 : 0));
             for (int i = 0; i < len; i++) {
                 writer.writeVarUint(cxtStructExpired.get(i));
             }
         }
         if (count > 0 && (len = cxtSymbolAdded.size()) > 0) {
-            writer.writeMetaHead(len, CXT_SYMBOL_ADDED, --count == 0);
+            writer.writeVarUint((len << 4) | (CXT_SYMBOL_ADDED << 1) | ((--count == 0) ? 1 : 0));
             for (int i = 0; i < len; i++) {
                 writer.writeString(cxtSymbolAdded.get(i));
             }
         }
         if (count > 0 && (len = cxtSymbolExpired.size()) > 0) {
-            writer.writeMetaHead(len, CXT_SYMBOL_EXPIRED, --count == 0);
+            writer.writeVarUint((len << 4) | (CXT_SYMBOL_EXPIRED << 1) | ((--count == 0) ? 1 : 0));
             for (int i = 0; i < len; i++) {
                 writer.writeVarUint(cxtSymbolExpired.get(i));
             }
         }
-    }
-
-    public void reset() {
-        this.tmpFloats.clear();
-        this.tmpDoubles.clear();
-        this.tmpVarints.clear();
-        this.tmpStrings.clear();
-        this.tmpNames.clear();
-        this.tmpStructs.clear();
-        this.cxtSymbolAdded.clear();
-        this.cxtSymbolExpired.clear();
-        this.cxtNameAdded.clear();
-        this.cxtStructAdded.clear();
-        this.cxtStructExpired.clear();
     }
 
 }

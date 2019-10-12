@@ -21,22 +21,6 @@ public final class OutputWriter {
         this.stream = stream;
     }
 
-    /**
-     * Write metadata area's head value as varuint.
-     *
-     * @param size    Area's size
-     * @param type    Area's type, such as TMP_FLOAT/TMP_DOUBLE/etc.
-     * @param hasMore Does this metadata finished.
-     * @throws IOException Underlying Exception in io level
-     */
-    public void writeMetaHead(long size, int type, boolean hasMore) throws IOException {
-        this.writeVarUint((size << 4) | (type << 1) | (hasMore ? 1 : 0));
-    }
-
-    public void writeSliceHead(int size, ArrayType elType, boolean hasMore) throws IOException {
-        this.writeVarUint((size << 7) | (elType.getCode() << 3) | (BODY_FLAG_ARRAY << 1) | (hasMore ? 1 : 0));
-    }
-
     public void writeByte(byte b) throws IOException {
         stream.write(b);
     }
@@ -47,13 +31,13 @@ public final class OutputWriter {
 
     public void writeVarUint(long n) throws IOException {
         do {
-            if (n <= 0x7F) {
+            if ((n & 0xFFFFFFFFFFFFFF80L) == 0) {
                 stream.write((byte) n);
             } else {
                 stream.write((byte) ((n | 0x80) & 0xFF));
             }
             n >>>= 7;
-        } while (n > 0);
+        } while (n != 0);
     }
 
     public void writeFloat(float f) throws IOException {
@@ -212,6 +196,10 @@ public final class OutputWriter {
         for (double d : doubles) {
             writeDouble(d);
         }
+    }
+
+    public void writeSliceHead(int size, ArrayType elType, boolean hasMore) throws IOException {
+        this.writeVarUint((size << 7) | (elType.getCode() << 3) | (BODY_FLAG_ARRAY << 1) | (hasMore ? 1 : 0));
     }
 
 }

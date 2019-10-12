@@ -2,6 +2,7 @@ package com.github.sisyphsu.nakedata.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -39,6 +40,22 @@ public class NumberUtilsTest {
                 log.error("err: {}, {}", d1, d2);
             }
         }
+    }
+
+    @RepeatedTest(1000)
+    public void testUint() {
+        this.testUintOnce(RandomUtils.nextLong());
+    }
+
+    @Test
+    public void testUint2() {
+        this.testUintOnce(8976814520369533952L);
+    }
+
+    private void testUintOnce(long l) {
+        long ul = NumberUtils.intToUint(l);
+        long l2 = NumberUtils.uintToInt(ul);
+        assert l == l2;
     }
 
 }
