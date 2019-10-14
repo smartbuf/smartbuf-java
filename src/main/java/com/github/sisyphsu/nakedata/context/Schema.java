@@ -28,18 +28,12 @@ public final class Schema {
     final Array<String>  cxtSymbolAdded   = new Array<>();
     final Array<Integer> cxtSymbolExpired = new Array<>();
     final Array<String>  cxtNameAdded     = new Array<>();
+    final Array<Integer> cxtNameExpired   = new Array<>();
     final Array<int[]>   cxtStructAdded   = new Array<>();
     final Array<Integer> cxtStructExpired = new Array<>();
 
     /**
-     * Initialize Schema for input mainly
-     */
-    public Schema() {
-        this(false);
-    }
-
-    /**
-     * Initialize Schema for output mainly
+     * Initialize Schema
      *
      * @param stream Enable stream-mode or not
      */
@@ -61,6 +55,7 @@ public final class Schema {
         this.cxtSymbolAdded.clear();
         this.cxtSymbolExpired.clear();
         this.cxtNameAdded.clear();
+        this.cxtNameExpired.clear();
         this.cxtStructAdded.clear();
         this.cxtStructExpired.clear();
     }
@@ -151,20 +146,16 @@ public final class Schema {
             long head = reader.readVarUint();
             int size = (int) (head >>> 4);
             hasMore = (head & 0b0000_0001) == 1;
-            switch ((byte) ((head >>> 1) & 0b0000_0111)) {
-                case CXT_SYMBOL_ADDED:
-                    for (int i = 0; i < size; i++) {
-                        cxtSymbolAdded.add(reader.readString());
-                    }
-                    break;
-                case CXT_SYMBOL_EXPIRED:
-                    for (int i = 0; i < size; i++) {
-                        cxtSymbolExpired.add((int) reader.readVarUint());
-                    }
-                    break;
+            byte flag = (byte) ((head >>> 1) & 0b0000_0111);
+            switch (flag) {
                 case CXT_NAME_ADDED:
                     for (int i = 0; i < size; i++) {
                         cxtNameAdded.add(reader.readString());
+                    }
+                    break;
+                case CXT_NAME_EXPIRED:
+                    for (int i = 0; i < size; i++) {
+                        cxtNameExpired.add((int) reader.readVarUint());
                     }
                     break;
                 case CXT_STRUCT_ADDED:
@@ -182,8 +173,18 @@ public final class Schema {
                         cxtStructExpired.add((int) reader.readVarUint());
                     }
                     break;
+                case CXT_SYMBOL_ADDED:
+                    for (int i = 0; i < size; i++) {
+                        cxtSymbolAdded.add(reader.readString());
+                    }
+                    break;
+                case CXT_SYMBOL_EXPIRED:
+                    for (int i = 0; i < size; i++) {
+                        cxtSymbolExpired.add((int) reader.readVarUint());
+                    }
+                    break;
                 default:
-                    throw new RuntimeException("invalid flag");
+                    throw new RuntimeException("invalid flag: " + flag);
             }
         }
     }
@@ -202,6 +203,7 @@ public final class Schema {
         if (tmpNames.size() > 0) tmpCount++;
         if (tmpStructs.size() > 0) tmpCount++;
         if (cxtNameAdded.size() > 0) cxtCount++;
+        if (cxtNameExpired.size() > 0) cxtCount++;
         if (cxtStructAdded.size() > 0) cxtCount++;
         if (cxtStructExpired.size() > 0) cxtCount++;
         if (cxtSymbolAdded.size() > 0) cxtCount++;
@@ -284,6 +286,12 @@ public final class Schema {
             writer.writeVarUint((len << 4) | (CXT_NAME_ADDED << 1) | ((--count == 0) ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 writer.writeString(cxtNameAdded.get(i));
+            }
+        }
+        if ((len = cxtNameExpired.size()) > 0) {
+            writer.writeVarUint((len << 4) | (CXT_NAME_EXPIRED << 1) | ((--count == 0) ? 0 : 1));
+            for (int i = 0; i < len; i++) {
+                writer.writeVarUint(cxtNameExpired.get(i));
             }
         }
         if (count > 0 && (len = cxtStructAdded.size()) > 0) {

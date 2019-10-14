@@ -7,6 +7,7 @@ import com.github.sisyphsu.nakedata.node.array.MixArrayNode;
 import com.github.sisyphsu.nakedata.node.std.ObjectNode;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,20 +21,24 @@ import static com.github.sisyphsu.nakedata.context.Proto.*;
  */
 public final class Output {
 
-    private final Schema schema;
+    private final boolean      stream;
+    private final Schema       schema;
+    private final OutputWriter writer;
 
-    private final boolean          stream;
     private final OutputDataPool   dataPool;
-    private final OutputNamePool   namePool   = new OutputNamePool();
-    private final OutputStructPool structPool = new OutputStructPool(1 << 12);
+    private final OutputNamePool   namePool;
+    private final OutputStructPool structPool;
 
-    public Output(boolean enableCxt) {
+    public Output(OutputStream stream, boolean enableCxt) {
         this.stream = enableCxt;
         this.schema = new Schema(enableCxt);
-        this.dataPool = new OutputDataPool(1 << 16, schema);
+        this.writer = new OutputWriter(stream);
+        this.dataPool = new OutputDataPool(schema, 1 << 16);
+        this.namePool = new OutputNamePool(schema);
+        this.structPool = new OutputStructPool(schema, 1 << 12);
     }
 
-    public void write(Node node, OutputWriter writer) throws IOException {
+    public void write(Node node) throws IOException {
         if (node == null) {
             throw new NullPointerException("node can't be null");
         }
@@ -65,9 +70,6 @@ public final class Output {
                 nameIds[j] = namePool.findNameID(names[j]);
             }
             schema.cxtStructAdded.add(nameIds);
-        }
-        for (int i = 0, len = structPool.cxtStructExpired.size(); i < len; i++) {
-            schema.cxtStructExpired.add(structPool.cxtStructExpired.get(i).offset);
         }
 
         schema.output(writer);

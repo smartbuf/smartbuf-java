@@ -13,7 +13,7 @@ public class OutputDataPoolTest {
 
     @Test
     public void test() {
-        OutputDataPool dataPool = new OutputDataPool(16, schema);
+        OutputDataPool dataPool = new OutputDataPool(schema, 16);
 
         try {
             dataPool.registerSymbol(null);
@@ -113,7 +113,7 @@ public class OutputDataPoolTest {
         TimeUtils.INTERVAL = 5;
         Thread.sleep(1000);
 
-        OutputDataPool dataPool = new OutputDataPool(4, schema);
+        OutputDataPool dataPool = new OutputDataPool(schema, 4);
         Thread.sleep(10);
         dataPool.registerSymbol("1");
         Thread.sleep(10);

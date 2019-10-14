@@ -28,7 +28,7 @@ public class SchemaTest {
     @Test
     public void testError() {
         InputReader reader = new InputReader(new ByteArrayInputStream(new byte[]{0b00010100, 0, 0, 0}));
-        Schema tmp = new Schema();
+        Schema tmp = new Schema(false);
         try {
             tmp.read(reader);
             assert false;
@@ -53,7 +53,7 @@ public class SchemaTest {
 
         Schema schema = new Schema(true);
 
-        List<Integer> codes = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+        List<Integer> codes = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
         Collections.shuffle(codes);
         for (Integer code : codes) {
             switch (code) {
@@ -86,18 +86,22 @@ public class SchemaTest {
                     assert isEqual(schema, trans(schema));
                     break;
                 case 8:
-                    schema.cxtStructAdded.add(nameIds);
+                    schema.cxtNameExpired.add(RandomUtils.nextInt(1, 1000));
                     assert isEqual(schema, trans(schema));
                     break;
                 case 9:
-                    schema.cxtStructExpired.add(RandomUtils.nextInt(1, 1000));
+                    schema.cxtStructAdded.add(nameIds);
                     assert isEqual(schema, trans(schema));
                     break;
                 case 10:
-                    schema.cxtSymbolAdded.add(RandomStringUtils.randomAlphanumeric(RandomUtils.nextInt(2, 64)));
+                    schema.cxtStructExpired.add(RandomUtils.nextInt(1, 1000));
                     assert isEqual(schema, trans(schema));
                     break;
                 case 11:
+                    schema.cxtSymbolAdded.add(RandomStringUtils.randomAlphanumeric(RandomUtils.nextInt(2, 64)));
+                    assert isEqual(schema, trans(schema));
+                    break;
+                case 12:
                     schema.cxtSymbolExpired.add(RandomUtils.nextInt(1, 1000));
                     assert isEqual(schema, trans(schema));
                     break;
@@ -123,6 +127,7 @@ public class SchemaTest {
             schema.cxtSymbolAdded.add(RandomStringUtils.randomAlphanumeric(RandomUtils.nextInt(2, 64)));
             schema.cxtSymbolExpired.add(RandomUtils.nextInt(1, 1000));
             schema.cxtNameAdded.add(RandomStringUtils.randomAlphanumeric(RandomUtils.nextInt(10, 100)));
+            schema.cxtNameExpired.add(RandomUtils.nextInt(10, 10000));
             schema.cxtStructAdded.add(nameIds);
             schema.cxtStructExpired.add(RandomUtils.nextInt(1, 1000));
         }
@@ -180,6 +185,7 @@ public class SchemaTest {
             && s1.cxtSymbolAdded.equals(s2.cxtSymbolAdded)
             && s1.cxtSymbolExpired.equals(s2.cxtSymbolExpired)
             && s1.cxtNameAdded.equals(s2.cxtNameAdded)
+            && s1.cxtNameExpired.equals(s2.cxtNameExpired)
             && s1.cxtStructAdded.equals(s2.cxtStructAdded)
             && s1.cxtStructExpired.equals(s2.cxtStructExpired);
     }

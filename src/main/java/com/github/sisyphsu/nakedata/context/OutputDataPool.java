@@ -38,9 +38,10 @@ public final class OutputDataPool {
     /**
      * Initialize DataPool, outter need specify the max number of symbol-area
      *
+     * @param schema      Schema
      * @param symbolLimit Max number of symbols, only for context
      */
-    OutputDataPool(int symbolLimit, Schema schema) {
+    OutputDataPool(Schema schema, int symbolLimit) {
         this.symbolLimit = symbolLimit;
         this.tmpFloats = schema.tmpFloats;
         this.tmpDoubles = schema.tmpDoubles;

@@ -17,9 +17,9 @@ import java.util.Map;
  */
 public final class OutputStructPool {
 
-    final Array<Struct> tmpStructs       = new Array<>();
-    final Array<Struct> cxtStructAdded   = new Array<>();
-    final Array<Struct> cxtStructExpired = new Array<>();
+    final Array<Struct>  tmpStructs     = new Array<>();
+    final Array<Struct>  cxtStructAdded = new Array<>();
+    final Array<Integer> cxtStructExpired;
 
     private final int                 cxtLimit;
     private final IDAllocator         cxtIdAlloc = new IDAllocator();
@@ -33,8 +33,9 @@ public final class OutputStructPool {
      *
      * @param limit Max number of context-struct
      */
-    public OutputStructPool(int limit) {
+    public OutputStructPool(Schema schema, int limit) {
         this.cxtLimit = limit;
+        this.cxtStructExpired = schema.cxtStructExpired;
     }
 
     /**
@@ -132,7 +133,6 @@ public final class OutputStructPool {
         }
         this.tmpStructs.clear();
         this.cxtStructAdded.clear();
-        this.cxtStructExpired.clear();
 
         // execute automatically expire for context-struct
         int expireCount = index.size() - cxtLimit;
@@ -170,7 +170,7 @@ public final class OutputStructPool {
             index.remove(expiredStruct);
             cxtIdAlloc.release(expiredStruct.offset);
             cxtStructs.put(expiredStruct.offset, null);
-            this.cxtStructExpired.add(expiredStruct);
+            this.cxtStructExpired.add(expiredStruct.offset);
         }
     }
 

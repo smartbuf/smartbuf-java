@@ -13,13 +13,19 @@ import java.util.Map;
  */
 public final class OutputNamePool {
 
-    final Array<Name> tmpNames     = new Array<>();
-    final Array<Name> cxtNameAdded = new Array<>();
+    final Array<Name>    tmpNames = new Array<>();
+    final Array<Name>    cxtNameAdded;
+    final Array<Integer> cxtNameExpired;
 
     private final IDAllocator cxtIdAlloc = new IDAllocator();
     private final Array<Name> cxtNames   = new Array<>();
 
     private final Map<String, Name> index = new HashMap<>();
+
+    public OutputNamePool(Schema schema) {
+        this.cxtNameAdded = new Array<>();
+        this.cxtNameExpired = schema.cxtNameExpired;
+    }
 
     /**
      * Register the specified names into this pool, could repeat.
@@ -66,15 +72,13 @@ public final class OutputNamePool {
     public void unregister(String... names) {
         for (String name : names) {
             Name meta = index.get(name);
-            if (meta == null || meta.temporary) {
+            if (meta == null || meta.temporary || --meta.refCount <= 0) {
                 continue;
             }
-            if (--meta.refCount <= 0) {
-                cxtNames.put(meta.offset, null);
-                cxtIdAlloc.release(meta.offset);
-                index.remove(name);
-            }
-            // don't need to sync peer
+            cxtNames.put(meta.offset, null);
+            cxtIdAlloc.release(meta.offset);
+            cxtNameExpired.add(meta.offset);
+            index.remove(name);
         }
     }
 

@@ -23,10 +23,11 @@ public interface Proto {
     byte TMP_STRUCTS = 6;
 
     byte CXT_NAME_ADDED     = 1;
-    byte CXT_STRUCT_ADDED   = 2;
-    byte CXT_STRUCT_EXPIRED = 3;
-    byte CXT_SYMBOL_ADDED   = 4;
-    byte CXT_SYMBOL_EXPIRED = 5;
+    byte CXT_NAME_EXPIRED   = 2;
+    byte CXT_STRUCT_ADDED   = 3;
+    byte CXT_STRUCT_EXPIRED = 4;
+    byte CXT_SYMBOL_ADDED   = 5;
+    byte CXT_SYMBOL_EXPIRED = 6;
 
     byte BODY_FLAG_DATA   = 0b0000_0011;
     byte BODY_FLAG_ARRAY  = 0b0000_0010;

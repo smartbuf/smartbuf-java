@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.context;
 
-import com.github.sisyphsu.nakedata.context.OutputStructPool;
 import com.github.sisyphsu.nakedata.utils.TimeUtils;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +13,7 @@ public class OutputStructPoolTest {
 
     @Test
     public void test() {
-        OutputStructPool pool = new OutputStructPool(16);
+        OutputStructPool pool = new OutputStructPool(new Schema(true), 16);
 
         try {
             pool.register(false, null);
@@ -103,7 +102,7 @@ public class OutputStructPoolTest {
         TimeUtils.INTERVAL = 8;
         Thread.sleep(1000);
 
-        OutputStructPool pool = new OutputStructPool(8);
+        OutputStructPool pool = new OutputStructPool(new Schema(true), 8);
 
         Thread.sleep(10);
         pool.register(false, new String[]{"id1", "name"});

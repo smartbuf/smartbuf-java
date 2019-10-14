@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.context;
 
-import com.github.sisyphsu.nakedata.context.OutputNamePool;
 import org.junit.jupiter.api.Test;
 
 import java.util.Objects;
@@ -13,7 +12,7 @@ public class OutputNamePoolTest {
 
     @Test
     public void test() {
-        OutputNamePool pool = new OutputNamePool();
+        OutputNamePool pool = new OutputNamePool(new Schema(true));
 
         pool.register(true, "tmp1", "tmp2", "tmp3", "tmp4", "tmp5", "tmp6", "tmp7", "tmp1");
         assert pool.size() == 7;
