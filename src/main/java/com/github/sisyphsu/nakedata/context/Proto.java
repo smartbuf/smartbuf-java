@@ -1,5 +1,7 @@
 package com.github.sisyphsu.nakedata.context;
 
+import com.github.sisyphsu.nakedata.ArrayType;
+
 /**
  * @author sulin
  * @since 2019-10-02 16:42:24
@@ -11,10 +13,10 @@ public interface Proto {
     byte ID_TRUE   = 0x02;
     int  ID_PREFIX = 4;
 
-    byte VER        = 0b0001_0000;
-    byte F_STREAM   = 0b0000_1000;
-    byte F_TMP_META = 0b0000_0100;
-    byte F_CXT_META = 0b0000_0010;
+    byte VER          = 0b0001_0000;
+    byte VER_STREAM   = 0b0000_1000;
+    byte VER_TMP_META = 0b0000_0100;
+    byte VER_CXT_META = 0b0000_0010;
 
     byte TMP_FLOAT   = 1;
     byte TMP_DOUBLE  = 2;
@@ -30,8 +32,50 @@ public interface Proto {
     byte CXT_SYMBOL_ADDED   = 5;
     byte CXT_SYMBOL_EXPIRED = 6;
 
-    byte BODY_FLAG_DATA   = 0b0000_0011;
-    byte BODY_FLAG_ARRAY  = 0b0000_0010;
-    byte BODY_FLAG_STRUCT = 0b0000_0001;
+    byte FLAG_DATA   = 0b0000_0011;
+    byte FLAG_ARRAY  = 0b0000_0010;
+    byte FLAG_STRUCT = 0b0000_0001;
+
+    byte SLICE_NULL   = 0x00;
+    byte SLICE_BOOL   = 0x01;
+    byte SLICE_FLOAT  = 0x02;
+    byte SLICE_DOUBLE = 0x03;
+    byte SLICE_BYTE   = 0x04;
+    byte SLICE_SHORT  = 0x05;
+    byte SLICE_INT    = 0x06;
+    byte SLICE_LONG   = 0x07;
+    byte SLICE_STRING = 0x08;
+    byte SLICE_ARRAY  = 0x09;
+    byte SLICE_OBJECT = 0x0A;
+
+    static byte toSliceType(ArrayType type) {
+        switch (type) {
+            case NULL:
+                return SLICE_NULL;
+            case BOOL:
+                return SLICE_BOOL;
+            case FLOAT:
+                return SLICE_FLOAT;
+            case DOUBLE:
+                return SLICE_DOUBLE;
+            case BYTE:
+                return SLICE_BYTE;
+            case SHORT:
+                return SLICE_SHORT;
+            case INT:
+                return SLICE_INT;
+            case LONG:
+                return SLICE_LONG;
+            case STRING:
+            case SYMBOL:
+                return SLICE_STRING;
+            case ARRAY:
+                return SLICE_ARRAY;
+            case OBJECT:
+                return SLICE_OBJECT;
+            default:
+                throw new IllegalArgumentException("unknown ArrayType: " + type);
+        }
+    }
 
 }

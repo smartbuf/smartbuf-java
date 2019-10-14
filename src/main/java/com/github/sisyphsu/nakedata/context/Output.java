@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.context;
 
-import com.github.sisyphsu.nakedata.ArrayType;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.array.ArrayNode;
 import com.github.sisyphsu.nakedata.node.array.MixArrayNode;
@@ -15,6 +14,8 @@ import static com.github.sisyphsu.nakedata.context.Proto.*;
 
 /**
  * 输出构造器，负责扫描源数据，序列化输出报文
+ * <p>
+ * TODO string与symbol是否可以混合在一起？
  *
  * @author sulin
  * @since 2019-05-01 14:50:15
@@ -81,69 +82,69 @@ public final class Output {
      */
     private void writeNode(Node node, OutputWriter writer) throws IOException {
         if (node.isNull()) {
-            writer.writeVarUint((ID_NULL << 2) | BODY_FLAG_DATA);
+            writer.writeVarUint((ID_NULL << 2) | FLAG_DATA);
             return;
         }
         switch (node.dataType()) {
             case BOOL:
                 if (node.booleanValue()) {
-                    writer.writeVarUint((ID_TRUE << 2) | BODY_FLAG_DATA);
+                    writer.writeVarUint((ID_TRUE << 2) | FLAG_DATA);
                 } else {
-                    writer.writeVarUint((ID_FALSE << 2) | BODY_FLAG_DATA);
+                    writer.writeVarUint((ID_FALSE << 2) | FLAG_DATA);
                 }
                 break;
             case FLOAT:
-                writer.writeVarUint((dataPool.findFloatID(node.floatValue()) << 2) | BODY_FLAG_DATA);
+                writer.writeVarUint((dataPool.findFloatID(node.floatValue()) << 2) | FLAG_DATA);
                 break;
             case DOUBLE:
-                writer.writeVarUint((dataPool.findDoubleID(node.doubleValue()) << 2) | BODY_FLAG_DATA);
+                writer.writeVarUint((dataPool.findDoubleID(node.doubleValue()) << 2) | FLAG_DATA);
                 break;
             case VARINT:
-                writer.writeVarUint((dataPool.findVarintID(node.longValue()) << 2) | BODY_FLAG_DATA);
+                writer.writeVarUint((dataPool.findVarintID(node.longValue()) << 2) | FLAG_DATA);
                 break;
             case STRING:
-                writer.writeVarUint((dataPool.findStringID(node.stringValue()) << 2) | BODY_FLAG_DATA);
+                writer.writeVarUint((dataPool.findStringID(node.stringValue()) << 2) | FLAG_DATA);
                 break;
             case SYMBOL:
                 if (stream) {
-                    writer.writeVarUint((dataPool.findSymbolID(node.stringValue()) << 2) | BODY_FLAG_DATA);
+                    writer.writeVarUint((dataPool.findSymbolID(node.stringValue()) << 2) | FLAG_DATA);
                 } else {
-                    writer.writeVarUint((dataPool.findStringID(node.stringValue()) << 2) | BODY_FLAG_DATA);
+                    writer.writeVarUint((dataPool.findStringID(node.stringValue()) << 2) | FLAG_DATA);
                 }
                 break;
             case N_BOOL_ARRAY:
                 boolean[] booleans = node.booleansValue();
-                writer.writeVarUint((booleans.length << 7) | (ArrayType.BOOL.getCode() << 3) | BODY_FLAG_ARRAY);
+                writer.writeVarUint((booleans.length << 7) | (SLICE_BOOL << 3) | FLAG_ARRAY);
                 writer.writeBooleanArray(booleans);
                 break;
             case N_BYTE_ARRAY:
                 byte[] bytes = node.bytesValue();
-                writer.writeVarUint((bytes.length << 7) | (ArrayType.BYTE.getCode() << 3) | BODY_FLAG_ARRAY);
+                writer.writeVarUint((bytes.length << 7) | (SLICE_BYTE << 3) | FLAG_ARRAY);
                 writer.writeByteArray(bytes);
                 break;
             case N_SHORT_ARRAY:
                 short[] shorts = node.shortsValue();
-                writer.writeVarUint((shorts.length << 7) | (ArrayType.SHORT.getCode() << 3) | BODY_FLAG_ARRAY);
+                writer.writeVarUint((shorts.length << 7) | (SLICE_SHORT << 3) | FLAG_ARRAY);
                 writer.writeShortArray(shorts);
                 break;
             case N_INT_ARRAY:
                 int[] ints = node.intsValue();
-                writer.writeVarUint((ints.length << 7) | (ArrayType.INT.getCode() << 3) | BODY_FLAG_ARRAY);
+                writer.writeVarUint((ints.length << 7) | (SLICE_INT << 3) | FLAG_ARRAY);
                 writer.writeIntArray(ints);
                 break;
             case N_LONG_ARRAY:
                 long[] longs = node.longsValue();
-                writer.writeVarUint((longs.length << 7) | (ArrayType.LONG.getCode() << 3) | BODY_FLAG_ARRAY);
+                writer.writeVarUint((longs.length << 7) | (SLICE_LONG << 3) | FLAG_ARRAY);
                 writer.writeLongArray(longs);
                 break;
             case N_FLOAT_ARRAY:
                 float[] floats = node.floatsValue();
-                writer.writeVarUint((floats.length << 7) | (ArrayType.FLOAT.getCode() << 3) | BODY_FLAG_ARRAY);
+                writer.writeVarUint((floats.length << 7) | (SLICE_FLOAT << 3) | FLAG_ARRAY);
                 writer.writeFloatArray(floats);
                 break;
             case N_DOUBLE_ARRAY:
                 double[] doubles = node.doublesValue();
-                writer.writeVarUint((doubles.length << 7) | (ArrayType.DOUBLE.getCode() << 3) | BODY_FLAG_ARRAY);
+                writer.writeVarUint((doubles.length << 7) | (SLICE_DOUBLE << 3) | FLAG_ARRAY);
                 writer.writeDoubleArray(doubles);
                 break;
             case ARRAY:
@@ -152,7 +153,7 @@ public final class Output {
             case OBJECT:
                 ObjectNode objectNode = (ObjectNode) node;
                 String[] fields = objectNode.getFields();
-                writer.writeVarUint((structPool.findStructID(fields) << 2) | BODY_FLAG_STRUCT);
+                writer.writeVarUint((structPool.findStructID(fields) << 2) | FLAG_STRUCT);
                 for (String field : fields) {
                     this.writeNode(objectNode.getField(field), writer);
                 }
@@ -175,19 +176,13 @@ public final class Output {
             ArrayNode slice = arrayNodes.get(i);
             List data = slice.getItems();
             // output array|slice header
-            long sliceHead = slice.elementType().getCode();
-            if (!stream && slice.elementType() == ArrayType.SYMBOL) {
-                sliceHead = ArrayType.STRING.getCode(); // in this case, treat symbol as string
-            }
-            sliceHead |= (data.size() << 5) | (sliceHead << 1) | ((i == len - 1) ? 1 : 0);
+            long sliceHead = (data.size() << 5) | (Proto.toSliceType(slice.elementType()) << 1) | ((i == len - 1) ? 0 : 1);
             if (i == 0) {
-                sliceHead = (sliceHead << 2) | BODY_FLAG_ARRAY; // only the first slice need bring body-flag
+                sliceHead = (sliceHead << 2) | FLAG_ARRAY; // only the first slice need bring body-flag
             }
             writer.writeVarUint(sliceHead);
             // output slice body
             switch (slice.elementType()) {
-                case NULL:
-                    break;
                 case BOOL:
                     writer.writeBooleanSlice(data);
                     break;

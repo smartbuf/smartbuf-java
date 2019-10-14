@@ -67,9 +67,9 @@ public final class Schema {
      */
     public void read(InputReader reader) throws IOException {
         this.head = reader.readByte();
-        this.stream = (head & F_STREAM) != 0;
-        this.hasTmpMeta = (head & F_TMP_META) != 0;
-        this.hasCxtMeta = (head & F_CXT_META) != 0;
+        this.stream = (head & VER_STREAM) != 0;
+        this.hasTmpMeta = (head & VER_TMP_META) != 0;
+        this.hasCxtMeta = (head & VER_CXT_META) != 0;
         // only stream-mode needs sequence
         if (stream && hasCxtMeta) {
             this.sequence = reader.readByte();
@@ -211,7 +211,7 @@ public final class Schema {
 
         this.hasTmpMeta = tmpCount > 0;
         this.hasCxtMeta = cxtCount > 0;
-        this.head = (byte) (VER | (stream ? F_STREAM : 0) | (hasTmpMeta ? F_TMP_META : 0) | (hasCxtMeta ? F_CXT_META : 0));
+        this.head = (byte) (VER | (stream ? VER_STREAM : 0) | (hasTmpMeta ? VER_TMP_META : 0) | (hasCxtMeta ? VER_CXT_META : 0));
 
         // 1-byte for summary
         writer.writeByte(head);
