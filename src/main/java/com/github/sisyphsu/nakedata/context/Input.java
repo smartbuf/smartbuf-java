@@ -173,7 +173,8 @@ public final class Input {
             case SLICE_ARRAY:
                 Object[] array = new Object[size];
                 for (int i = 0; i < size; i++) {
-                    array[i] = readNode();
+                    long arrHead = reader.readVarUint();
+                    array[i] = readArray(arrHead);
                 }
                 return array;
             case SLICE_OBJECT:
