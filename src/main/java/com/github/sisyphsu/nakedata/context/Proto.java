@@ -45,8 +45,9 @@ public interface Proto {
     byte SLICE_INT    = 0x06;
     byte SLICE_LONG   = 0x07;
     byte SLICE_STRING = 0x08;
-    byte SLICE_ARRAY  = 0x09;
-    byte SLICE_OBJECT = 0x0A;
+    byte SLICE_SYMBOL = 0x09;
+    byte SLICE_ARRAY  = 0x0A;
+    byte SLICE_OBJECT = 0x0B;
 
     static byte toSliceType(ArrayType type) {
         switch (type) {
@@ -67,6 +68,7 @@ public interface Proto {
             case LONG:
                 return SLICE_LONG;
             case STRING:
+                return SLICE_SYMBOL;
             case SYMBOL:
                 return SLICE_STRING;
             case ARRAY:

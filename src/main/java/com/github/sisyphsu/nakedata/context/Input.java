@@ -109,16 +109,19 @@ public final class Input {
                 case SLICE_DOUBLE:
                     reader.readDoubleSlice(result, size);
                     break;
+                case SLICE_SYMBOL:
+                    for (int i = 0; i < size; i++) {
+                        result.add(context.findSymbolByID((int) reader.readVarUint()));
+                    }
+                    break;
                 case SLICE_STRING:
                     for (int i = 0; i < size; i++) {
-                        int dataId = (int) reader.readVarUint();
-                        result.add(context.findDataByID(dataId));
+                        result.add(context.findStringByID((int) reader.readVarUint()));
                     }
                     break;
                 case SLICE_ARRAY:
                     for (int i = 0; i < size; i++) {
-                        long subHead = reader.readVarUint();
-                        result.add(readArray(subHead));
+                        result.add(readArray(reader.readVarUint()));
                     }
                     break;
                 case SLICE_OBJECT:
@@ -164,17 +167,21 @@ public final class Input {
             case SLICE_DOUBLE:
                 return reader.readDoubleArray(size);
             case SLICE_STRING:
-                String[] arr = new String[size];
+                String[] strings = new String[size];
                 for (int i = 0; i < size; i++) {
-                    int dataId = (int) reader.readVarUint();
-                    arr[i] = (String) context.findDataByID(dataId);
+                    strings[i] = context.findStringByID((int) reader.readVarUint());
                 }
-                return arr;
+                return strings;
+            case SLICE_SYMBOL:
+                String[] symbols = new String[size];
+                for (int i = 0; i < size; i++) {
+                    symbols[i] = context.findSymbolByID((int) reader.readVarUint());
+                }
+                return symbols;
             case SLICE_ARRAY:
                 Object[] array = new Object[size];
                 for (int i = 0; i < size; i++) {
-                    long arrHead = reader.readVarUint();
-                    array[i] = readArray(arrHead);
+                    array[i] = readArray(reader.readVarUint());
                 }
                 return array;
             case SLICE_OBJECT:

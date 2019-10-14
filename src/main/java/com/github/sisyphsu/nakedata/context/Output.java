@@ -14,8 +14,6 @@ import static com.github.sisyphsu.nakedata.context.Proto.*;
 
 /**
  * 输出构造器，负责扫描源数据，序列化输出报文
- * <p>
- * TODO string与symbol是否可以混合在一起？
  *
  * @author sulin
  * @since 2019-05-01 14:50:15

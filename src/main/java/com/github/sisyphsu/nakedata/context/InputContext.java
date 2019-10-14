@@ -120,6 +120,26 @@ public final class InputContext {
         return struct;
     }
 
+    public float findFloatByID(int id) {
+        return 0;
+    }
+
+    public double findDoubleByID(int id) {
+        return 0;
+    }
+
+    public long findVarintByID(int id) {
+        return 0;
+    }
+
+    public String findStringByID(int id) {
+        return null;
+    }
+
+    public String findSymbolByID(int id) {
+        return null;
+    }
+
     /**
      * Find the specified data by its unique id, includ float/double/varint/string/symbol
      *
