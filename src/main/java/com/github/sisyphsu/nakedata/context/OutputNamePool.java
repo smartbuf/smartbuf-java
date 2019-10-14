@@ -72,7 +72,7 @@ public final class OutputNamePool {
     public void unregister(String... names) {
         for (String name : names) {
             Name meta = index.get(name);
-            if (meta == null || meta.temporary || --meta.refCount <= 0) {
+            if (meta == null || meta.temporary || --meta.refCount > 0) {
                 continue;
             }
             cxtNames.put(meta.offset, null);
