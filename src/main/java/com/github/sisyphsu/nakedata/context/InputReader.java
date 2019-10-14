@@ -129,7 +129,7 @@ public final class InputReader {
                 if ((pos = i * 8 + j) >= len) {
                     break;
                 }
-                arr[pos] = ((b >>> j) & 1) == 1;
+                arr[off + pos] = ((b >>> j) & 1) == 1;
             }
         }
     }

@@ -1,13 +1,10 @@
 package com.github.sisyphsu.nakedata.context;
 
-import com.github.sisyphsu.nakedata.ArrayType;
 import com.github.sisyphsu.nakedata.utils.NumberUtils;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
-
-import static com.github.sisyphsu.nakedata.context.Proto.BODY_FLAG_ARRAY;
 
 /**
  * @author sulin
@@ -66,7 +63,6 @@ public final class OutputWriter {
 
     public void writeBooleanArray(boolean[] booleans) throws IOException {
         int len = booleans.length;
-        this.writeSliceHead(len, ArrayType.BOOL, false);
         int off;
         for (int i = 0; i < len; i += 8) {
             byte b = 0;
@@ -83,16 +79,12 @@ public final class OutputWriter {
     }
 
     public void writeByteArray(byte[] bytes) throws IOException {
-        int len = bytes.length;
-        this.writeSliceHead(len, ArrayType.BYTE, false);
         for (byte b : bytes) {
             stream.write(b);
         }
     }
 
     public void writeShortArray(short[] shorts) throws IOException {
-        int len = shorts.length;
-        this.writeSliceHead(len, ArrayType.SHORT, false);
         for (short s : shorts) {
             stream.write((byte) (s >> 8));
             stream.write((byte) s);
@@ -100,40 +92,31 @@ public final class OutputWriter {
     }
 
     public void writeIntArray(int[] ints) throws IOException {
-        int len = ints.length;
-        this.writeSliceHead(len, ArrayType.INT, false);
         for (int i : ints) {
             writeVarInt(i);
         }
     }
 
     public void writeLongArray(long[] longs) throws IOException {
-        int len = longs.length;
-        this.writeSliceHead(len, ArrayType.LONG, false);
         for (long l : longs) {
             writeVarInt(l);
         }
     }
 
     public void writeFloatArray(float[] floats) throws IOException {
-        int len = floats.length;
-        this.writeSliceHead(len, ArrayType.FLOAT, false);
         for (float f : floats) {
             writeFloat(f);
         }
     }
 
     public void writeDoubleArray(double[] doubles) throws IOException {
-        int len = doubles.length;
-        this.writeSliceHead(len, ArrayType.DOUBLE, false);
         for (double d : doubles) {
             writeDouble(d);
         }
     }
 
-    public void writeBooleanSlice(List<Boolean> booleans, boolean hasMore) throws IOException {
+    public void writeBooleanSlice(List<Boolean> booleans) throws IOException {
         int len = booleans.size();
-        this.writeSliceHead(len, ArrayType.BOOL, hasMore);
         int off;
         for (int i = 0; i < len; i += 8) {
             byte b = 0;
@@ -149,57 +132,41 @@ public final class OutputWriter {
         }
     }
 
-    public void writeByteSlice(List<Byte> bytes, boolean hasMore) throws IOException {
-        int len = bytes.size();
-        this.writeSliceHead(len, ArrayType.BYTE, hasMore);
+    public void writeByteSlice(List<Byte> bytes) throws IOException {
         for (byte b : bytes) {
             stream.write(b);
         }
     }
 
-    public void writeShortSlice(List<Short> shorts, boolean hasMore) throws IOException {
-        int len = shorts.size();
-        this.writeSliceHead(len, ArrayType.SHORT, hasMore);
+    public void writeShortSlice(List<Short> shorts) throws IOException {
         for (short s : shorts) {
             stream.write((byte) (s >> 8));
             stream.write((byte) s);
         }
     }
 
-    public void writeIntSlice(List<Integer> ints, boolean hasMore) throws IOException {
-        int len = ints.size();
-        this.writeSliceHead(len, ArrayType.INT, hasMore);
+    public void writeIntSlice(List<Integer> ints) throws IOException {
         for (int i : ints) {
             writeVarInt(i);
         }
     }
 
-    public void writeLongSlice(List<Long> longs, boolean hasMore) throws IOException {
-        int len = longs.size();
-        this.writeSliceHead(len, ArrayType.LONG, hasMore);
+    public void writeLongSlice(List<Long> longs) throws IOException {
         for (long l : longs) {
             writeVarInt(l);
         }
     }
 
-    public void writeFloatSlice(List<Float> floats, boolean hasMore) throws IOException {
-        int len = floats.size();
-        this.writeSliceHead(len, ArrayType.FLOAT, hasMore);
+    public void writeFloatSlice(List<Float> floats) throws IOException {
         for (float f : floats) {
             writeFloat(f);
         }
     }
 
-    public void writeDoubleSlice(List<Double> doubles, boolean hasMore) throws IOException {
-        int len = doubles.size();
-        this.writeSliceHead(len, ArrayType.DOUBLE, hasMore);
+    public void writeDoubleSlice(List<Double> doubles) throws IOException {
         for (double d : doubles) {
             writeDouble(d);
         }
-    }
-
-    public void writeSliceHead(int size, ArrayType elType, boolean hasMore) throws IOException {
-        this.writeVarUint((size << 7) | (elType.getCode() << 3) | (BODY_FLAG_ARRAY << 1) | (hasMore ? 1 : 0));
     }
 
 }

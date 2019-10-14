@@ -110,25 +110,39 @@ public final class Output {
                 }
                 break;
             case N_BOOL_ARRAY:
-                writer.writeBooleanArray(node.booleansValue());
+                boolean[] booleans = node.booleansValue();
+                writer.writeVarUint((booleans.length << 7) | (ArrayType.BOOL.getCode() << 3) | BODY_FLAG_ARRAY);
+                writer.writeBooleanArray(booleans);
                 break;
             case N_BYTE_ARRAY:
-                writer.writeByteArray(node.bytesValue());
+                byte[] bytes = node.bytesValue();
+                writer.writeVarUint((bytes.length << 7) | (ArrayType.BYTE.getCode() << 3) | BODY_FLAG_ARRAY);
+                writer.writeByteArray(bytes);
                 break;
             case N_SHORT_ARRAY:
-                writer.writeShortArray(node.shortsValue());
+                short[] shorts = node.shortsValue();
+                writer.writeVarUint((shorts.length << 7) | (ArrayType.SHORT.getCode() << 3) | BODY_FLAG_ARRAY);
+                writer.writeShortArray(shorts);
                 break;
             case N_INT_ARRAY:
-                writer.writeIntArray(node.intsValue());
+                int[] ints = node.intsValue();
+                writer.writeVarUint((ints.length << 7) | (ArrayType.INT.getCode() << 3) | BODY_FLAG_ARRAY);
+                writer.writeIntArray(ints);
                 break;
             case N_LONG_ARRAY:
-                writer.writeLongArray(node.longsValue());
+                long[] longs = node.longsValue();
+                writer.writeVarUint((longs.length << 7) | (ArrayType.LONG.getCode() << 3) | BODY_FLAG_ARRAY);
+                writer.writeLongArray(longs);
                 break;
             case N_FLOAT_ARRAY:
-                writer.writeFloatArray(node.floatsValue());
+                float[] floats = node.floatsValue();
+                writer.writeVarUint((floats.length << 7) | (ArrayType.FLOAT.getCode() << 3) | BODY_FLAG_ARRAY);
+                writer.writeFloatArray(floats);
                 break;
             case N_DOUBLE_ARRAY:
-                writer.writeDoubleArray(node.doublesValue());
+                double[] doubles = node.doublesValue();
+                writer.writeVarUint((doubles.length << 7) | (ArrayType.DOUBLE.getCode() << 3) | BODY_FLAG_ARRAY);
+                writer.writeDoubleArray(doubles);
                 break;
             case ARRAY:
                 this.writeArrayNode((ArrayNode) node, writer);
@@ -156,62 +170,71 @@ public final class Output {
             arrayNodes = Collections.singletonList(node);
         }
         for (int i = 0, len = arrayNodes.size(); i < len; i++) {
-            final boolean hasMore = i == len - 1;
             ArrayNode slice = arrayNodes.get(i);
             List data = slice.getItems();
+            final boolean hasMore = i == len - 1;
+            final int dataLen = data.size();
+            final byte moreFlag = (byte) (hasMore ? 0b00000100 : 0);
             switch (slice.elementType()) {
                 case BOOL:
-                    writer.writeBooleanSlice(data, hasMore);
+                    writer.writeVarUint((dataLen << 7) | (ArrayType.BOOL.getCode() << 3) | moreFlag | BODY_FLAG_ARRAY);
+                    writer.writeBooleanSlice(data);
                     break;
                 case BYTE:
-                    writer.writeByteSlice(data, hasMore);
+                    writer.writeVarUint((dataLen << 7) | (ArrayType.BYTE.getCode() << 3) | moreFlag | BODY_FLAG_ARRAY);
+                    writer.writeByteSlice(data);
                     break;
                 case SHORT:
-                    writer.writeShortSlice(data, hasMore);
+                    writer.writeVarUint((dataLen << 7) | (ArrayType.SHORT.getCode() << 3) | moreFlag | BODY_FLAG_ARRAY);
+                    writer.writeShortSlice(data);
                     break;
                 case INT:
-                    writer.writeIntSlice(data, hasMore);
+                    writer.writeVarUint((dataLen << 7) | (ArrayType.INT.getCode() << 3) | moreFlag | BODY_FLAG_ARRAY);
+                    writer.writeIntSlice(data);
                     break;
                 case LONG:
-                    writer.writeLongSlice(data, hasMore);
+                    writer.writeVarUint((dataLen << 7) | (ArrayType.LONG.getCode() << 3) | moreFlag | BODY_FLAG_ARRAY);
+                    writer.writeLongSlice(data);
                     break;
                 case FLOAT:
-                    writer.writeFloatSlice(data, hasMore);
+                    writer.writeVarUint((dataLen << 7) | (ArrayType.FLOAT.getCode() << 3) | moreFlag | BODY_FLAG_ARRAY);
+                    writer.writeFloatSlice(data);
                     break;
                 case DOUBLE:
-                    writer.writeDoubleSlice(data, hasMore);
+                    writer.writeVarUint((dataLen << 7) | (ArrayType.DOUBLE.getCode() << 3) | moreFlag | BODY_FLAG_ARRAY);
+                    writer.writeDoubleSlice(data);
                     break;
                 case NULL:
-                    writer.writeSliceHead(data.size(), ArrayType.NULL, hasMore);
+                    writer.writeVarUint((dataLen << 7) | (ArrayType.NULL.getCode() << 3) | moreFlag | BODY_FLAG_ARRAY);
                     break;
                 case STRING:
-                    writer.writeSliceHead(data.size(), ArrayType.STRING, hasMore);
+                    writer.writeVarUint((dataLen << 7) | (ArrayType.STRING.getCode() << 3) | moreFlag | BODY_FLAG_ARRAY);
                     for (Object datum : data) {
                         writer.writeVarInt(dataPool.findStringID((String) datum));
                     }
                     break;
                 case SYMBOL:
                     if (stream) {
-                        writer.writeSliceHead(data.size(), ArrayType.SYMBOL, hasMore);
+                        writer.writeVarUint((dataLen << 7) | (ArrayType.SYMBOL.getCode() << 3) | moreFlag | BODY_FLAG_ARRAY);
                         for (Object item : data) {
                             writer.writeVarInt(dataPool.findSymbolID((String) item));
                         }
                     } else {
-                        writer.writeSliceHead(data.size(), ArrayType.STRING, hasMore);
+                        writer.writeVarUint((dataLen << 7) | (ArrayType.STRING.getCode() << 3) | moreFlag | BODY_FLAG_ARRAY);
                         for (Object item : data) {
                             writer.writeVarInt(dataPool.findStringID((String) item));
                         }
                     }
                     break;
                 case ARRAY:
-                    writer.writeSliceHead(data.size(), ArrayType.ARRAY, hasMore);
+                    writer.writeVarUint((dataLen << 7) | (ArrayType.ARRAY.getCode() << 3) | moreFlag | BODY_FLAG_ARRAY);
                     for (Object item : data) {
                         this.writeArrayNode((ArrayNode) item, writer);
                     }
                     break;
                 case OBJECT:
                     String[] fields = ((ObjectNode) data.get(0)).getFields();
-                    writer.writeSliceHead(data.size(), ArrayType.OBJECT, hasMore);
+                    writer.writeVarUint((dataLen << 7) | (ArrayType.OBJECT.getCode() << 3) | moreFlag | BODY_FLAG_ARRAY);
                     writer.writeVarUint(structPool.findStructID(fields)); // structId
                     for (Object item : data) {
                         ObjectNode objectNode = (ObjectNode) item;
