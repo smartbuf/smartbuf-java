@@ -148,7 +148,7 @@ public final class Output {
                 writer.writeDoubleArray(doubles);
                 break;
             case ARRAY:
-                this.writeArrayNode((ArrayNode) node, writer);
+                this.writeArrayNode((ArrayNode) node, writer, true);
                 break;
             case OBJECT:
                 ObjectNode objectNode = (ObjectNode) node;
@@ -165,7 +165,7 @@ public final class Output {
      * 输出ArrayNode
      */
     @SuppressWarnings("unchecked")
-    private void writeArrayNode(ArrayNode node, OutputWriter writer) throws IOException {
+    private void writeArrayNode(ArrayNode node, OutputWriter writer, boolean suffixFlag) throws IOException {
         List<ArrayNode> arrayNodes;
         if (node instanceof MixArrayNode) {
             arrayNodes = node.getItems();
@@ -177,7 +177,7 @@ public final class Output {
             List data = slice.getItems();
             // output array|slice header
             long sliceHead = (data.size() << 5) | (Proto.toSliceType(slice.elementType()) << 1) | ((i == len - 1) ? 0 : 1);
-            if (i == 0) {
+            if (suffixFlag && i == 0) {
                 sliceHead = (sliceHead << 2) | FLAG_ARRAY; // only the first slice need bring body-flag
             }
             writer.writeVarUint(sliceHead);
@@ -222,7 +222,7 @@ public final class Output {
                     break;
                 case ARRAY:
                     for (Object item : data) {
-                        this.writeArrayNode((ArrayNode) item, writer);
+                        this.writeArrayNode((ArrayNode) item, writer, false);
                     }
                     break;
                 case OBJECT:
