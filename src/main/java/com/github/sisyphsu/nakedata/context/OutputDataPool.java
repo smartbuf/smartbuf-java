@@ -6,6 +6,8 @@ import com.github.sisyphsu.nakedata.utils.TimeUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.github.sisyphsu.nakedata.context.Proto.ID_PREFIX;
+
 /**
  * DataPool represents an area holds data properties like float/double/varint/string/symbol.
  * <p>
@@ -15,8 +17,6 @@ import java.util.Map;
  * @since 2019-10-08 20:19:59
  */
 public final class OutputDataPool {
-
-    private static final int FIX_HEAD = 4;
 
     private final Array<Float>  tmpFloats;
     private final Array<Double> tmpDoubles;
@@ -128,7 +128,7 @@ public final class OutputDataPool {
         if (offset == null) {
             throw new IllegalArgumentException("float not exists: " + f);
         }
-        return FIX_HEAD + offset;
+        return ID_PREFIX + offset;
     }
 
     /**
@@ -142,7 +142,7 @@ public final class OutputDataPool {
         if (offset == null) {
             throw new IllegalArgumentException("double not exists: " + d);
         }
-        return FIX_HEAD + tmpFloats.size() + offset;
+        return ID_PREFIX + tmpFloats.size() + offset;
     }
 
     /**
@@ -156,7 +156,7 @@ public final class OutputDataPool {
         if (offset == null) {
             throw new IllegalArgumentException("varint not exists: " + l);
         }
-        return FIX_HEAD + tmpFloats.size() + tmpDoubles.size() + offset;
+        return ID_PREFIX + tmpFloats.size() + tmpDoubles.size() + offset;
     }
 
     /**
@@ -170,7 +170,7 @@ public final class OutputDataPool {
         if (offset == null) {
             throw new IllegalArgumentException("string not exists: " + str);
         }
-        return FIX_HEAD + tmpFloats.size() + tmpDoubles.size() + tmpVarints.size() + offset;
+        return ID_PREFIX + tmpFloats.size() + tmpDoubles.size() + tmpVarints.size() + offset;
     }
 
     /**
@@ -184,7 +184,7 @@ public final class OutputDataPool {
         if (offset == null) {
             throw new IllegalArgumentException("symbol not exists: " + symbol);
         }
-        return FIX_HEAD + dataIndex.size() + offset;
+        return ID_PREFIX + dataIndex.size() + offset;
     }
 
     /**

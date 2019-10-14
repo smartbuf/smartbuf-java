@@ -6,9 +6,10 @@ package com.github.sisyphsu.nakedata.context;
  */
 public interface Proto {
 
-    byte ID_NULL  = 0x00;
-    byte ID_FALSE = 0x01;
-    byte ID_TRUE  = 0x02;
+    byte ID_NULL   = 0x00;
+    byte ID_FALSE  = 0x01;
+    byte ID_TRUE   = 0x02;
+    int  ID_PREFIX = 4;
 
     byte VER        = 0b0001_0000;
     byte F_STREAM   = 0b0000_1000;
