@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.*;
 
@@ -95,7 +96,7 @@ public class ReaderWriterTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1 << 16);
         List<Object> list = new ArrayList<>();
         list.add(RandomUtils.nextBytes(RandomUtils.nextInt(10, 100)));
-        list.add(new boolean[]{true, false, false});
+        list.add(new boolean[]{true, false, false, true, true, false, false, false, false, true, true, false, true});
         list.add(new short[]{0, Short.MAX_VALUE, Short.MIN_VALUE, (short) RandomUtils.nextInt()});
         list.add(new int[]{0, Integer.MAX_VALUE, Integer.MIN_VALUE, RandomUtils.nextInt()});
         list.add(new long[]{0, Long.MIN_VALUE, Long.MAX_VALUE, RandomUtils.nextLong()});
@@ -150,7 +151,7 @@ public class ReaderWriterTest {
     public void testSlice() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1 << 16);
 
-        List<Boolean> booleans = Arrays.asList(true, false, false, true, false);
+        List<Boolean> booleans = Arrays.asList(true, false, false, true, true, false, false, false, false, true, true, false, true);
         List<Byte> bytes = Arrays.asList((byte) 0, Byte.MIN_VALUE, Byte.MAX_VALUE, (byte) RandomUtils.nextInt());
         List<Short> shorts = Arrays.asList((short) 0, Short.MIN_VALUE, Short.MAX_VALUE, (short) RandomUtils.nextInt());
         List<Integer> ints = Arrays.asList(0, Integer.MIN_VALUE, Integer.MAX_VALUE, RandomUtils.nextInt());
@@ -175,6 +176,27 @@ public class ReaderWriterTest {
         assert Objects.deepEquals(longs.toArray(), input.readLongSlice(longs.size()));
         assert Objects.deepEquals(floats.toArray(), input.readFloatSlice(floats.size()));
         assert Objects.deepEquals(doubles.toArray(), input.readDoubleSlice(doubles.size()));
+    }
+
+    @Test
+    public void testError() {
+        InputReader input = new InputReader(new ByteArrayInputStream(new byte[2]));
+        try {
+            input.readDouble();
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof EOFException;
+        }
+
+        byte[] bytes = new byte[20];
+        Arrays.fill(bytes, (byte) 0xFF);
+        input = new InputReader(new ByteArrayInputStream(bytes));
+        try {
+            input.readVarInt();
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof IOException;
+        }
     }
 
     @Test

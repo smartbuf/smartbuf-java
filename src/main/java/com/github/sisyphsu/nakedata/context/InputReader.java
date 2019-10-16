@@ -36,11 +36,14 @@ public final class InputReader {
     public long readVarUint() throws IOException {
         long l = 0;
         byte b;
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; ; i++) {
             b = readByte();
             l |= ((long) (b & 0x7F)) << (i * 7);
             if ((b & 0x80) == 0) {
                 break;
+            }
+            if (i == 10) {
+                throw new IOException("invlaid varuint");
             }
         }
         return l;
@@ -77,14 +80,13 @@ public final class InputReader {
 
     public boolean[] readBooleanArray(int len) throws IOException {
         boolean[] result = new boolean[len];
-        int off;
         for (int i = 0; i < len; i += 8) {
             byte b = readByte();
             for (int j = 0; j < 8; j++) {
-                if ((off = i * 8 + j) >= len) {
+                if (i + j >= len) {
                     break;
                 }
-                result[off] = 1 == ((b >>> j) & 1);
+                result[i + j] = (b & (1 << j)) > 0;
             }
         }
         return result;
@@ -142,14 +144,13 @@ public final class InputReader {
 
     public Boolean[] readBooleanSlice(int len) throws IOException {
         Boolean[] result = new Boolean[len];
-        int off = 0;
         for (int i = 0; i < len; i += 8) {
             byte b = readByte();
             for (int j = 0; j < 8; j++) {
-                if ((i * 8 + j) >= len) {
+                if (i + j >= len) {
                     break;
                 }
-                result[off++] = ((b >>> j) & 1) == 1;
+                result[i + j] = (b & (1 << j)) > 0;
             }
         }
         return result;

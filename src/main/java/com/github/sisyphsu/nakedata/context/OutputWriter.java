@@ -69,7 +69,7 @@ public final class OutputWriter {
         for (int i = 0; i < len; i += 8) {
             byte b = 0;
             for (int j = 0; j < 8; j++) {
-                if ((off = i * 8 + j) >= len) {
+                if ((off = i + j) >= len) {
                     break;
                 }
                 if (booleans[off]) {
@@ -123,7 +123,7 @@ public final class OutputWriter {
         for (int i = 0; i < len; i += 8) {
             byte b = 0;
             for (int j = 0; j < 8; j++) {
-                if ((off = i * 8 + j) >= len) {
+                if ((off = i + j) >= len) {
                     break;
                 }
                 if (booleans.get(off)) {
