@@ -68,9 +68,9 @@ public interface Proto {
             case LONG:
                 return SLICE_LONG;
             case STRING:
-                return SLICE_SYMBOL;
-            case SYMBOL:
                 return SLICE_STRING;
+            case SYMBOL:
+                return SLICE_SYMBOL;
             case ARRAY:
                 return SLICE_ARRAY;
             case OBJECT:

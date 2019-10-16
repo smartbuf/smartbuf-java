@@ -220,18 +220,13 @@ public final class Output {
                     break;
                 case STRING:
                     for (Object datum : data) {
-                        writer.writeVarInt(dataPool.findStringID((String) datum));
+                        writer.writeVarUint(dataPool.findStringID((String) datum));
                     }
                     break;
                 case SYMBOL:
-                    if (stream) {
-                        for (Object item : data) {
-                            writer.writeVarInt(dataPool.findSymbolID((String) item));
-                        }
-                    } else {
-                        for (Object item : data) {
-                            writer.writeVarInt(dataPool.findStringID((String) item));
-                        }
+                    for (Object item : data) {
+                        String str = (String) item;
+                        writer.writeVarUint(stream ? dataPool.findSymbolID(str) : dataPool.findStringID(str));
                     }
                     break;
                 case ARRAY:
@@ -302,10 +297,12 @@ public final class Output {
                 array.forEach(item -> dataPool.registerString(String.valueOf(item)));
                 break;
             case SYMBOL:
-                if (stream) {
-                    array.forEach(item -> dataPool.registerSymbol(String.valueOf(item)));
-                } else {
-                    array.forEach(item -> dataPool.registerSymbol(String.valueOf(item)));
+                for (Object item : array.getItems()) {
+                    if (stream) {
+                        dataPool.registerSymbol((String) item);
+                    } else {
+                        dataPool.registerString((String) item);
+                    }
                 }
                 break;
             case OBJECT:

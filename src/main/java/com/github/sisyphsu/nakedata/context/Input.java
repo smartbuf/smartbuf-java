@@ -187,7 +187,8 @@ public final class Input {
             case SLICE_SYMBOL:
                 String[] symbols = new String[size];
                 for (int i = 0; i < size; i++) {
-                    symbols[i] = context.findSymbolByID((int) reader.readVarUint());
+                    int dataId = (int) reader.readVarUint();
+                    symbols[i] = stream ? context.findSymbolByID(dataId) : context.findStringByID(dataId);
                 }
                 return symbols;
             case SLICE_ARRAY:

@@ -74,7 +74,7 @@ public final class Array<T> {
      * Return capacity of this array
      */
     public int cap() {
-        return data.length;
+        return data == null ? 0 : data.length;
     }
 
     /**
