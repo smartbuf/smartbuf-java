@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.context;
+package com.github.sisyphsu.nakedata.proto;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.sisyphsu.nakedata.context.Proto.*;
+import static com.github.sisyphsu.nakedata.proto.Const.*;
 
 /**
  * @author sulin

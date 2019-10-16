@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.context;
+package com.github.sisyphsu.nakedata.proto;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;

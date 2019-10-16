@@ -1,6 +1,6 @@
-package com.github.sisyphsu.nakedata.context;
+package com.github.sisyphsu.nakedata.proto;
 
-import static com.github.sisyphsu.nakedata.context.Proto.*;
+import static com.github.sisyphsu.nakedata.proto.Const.*;
 
 /**
  * InputContext holds the state of input's context, it helps decompress data and metadata's reusing.

@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.context;
+package com.github.sisyphsu.nakedata.proto;
 
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.array.ArrayNode;
@@ -10,7 +10,7 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 
-import static com.github.sisyphsu.nakedata.context.Proto.*;
+import static com.github.sisyphsu.nakedata.proto.Const.*;
 
 /**
  * Output wraps the logic that scans the source data and serializes the output message into highly compressed data
@@ -190,7 +190,7 @@ public final class Output {
             ArrayNode slice = arrayNodes.get(i);
             List data = slice.getItems();
             // output array|slice header
-            long sliceHead = (data.size() << 5) | (Proto.toSliceType(slice.elementType()) << 1) | ((i == len - 1) ? 0 : 1);
+            long sliceHead = (data.size() << 5) | (Const.toSliceType(slice.elementType()) << 1) | ((i == len - 1) ? 0 : 1);
             if (suffixFlag && i == 0) {
                 sliceHead = (sliceHead << 2) | FLAG_ARRAY; // only the first slice need bring body-flag
             }

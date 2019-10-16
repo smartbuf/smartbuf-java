@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.context;
+package com.github.sisyphsu.nakedata.proto;
 
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.array.NullArrayNode;

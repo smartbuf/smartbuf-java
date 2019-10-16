@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.context;
+package com.github.sisyphsu.nakedata.proto;
 
 import com.github.sisyphsu.nakedata.utils.ArrayUtils;
 import com.github.sisyphsu.nakedata.utils.TimeUtils;
@@ -6,7 +6,7 @@ import com.github.sisyphsu.nakedata.utils.TimeUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.github.sisyphsu.nakedata.context.Proto.ID_PREFIX;
+import static com.github.sisyphsu.nakedata.proto.Const.ID_PREFIX;
 
 /**
  * DataPool represents an area holds data properties like float/double/varint/string/symbol.

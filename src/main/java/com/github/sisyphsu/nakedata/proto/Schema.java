@@ -1,8 +1,8 @@
-package com.github.sisyphsu.nakedata.context;
+package com.github.sisyphsu.nakedata.proto;
 
 import java.io.IOException;
 
-import static com.github.sisyphsu.nakedata.context.Proto.*;
+import static com.github.sisyphsu.nakedata.proto.Const.*;
 
 /**
  * Schema represents data's meta info, used for discribe and explain data area

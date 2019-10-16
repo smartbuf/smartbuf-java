@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.context;
+package com.github.sisyphsu.nakedata.proto;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

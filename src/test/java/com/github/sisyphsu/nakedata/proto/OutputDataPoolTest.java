@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.context;
+package com.github.sisyphsu.nakedata.proto;
 
 import com.github.sisyphsu.nakedata.utils.TimeUtils;
 import org.junit.jupiter.api.Test;

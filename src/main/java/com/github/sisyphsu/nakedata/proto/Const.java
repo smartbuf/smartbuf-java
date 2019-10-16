@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.context;
+package com.github.sisyphsu.nakedata.proto;
 
 import com.github.sisyphsu.nakedata.ArrayType;
 
@@ -6,7 +6,7 @@ import com.github.sisyphsu.nakedata.ArrayType;
  * @author sulin
  * @since 2019-10-02 16:42:24
  */
-public interface Proto {
+public interface Const {
 
     byte ID_NULL   = 0x00;
     byte ID_FALSE  = 0x01;
