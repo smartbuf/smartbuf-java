@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import java.util.List;
 
 /**
+ * Encapsulate all deserialization operations of output side.
+ *
  * @author sulin
  * @since 2019-04-27 13:02:49
  */

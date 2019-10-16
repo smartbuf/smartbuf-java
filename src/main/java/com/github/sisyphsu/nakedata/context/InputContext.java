@@ -3,6 +3,8 @@ package com.github.sisyphsu.nakedata.context;
 import static com.github.sisyphsu.nakedata.context.Proto.*;
 
 /**
+ * InputContext holds the state of input's context, it helps decompress data and metadata's reusing.
+ *
  * @author sulin
  * @since 2019-10-14 11:00:08
  */
@@ -26,6 +28,11 @@ public final class InputContext {
     private final IDAllocator   cxtSymbolID = new IDAllocator();
     private final Array<String> cxtSymbols  = new Array<>();
 
+    /**
+     * Initalize InputContext, caller should provide {@link Schema} for synchronization of schema and metadata.
+     *
+     * @param schema Schema of input side
+     */
     public InputContext(Schema schema) {
         this.schema = schema;
         this.tmpFloats = schema.tmpFloats;
@@ -35,6 +42,9 @@ public final class InputContext {
         this.tmpNames = schema.tmpNames;
     }
 
+    /**
+     * Execute synchronization for schema and metadata of context
+     */
     public void sync() {
         this.tmpStructs.clear();
 

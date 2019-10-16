@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
+ * Encapsulate all serialization operations of input side.
+ *
  * @author sulin
  * @since 2019-10-10 21:44:32
  */
