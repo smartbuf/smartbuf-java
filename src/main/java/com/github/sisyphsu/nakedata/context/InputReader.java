@@ -5,7 +5,6 @@ import com.github.sisyphsu.nakedata.utils.NumberUtils;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 /**
  * @author sulin
@@ -101,7 +100,8 @@ public final class InputReader {
         short[] result = new short[len];
         for (int i = 0; i < len; i++) {
             byte high = readByte();
-            result[i] = (short) ((high << 8) | readByte());
+            byte low = readByte();
+            result[i] = (short) ((high << 8) | (low & 0xFF));
         }
         return result;
     }
@@ -138,53 +138,69 @@ public final class InputReader {
         return result;
     }
 
-    public void readBooleanSlice(List<Object> arr, int len) throws IOException {
+    public Boolean[] readBooleanSlice(int len) throws IOException {
+        Boolean[] result = new Boolean[len];
+        int off = 0;
         for (int i = 0; i < len; i += 8) {
             byte b = readByte();
             for (int j = 0; j < 8; j++) {
                 if ((i * 8 + j) >= len) {
                     break;
                 }
-                arr.add(((b >>> j) & 1) == 1);
+                result[off++] = ((b >>> j) & 1) == 1;
             }
         }
+        return result;
     }
 
-    public void readByteSlice(List<Object> arr, int len) throws IOException {
-        for (int i = 0; i < len; i++) {
-            arr.add(readByte());
+    public Byte[] readByteSlice(int len) throws IOException {
+        Byte[] result = new Byte[len];
+        for (int i = 0, off = 0; i < len; i++) {
+            result[off++] = readByte();
         }
+        return result;
     }
 
-    public void readShortSlice(List<Object> arr, int len) throws IOException {
-        for (int i = 0; i < len; i++) {
+    public Short[] readShortSlice(int len) throws IOException {
+        Short[] result = new Short[len];
+        for (int i = 0, off = 0; i < len; i++) {
             byte high = readByte();
-            arr.add((short) ((high << 8) | readByte()));
+            byte low = readByte();
+            result[off++] = (short) ((high << 8) | (low & 0xFF));
         }
+        return result;
     }
 
-    public void readIntSlice(List<Object> arr, int len) throws IOException {
-        for (int i = 0; i < len; i++) {
-            arr.add((int) readVarInt());
+    public Integer[] readIntSlice(int len) throws IOException {
+        Integer[] result = new Integer[len];
+        for (int i = 0, off = 0; i < len; i++) {
+            result[off++] = (int) readVarInt();
         }
+        return result;
     }
 
-    public void readLongSlice(List<Object> arr, int len) throws IOException {
-        for (int i = 0; i < len; i++) {
-            arr.add(readVarInt());
+    public Long[] readLongSlice(int len) throws IOException {
+        Long[] result = new Long[len];
+        for (int i = 0, off = 0; i < len; i++) {
+            result[off++] = readVarInt();
         }
+        return result;
     }
 
-    public void readFloatSlice(List<Object> arr, int len) throws IOException {
-        for (int i = 0; i < len; i++) {
-            arr.add(readFloat());
+    public Float[] readFloatSlice(int len) throws IOException {
+        Float[] result = new Float[len];
+        for (int i = 0, off = 0; i < len; i++) {
+            result[off++] = readFloat();
         }
+        return result;
     }
 
-    public void readDoubleSlice(List<Object> arr, int len) throws IOException {
-        for (int i = 0; i < len; i++) {
-            arr.add(readDouble());
+    public Double[] readDoubleSlice(int len) throws IOException {
+        Double[] result = new Double[len];
+        for (int i = 0, off = 0; i < len; i++) {
+            result[off++] = readDouble();
         }
+        return result;
     }
 
 }

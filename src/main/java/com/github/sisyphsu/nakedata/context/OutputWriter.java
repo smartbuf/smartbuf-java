@@ -87,7 +87,7 @@ public final class OutputWriter {
     public void writeShortArray(short[] shorts) throws IOException {
         for (short s : shorts) {
             stream.write((byte) (s >> 8));
-            stream.write((byte) s);
+            stream.write((byte) (s & 0xFF));
         }
     }
 
@@ -140,8 +140,8 @@ public final class OutputWriter {
 
     public void writeShortSlice(List<Short> shorts) throws IOException {
         for (short s : shorts) {
-            stream.write((byte) (s >> 8));
-            stream.write((byte) s);
+            stream.write((byte) (s >>> 8));
+            stream.write((byte) (s & 0xFF));
         }
     }
 

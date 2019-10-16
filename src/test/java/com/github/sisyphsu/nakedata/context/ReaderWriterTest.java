@@ -8,10 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author sulin
@@ -91,6 +88,93 @@ public class ReaderWriterTest {
                 assert input.readString().equals(o);
             }
         }
+    }
+
+    @Test
+    public void testArray() throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1 << 16);
+        List<Object> list = new ArrayList<>();
+        list.add(RandomUtils.nextBytes(RandomUtils.nextInt(10, 100)));
+        list.add(new boolean[]{true, false, false});
+        list.add(new short[]{0, Short.MAX_VALUE, Short.MIN_VALUE, (short) RandomUtils.nextInt()});
+        list.add(new int[]{0, Integer.MAX_VALUE, Integer.MIN_VALUE, RandomUtils.nextInt()});
+        list.add(new long[]{0, Long.MIN_VALUE, Long.MAX_VALUE, RandomUtils.nextLong()});
+        list.add(new float[]{0, Float.MIN_VALUE, Float.MAX_VALUE, RandomUtils.nextFloat()});
+        list.add(new double[]{0, Double.MIN_VALUE, Double.MAX_VALUE, RandomUtils.nextDouble()});
+        Collections.shuffle(list);
+
+        OutputWriter output = new OutputWriter(outputStream);
+        for (Object o : list) {
+            if (o instanceof boolean[]) {
+                output.writeBooleanArray((boolean[]) o);
+            } else if (o instanceof byte[]) {
+                output.writeByteArray((byte[]) o);
+            } else if (o instanceof short[]) {
+                output.writeShortArray((short[]) o);
+            } else if (o instanceof int[]) {
+                output.writeIntArray((int[]) o);
+            } else if (o instanceof long[]) {
+                output.writeLongArray((long[]) o);
+            } else if (o instanceof float[]) {
+                output.writeFloatArray((float[]) o);
+            } else if (o instanceof double[]) {
+                output.writeDoubleArray((double[]) o);
+            } else {
+                assert false;
+            }
+        }
+
+        InputReader input = new InputReader(new ByteArrayInputStream(outputStream.toByteArray()));
+        for (Object o : list) {
+            if (o instanceof boolean[]) {
+                assert Objects.deepEquals(o, input.readBooleanArray(((boolean[]) o).length));
+            } else if (o instanceof byte[]) {
+                assert Objects.deepEquals(o, input.readByteArray(((byte[]) o).length));
+            } else if (o instanceof short[]) {
+                assert Objects.deepEquals(o, input.readShortArray(((short[]) o).length));
+            } else if (o instanceof int[]) {
+                assert Objects.deepEquals(o, input.readIntArray(((int[]) o).length));
+            } else if (o instanceof long[]) {
+                assert Objects.deepEquals(o, input.readLongArray(((long[]) o).length));
+            } else if (o instanceof float[]) {
+                assert Objects.deepEquals(o, input.readFloatArray(((float[]) o).length));
+            } else if (o instanceof double[]) {
+                assert Objects.deepEquals(o, input.readDoubleArray(((double[]) o).length));
+            } else {
+                assert false;
+            }
+        }
+    }
+
+    @Test
+    public void testSlice() throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1 << 16);
+
+        List<Boolean> booleans = Arrays.asList(true, false, false, true, false);
+        List<Byte> bytes = Arrays.asList((byte) 0, Byte.MIN_VALUE, Byte.MAX_VALUE, (byte) RandomUtils.nextInt());
+        List<Short> shorts = Arrays.asList((short) 0, Short.MIN_VALUE, Short.MAX_VALUE, (short) RandomUtils.nextInt());
+        List<Integer> ints = Arrays.asList(0, Integer.MIN_VALUE, Integer.MAX_VALUE, RandomUtils.nextInt());
+        List<Long> longs = Arrays.asList(0L, Long.MIN_VALUE, Long.MAX_VALUE, RandomUtils.nextLong());
+        List<Float> floats = Arrays.asList(0.0f, Float.MIN_VALUE, Float.MAX_VALUE, RandomUtils.nextFloat());
+        List<Double> doubles = Arrays.asList(0.0, Double.MIN_VALUE, Double.MAX_VALUE, RandomUtils.nextDouble());
+
+        OutputWriter output = new OutputWriter(outputStream);
+        output.writeBooleanSlice(booleans);
+        output.writeByteSlice(bytes);
+        output.writeShortSlice(shorts);
+        output.writeIntSlice(ints);
+        output.writeLongSlice(longs);
+        output.writeFloatSlice(floats);
+        output.writeDoubleSlice(doubles);
+
+        InputReader input = new InputReader(new ByteArrayInputStream(outputStream.toByteArray()));
+        assert Objects.deepEquals(booleans.toArray(), input.readBooleanSlice(booleans.size()));
+        assert Objects.deepEquals(bytes.toArray(), input.readByteSlice(bytes.size()));
+        assert Objects.deepEquals(shorts.toArray(), input.readShortSlice(shorts.size()));
+        assert Objects.deepEquals(ints.toArray(), input.readIntSlice(ints.size()));
+        assert Objects.deepEquals(longs.toArray(), input.readLongSlice(longs.size()));
+        assert Objects.deepEquals(floats.toArray(), input.readFloatSlice(floats.size()));
+        assert Objects.deepEquals(doubles.toArray(), input.readDoubleSlice(doubles.size()));
     }
 
     @Test

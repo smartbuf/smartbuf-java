@@ -78,53 +78,58 @@ public final class Input {
         if (!hasMore) {
             return readPureArray(head);
         }
-        List<Object> result = new ArrayList<>();
+        List<Object[]> slices = new ArrayList<>();
+        int totalSize = 0;
         for (; hasMore; hasMore = (head & 1) == 1) {
             byte type = (byte) ((head >>> 1) & 0x0F);
             int size = (int) (head >>> 5);
+            Object[] slice;
+            totalSize += size;
             switch (type) {
-                case SLICE_NULL:
-                    for (int i = 0; i < size; i++) {
-                        result.add(null);
-                    }
-                    break;
                 case SLICE_BOOL:
-                    reader.readBooleanSlice(result, size);
+                    slice = reader.readBooleanSlice(size);
                     break;
                 case SLICE_BYTE:
-                    reader.readByteSlice(result, size);
+                    slice = reader.readByteSlice(size);
                     break;
                 case SLICE_SHORT:
-                    reader.readShortSlice(result, size);
+                    slice = reader.readShortSlice(size);
                     break;
                 case SLICE_INT:
-                    reader.readIntSlice(result, size);
+                    slice = reader.readIntSlice(size);
                     break;
                 case SLICE_LONG:
-                    reader.readLongSlice(result, size);
+                    slice = reader.readLongSlice(size);
                     break;
                 case SLICE_FLOAT:
-                    reader.readFloatSlice(result, size);
+                    slice = reader.readFloatSlice(size);
                     break;
                 case SLICE_DOUBLE:
-                    reader.readDoubleSlice(result, size);
+                    slice = reader.readDoubleSlice(size);
+                    break;
+                case SLICE_NULL:
+                    slice = new Object[size];
                     break;
                 case SLICE_SYMBOL:
+                    slice = new String[size];
                     for (int i = 0; i < size; i++) {
-                        result.add(context.findSymbolByID((int) reader.readVarUint()));
+                        slice[i] = context.findSymbolByID((int) reader.readVarUint());
                     }
                     break;
                 case SLICE_STRING:
+                    slice = new String[size];
                     for (int i = 0; i < size; i++) {
-                        result.add(context.findStringByID((int) reader.readVarUint()));
+                        slice[i] = context.findStringByID((int) reader.readVarUint());
                     }
                     break;
                 case SLICE_ARRAY:
+                    slice = new Object[size];
                     for (int i = 0; i < size; i++) {
-                        result.add(readArray(reader.readVarUint()));
+                        slice[i] = readArray(reader.readVarUint());
                     }
                     break;
                 case SLICE_OBJECT:
+                    slice = new Object[size];
                     int structId = (int) reader.readVarUint();
                     String[] fieldNames = context.findStructByID(structId);
                     for (int i = 0; i < size; i++) {
@@ -132,13 +137,21 @@ public final class Input {
                         for (String field : fieldNames) {
                             obj.put(field, readNode());
                         }
-                        result.add(obj);
+                        slice[i] = obj;
                     }
                     break;
                 default:
                     throw new IllegalArgumentException("invalid data");
             }
             head = reader.readVarUint();
+            slices.add(slice);
+        }
+        Object[] result = new Object[totalSize];
+        int off = 0;
+        for (Object[] slice : slices) {
+            for (Object o : slice) {
+                result[off++] = o;
+            }
         }
         return result;
     }

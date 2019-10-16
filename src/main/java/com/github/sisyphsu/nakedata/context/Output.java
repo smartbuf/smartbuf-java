@@ -13,7 +13,7 @@ import java.util.List;
 import static com.github.sisyphsu.nakedata.context.Proto.*;
 
 /**
- * 输出构造器，负责扫描源数据，序列化输出报文
+ * Output wraps the logic that scans the source data and serializes the output message into highly compressed data
  *
  * @author sulin
  * @since 2019-05-01 14:50:15
@@ -28,6 +28,12 @@ public final class Output {
     private final OutputNamePool   namePool;
     private final OutputStructPool structPool;
 
+    /**
+     * Initialize Output, it is reusable
+     *
+     * @param stream    Underlying output stream
+     * @param enableCxt Enable context-model or not
+     */
     public Output(OutputStream stream, boolean enableCxt) {
         this.stream = enableCxt;
         this.schema = new Schema(enableCxt);
@@ -37,6 +43,14 @@ public final class Output {
         this.structPool = new OutputStructPool(schema, 1 << 12);
     }
 
+    /**
+     * Write the specified Node into Output.
+     * It will scan metadata first, build {@link Schema} and write it at the beginning of data-packet
+     * After that, it will write node as body, which is highly compressed based on precollected schema
+     *
+     * @param node The node need to output
+     * @throws IOException Underlying io error
+     */
     public void write(Node node) throws IOException {
         if (node == null) {
             throw new NullPointerException("node can't be null");
@@ -76,7 +90,7 @@ public final class Output {
     }
 
     /**
-     * 输出报文的body区，节点前缀一个varuint标明：数据类型（普通数据、array、object）
+     * Ouput the specified Node into writer, all nodes need prefix an varuint as head-id.
      */
     private void writeNode(Node node, OutputWriter writer) throws IOException {
         if (node.isNull()) {
@@ -160,7 +174,9 @@ public final class Output {
     }
 
     /**
-     * 输出ArrayNode
+     * Output the specified ArrayNode into writer, different callers may need different form of head
+     *
+     * @param suffixFlag Need suffix FLAG_ARRAY at head or not
      */
     @SuppressWarnings("unchecked")
     private void writeArrayNode(ArrayNode node, OutputWriter writer, boolean suffixFlag) throws IOException {
@@ -238,7 +254,7 @@ public final class Output {
     }
 
     /**
-     * 扫描元数据
+     * Scan the specified Node's metadata
      */
     private void scan(Node node) {
         if (node.isNull()) {
@@ -274,14 +290,13 @@ public final class Output {
     }
 
     /**
-     * 扫描数组节点
+     * Scan the specified ArrayNode, support all kinds array exclude native array.
      */
     private void scanArrayNode(ArrayNode array) {
         if (array instanceof MixArrayNode) {
             array.forEach(item -> this.scanArrayNode((ArrayNode) item));
             return;
         }
-        // 数组成员是string、symbol、object则需要更新元数据
         switch (array.elementType()) {
             case STRING:
                 array.forEach(item -> dataPool.registerString(String.valueOf(item)));
@@ -303,15 +318,15 @@ public final class Output {
     }
 
     /**
-     * 扫描并整理Object节点的元数据
+     * Scan the specified ObjectNode, collect it's relevant metadata and children's
      */
     private void scanObjectNode(ObjectNode node) {
         String[] fieldNames = node.getFields();
         boolean stable = node.isStable();
-        // 注册struct
+        // reigster object's metadata
         namePool.register(!stream || !stable, fieldNames);
         structPool.register(!stream || !stable, fieldNames);
-        // 扫描子节点
+        // scan children nodes
         for (Node subNode : node.getData().values()) {
             this.scan(subNode);
         }
