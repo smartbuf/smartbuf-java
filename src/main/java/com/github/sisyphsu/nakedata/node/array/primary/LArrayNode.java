@@ -24,7 +24,8 @@ public final class LArrayNode extends Node {
         return new LArrayNode(data);
     }
 
-    public long[] getItems() {
+    @Override
+    public long[] longsValue() {
         return items;
     }
 

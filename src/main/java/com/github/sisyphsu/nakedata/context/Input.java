@@ -52,14 +52,13 @@ public final class Input {
     private Object readNode() throws IOException {
         long nodeID = reader.readVarUint();
         byte flag = (byte) (nodeID & 0b0000_0011);
-        nodeID = nodeID >>> 2;
         switch (flag) {
             case FLAG_DATA:
-                return context.findDataByID((int) nodeID);
+                return context.findDataByID((int) (nodeID >>> 2));
             case FLAG_ARRAY:
                 return this.readArray(nodeID >>> 2);
             case FLAG_STRUCT:
-                String[] fields = context.findStructByID((int) nodeID);
+                String[] fields = context.findStructByID((int) (nodeID >>> 2));
                 Map<String, Object> tmp = new HashMap<>();
                 for (String field : fields) {
                     tmp.put(field, readNode());

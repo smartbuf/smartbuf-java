@@ -62,37 +62,37 @@ public final class ArrayNodeCodec extends Codec {
 
     @Converter
     public boolean[] toArray(ZArrayNode node) {
-        return node.getItems();
+        return node.booleansValue();
     }
 
     @Converter
     public byte[] toArray(BArrayNode node) {
-        return node.getItems();
+        return node.bytesValue();
     }
 
     @Converter
     public short[] toArray(SArrayNode node) {
-        return node.getItems();
+        return node.shortsValue();
     }
 
     @Converter
     public int[] toArray(IArrayNode node) {
-        return node.getItems();
+        return node.intsValue();
     }
 
     @Converter
     public long[] toArray(LArrayNode node) {
-        return node.getItems();
+        return node.longsValue();
     }
 
     @Converter
     public float[] toArray(FArrayNode node) {
-        return node.getItems();
+        return node.floatsValue();
     }
 
     @Converter
     public double[] toArray(DArrayNode node) {
-        return node.getItems();
+        return node.doublesValue();
     }
 
     @Converter

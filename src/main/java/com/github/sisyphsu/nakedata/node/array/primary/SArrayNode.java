@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.node.array.primary;
 
-import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.DataType;
+import com.github.sisyphsu.nakedata.node.Node;
 
 /**
  * short[] array
@@ -24,7 +24,8 @@ public final class SArrayNode extends Node {
         return new SArrayNode(data);
     }
 
-    public short[] getItems() {
+    @Override
+    public short[] shortsValue() {
         return items;
     }
 

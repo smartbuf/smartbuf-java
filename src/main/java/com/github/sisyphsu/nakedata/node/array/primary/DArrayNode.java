@@ -24,7 +24,8 @@ public final class DArrayNode extends Node {
         return new DArrayNode(data);
     }
 
-    public double[] getItems() {
+    @Override
+    public double[] doublesValue() {
         return items;
     }
 

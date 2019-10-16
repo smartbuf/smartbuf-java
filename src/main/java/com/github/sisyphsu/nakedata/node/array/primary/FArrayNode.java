@@ -24,7 +24,8 @@ public final class FArrayNode extends Node {
         return new FArrayNode(items);
     }
 
-    public float[] getItems() {
+    @Override
+    public float[] floatsValue() {
         return items;
     }
 

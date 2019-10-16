@@ -24,7 +24,8 @@ public final class IArrayNode extends Node {
         return new IArrayNode(data);
     }
 
-    public int[] getItems() {
+    @Override
+    public int[] intsValue() {
         return items;
     }
 

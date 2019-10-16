@@ -24,7 +24,8 @@ public final class BArrayNode extends Node {
         return new BArrayNode(data);
     }
 
-    public byte[] getItems() {
+    @Override
+    public byte[] bytesValue() {
         return items;
     }
 

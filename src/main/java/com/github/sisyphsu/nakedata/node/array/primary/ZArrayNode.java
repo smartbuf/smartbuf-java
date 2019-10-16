@@ -24,6 +24,11 @@ public final class ZArrayNode extends Node {
         return new ZArrayNode(data);
     }
 
+    @Override
+    public boolean[] booleansValue() {
+        return items;
+    }
+
     public boolean[] getItems() {
         return items;
     }

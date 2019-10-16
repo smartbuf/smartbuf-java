@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -18,16 +17,8 @@ import java.util.Objects;
  */
 public class IOSimpleTest {
 
-    private byte[] bytes;
-
-    @Test
-    public void testNull() throws IOException {
-        for (Node node : Arrays.asList(DoubleNode.NULL, FloatNode.NULL, VarintNode.NULL, StringNode.NULL, ObjectNode.NULL)) {
-            Object obj = transIO(node);
-            assert bytes.length == 2;
-            assert obj == null;
-        }
-    }
+    private boolean enableCxt;
+    private byte[]  bytes;
 
     @Test
     public void testBoolean() throws IOException {
@@ -142,15 +133,45 @@ public class IOSimpleTest {
         assert Objects.equals(obj, str);
     }
 
+    @Test
+    public void testSymbol() throws IOException {
+        String symbol = "USER_BLOCKED";
+
+        enableCxt = true;
+        Object obj = transIO(SymbolNode.valueOf(symbol));
+        assert Objects.equals(symbol, obj);
+
+        enableCxt = false;
+        obj = transIO(SymbolNode.valueOf(symbol));
+        assert Objects.equals(symbol, obj);
+    }
+
+    @Test
+    public void testObject() throws IOException {
+        Object obj = transIO(ObjectNode.NULL);
+        assert bytes.length == 2;
+        assert obj == null;
+    }
+
+    @Test
+    public void testError() {
+        try {
+            transIO(null);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof NullPointerException;
+        }
+    }
+
     // exec node -> output -> input -> object
     private Object transIO(Node node) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1 << 16);
-        Output output = new Output(outputStream, false);
+        Output output = new Output(outputStream, enableCxt);
         output.write(node);
 
         bytes = outputStream.toByteArray();
         ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-        Input input = new Input(inputStream, false);
+        Input input = new Input(inputStream, enableCxt);
         return input.read();
     }
 
