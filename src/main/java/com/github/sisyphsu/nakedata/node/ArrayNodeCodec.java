@@ -97,7 +97,7 @@ public final class ArrayNodeCodec extends Codec {
 
     @Converter
     public char[] toArray(StringNode node) {
-        return node.getValue().toCharArray();
+        return node.stringValue().toCharArray();
     }
 
     /**

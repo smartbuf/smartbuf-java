@@ -306,8 +306,8 @@ public final class Output {
      * 扫描并整理Object节点的元数据
      */
     private void scanObjectNode(ObjectNode node) {
-        String[] fieldNames = node.getKey().getFields();
-        boolean stable = node.getKey().isStable();
+        String[] fieldNames = node.getFields();
+        boolean stable = node.isStable();
         // 注册struct
         namePool.register(!stream || !stable, fieldNames);
         structPool.register(!stream || !stable, fieldNames);

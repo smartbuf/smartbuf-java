@@ -54,7 +54,7 @@ public final class VarintNode extends Node {
 
     public static VarintNode valueOf(long l) {
         long ul = NumberUtils.intToUint(l);
-        if (ul < TABLE.length) {
+        if (ul >= 0 && ul < TABLE.length) {
             return TABLE[(int) ul];
         }
         return new VarintNode(l);
@@ -76,10 +76,9 @@ public final class VarintNode extends Node {
         return this == NULL;
     }
 
-    public Long getValue() {
-        if (this == NULL) {
-            return null;
-        }
+    @Override
+    public long longValue() {
         return value;
     }
+
 }

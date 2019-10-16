@@ -34,10 +34,8 @@ public final class DoubleNode extends Node {
         return valueOf(d.doubleValue());
     }
 
-    public Double getValue() {
-        if (this == NULL) {
-            return null;
-        }
+    @Override
+    public double doubleValue() {
         return value;
     }
 
@@ -50,4 +48,5 @@ public final class DoubleNode extends Node {
     public boolean isNull() {
         return this == NULL;
     }
+
 }

@@ -120,24 +120,43 @@ public final class InputContext {
         return struct;
     }
 
-    public float findFloatByID(int id) {
-        return 0;
-    }
-
-    public double findDoubleByID(int id) {
-        return 0;
-    }
-
-    public long findVarintByID(int id) {
-        return 0;
-    }
-
+    /**
+     * Find the specified string by its unique ID
+     *
+     * @param id String's unique ID
+     * @return String's value
+     */
     public String findStringByID(int id) {
-        return null;
+        id -= ID_PREFIX;
+        id -= tmpFloats.size();
+        id -= tmpDoubles.size();
+        id -= tmpVarints.size();
+        if (id < tmpStrings.size()) {
+            return tmpStrings.get(id);
+        }
+        throw new IllegalArgumentException("invalid string dataId: " + id);
     }
 
+    /**
+     * Find the specified symbol by its unique ID
+     *
+     * @param id Symbol's unique ID
+     * @return Symbol's value
+     */
     public String findSymbolByID(int id) {
-        return null;
+        id -= ID_PREFIX;
+        id -= tmpFloats.size();
+        id -= tmpDoubles.size();
+        id -= tmpVarints.size();
+        id -= tmpStrings.size();
+        if (id >= cxtSymbols.cap()) {
+            throw new IllegalArgumentException("invalid string dataId: " + id);
+        }
+        String symbol = cxtSymbols.get(id);
+        if (symbol == null) {
+            throw new IllegalArgumentException("invalid string dataId: " + id);
+        }
+        return symbol;
     }
 
     /**
@@ -164,7 +183,7 @@ public final class InputContext {
         }
         offset -= len;
         if (offset < (len = tmpDoubles.size())) {
-            return tmpDoubles.size();
+            return tmpDoubles.get(offset);
         }
         offset -= len;
         if (offset < (len = tmpVarints.size())) {
@@ -175,10 +194,14 @@ public final class InputContext {
             return tmpStrings.get(offset);
         }
         offset -= len;
-        if (offset < cxtSymbols.size()) {
-            return cxtSymbols.get(offset);
+        if (offset >= cxtSymbols.cap()) {
+            throw new IllegalArgumentException("invalid data-id: " + id);
         }
-        throw new IllegalArgumentException("invalid data-id: " + id);
+        String symbol = cxtSymbols.get(offset);
+        if (symbol == null) {
+            throw new IllegalArgumentException("invalid data-id: " + id);
+        }
+        return symbol;
     }
 
 }

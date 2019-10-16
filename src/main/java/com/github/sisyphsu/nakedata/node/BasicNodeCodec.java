@@ -54,47 +54,47 @@ public final class BasicNodeCodec extends Codec {
 
     @Converter
     public Boolean toBoolean(BooleanNode node) {
-        return node.value();
+        return node.isNull() ? null : node.booleanValue();
     }
 
     @Converter
     public Byte toByte(VarintNode node) {
-        return node.isNull() ? null : node.getValue().byteValue();
+        return node.isNull() ? null : (byte) node.longValue();
     }
 
     @Converter
     public Short toShort(VarintNode node) {
-        return node.isNull() ? null : node.getValue().shortValue();
+        return node.isNull() ? null : (short) node.longValue();
     }
 
     @Converter
     public Integer toInt(VarintNode node) {
-        return node.isNull() ? null : node.getValue().intValue();
+        return node.isNull() ? null : (int) node.longValue();
     }
 
     @Converter
     public Long toLong(VarintNode node) {
-        return node.isNull() ? null : node.getValue();
+        return node.isNull() ? null : node.longValue();
     }
 
     @Converter
     public Float toFloat(FloatNode node) {
-        return node.isNull() ? null : node.getValue();
+        return node.isNull() ? null : node.floatValue();
     }
 
     @Converter
     public Double toDouble(DoubleNode node) {
-        return node.isNull() ? null : node.getValue();
+        return node.isNull() ? null : node.doubleValue();
     }
 
     @Converter
     public String toString(StringNode node) {
-        return node.getValue();
+        return node.stringValue();
     }
 
     @Converter
     public String toString(SymbolNode node) {
-        return node.getData();
+        return node.stringValue();
     }
 
     /**

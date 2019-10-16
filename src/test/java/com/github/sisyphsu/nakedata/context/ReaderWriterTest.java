@@ -17,7 +17,7 @@ import java.util.Objects;
  * @author sulin
  * @since 2019-10-12 11:06:07
  */
-public class IOTest {
+public class ReaderWriterTest {
 
     @RepeatedTest(100)
     public void repeatBasic() throws IOException {

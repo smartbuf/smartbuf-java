@@ -34,10 +34,8 @@ public final class FloatNode extends Node {
         return valueOf(f.floatValue());
     }
 
-    public Float getValue() {
-        if (this == NULL) {
-            return null;
-        }
+    @Override
+    public float floatValue() {
         return value;
     }
 

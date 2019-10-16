@@ -55,10 +55,6 @@ public final class ObjectNode extends Node {
         return data;
     }
 
-    public Key getKey() {
-        return key;
-    }
-
     public String[] getFields() {
         return key.fields;
     }
@@ -73,21 +69,14 @@ public final class ObjectNode extends Node {
 
     public static final class Key {
 
-        private final boolean  stable;
-        private final String[] fields;
+        final boolean  stable;
+        final String[] fields;
 
         public Key(boolean stable, String[] fields) {
             this.stable = stable;
             this.fields = fields;
         }
 
-        public boolean isStable() {
-            return stable;
-        }
-
-        public String[] getFields() {
-            return fields;
-        }
     }
 
 }

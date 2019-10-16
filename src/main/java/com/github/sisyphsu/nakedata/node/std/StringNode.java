@@ -11,7 +11,7 @@ import com.github.sisyphsu.nakedata.node.Node;
  */
 public final class StringNode extends Node {
 
-    public final static StringNode NULL = new StringNode(null);
+    public final static StringNode NULL  = new StringNode(null);
     public final static StringNode EMPTY = new StringNode("");
 
     private final String value;
@@ -30,13 +30,6 @@ public final class StringNode extends Node {
         return new StringNode(str);
     }
 
-    public String getValue() {
-        if (this == NULL) {
-            return null;
-        }
-        return value;
-    }
-
     @Override
     public DataType dataType() {
         return DataType.STRING;
@@ -47,4 +40,8 @@ public final class StringNode extends Node {
         return this == NULL;
     }
 
+    @Override
+    public String stringValue() {
+        return value;
+    }
 }

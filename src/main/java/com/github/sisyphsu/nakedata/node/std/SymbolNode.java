@@ -22,10 +22,6 @@ public final class SymbolNode extends Node {
         return new SymbolNode(data);
     }
 
-    public String getData() {
-        return data;
-    }
-
     @Override
     public DataType dataType() {
         return DataType.SYMBOL;
@@ -36,4 +32,9 @@ public final class SymbolNode extends Node {
         return false;
     }
 
+    @Override
+    public String stringValue() {
+        return data;
+    }
+    
 }
