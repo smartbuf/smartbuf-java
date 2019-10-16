@@ -9,28 +9,22 @@ import lombok.Getter;
 @Getter
 public enum DataType {
 
-    NULL(0x00),
-    BOOL(0x01),
-    FLOAT(0x02),
-    DOUBLE(0x03),
-    VARINT(0x04),
-    STRING(0x05),
-    SYMBOL(0x06),
-    ARRAY(0x07),
-    OBJECT(0x08),
+    NULL,
+    BOOL,
+    FLOAT,
+    DOUBLE,
+    VARINT,
+    STRING,
+    SYMBOL,
+    ARRAY,
+    OBJECT,
 
-    N_BOOL_ARRAY(0x10),
-    N_BYTE_ARRAY(0x11),
-    N_SHORT_ARRAY(0x12),
-    N_INT_ARRAY(0x13),
-    N_LONG_ARRAY(0x14),
-    N_FLOAT_ARRAY(0x15),
-    N_DOUBLE_ARRAY(0x16);
-
-    private final byte code;
-
-    DataType(int code) {
-        this.code = (byte) code;
-    }
+    N_BOOL_ARRAY,
+    N_BYTE_ARRAY,
+    N_SHORT_ARRAY,
+    N_INT_ARRAY,
+    N_LONG_ARRAY,
+    N_FLOAT_ARRAY,
+    N_DOUBLE_ARRAY
 
 }

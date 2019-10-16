@@ -8,27 +8,17 @@ package com.github.sisyphsu.nakedata;
  */
 public enum ArrayType {
 
-    NULL(0x00),
-    BOOL(0x01),
-    FLOAT(0x02),
-    DOUBLE(0x03),
-    BYTE(0x04),
-    SHORT(0x05),
-    INT(0x06),
-    LONG(0x07),
-    STRING(0x08),
-    SYMBOL(0x09),
-    ARRAY(0x10),
-    OBJECT(0x11);
-
-    private final byte code;
-
-    ArrayType(int code) {
-        this.code = (byte) code;
-    }
-
-    public byte getCode() {
-        return code;
-    }
+    NULL,
+    BOOL,
+    FLOAT,
+    DOUBLE,
+    BYTE,
+    SHORT,
+    INT,
+    LONG,
+    STRING,
+    SYMBOL,
+    ARRAY,
+    OBJECT
 
 }
