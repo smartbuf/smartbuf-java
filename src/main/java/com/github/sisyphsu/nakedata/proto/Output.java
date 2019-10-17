@@ -2,12 +2,11 @@ package com.github.sisyphsu.nakedata.proto;
 
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.array.ArrayNode;
-import com.github.sisyphsu.nakedata.node.array.MixArrayNode;
+import com.github.sisyphsu.nakedata.node.array.SliceNode;
 import com.github.sisyphsu.nakedata.node.std.ObjectNode;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collections;
 import java.util.List;
 
 import static com.github.sisyphsu.nakedata.proto.Const.*;
@@ -180,14 +179,9 @@ public final class Output {
      */
     @SuppressWarnings("unchecked")
     private void writeArrayNode(ArrayNode node, OutputWriter writer, boolean suffixFlag) throws IOException {
-        List<ArrayNode> arrayNodes;
-        if (node instanceof MixArrayNode) {
-            arrayNodes = node.getItems();
-        } else {
-            arrayNodes = Collections.singletonList(node);
-        }
+        List<SliceNode> arrayNodes = node.getSlices();
         for (int i = 0, len = arrayNodes.size(); i < len; i++) {
-            ArrayNode slice = arrayNodes.get(i);
+            SliceNode slice = arrayNodes.get(i);
             List data = slice.getItems();
             // output array|slice header
             long sliceHead = (data.size() << 5) | (Const.toSliceType(slice.elementType()) << 1) | ((i == len - 1) ? 0 : 1);
@@ -288,29 +282,27 @@ public final class Output {
      * Scan the specified ArrayNode, support all kinds array exclude native array.
      */
     private void scanArrayNode(ArrayNode array) {
-        if (array instanceof MixArrayNode) {
-            array.forEach(item -> this.scanArrayNode((ArrayNode) item));
-            return;
-        }
-        switch (array.elementType()) {
-            case STRING:
-                array.forEach(item -> dataPool.registerString(String.valueOf(item)));
-                break;
-            case SYMBOL:
-                for (Object item : array.getItems()) {
-                    if (stream) {
-                        dataPool.registerSymbol((String) item);
-                    } else {
-                        dataPool.registerString((String) item);
+        for (SliceNode slice : array.getSlices()) {
+            switch (slice.elementType()) {
+                case STRING:
+                    slice.forEach(item -> dataPool.registerString(String.valueOf(item)));
+                    break;
+                case SYMBOL:
+                    for (Object item : slice.getItems()) {
+                        if (stream) {
+                            dataPool.registerSymbol((String) item);
+                        } else {
+                            dataPool.registerString((String) item);
+                        }
                     }
-                }
-                break;
-            case OBJECT:
-                array.forEach(item -> this.scanObjectNode((ObjectNode) item));
-                break;
-            case ARRAY:
-                array.forEach(item -> this.scanArrayNode((ArrayNode) item));
-                break;
+                    break;
+                case OBJECT:
+                    slice.forEach(item -> this.scanObjectNode((ObjectNode) item));
+                    break;
+                case ARRAY:
+                    slice.forEach(item -> this.scanArrayNode((ArrayNode) item));
+                    break;
+            }
         }
     }
 

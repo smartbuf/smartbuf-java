@@ -1,6 +1,7 @@
 package com.github.sisyphsu.nakedata.proto;
 
-import com.github.sisyphsu.nakedata.node.array.*;
+import com.github.sisyphsu.nakedata.node.array.ArrayNode;
+import com.github.sisyphsu.nakedata.node.array.SliceNode;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
@@ -21,13 +22,13 @@ public class IOSliceTest {
 
     @Test
     public void testMixArray() throws IOException {
-        List<ArrayNode> slices = create();
+        List<SliceNode> slices = create();
         List<Object> data = new ArrayList<>();
-        for (ArrayNode slice : slices) {
+        for (SliceNode slice : slices) {
             data.addAll(slice.getItems());
         }
         Object[] srcArr = data.toArray();
-        MixArrayNode node = new MixArrayNode(slices);
+        ArrayNode node = new ArrayNode(slices);
 
         // execute in temporary mode
         enableCxt = false;
@@ -42,15 +43,12 @@ public class IOSliceTest {
 
     @Test
     public void test2DArray() {
-        List<ArrayNode> arr1 = create();
-        List<ArrayNode> arr2 = create();
-        List<ArrayNode> arr3 = create();
 
     }
 
-    List<ArrayNode> create() {
+    List<SliceNode> create() {
         int len;
-        List<ArrayNode> slices = new ArrayList<>();
+        List<SliceNode> slices = new ArrayList<>();
         // boolean
         len = RandomUtils.nextInt(100, 200);
         List<Boolean> booleans = new ArrayList<>();
@@ -58,7 +56,7 @@ public class IOSliceTest {
             boolean b = RandomUtils.nextBoolean();
             booleans.add(b);
         }
-        slices.add(ArrayNode.booleanArray(booleans));
+        slices.add(SliceNode.booleanArray(booleans));
 
         // byte
         len = RandomUtils.nextInt(100, 200);
@@ -67,7 +65,7 @@ public class IOSliceTest {
             byte tmp = (byte) RandomUtils.nextInt();
             bytes.add(tmp);
         }
-        slices.add(ArrayNode.byteArray(bytes));
+        slices.add(SliceNode.byteArray(bytes));
 
         // short
         len = RandomUtils.nextInt(100, 200);
@@ -76,7 +74,7 @@ public class IOSliceTest {
             short tmp = (short) RandomUtils.nextInt();
             shorts.add(tmp);
         }
-        slices.add(ArrayNode.shortArray(shorts));
+        slices.add(SliceNode.shortArray(shorts));
 
         // int
         len = RandomUtils.nextInt(100, 200);
@@ -85,7 +83,7 @@ public class IOSliceTest {
             int tmp = RandomUtils.nextInt();
             ints.add(tmp);
         }
-        slices.add(ArrayNode.intArray(ints));
+        slices.add(SliceNode.intArray(ints));
 
         // long
         len = RandomUtils.nextInt(100, 200);
@@ -94,7 +92,7 @@ public class IOSliceTest {
             long tmp = RandomUtils.nextLong();
             longs.add(tmp);
         }
-        slices.add(ArrayNode.longArray(longs));
+        slices.add(SliceNode.longArray(longs));
 
         // null
         len = RandomUtils.nextInt(100, 200);
@@ -102,7 +100,7 @@ public class IOSliceTest {
         for (int i = 0; i < len; i++) {
             nulls.add(null);
         }
-        slices.add(ArrayNode.nullArray(nulls));
+        slices.add(SliceNode.nullArray(nulls));
 
         // float
         len = RandomUtils.nextInt(100, 200);
@@ -111,7 +109,7 @@ public class IOSliceTest {
             float tmp = RandomUtils.nextFloat();
             floats.add(tmp);
         }
-        slices.add(ArrayNode.floatArray(floats));
+        slices.add(SliceNode.floatArray(floats));
 
         // double
         len = RandomUtils.nextInt(100, 200);
@@ -120,7 +118,7 @@ public class IOSliceTest {
             double tmp = RandomUtils.nextDouble();
             doubles.add(tmp);
         }
-        slices.add(ArrayNode.doubleArray(doubles));
+        slices.add(SliceNode.doubleArray(doubles));
 
         // String
         len = RandomUtils.nextInt(100, 200);
@@ -129,7 +127,7 @@ public class IOSliceTest {
             String tmp = RandomStringUtils.random(16);
             strings.add(tmp);
         }
-        slices.add(ArrayNode.stringArray(strings));
+        slices.add(SliceNode.stringArray(strings));
 
         // symbol
         len = RandomUtils.nextInt(100, 200);
@@ -138,7 +136,7 @@ public class IOSliceTest {
             String tmp = RandomStringUtils.randomAlphabetic(16);
             symbols.add(tmp);
         }
-        slices.add(ArrayNode.symbolArray(symbols));
+        slices.add(SliceNode.symbolArray(symbols));
 
         return slices;
     }

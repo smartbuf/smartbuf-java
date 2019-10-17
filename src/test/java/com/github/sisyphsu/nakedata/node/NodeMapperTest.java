@@ -22,15 +22,15 @@ public class NodeMapperTest {
 
         Node node = NodeMapper.convertNodeTree(beans);
         assert node instanceof ArrayNode;
-        assert ((ArrayNode) node).getItems().size() == 2;
+        assert ((ArrayNode) node).getSlices().size() == 1;
     }
 
     @Data
     public static class Bean {
 
-        private int id;
+        private int    id;
         private String name;
-        private Date timestamp;
+        private Date   timestamp;
 
         public Bean(int id, String name) {
             this.id = id;
