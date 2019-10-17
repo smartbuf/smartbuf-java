@@ -7,7 +7,7 @@ import lombok.Getter;
  * @since 2019-05-08 20:25:32
  */
 @Getter
-public enum DataType {
+public enum NodeType {
 
     NULL,
     BOOL,

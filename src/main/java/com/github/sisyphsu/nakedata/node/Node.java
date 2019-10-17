@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.node;
 
-import com.github.sisyphsu.nakedata.DataType;
+import com.github.sisyphsu.nakedata.NodeType;
 
 /**
  * 属性树节点
@@ -22,7 +22,7 @@ public abstract class Node {
      *
      * @return DataType
      */
-    public abstract DataType dataType();
+    public abstract NodeType dataType();
 
     public boolean booleanValue() {
         throw new UnsupportedOperationException();

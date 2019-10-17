@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.node.std;
 
-import com.github.sisyphsu.nakedata.DataType;
+import com.github.sisyphsu.nakedata.NodeType;
 import com.github.sisyphsu.nakedata.node.Node;
 
 /**
@@ -23,8 +23,8 @@ public final class SymbolNode extends Node {
     }
 
     @Override
-    public DataType dataType() {
-        return DataType.SYMBOL;
+    public NodeType dataType() {
+        return NodeType.SYMBOL;
     }
 
     @Override

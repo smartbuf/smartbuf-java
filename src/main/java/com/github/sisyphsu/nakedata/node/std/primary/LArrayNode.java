@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.node.std.primary;
 
 import com.github.sisyphsu.nakedata.node.Node;
-import com.github.sisyphsu.nakedata.DataType;
+import com.github.sisyphsu.nakedata.NodeType;
 
 /**
  * long[] array
@@ -30,8 +30,8 @@ public final class LArrayNode extends Node {
     }
 
     @Override
-    public DataType dataType() {
-        return DataType.N_LONG_ARRAY;
+    public NodeType dataType() {
+        return NodeType.N_LONG_ARRAY;
     }
 
     @Override

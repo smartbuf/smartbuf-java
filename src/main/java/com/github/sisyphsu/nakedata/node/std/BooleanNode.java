@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.node.std;
 
 import com.github.sisyphsu.nakedata.node.Node;
-import com.github.sisyphsu.nakedata.DataType;
+import com.github.sisyphsu.nakedata.NodeType;
 
 /**
  * BooleanNode represents boolean and Boolean.
@@ -30,8 +30,8 @@ public final class BooleanNode extends Node {
     }
 
     @Override
-    public DataType dataType() {
-        return DataType.BOOL;
+    public NodeType dataType() {
+        return NodeType.BOOL;
     }
 
     @Override

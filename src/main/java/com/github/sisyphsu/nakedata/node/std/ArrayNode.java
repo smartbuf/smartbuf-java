@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.node.std;
 
 import com.github.sisyphsu.nakedata.ArrayType;
-import com.github.sisyphsu.nakedata.DataType;
+import com.github.sisyphsu.nakedata.NodeType;
 import com.github.sisyphsu.nakedata.node.AsList;
 import com.github.sisyphsu.nakedata.node.Node;
 
@@ -67,8 +67,8 @@ public class ArrayNode extends Node {
     }
 
     @Override
-    public DataType dataType() {
-        return DataType.ARRAY;
+    public NodeType dataType() {
+        return NodeType.ARRAY;
     }
 
     @Override

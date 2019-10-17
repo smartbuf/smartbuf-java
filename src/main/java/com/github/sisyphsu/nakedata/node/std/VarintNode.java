@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.node.std;
 
-import com.github.sisyphsu.nakedata.DataType;
+import com.github.sisyphsu.nakedata.NodeType;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.utils.NumberUtils;
 
@@ -67,8 +67,8 @@ public final class VarintNode extends Node {
     }
 
     @Override
-    public DataType dataType() {
-        return DataType.VARINT;
+    public NodeType dataType() {
+        return NodeType.VARINT;
     }
 
     @Override

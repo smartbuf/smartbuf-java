@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.node.std;
 
-import com.github.sisyphsu.nakedata.DataType;
+import com.github.sisyphsu.nakedata.NodeType;
 import com.github.sisyphsu.nakedata.node.Node;
 
 import java.util.Collections;
@@ -38,8 +38,8 @@ public final class ObjectNode extends Node {
     }
 
     @Override
-    public DataType dataType() {
-        return DataType.OBJECT;
+    public NodeType dataType() {
+        return NodeType.OBJECT;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.node.std;
 
-import com.github.sisyphsu.nakedata.DataType;
+import com.github.sisyphsu.nakedata.NodeType;
 import com.github.sisyphsu.nakedata.node.Node;
 
 /**
@@ -31,8 +31,8 @@ public final class StringNode extends Node {
     }
 
     @Override
-    public DataType dataType() {
-        return DataType.STRING;
+    public NodeType dataType() {
+        return NodeType.STRING;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.node.std.primary;
 
 import com.github.sisyphsu.nakedata.node.Node;
-import com.github.sisyphsu.nakedata.DataType;
+import com.github.sisyphsu.nakedata.NodeType;
 
 /**
  * byte[] array
@@ -30,8 +30,8 @@ public final class BArrayNode extends Node {
     }
 
     @Override
-    public DataType dataType() {
-        return DataType.N_BYTE_ARRAY;
+    public NodeType dataType() {
+        return NodeType.N_BYTE_ARRAY;
     }
 
     @Override

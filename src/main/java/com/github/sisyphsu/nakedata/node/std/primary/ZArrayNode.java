@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.node.std.primary;
 
-import com.github.sisyphsu.nakedata.DataType;
+import com.github.sisyphsu.nakedata.NodeType;
 import com.github.sisyphsu.nakedata.node.Node;
 
 /**
@@ -34,8 +34,8 @@ public final class ZArrayNode extends Node {
     }
 
     @Override
-    public DataType dataType() {
-        return DataType.N_BOOL_ARRAY;
+    public NodeType dataType() {
+        return NodeType.N_BOOL_ARRAY;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.node.std.primary;
 
-import com.github.sisyphsu.nakedata.DataType;
+import com.github.sisyphsu.nakedata.NodeType;
 import com.github.sisyphsu.nakedata.node.Node;
 
 /**
@@ -30,8 +30,8 @@ public final class SArrayNode extends Node {
     }
 
     @Override
-    public DataType dataType() {
-        return DataType.N_SHORT_ARRAY;
+    public NodeType dataType() {
+        return NodeType.N_SHORT_ARRAY;
     }
 
     @Override
