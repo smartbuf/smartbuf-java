@@ -1,37 +1,37 @@
-package com.github.sisyphsu.nakedata.node.array.primary;
+package com.github.sisyphsu.nakedata.node.std.primary;
 
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.DataType;
 
 /**
- * int[] array
+ * double[] array
  *
  * @author sulin
- * @since 2019-06-05 15:54:27
+ * @since 2019-06-04 16:51:04
  */
-public final class IArrayNode extends Node {
+public final class DArrayNode extends Node {
 
-    private int[] items;
+    private double[] items;
 
-    private IArrayNode(int[] items) {
+    private DArrayNode(double[] items) {
         this.items = items;
     }
 
-    public static IArrayNode valueOf(int[] data) {
+    public static DArrayNode valueOf(double[] data) {
         if (data == null || data.length == 0) {
             throw new IllegalArgumentException("data can't be null or empty");
         }
-        return new IArrayNode(data);
+        return new DArrayNode(data);
     }
 
     @Override
-    public int[] intsValue() {
+    public double[] doublesValue() {
         return items;
     }
 
     @Override
     public DataType dataType() {
-        return DataType.N_INT_ARRAY;
+        return DataType.N_DOUBLE_ARRAY;
     }
 
     @Override

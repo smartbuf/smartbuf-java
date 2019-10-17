@@ -1,37 +1,37 @@
-package com.github.sisyphsu.nakedata.node.array.primary;
+package com.github.sisyphsu.nakedata.node.std.primary;
 
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.DataType;
 
 /**
- * long[] array
+ * byte[] array
  *
  * @author sulin
- * @since 2019-06-05 15:54:35
+ * @since 2019-05-08 21:01:31
  */
-public final class LArrayNode extends Node {
+public final class BArrayNode extends Node {
 
-    private long[] items;
+    private byte[] items;
 
-    private LArrayNode(long[] items) {
+    private BArrayNode(byte[] items) {
         this.items = items;
     }
 
-    public static LArrayNode valueOf(long[] data) {
+    public static BArrayNode valueOf(byte[] data) {
         if (data == null || data.length == 0) {
             throw new IllegalArgumentException("data can't be null or empty");
         }
-        return new LArrayNode(data);
+        return new BArrayNode(data);
     }
 
     @Override
-    public long[] longsValue() {
+    public byte[] bytesValue() {
         return items;
     }
 
     @Override
     public DataType dataType() {
-        return DataType.N_LONG_ARRAY;
+        return DataType.N_BYTE_ARRAY;
     }
 
     @Override

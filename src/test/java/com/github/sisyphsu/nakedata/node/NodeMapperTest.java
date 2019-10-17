@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.node;
 
-import com.github.sisyphsu.nakedata.node.array.ArrayNode;
+import com.github.sisyphsu.nakedata.node.std.ArrayNode;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
 

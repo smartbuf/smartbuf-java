@@ -1,8 +1,8 @@
 package com.github.sisyphsu.nakedata.proto;
 
 import com.github.sisyphsu.nakedata.node.Node;
-import com.github.sisyphsu.nakedata.node.array.ArrayNode;
-import com.github.sisyphsu.nakedata.node.array.SliceNode;
+import com.github.sisyphsu.nakedata.node.std.ArrayNode;
+import com.github.sisyphsu.nakedata.node.std.SliceNode;
 import com.github.sisyphsu.nakedata.node.std.ObjectNode;
 
 import java.io.IOException;

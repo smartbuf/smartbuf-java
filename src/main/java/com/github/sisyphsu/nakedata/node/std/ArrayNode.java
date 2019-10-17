@@ -1,4 +1,4 @@
-package com.github.sisyphsu.nakedata.node.array;
+package com.github.sisyphsu.nakedata.node.std;
 
 import com.github.sisyphsu.nakedata.DataType;
 import com.github.sisyphsu.nakedata.node.Node;

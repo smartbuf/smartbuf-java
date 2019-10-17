@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.proto;
 
-import com.github.sisyphsu.nakedata.node.array.ArrayNode;
-import com.github.sisyphsu.nakedata.node.array.SliceNode;
+import com.github.sisyphsu.nakedata.node.std.ArrayNode;
+import com.github.sisyphsu.nakedata.node.std.SliceNode;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;

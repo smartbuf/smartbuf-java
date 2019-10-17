@@ -2,9 +2,9 @@ package com.github.sisyphsu.nakedata.node;
 
 import com.github.sisyphsu.nakedata.convertor.Codec;
 import com.github.sisyphsu.nakedata.convertor.Converter;
-import com.github.sisyphsu.nakedata.node.array.ArrayNode;
-import com.github.sisyphsu.nakedata.node.array.SliceNode;
-import com.github.sisyphsu.nakedata.node.array.primary.*;
+import com.github.sisyphsu.nakedata.node.std.ArrayNode;
+import com.github.sisyphsu.nakedata.node.std.SliceNode;
+import com.github.sisyphsu.nakedata.node.std.primary.*;
 import com.github.sisyphsu.nakedata.node.std.StringNode;
 
 import java.util.ArrayList;
