@@ -2,7 +2,8 @@ package com.github.sisyphsu.nakedata.node;
 
 import com.github.sisyphsu.nakedata.convertor.Codec;
 import com.github.sisyphsu.nakedata.convertor.Converter;
-import com.github.sisyphsu.nakedata.node.array.*;
+import com.github.sisyphsu.nakedata.node.array.ArrayNode;
+import com.github.sisyphsu.nakedata.node.array.MixArrayNode;
 import com.github.sisyphsu.nakedata.node.array.primary.*;
 import com.github.sisyphsu.nakedata.node.std.StringNode;
 
@@ -135,31 +136,32 @@ public final class ArrayNodeCodec extends Codec {
             ArrayNode slice;
             List subList = list.subList(sliceOff, off + 1);
             if (sliceType == null) {
-                slice = new NullArrayNode(subList);
+                slice = ArrayNode.nullArray(subList);
             } else if (sliceType == Boolean.class) {
-                slice = new BooleanArrayNode(subList);
+                slice = ArrayNode.booleanArray(subList);
             } else if (sliceType == Byte.class) {
-                slice = new ByteArrayNode(subList);
+                slice = ArrayNode.byteArray(subList);
             } else if (sliceType == Short.class) {
-                slice = new ShortArrayNode(subList);
+                slice = ArrayNode.shortArray(subList);
             } else if (sliceType == Integer.class) {
-                slice = new IntegerArrayNode(subList);
+                slice = ArrayNode.intArray(subList);
             } else if (sliceType == Long.class) {
-                slice = new LongArrayNode(subList);
+                slice = ArrayNode.longArray(subList);
             } else if (sliceType == Float.class) {
-                slice = new FloatArrayNode(subList);
+                slice = ArrayNode.floatArray(subList);
             } else if (sliceType == Double.class) {
-                slice = new DoubleArrayNode(subList);
+                slice = ArrayNode.doubleArray(subList);
             } else if (String.class.isAssignableFrom(sliceType)) {
-                slice = new StringArrayNode(subList);
+                slice = ArrayNode.stringArray(subList);
             } else if (Enum.class.isAssignableFrom(sliceType)) {
-                slice = new SymbolArrayNode(subList);
+                slice = ArrayNode.symbolArray(subList); // subList's component is not string
             } else {
                 List<Node> nodes = new ArrayList<>(subList.size());
                 for (Object o : subList) {
                     nodes.add(convert(o, Node.class));
                 }
-                slice = new ObjectArrayNode(nodes);
+                // TODO 此时不一定是ObjectNode，需要根据Node具体类型再次分组？
+                slice = ArrayNode.nodeArray(nodes);
             }
             // update arrays and last
             if (off == size - 1 && multiSliceResult == null) {

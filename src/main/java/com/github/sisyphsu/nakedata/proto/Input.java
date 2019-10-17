@@ -73,17 +73,16 @@ public final class Input {
      * Read an array
      */
     private Object readArray(long head) throws IOException {
-        boolean hasMore = (head & 1) == 1;
-        if (!hasMore) {
+        if ((head & 1) == 0) {
             return readPureArray(head);
         }
         List<Object[]> slices = new ArrayList<>();
         int totalSize = 0;
-        for (; hasMore; hasMore = (head & 1) == 1) {
+        while (true) {
             byte type = (byte) ((head >>> 1) & 0x0F);
             int size = (int) (head >>> 5);
-            Object[] slice;
             totalSize += size;
+            Object[] slice;
             switch (type) {
                 case SLICE_BOOL:
                     slice = reader.readBooleanSlice(size);
@@ -112,7 +111,8 @@ public final class Input {
                 case SLICE_SYMBOL:
                     slice = new String[size];
                     for (int i = 0; i < size; i++) {
-                        slice[i] = context.findSymbolByID((int) reader.readVarUint());
+                        int dataId = (int) reader.readVarUint();
+                        slice[i] = stream ? context.findSymbolByID(dataId) : context.findStringByID(dataId);
                     }
                     break;
                 case SLICE_STRING:
@@ -142,8 +142,11 @@ public final class Input {
                 default:
                     throw new IllegalArgumentException("invalid data");
             }
-            head = reader.readVarUint();
             slices.add(slice);
+            if ((head & 1) == 0) {
+                break;
+            }
+            head = reader.readVarUint();
         }
         Object[] result = new Object[totalSize];
         int off = 0;

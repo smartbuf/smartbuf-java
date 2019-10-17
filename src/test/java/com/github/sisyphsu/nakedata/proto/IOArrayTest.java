@@ -1,28 +1,22 @@
 package com.github.sisyphsu.nakedata.proto;
 
-import com.github.sisyphsu.nakedata.node.Node;
-import com.github.sisyphsu.nakedata.node.array.NullArrayNode;
-import com.github.sisyphsu.nakedata.node.array.StringArrayNode;
-import com.github.sisyphsu.nakedata.node.array.SymbolArrayNode;
+import com.github.sisyphsu.nakedata.node.array.ArrayNode;
 import com.github.sisyphsu.nakedata.node.array.primary.*;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import static com.github.sisyphsu.nakedata.proto.IOTest.*;
 
 /**
  * @author sulin
  * @since 2019-10-16 19:55:43
  */
 public class IOArrayTest {
-
-    private boolean enableCxt;
-    private byte[]  bytes;
 
     @Test
     public void testZArray() throws IOException {
@@ -96,39 +90,28 @@ public class IOArrayTest {
     @Test
     public void testNullArray() throws IOException {
         List list = Arrays.asList(null, null, null, null, null);
-        Object result = transIO(new NullArrayNode(list));
+        Object result = transIO(ArrayNode.nullArray(list));
         assert Objects.deepEquals(list.toArray(), result);
     }
 
     @Test
     public void testStringArray() throws IOException {
-        List list = Arrays.asList("hello1", "hello2", "hello3", "hello4", "hello5");
-        Object result = transIO(new StringArrayNode(list));
+        List<String> list = Arrays.asList("hello1", "hello2", "hello3", "hello4", "hello5");
+        Object result = transIO(ArrayNode.stringArray(list));
         assert Objects.deepEquals(list.toArray(), result);
     }
 
     @Test
     public void testSymbolArray() throws IOException {
-        List list = Arrays.asList("symbol1", "symbol2", "symbol3", "symbol4", "symbol5");
+        List<String> list = Arrays.asList("symbol1", "symbol2", "symbol3", "symbol4", "symbol5");
 
         enableCxt = true;
-        Object result = transIO(new SymbolArrayNode(list));
+        Object result = transIO(ArrayNode.symbolArray(list));
         assert Objects.deepEquals(list.toArray(), result);
 
         enableCxt = false;
-        result = transIO(new SymbolArrayNode(list));
+        result = transIO(ArrayNode.symbolArray(list));
         assert Objects.deepEquals(list.toArray(), result);
-    }
-
-    private Object transIO(Node node) throws IOException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1 << 16);
-        Output output = new Output(outputStream, enableCxt);
-        output.write(node);
-
-        bytes = outputStream.toByteArray();
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-        Input input = new Input(inputStream, enableCxt);
-        return input.read();
     }
 
 }

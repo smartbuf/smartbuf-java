@@ -15,10 +15,10 @@ import java.util.Objects;
  * @author sulin
  * @since 2019-10-16 10:17:06
  */
-public class IOSimpleTest {
+public class IOTest {
 
-    private boolean enableCxt;
-    private byte[]  bytes;
+    static boolean enableCxt;
+    static byte[]  bytes;
 
     @Test
     public void testBoolean() throws IOException {
@@ -164,8 +164,8 @@ public class IOSimpleTest {
     }
 
     // exec node -> output -> input -> object
-    private Object transIO(Node node) throws IOException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1 << 16);
+    static Object transIO(Node node) throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1 << 20);
         Output output = new Output(outputStream, enableCxt);
         output.write(node);
 

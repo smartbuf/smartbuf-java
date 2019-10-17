@@ -11,17 +11,7 @@ import java.util.List;
 public final class MixArrayNode extends ArrayNode {
 
     public MixArrayNode(List<ArrayNode> items) {
-        super(items);
-    }
-
-    @Override
-    public int size() {
-        int result = 0;
-        for (Object item : items) {
-            ArrayNode node = (ArrayNode) item;
-            result += node.size();
-        }
-        return result;
+        super(items, null);
     }
 
 }
