@@ -2,7 +2,6 @@ package com.github.sisyphsu.nakedata.proto;
 
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.std.ArrayNode;
-import com.github.sisyphsu.nakedata.node.std.SliceNode;
 import com.github.sisyphsu.nakedata.node.std.ObjectNode;
 
 import java.io.IOException;
@@ -179,9 +178,9 @@ public final class Output {
      */
     @SuppressWarnings("unchecked")
     private void writeArrayNode(ArrayNode node, OutputWriter writer, boolean suffixFlag) throws IOException {
-        List<SliceNode> arrayNodes = node.getSlices();
+        List<ArrayNode.Slice> arrayNodes = node.getSlices();
         for (int i = 0, len = arrayNodes.size(); i < len; i++) {
-            SliceNode slice = arrayNodes.get(i);
+            ArrayNode.Slice slice = arrayNodes.get(i);
             List data = slice.getItems();
             // output array|slice header
             long sliceHead = (data.size() << 5) | (Const.toSliceType(slice.elementType()) << 1) | ((i == len - 1) ? 0 : 1);
@@ -282,7 +281,7 @@ public final class Output {
      * Scan the specified ArrayNode, support all kinds array exclude native array.
      */
     private void scanArrayNode(ArrayNode array) {
-        for (SliceNode slice : array.getSlices()) {
+        for (ArrayNode.Slice slice : array.getSlices()) {
             switch (slice.elementType()) {
                 case STRING:
                     slice.forEach(item -> dataPool.registerString(String.valueOf(item)));

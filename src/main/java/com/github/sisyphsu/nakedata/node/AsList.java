@@ -11,20 +11,22 @@ import java.util.function.UnaryOperator;
  */
 public class AsList<E> extends AbstractList<E> implements RandomAccess {
 
-    private final E[] a;
+    private final int size;
+    private final E[] data;
 
-    public AsList(E[] array) {
-        a = Objects.requireNonNull(array);
+    public AsList(E[] array, int size) {
+        this.size = size;
+        this.data = Objects.requireNonNull(array);
     }
 
     @Override
     public int size() {
-        return a.length;
+        return size;
     }
 
     @Override
     public Object[] toArray() {
-        return a;
+        return data;
     }
 
     @Override
@@ -32,9 +34,9 @@ public class AsList<E> extends AbstractList<E> implements RandomAccess {
     public <T> T[] toArray(T[] a) {
         int size = size();
         if (a.length < size) {
-            return Arrays.copyOf(this.a, size, (Class<? extends T[]>) a.getClass());
+            return Arrays.copyOf(this.data, size, (Class<? extends T[]>) a.getClass());
         }
-        System.arraycopy(this.a, 0, a, 0, size);
+        System.arraycopy(this.data, 0, a, 0, size);
         if (a.length > size) {
             a[size] = null;
         }
@@ -43,25 +45,25 @@ public class AsList<E> extends AbstractList<E> implements RandomAccess {
 
     @Override
     public E get(int index) {
-        return a[index];
+        return data[index];
     }
 
     @Override
     public E set(int index, E element) {
-        E oldValue = a[index];
-        a[index] = element;
+        E oldValue = data[index];
+        data[index] = element;
         return oldValue;
     }
 
     @Override
     public int indexOf(Object o) {
-        E[] a = this.a;
+        final E[] a = this.data;
         if (o == null) {
-            for (int i = 0; i < a.length; i++)
+            for (int i = 0; i < size; i++)
                 if (a[i] == null)
                     return i;
         } else {
-            for (int i = 0; i < a.length; i++)
+            for (int i = 0; i < size; i++)
                 if (o.equals(a[i]))
                     return i;
         }
@@ -75,13 +77,13 @@ public class AsList<E> extends AbstractList<E> implements RandomAccess {
 
     @Override
     public Spliterator<E> spliterator() {
-        return Spliterators.spliterator(a, Spliterator.ORDERED);
+        return Spliterators.spliterator(data, Spliterator.ORDERED);
     }
 
     @Override
     public void forEach(Consumer<? super E> action) {
         Objects.requireNonNull(action);
-        for (E e : a) {
+        for (E e : data) {
             action.accept(e);
         }
     }
@@ -89,14 +91,14 @@ public class AsList<E> extends AbstractList<E> implements RandomAccess {
     @Override
     public void replaceAll(UnaryOperator<E> operator) {
         Objects.requireNonNull(operator);
-        E[] a = this.a;
-        for (int i = 0; i < a.length; i++) {
+        E[] a = this.data;
+        for (int i = 0; i < size; i++) {
             a[i] = operator.apply(a[i]);
         }
     }
 
     @Override
     public void sort(Comparator<? super E> c) {
-        Arrays.sort(a, c);
+        Arrays.sort(data, c);
     }
 }

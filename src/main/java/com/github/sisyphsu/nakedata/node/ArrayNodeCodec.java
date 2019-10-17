@@ -3,9 +3,8 @@ package com.github.sisyphsu.nakedata.node;
 import com.github.sisyphsu.nakedata.convertor.Codec;
 import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.node.std.ArrayNode;
-import com.github.sisyphsu.nakedata.node.std.SliceNode;
-import com.github.sisyphsu.nakedata.node.std.primary.*;
 import com.github.sisyphsu.nakedata.node.std.StringNode;
+import com.github.sisyphsu.nakedata.node.std.primary.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,8 +114,7 @@ public final class ArrayNodeCodec extends Codec {
         if (list.isEmpty()) {
             return ArrayNode.EMPTY;
         }
-        SliceNode singleSliceResult = null;
-        List<SliceNode> multiSliceResult = null;
+        ArrayNode node = new ArrayNode();
         // iterate list and generate slices.
         Class sliceType = null;
         int sliceOff = 0;
@@ -133,53 +131,40 @@ public final class ArrayNodeCodec extends Codec {
                 continue;
             }
             // generate ArrayNode as slice
-            SliceNode slice;
             List subList = list.subList(sliceOff, off + 1);
             if (sliceType == null) {
-                slice = SliceNode.nullArray(subList);
+                node.addNullSlice(subList);
             } else if (sliceType == Boolean.class) {
-                slice = SliceNode.booleanArray(subList);
+                node.addBooleanSlice(subList);
             } else if (sliceType == Byte.class) {
-                slice = SliceNode.byteArray(subList);
+                node.addByteSlice(subList);
             } else if (sliceType == Short.class) {
-                slice = SliceNode.shortArray(subList);
+                node.addShortSlice(subList);
             } else if (sliceType == Integer.class) {
-                slice = SliceNode.intArray(subList);
+                node.addIntSlice(subList);
             } else if (sliceType == Long.class) {
-                slice = SliceNode.longArray(subList);
+                node.addLongSlice(subList);
             } else if (sliceType == Float.class) {
-                slice = SliceNode.floatArray(subList);
+                node.addFloatSlice(subList);
             } else if (sliceType == Double.class) {
-                slice = SliceNode.doubleArray(subList);
+                node.addDoubleSlice(subList);
             } else if (String.class.isAssignableFrom(sliceType)) {
-                slice = SliceNode.stringArray(subList);
+                node.addStringSlice(subList);
             } else if (Enum.class.isAssignableFrom(sliceType)) {
-                slice = SliceNode.symbolArray(subList); // subList's component is not string
+                node.addSymbolSlice(subList); // subList's component shouldn't be string
             } else {
                 List<Node> nodes = new ArrayList<>(subList.size());
                 for (Object o : subList) {
                     nodes.add(convert(o, Node.class));
                 }
                 // TODO 此时不一定是ObjectNode，需要根据Node具体类型再次分组？
-                slice = SliceNode.nodeArray(nodes);
-            }
-            // update arrays and last
-            if (off == size - 1 && multiSliceResult == null) {
-                singleSliceResult = slice;
-            } else {
-                if (multiSliceResult == null) {
-                    multiSliceResult = new ArrayList<>();
-                }
-                multiSliceResult.add(slice);
+                node.addNodeArray(nodes);
             }
             // update next slice
             sliceOff = off;
             sliceType = type;
         }
-        if (singleSliceResult != null) {
-            return new ArrayNode(singleSliceResult);
-        }
-        return new ArrayNode(multiSliceResult);
+        return node;
     }
 
     /**
@@ -196,7 +181,7 @@ public final class ArrayNodeCodec extends Codec {
         if (node == ArrayNode.EMPTY) {
             return new Object[0];
         }
-        List<SliceNode> slices = node.getSlices();
+        List<ArrayNode.Slice> slices = node.getSlices();
         switch (slices.size()) {
             case 0:
                 return new Object[0];
@@ -204,7 +189,7 @@ public final class ArrayNodeCodec extends Codec {
                 return slices.get(0).getItems().toArray();
             default:
                 List result = new ArrayList();
-                for (SliceNode slice : slices) {
+                for (ArrayNode.Slice slice : slices) {
                     result.addAll(slice.getItems());
                 }
                 return result.toArray();

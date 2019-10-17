@@ -1,7 +1,6 @@
 package com.github.sisyphsu.nakedata.proto;
 
 import com.github.sisyphsu.nakedata.node.std.ArrayNode;
-import com.github.sisyphsu.nakedata.node.std.SliceNode;
 import com.github.sisyphsu.nakedata.node.std.primary.*;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
@@ -91,27 +90,33 @@ public class IOArrayTest {
     @Test
     public void testNullArray() throws IOException {
         List list = Arrays.asList(null, null, null, null, null);
-        Object result = transIO(new ArrayNode(SliceNode.nullArray(list)));
+        ArrayNode node = new ArrayNode();
+        node.addNullSlice(list);
+        Object result = transIO(node);
         assert Objects.deepEquals(list.toArray(), result);
     }
 
     @Test
     public void testStringArray() throws IOException {
         List<String> list = Arrays.asList("hello1", "hello2", "hello3", "hello4", "hello5");
-        Object result = transIO(new ArrayNode(SliceNode.stringArray(list)));
+        ArrayNode node = new ArrayNode();
+        node.addStringSlice(list);
+        Object result = transIO(node);
         assert Objects.deepEquals(list.toArray(), result);
     }
 
     @Test
     public void testSymbolArray() throws IOException {
         List<String> list = Arrays.asList("symbol1", "symbol2", "symbol3", "symbol4", "symbol5");
+        ArrayNode node = new ArrayNode();
+        node.addSymbolSlice(list);
 
         enableCxt = true;
-        Object result = transIO(new ArrayNode(SliceNode.symbolArray(list)));
+        Object result = transIO(node);
         assert Objects.deepEquals(list.toArray(), result);
 
         enableCxt = false;
-        result = transIO(new ArrayNode(SliceNode.symbolArray(list)));
+        result = transIO(node);
         assert Objects.deepEquals(list.toArray(), result);
     }
 

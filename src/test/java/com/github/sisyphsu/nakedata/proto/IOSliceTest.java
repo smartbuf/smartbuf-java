@@ -1,7 +1,6 @@
 package com.github.sisyphsu.nakedata.proto;
 
 import com.github.sisyphsu.nakedata.node.std.ArrayNode;
-import com.github.sisyphsu.nakedata.node.std.SliceNode;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
@@ -22,13 +21,12 @@ public class IOSliceTest {
 
     @Test
     public void testMixArray() throws IOException {
-        List<SliceNode> slices = create();
+        ArrayNode node = create();
         List<Object> data = new ArrayList<>();
-        for (SliceNode slice : slices) {
+        for (ArrayNode.Slice slice : node.getSlices()) {
             data.addAll(slice.getItems());
         }
         Object[] srcArr = data.toArray();
-        ArrayNode node = new ArrayNode(slices);
 
         // execute in temporary mode
         enableCxt = false;
@@ -46,9 +44,9 @@ public class IOSliceTest {
 
     }
 
-    List<SliceNode> create() {
+    ArrayNode create() {
         int len;
-        List<SliceNode> slices = new ArrayList<>();
+        ArrayNode node = new ArrayNode();
         // boolean
         len = RandomUtils.nextInt(100, 200);
         List<Boolean> booleans = new ArrayList<>();
@@ -56,7 +54,7 @@ public class IOSliceTest {
             boolean b = RandomUtils.nextBoolean();
             booleans.add(b);
         }
-        slices.add(SliceNode.booleanArray(booleans));
+        node.addBooleanSlice(booleans);
 
         // byte
         len = RandomUtils.nextInt(100, 200);
@@ -65,7 +63,7 @@ public class IOSliceTest {
             byte tmp = (byte) RandomUtils.nextInt();
             bytes.add(tmp);
         }
-        slices.add(SliceNode.byteArray(bytes));
+        node.addByteSlice(bytes);
 
         // short
         len = RandomUtils.nextInt(100, 200);
@@ -74,7 +72,7 @@ public class IOSliceTest {
             short tmp = (short) RandomUtils.nextInt();
             shorts.add(tmp);
         }
-        slices.add(SliceNode.shortArray(shorts));
+        node.addShortSlice(shorts);
 
         // int
         len = RandomUtils.nextInt(100, 200);
@@ -83,7 +81,7 @@ public class IOSliceTest {
             int tmp = RandomUtils.nextInt();
             ints.add(tmp);
         }
-        slices.add(SliceNode.intArray(ints));
+        node.addIntSlice(ints);
 
         // long
         len = RandomUtils.nextInt(100, 200);
@@ -92,7 +90,7 @@ public class IOSliceTest {
             long tmp = RandomUtils.nextLong();
             longs.add(tmp);
         }
-        slices.add(SliceNode.longArray(longs));
+        node.addLongSlice(longs);
 
         // null
         len = RandomUtils.nextInt(100, 200);
@@ -100,7 +98,7 @@ public class IOSliceTest {
         for (int i = 0; i < len; i++) {
             nulls.add(null);
         }
-        slices.add(SliceNode.nullArray(nulls));
+        node.addNullSlice(nulls);
 
         // float
         len = RandomUtils.nextInt(100, 200);
@@ -109,7 +107,7 @@ public class IOSliceTest {
             float tmp = RandomUtils.nextFloat();
             floats.add(tmp);
         }
-        slices.add(SliceNode.floatArray(floats));
+        node.addFloatSlice(floats);
 
         // double
         len = RandomUtils.nextInt(100, 200);
@@ -118,7 +116,7 @@ public class IOSliceTest {
             double tmp = RandomUtils.nextDouble();
             doubles.add(tmp);
         }
-        slices.add(SliceNode.doubleArray(doubles));
+        node.addDoubleSlice(doubles);
 
         // String
         len = RandomUtils.nextInt(100, 200);
@@ -127,7 +125,7 @@ public class IOSliceTest {
             String tmp = RandomStringUtils.random(16);
             strings.add(tmp);
         }
-        slices.add(SliceNode.stringArray(strings));
+        node.addStringSlice(strings);
 
         // symbol
         len = RandomUtils.nextInt(100, 200);
@@ -136,9 +134,9 @@ public class IOSliceTest {
             String tmp = RandomStringUtils.randomAlphabetic(16);
             symbols.add(tmp);
         }
-        slices.add(SliceNode.symbolArray(symbols));
+        node.addSymbolSlice(symbols);
 
-        return slices;
+        return node;
     }
 
 }
