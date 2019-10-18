@@ -2,7 +2,6 @@ package com.github.sisyphsu.nakedata.node;
 
 import com.github.sisyphsu.nakedata.node.std.ArrayNode;
 import lombok.Data;
-import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,7 +13,7 @@ import java.util.List;
  */
 public class NodeMapperTest {
 
-    @Test
+    //    @Test
     void test() {
         List<Bean> beans = new ArrayList<>();
         beans.add(new Bean(1, "hello"));

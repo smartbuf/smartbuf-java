@@ -1,12 +1,11 @@
 package com.github.sisyphsu.nakedata.node.std;
 
-import com.github.sisyphsu.nakedata.ArrayType;
 import com.github.sisyphsu.nakedata.NodeType;
-import com.github.sisyphsu.nakedata.node.AsList;
+import com.github.sisyphsu.nakedata.SliceType;
 import com.github.sisyphsu.nakedata.node.Node;
+import com.github.sisyphsu.nakedata.node.RefList;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Slice represent an subarray of ArrayNode.
@@ -22,48 +21,83 @@ public class ArrayNode extends Node {
     private int     size;
     private Slice[] slices = new Slice[1];
 
+    public static ArrayNode valueOf(boolean[] booleans) {
+        return new ArrayNode().appendSlice(booleans, booleans.length, SliceType.BOOL_NATIVE);
+    }
+
+    public static ArrayNode valueOf(byte[] bytes) {
+        return new ArrayNode().appendSlice(bytes, bytes.length, SliceType.BYTE_NATIVE);
+    }
+
+    public static ArrayNode valueOf(short[] shorts) {
+        return new ArrayNode().appendSlice(shorts, shorts.length, SliceType.SHORT_NATIVE);
+    }
+
+    public static ArrayNode valueOf(int[] ints) {
+        return new ArrayNode().appendSlice(ints, ints.length, SliceType.INT_NATIVE);
+    }
+
+    public static ArrayNode valueOf(long[] longs) {
+        return new ArrayNode().appendSlice(longs, longs.length, SliceType.LONG_NATIVE);
+    }
+
+    public static ArrayNode valueOf(float[] floats) {
+        return new ArrayNode().appendSlice(floats, floats.length, SliceType.FLOAT_NATIVE);
+    }
+
+    public static ArrayNode valueOf(double[] doubles) {
+        return new ArrayNode().appendSlice(doubles, doubles.length, SliceType.DOUBLE_NATIVE);
+    }
+
     public void addNullSlice(List nulls) {
-        this.appendSlice(new Slice(nulls, ArrayType.NULL));
+        this.appendSlice(nulls, nulls.size(), SliceType.NULL);
     }
 
     public void addBooleanSlice(List<Boolean> booleans) {
-        this.appendSlice(new Slice(booleans, ArrayType.BOOL));
+        this.appendSlice(booleans, booleans.size(), SliceType.BOOL);
     }
 
     public void addByteSlice(List<Byte> bytes) {
-        this.appendSlice(new Slice(bytes, ArrayType.BYTE));
+        this.appendSlice(bytes, bytes.size(), SliceType.BYTE);
     }
 
     public void addShortSlice(List<Short> shorts) {
-        this.appendSlice(new Slice(shorts, ArrayType.SHORT));
+        this.appendSlice(shorts, shorts.size(), SliceType.SHORT);
     }
 
     public void addIntSlice(List<Integer> ints) {
-        this.appendSlice(new Slice(ints, ArrayType.INT));
+        this.appendSlice(ints, ints.size(), SliceType.INT);
     }
 
     public void addLongSlice(List<Long> longs) {
-        this.appendSlice(new Slice(longs, ArrayType.LONG));
+        this.appendSlice(longs, longs.size(), SliceType.LONG);
     }
 
     public void addFloatSlice(List<Float> floats) {
-        this.appendSlice(new Slice(floats, ArrayType.FLOAT));
+        this.appendSlice(floats, floats.size(), SliceType.FLOAT);
     }
 
     public void addDoubleSlice(List<Double> doubles) {
-        this.appendSlice(new Slice(doubles, ArrayType.DOUBLE));
+        this.appendSlice(doubles, doubles.size(), SliceType.DOUBLE);
     }
 
     public void addStringSlice(List<String> strings) {
-        this.appendSlice(new Slice(strings, ArrayType.STRING));
+        this.appendSlice(strings, strings.size(), SliceType.STRING);
     }
 
     public void addSymbolSlice(List<String> symbols) {
-        this.appendSlice(new Slice(symbols, ArrayType.SYMBOL));
+        this.appendSlice(symbols, symbols.size(), SliceType.SYMBOL);
     }
 
-    public void addNodeArray(List<Node> nodes) {
-        this.appendSlice(new Slice(nodes, ArrayType.OBJECT)); // TODO 需要判断具体Node类型么？
+    public ArrayNode appendSlice(Object obj, int sliceSize, SliceType type) {
+        Slice slice = new Slice(obj, sliceSize, type);
+        if (size == slices.length - 1) {
+            Slice[] tmp = new Slice[Math.max(4, slices.length * 2)];
+            System.arraycopy(slices, 0, tmp, 0, size);
+            this.slices = tmp;
+        }
+        this.slices[size++] = slice;
+        return this;
     }
 
     @Override
@@ -76,44 +110,105 @@ public class ArrayNode extends Node {
         return this == NULL;
     }
 
-    void appendSlice(Slice slice) {
-        if (size == slices.length - 1) {
-            Slice[] tmp = new Slice[Math.max(4, slices.length * 2)];
-            System.arraycopy(slices, 0, tmp, 0, size);
-            this.slices = tmp;
-        }
-        this.slices[size++] = slice;
-    }
-
     public List<Slice> getSlices() {
-        return new AsList<>(slices, size);
+        return new RefList<>(slices, size);
     }
 
+    @SuppressWarnings("unchecked")
     public static class Slice {
 
-        private final ArrayType type;
-        private final List      items;
+        private final Object    data;
+        private final int       size;
+        private final SliceType type;
 
-        Slice(List items, ArrayType type) {
-            this.items = items;
+        private Slice(Object data, int size, SliceType type) {
+            this.data = data;
+            this.size = size;
             this.type = type;
         }
 
-        /**
-         * Get Array's element dataType
-         *
-         * @return DataType of element
-         */
-        public ArrayType elementType() {
+        public SliceType elementType() {
             return type;
         }
 
-        public List getItems() {
-            return items;
+        public int size() {
+            return size;
         }
 
-        public void forEach(Consumer<Object> consumer) {
-            items.forEach(consumer);
+        public List asList() {
+            return (List) data;
+        }
+
+        public boolean[] asBooleanArray() {
+            return (boolean[]) data;
+        }
+
+        public byte[] asByteArray() {
+            return (byte[]) data;
+        }
+
+        public short[] asShortArray() {
+            return (short[]) data;
+        }
+
+        public int[] asIntArray() {
+            return (int[]) data;
+        }
+
+        public long[] asLongArray() {
+            return (long[]) data;
+        }
+
+        public float[] asFloatArray() {
+            return (float[]) data;
+        }
+
+        public double[] asDoubleArray() {
+            return (double[]) data;
+        }
+
+        public List<Boolean> asBoolSlice() {
+            return (List<Boolean>) data;
+        }
+
+        public List<Byte> asByteSlice() {
+            return (List<Byte>) data;
+        }
+
+        public List<Short> asShortSlice() {
+            return (List<Short>) data;
+        }
+
+        public List<Integer> asIntSlice() {
+            return (List<Integer>) data;
+        }
+
+        public List<Long> asLongSlice() {
+            return (List<Long>) data;
+        }
+
+        public List<Float> asFloatSlice() {
+            return (List<Float>) data;
+        }
+
+        public List<Double> asDoubleSlice() {
+            return (List<Double>) data;
+        }
+
+        public List<String> asStringSlice() {
+            return (List<String>) data;
+        }
+
+        public List<String> asSymbolSlice() {
+            return (List<String>) data;
+        }
+
+        public List<ObjectNode> asObjectSlice() {
+            return (List<ObjectNode>) data;
+        }
+
+        public List<ArrayNode> asArraySlice() {
+            return (List<ArrayNode>) data;
         }
     }
 

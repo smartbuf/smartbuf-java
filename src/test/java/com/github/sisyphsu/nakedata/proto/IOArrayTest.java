@@ -1,7 +1,6 @@
 package com.github.sisyphsu.nakedata.proto;
 
 import com.github.sisyphsu.nakedata.node.std.ArrayNode;
-import com.github.sisyphsu.nakedata.node.std.primary.*;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
@@ -24,14 +23,14 @@ public class IOArrayTest {
         for (int i = 0; i < data.length; i++) {
             data[i] = RandomUtils.nextInt() % 2 == 0;
         }
-        Object result = transIO(ZArrayNode.valueOf(data));
+        Object result = transIO(ArrayNode.valueOf(data));
         assert Objects.deepEquals(data, result);
     }
 
     @Test
     public void testBArray() throws IOException {
         byte[] data = RandomUtils.nextBytes(RandomUtils.nextInt(10, 20));
-        Object result = transIO(BArrayNode.valueOf(data));
+        Object result = transIO(ArrayNode.valueOf(data));
 
         assert Objects.deepEquals(data, result);
         assert bytes.length == data.length + 3;
@@ -43,7 +42,7 @@ public class IOArrayTest {
         for (int i = 0; i < data.length; i++) {
             data[i] = (short) RandomUtils.nextInt();
         }
-        Object result = transIO(SArrayNode.valueOf(data));
+        Object result = transIO(ArrayNode.valueOf(data));
         assert Objects.deepEquals(result, data);
     }
 
@@ -53,7 +52,7 @@ public class IOArrayTest {
         for (int i = 0; i < data.length; i++) {
             data[i] = RandomUtils.nextInt();
         }
-        Object result = transIO(IArrayNode.valueOf(data));
+        Object result = transIO(ArrayNode.valueOf(data));
         assert Objects.deepEquals(result, data);
     }
 
@@ -63,7 +62,7 @@ public class IOArrayTest {
         for (int i = 0; i < data.length; i++) {
             data[i] = RandomUtils.nextLong();
         }
-        Object result = transIO(LArrayNode.valueOf(data));
+        Object result = transIO(ArrayNode.valueOf(data));
         assert Objects.deepEquals(result, data);
     }
 
@@ -73,7 +72,7 @@ public class IOArrayTest {
         for (int i = 0; i < data.length; i++) {
             data[i] = RandomUtils.nextFloat();
         }
-        Object result = transIO(FArrayNode.valueOf(data));
+        Object result = transIO(ArrayNode.valueOf(data));
         assert Objects.deepEquals(result, data);
     }
 
@@ -83,7 +82,7 @@ public class IOArrayTest {
         for (int i = 0; i < data.length; i++) {
             data[i] = RandomUtils.nextDouble();
         }
-        Object result = transIO(DArrayNode.valueOf(data));
+        Object result = transIO(ArrayNode.valueOf(data));
         assert Objects.deepEquals(result, data);
     }
 

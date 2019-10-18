@@ -44,32 +44,4 @@ public abstract class Node {
         throw new UnsupportedOperationException();
     }
 
-    public boolean[] booleansValue() {
-        throw new UnsupportedOperationException();
-    }
-
-    public byte[] bytesValue() {
-        throw new UnsupportedOperationException();
-    }
-
-    public short[] shortsValue() {
-        throw new UnsupportedOperationException();
-    }
-
-    public int[] intsValue() {
-        throw new UnsupportedOperationException();
-    }
-
-    public long[] longsValue() {
-        throw new UnsupportedOperationException();
-    }
-
-    public float[] floatsValue() {
-        throw new UnsupportedOperationException();
-    }
-
-    public double[] doublesValue() {
-        throw new UnsupportedOperationException();
-    }
-
 }

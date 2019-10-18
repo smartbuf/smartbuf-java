@@ -1,13 +1,13 @@
 package com.github.sisyphsu.nakedata.node;
 
+import com.github.sisyphsu.nakedata.SliceType;
 import com.github.sisyphsu.nakedata.convertor.Codec;
 import com.github.sisyphsu.nakedata.convertor.Converter;
-import com.github.sisyphsu.nakedata.node.std.ArrayNode;
-import com.github.sisyphsu.nakedata.node.std.StringNode;
-import com.github.sisyphsu.nakedata.node.std.primary.*;
+import com.github.sisyphsu.nakedata.node.std.*;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Array, Collection's codec implemention.
@@ -22,77 +22,42 @@ public final class ArrayNodeCodec extends Codec {
 
     @Converter
     public Node toNode(boolean[] arr) {
-        return ZArrayNode.valueOf(arr);
+        return ArrayNode.valueOf(arr);
     }
 
     @Converter
     public Node toNode(byte[] arr) {
-        return BArrayNode.valueOf(arr);
+        return ArrayNode.valueOf(arr);
     }
 
     @Converter
     public Node toNode(int[] arr) {
-        return IArrayNode.valueOf(arr);
+        return ArrayNode.valueOf(arr);
     }
 
     @Converter
     public Node toNode(long[] arr) {
-        return LArrayNode.valueOf(arr);
+        return ArrayNode.valueOf(arr);
     }
 
     @Converter
     public Node toNode(short[] arr) {
-        return SArrayNode.valueOf(arr);
+        return ArrayNode.valueOf(arr);
     }
 
     @Converter
     public Node toNode(float[] arr) {
-        return FArrayNode.valueOf(arr);
+        return ArrayNode.valueOf(arr);
     }
 
     @Converter
     public Node toNode(double[] arr) {
-        return DArrayNode.valueOf(arr);
+        return ArrayNode.valueOf(arr);
     }
 
     @Converter
     public Node toNode(char[] arr) {
         return StringNode.valueOf(String.valueOf(arr));
-    }
-
-    @Converter
-    public boolean[] toArray(ZArrayNode node) {
-        return node.booleansValue();
-    }
-
-    @Converter
-    public byte[] toArray(BArrayNode node) {
-        return node.bytesValue();
-    }
-
-    @Converter
-    public short[] toArray(SArrayNode node) {
-        return node.shortsValue();
-    }
-
-    @Converter
-    public int[] toArray(IArrayNode node) {
-        return node.intsValue();
-    }
-
-    @Converter
-    public long[] toArray(LArrayNode node) {
-        return node.longsValue();
-    }
-
-    @Converter
-    public float[] toArray(FArrayNode node) {
-        return node.floatsValue();
-    }
-
-    @Converter
-    public double[] toArray(DArrayNode node) {
-        return node.doublesValue();
     }
 
     @Converter
@@ -107,93 +72,95 @@ public final class ArrayNodeCodec extends Codec {
      * @return ArrayNode
      */
     @Converter
-    public Node toNode(List list) {
-        if (list == null) {
-            return ArrayNode.NULL;
-        }
+    public Node toNode(Collection list) {
         if (list.isEmpty()) {
             return ArrayNode.EMPTY;
         }
-        ArrayNode node = new ArrayNode();
-        // iterate list and generate slices.
-        Class sliceType = null;
-        int sliceOff = 0;
-        for (int off = 0, size = list.size(); off < size; off++) {
-            Object curr = list.get(off);
-            Class type = curr == null ? null : curr.getClass();
-            // do nothing for first item
-            if (off == 0) {
-                sliceType = type;
-                continue;
-            }
-            // continue if continuously and not end
-            if (sliceType == type && off < size - 1) {
-                continue;
-            }
-            // generate ArrayNode as slice
-            List subList = list.subList(sliceOff, off + 1);
-            if (sliceType == null) {
-                node.addNullSlice(subList);
-            } else if (sliceType == Boolean.class) {
-                node.addBooleanSlice(subList);
-            } else if (sliceType == Byte.class) {
-                node.addByteSlice(subList);
-            } else if (sliceType == Short.class) {
-                node.addShortSlice(subList);
-            } else if (sliceType == Integer.class) {
-                node.addIntSlice(subList);
-            } else if (sliceType == Long.class) {
-                node.addLongSlice(subList);
-            } else if (sliceType == Float.class) {
-                node.addFloatSlice(subList);
-            } else if (sliceType == Double.class) {
-                node.addDoubleSlice(subList);
-            } else if (String.class.isAssignableFrom(sliceType)) {
-                node.addStringSlice(subList);
-            } else if (Enum.class.isAssignableFrom(sliceType)) {
-                node.addSymbolSlice(subList); // subList's component shouldn't be string
+        final ArrayNode node = new ArrayNode();
+        final Object[] arr = new Object[list.size()];
+        // trim collection to native array which has multiple slices
+        int offset = 0;
+        int sliceFrom = 0;
+        SliceType sliceType = null;
+        String[] sliceStruct = null;
+        for (Object item : list) {
+            Class cls = (item == null) ? null : item.getClass();
+            SliceType itemType = null;
+            String[] itemStruct = null;
+            if (cls == null) {
+                itemType = SliceType.NULL;
+            } else if (cls == Boolean.class) {
+                itemType = SliceType.BOOL;
+            } else if (cls == Short.class) {
+                itemType = SliceType.SHORT;
+            } else if (cls == Integer.class) {
+                itemType = SliceType.INT;
+            } else if (cls == Long.class) {
+                itemType = SliceType.LONG;
+            } else if (cls == Float.class) {
+                itemType = SliceType.FLOAT;
+            } else if (cls == Double.class) {
+                itemType = SliceType.DOUBLE;
+            } else if (CharSequence.class.isAssignableFrom(cls)) {
+                item = String.valueOf(item);
+                itemType = SliceType.STRING;
+            } else if (Enum.class.isAssignableFrom(cls)) {
+                itemType = SliceType.SYMBOL;
             } else {
-                List<Node> nodes = new ArrayList<>(subList.size());
-                for (Object o : subList) {
-                    nodes.add(convert(o, Node.class));
+                Node itemNode = convert(item, Node.class);
+                if (itemNode == null || itemNode.isNull()) {
+                    item = null;
+                    itemType = SliceType.NULL;
+                } else if (itemNode instanceof BooleanNode) {
+                    item = itemNode.booleanValue();
+                    itemType = SliceType.BOOL;
+                } else if (itemNode instanceof VarintNode) {
+                    item = itemNode.longValue();
+                    itemType = SliceType.LONG;
+                } else if (itemNode instanceof FloatNode) {
+                    item = itemNode.floatValue();
+                    itemType = SliceType.FLOAT;
+                } else if (itemNode instanceof DoubleNode) {
+                    item = itemNode.doubleValue();
+                    itemType = SliceType.DOUBLE;
+                } else if (itemNode instanceof StringNode) {
+                    item = itemNode.stringValue();
+                    itemType = SliceType.STRING;
+                } else if (itemNode instanceof SymbolNode) {
+                    item = itemNode.stringValue();
+                    itemType = SliceType.SYMBOL;
+                } else if (itemNode instanceof ArrayNode) {
+                    item = itemNode;
+                    itemType = SliceType.ARRAY;
+                } else if (itemNode instanceof ObjectNode) {
+                    item = itemNode;
+                    itemType = SliceType.OBJECT;
+                    itemStruct = ((ObjectNode) itemNode).getFields();
                 }
-                // TODO 此时不一定是ObjectNode，需要根据Node具体类型再次分组？
-                node.addNodeArray(nodes);
             }
-            // update next slice
-            sliceOff = off;
-            sliceType = type;
+            arr[offset++] = item;
+            // check continuous
+            boolean continuous = sliceType == itemType && Objects.deepEquals(sliceStruct, itemStruct);
+            if (continuous && offset < arr.length) {
+                continue;
+            }
+            // create previous slice
+            List sliceData;
+            if (arr.length == 1) {
+                sliceData = new RefList(0, 1, arr);
+            } else if (continuous) {
+                sliceData = new RefList(sliceFrom, offset, arr);// no more slice
+                sliceType = itemType;
+            } else {
+                sliceData = new RefList(sliceFrom, offset - 1, arr);// has more slice
+            }
+            node.appendSlice(sliceData, sliceData.size(), sliceType);
+            // prepare next slice
+            sliceFrom = offset;
+            sliceType = itemType;
+            sliceStruct = itemStruct;
         }
         return node;
-    }
-
-    /**
-     * Convert ArrayNode to Array, in most case, toArray will not copy memory.
-     *
-     * @param node ArrayNode
-     * @return Object[]
-     */
-    @Converter
-    public Object[] toList(ArrayNode node) {
-        if (node == ArrayNode.NULL) {
-            return null;
-        }
-        if (node == ArrayNode.EMPTY) {
-            return new Object[0];
-        }
-        List<ArrayNode.Slice> slices = node.getSlices();
-        switch (slices.size()) {
-            case 0:
-                return new Object[0];
-            case 1:
-                return slices.get(0).getItems().toArray();
-            default:
-                List result = new ArrayList();
-                for (ArrayNode.Slice slice : slices) {
-                    result.addAll(slice.getItems());
-                }
-                return result.toArray();
-        }
     }
 
 }

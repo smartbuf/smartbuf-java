@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.proto;
 
-import com.github.sisyphsu.nakedata.ArrayType;
+import com.github.sisyphsu.nakedata.SliceType;
 
 /**
  * @author sulin
@@ -49,23 +49,30 @@ public interface Const {
     byte SLICE_ARRAY  = 0x0A;
     byte SLICE_OBJECT = 0x0B;
 
-    static byte toSliceType(ArrayType type) {
+    static byte toSliceType(SliceType type) {
         switch (type) {
             case NULL:
                 return SLICE_NULL;
             case BOOL:
+            case BOOL_NATIVE:
                 return SLICE_BOOL;
             case FLOAT:
+            case FLOAT_NATIVE:
                 return SLICE_FLOAT;
             case DOUBLE:
+            case DOUBLE_NATIVE:
                 return SLICE_DOUBLE;
             case BYTE:
+            case BYTE_NATIVE:
                 return SLICE_BYTE;
             case SHORT:
+            case SHORT_NATIVE:
                 return SLICE_SHORT;
             case INT:
+            case INT_NATIVE:
                 return SLICE_INT;
             case LONG:
+            case LONG_NATIVE:
                 return SLICE_LONG;
             case STRING:
                 return SLICE_STRING;

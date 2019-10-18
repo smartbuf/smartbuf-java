@@ -9,19 +9,27 @@ import java.util.function.UnaryOperator;
  *
  * @param <E>
  */
-public class AsList<E> extends AbstractList<E> implements RandomAccess {
+public class RefList<E> extends AbstractList<E> implements RandomAccess {
 
-    private final int size;
+    private final int fromOff;
+    private final int toOff;
     private final E[] data;
 
-    public AsList(E[] array, int size) {
-        this.size = size;
+    public RefList(E[] array, int toOff) {
+        this.fromOff = 0;
+        this.toOff = toOff;
         this.data = Objects.requireNonNull(array);
+    }
+
+    public RefList(int fromOff, int toOff, E[] data) {
+        this.fromOff = fromOff;
+        this.toOff = toOff;
+        this.data = data;
     }
 
     @Override
     public int size() {
-        return size;
+        return toOff;
     }
 
     @Override
@@ -59,11 +67,11 @@ public class AsList<E> extends AbstractList<E> implements RandomAccess {
     public int indexOf(Object o) {
         final E[] a = this.data;
         if (o == null) {
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < toOff; i++)
                 if (a[i] == null)
                     return i;
         } else {
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < toOff; i++)
                 if (o.equals(a[i]))
                     return i;
         }
@@ -92,7 +100,7 @@ public class AsList<E> extends AbstractList<E> implements RandomAccess {
     public void replaceAll(UnaryOperator<E> operator) {
         Objects.requireNonNull(operator);
         E[] a = this.data;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < toOff; i++) {
             a[i] = operator.apply(a[i]);
         }
     }

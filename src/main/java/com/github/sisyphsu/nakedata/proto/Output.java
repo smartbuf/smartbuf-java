@@ -116,46 +116,9 @@ public final class Output {
                 writer.writeVarUint((dataPool.findStringID(node.stringValue()) << 2) | FLAG_DATA);
                 break;
             case SYMBOL:
-                if (stream) {
-                    writer.writeVarUint((dataPool.findSymbolID(node.stringValue()) << 2) | FLAG_DATA);
-                } else {
-                    writer.writeVarUint((dataPool.findStringID(node.stringValue()) << 2) | FLAG_DATA);
-                }
-                break;
-            case N_BOOL_ARRAY:
-                boolean[] booleans = node.booleansValue();
-                writer.writeVarUint((booleans.length << 7) | (SLICE_BOOL << 3) | FLAG_ARRAY);
-                writer.writeBooleanArray(booleans);
-                break;
-            case N_BYTE_ARRAY:
-                byte[] bytes = node.bytesValue();
-                writer.writeVarUint((bytes.length << 7) | (SLICE_BYTE << 3) | FLAG_ARRAY);
-                writer.writeByteArray(bytes);
-                break;
-            case N_SHORT_ARRAY:
-                short[] shorts = node.shortsValue();
-                writer.writeVarUint((shorts.length << 7) | (SLICE_SHORT << 3) | FLAG_ARRAY);
-                writer.writeShortArray(shorts);
-                break;
-            case N_INT_ARRAY:
-                int[] ints = node.intsValue();
-                writer.writeVarUint((ints.length << 7) | (SLICE_INT << 3) | FLAG_ARRAY);
-                writer.writeIntArray(ints);
-                break;
-            case N_LONG_ARRAY:
-                long[] longs = node.longsValue();
-                writer.writeVarUint((longs.length << 7) | (SLICE_LONG << 3) | FLAG_ARRAY);
-                writer.writeLongArray(longs);
-                break;
-            case N_FLOAT_ARRAY:
-                float[] floats = node.floatsValue();
-                writer.writeVarUint((floats.length << 7) | (SLICE_FLOAT << 3) | FLAG_ARRAY);
-                writer.writeFloatArray(floats);
-                break;
-            case N_DOUBLE_ARRAY:
-                double[] doubles = node.doublesValue();
-                writer.writeVarUint((doubles.length << 7) | (SLICE_DOUBLE << 3) | FLAG_ARRAY);
-                writer.writeDoubleArray(doubles);
+                String symbol = node.stringValue();
+                int dataId = stream ? dataPool.findSymbolID(symbol) : dataPool.findStringID(symbol);
+                writer.writeVarUint((dataId << 2) | FLAG_DATA);
                 break;
             case ARRAY:
                 this.writeArrayNode((ArrayNode) node, writer, true);
@@ -176,64 +139,84 @@ public final class Output {
      *
      * @param suffixFlag Need suffix FLAG_ARRAY at head or not
      */
-    @SuppressWarnings("unchecked")
     private void writeArrayNode(ArrayNode node, OutputWriter writer, boolean suffixFlag) throws IOException {
         List<ArrayNode.Slice> arrayNodes = node.getSlices();
         for (int i = 0, len = arrayNodes.size(); i < len; i++) {
             ArrayNode.Slice slice = arrayNodes.get(i);
-            List data = slice.getItems();
             // output array|slice header
-            long sliceHead = (data.size() << 5) | (Const.toSliceType(slice.elementType()) << 1) | ((i == len - 1) ? 0 : 1);
+            long sliceHead = (slice.size() << 5) | (Const.toSliceType(slice.elementType()) << 1) | ((i == len - 1) ? 0 : 1);
             if (suffixFlag && i == 0) {
                 sliceHead = (sliceHead << 2) | FLAG_ARRAY; // only the first slice need bring body-flag
             }
             writer.writeVarUint(sliceHead);
             // output slice body
             switch (slice.elementType()) {
+                case NULL:
+                    break;
+                case BOOL_NATIVE:
+                    writer.writeBooleanArray(slice.asBooleanArray());
+                    break;
                 case BOOL:
-                    writer.writeBooleanSlice(data);
+                    writer.writeBooleanSlice(slice.asBoolSlice());
+                    break;
+                case BYTE_NATIVE:
+                    writer.writeByteArray(slice.asByteArray());
                     break;
                 case BYTE:
-                    writer.writeByteSlice(data);
+                    writer.writeByteSlice(slice.asByteSlice());
+                    break;
+                case SHORT_NATIVE:
+                    writer.writeShortArray(slice.asShortArray());
                     break;
                 case SHORT:
-                    writer.writeShortSlice(data);
+                    writer.writeShortSlice(slice.asShortSlice());
+                    break;
+                case INT_NATIVE:
+                    writer.writeIntArray(slice.asIntArray());
                     break;
                 case INT:
-                    writer.writeIntSlice(data);
+                    writer.writeIntSlice(slice.asIntSlice());
+                    break;
+                case LONG_NATIVE:
+                    writer.writeLongArray(slice.asLongArray());
                     break;
                 case LONG:
-                    writer.writeLongSlice(data);
+                    writer.writeLongSlice(slice.asLongSlice());
+                    break;
+                case FLOAT_NATIVE:
+                    writer.writeFloatArray(slice.asFloatArray());
+                    break;
+                case DOUBLE_NATIVE:
+                    writer.writeDoubleArray(slice.asDoubleArray());
                     break;
                 case FLOAT:
-                    writer.writeFloatSlice(data);
+                    writer.writeFloatSlice(slice.asFloatSlice());
                     break;
                 case DOUBLE:
-                    writer.writeDoubleSlice(data);
+                    writer.writeDoubleSlice(slice.asDoubleSlice());
                     break;
                 case STRING:
-                    for (Object datum : data) {
-                        writer.writeVarUint(dataPool.findStringID((String) datum));
+                    for (String datum : slice.asStringSlice()) {
+                        writer.writeVarUint(dataPool.findStringID(datum));
                     }
                     break;
                 case SYMBOL:
-                    for (Object item : data) {
-                        String str = (String) item;
-                        writer.writeVarUint(stream ? dataPool.findSymbolID(str) : dataPool.findStringID(str));
+                    for (String item : slice.asSymbolSlice()) {
+                        writer.writeVarUint(stream ? dataPool.findSymbolID(item) : dataPool.findStringID(item));
                     }
                     break;
                 case ARRAY:
-                    for (Object item : data) {
-                        this.writeArrayNode((ArrayNode) item, writer, false);
+                    for (ArrayNode item : slice.asArraySlice()) {
+                        this.writeArrayNode(item, writer, false);
                     }
                     break;
                 case OBJECT:
-                    String[] fields = ((ObjectNode) data.get(0)).getFields();
+                    List<ObjectNode> nodes = slice.asObjectSlice();
+                    String[] fields = nodes.get(0).getFields();
                     writer.writeVarUint(structPool.findStructID(fields)); // structId
-                    for (Object item : data) {
-                        ObjectNode objectNode = (ObjectNode) item;
+                    for (ObjectNode item : nodes) {
                         for (String field : fields) {
-                            this.writeNode(objectNode.getField(field), writer);
+                            this.writeNode(item.getField(field), writer);
                         }
                     }
                     break;
@@ -284,10 +267,12 @@ public final class Output {
         for (ArrayNode.Slice slice : array.getSlices()) {
             switch (slice.elementType()) {
                 case STRING:
-                    slice.forEach(item -> dataPool.registerString(String.valueOf(item)));
+                    for (String str : slice.asStringSlice()) {
+                        dataPool.registerString(str);
+                    }
                     break;
                 case SYMBOL:
-                    for (Object item : slice.getItems()) {
+                    for (Object item : slice.asSymbolSlice()) {
                         if (stream) {
                             dataPool.registerSymbol((String) item);
                         } else {
@@ -296,10 +281,14 @@ public final class Output {
                     }
                     break;
                 case OBJECT:
-                    slice.forEach(item -> this.scanObjectNode((ObjectNode) item));
+                    for (ObjectNode item : slice.asObjectSlice()) {
+                        this.scanObjectNode(item);
+                    }
                     break;
                 case ARRAY:
-                    slice.forEach(item -> this.scanArrayNode((ArrayNode) item));
+                    for (ArrayNode item : slice.asArraySlice()) {
+                        this.scanArrayNode(item);
+                    }
                     break;
             }
         }

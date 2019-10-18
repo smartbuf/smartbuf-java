@@ -24,7 +24,7 @@ public class IOSliceTest {
         ArrayNode node = create();
         List<Object> data = new ArrayList<>();
         for (ArrayNode.Slice slice : node.getSlices()) {
-            data.addAll(slice.getItems());
+            data.addAll(slice.asList());
         }
         Object[] srcArr = data.toArray();
 
