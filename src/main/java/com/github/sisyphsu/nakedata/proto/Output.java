@@ -140,9 +140,9 @@ public final class Output {
      * @param suffixFlag Need suffix FLAG_ARRAY at head or not
      */
     private void writeArrayNode(ArrayNode node, OutputWriter writer, boolean suffixFlag) throws IOException {
-        List<ArrayNode.Slice> arrayNodes = node.getSlices();
-        for (int i = 0, len = arrayNodes.size(); i < len; i++) {
-            ArrayNode.Slice slice = arrayNodes.get(i);
+        ArrayNode.Slice[] slices = node.slices();
+        for (int i = 0, len = node.size(); i < len; i++) {
+            ArrayNode.Slice slice = slices[i];
             // output array|slice header
             long sliceHead = (slice.size() << 5) | (Const.toSliceType(slice.elementType()) << 1) | ((i == len - 1) ? 0 : 1);
             if (suffixFlag && i == 0) {
@@ -264,7 +264,9 @@ public final class Output {
      * Scan the specified ArrayNode, support all kinds array exclude native array.
      */
     private void scanArrayNode(ArrayNode array) {
-        for (ArrayNode.Slice slice : array.getSlices()) {
+        ArrayNode.Slice[] slices = array.slices();
+        for (int i = 0, len = array.size(); i < len; i++) {
+            ArrayNode.Slice slice = slices[i];
             switch (slice.elementType()) {
                 case STRING:
                     for (String str : slice.asStringSlice()) {

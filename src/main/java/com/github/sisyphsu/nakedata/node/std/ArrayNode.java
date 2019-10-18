@@ -3,7 +3,6 @@ package com.github.sisyphsu.nakedata.node.std;
 import com.github.sisyphsu.nakedata.NodeType;
 import com.github.sisyphsu.nakedata.SliceType;
 import com.github.sisyphsu.nakedata.node.Node;
-import com.github.sisyphsu.nakedata.node.RefList;
 
 import java.util.List;
 
@@ -13,7 +12,7 @@ import java.util.List;
  * @author sulin
  * @since 2019-06-05 11:39:47
  */
-public class ArrayNode extends Node {
+public final class ArrayNode extends Node {
 
     public static final ArrayNode NULL  = new ArrayNode();
     public static final ArrayNode EMPTY = new ArrayNode();
@@ -110,8 +109,12 @@ public class ArrayNode extends Node {
         return this == NULL;
     }
 
-    public List<Slice> getSlices() {
-        return new RefList<>(slices, size);
+    public int size() {
+        return size;
+    }
+
+    public Slice[] slices() {
+        return slices;
     }
 
     @SuppressWarnings("unchecked")

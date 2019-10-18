@@ -23,8 +23,8 @@ public class IOSliceTest {
     public void testMixArray() throws IOException {
         ArrayNode node = create();
         List<Object> data = new ArrayList<>();
-        for (ArrayNode.Slice slice : node.getSlices()) {
-            data.addAll(slice.asList());
+        for (int i = 0, len = node.size(); i < len; i++) {
+            data.addAll(node.slices()[i].asList());
         }
         Object[] srcArr = data.toArray();
 

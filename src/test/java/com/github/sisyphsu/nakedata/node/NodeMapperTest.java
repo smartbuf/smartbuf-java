@@ -21,7 +21,6 @@ public class NodeMapperTest {
 
         Node node = NodeMapper.convertNodeTree(beans);
         assert node instanceof ArrayNode;
-        assert ((ArrayNode) node).getSlices().size() == 1;
     }
 
     @Data
