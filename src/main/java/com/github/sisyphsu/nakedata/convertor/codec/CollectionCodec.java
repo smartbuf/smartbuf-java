@@ -119,7 +119,7 @@ public final class CollectionCodec extends Codec {
      */
     @SuppressWarnings("unchecked")
     public static <T extends Collection> T create(Class<T> clz, Class itemType, int size) {
-        Collection result = null;
+        Collection result;
 
         if (Set.class.isAssignableFrom(clz)) {
             if (clz.isAssignableFrom(HashSet.class)) {
@@ -134,6 +134,8 @@ public final class CollectionCodec extends Codec {
                 result = new ConcurrentSkipListSet();
             } else if (clz.isAssignableFrom(EnumSet.class)) {
                 result = EnumSet.noneOf(itemType);
+            } else {
+                throw new UnsupportedOperationException("Unsupported Set: " + clz);
             }
         } else if (Queue.class.isAssignableFrom(clz)) {
             if (clz.isAssignableFrom(LinkedList.class)) {
@@ -160,6 +162,8 @@ public final class CollectionCodec extends Codec {
                 result = new ConcurrentLinkedDeque();
             } else if (clz.isAssignableFrom(ConcurrentLinkedQueue.class)) {
                 result = new ConcurrentLinkedQueue();
+            } else {
+                throw new UnsupportedOperationException("Unsupported Queue: " + clz);
             }
         } else {
             if (clz.isAssignableFrom(ArrayList.class)) {
@@ -172,10 +176,9 @@ public final class CollectionCodec extends Codec {
                 result = new Stack();
             } else if (clz.isAssignableFrom(CopyOnWriteArrayList.class)) {
                 result = new CopyOnWriteArrayList();
+            } else {
+                throw new UnsupportedOperationException("Unsupported Collection: " + clz);
             }
-        }
-        if (result == null) {
-            throw new UnsupportedOperationException("Invalid Collection Type: " + clz);
         }
         return (T) result;
     }

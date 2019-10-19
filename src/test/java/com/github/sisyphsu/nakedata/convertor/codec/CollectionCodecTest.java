@@ -13,6 +13,7 @@ import java.util.concurrent.*;
  * @author sulin
  * @since 2019-08-04 15:52:41
  */
+@SuppressWarnings("ALL")
 public class CollectionCodecTest {
 
     private CollectionCodec codec = new CollectionCodec();
@@ -86,11 +87,18 @@ public class CollectionCodecTest {
 
         List list = new ArrayList();
         list.add(1);
+        list.add(null);
         list.add(2L);
         assert list == codec.toCollection(list, XTypeUtils.toXType(new TypeRef<List<Number>>() {
         }.getType()));
 
         assert list != codec.toCollection(list, XTypeUtils.toXType(new TypeRef<List<Long>>() {
+        }.getType()));
+
+        assert list != codec.toCollection(list, XTypeUtils.toXType(new TypeRef<List<Optional<Integer>>>() {
+        }.getType()));
+
+        assert list == codec.toCollection(list, XTypeUtils.toXType(new TypeRef<List>() {
         }.getType()));
     }
 
@@ -157,6 +165,18 @@ public class CollectionCodecTest {
 
         try {
             CollectionCodec.create(Collections.singletonList(0).getClass(), Integer.class, 10);
+        } catch (Exception e) {
+            assert e instanceof UnsupportedOperationException;
+        }
+
+        try {
+            CollectionCodec.create(Collections.singleton(0).getClass(), Integer.class, 10);
+        } catch (Exception e) {
+            assert e instanceof UnsupportedOperationException;
+        }
+
+        try {
+            CollectionCodec.create(Collections.asLifoQueue(new LinkedList()).getClass(), Integer.class, 10);
         } catch (Exception e) {
             assert e instanceof UnsupportedOperationException;
         }

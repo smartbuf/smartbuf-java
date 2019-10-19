@@ -48,6 +48,23 @@ public class MapCodecTest {
         }.getType()));
         assert map1 != map2;
         assert map2.get(2L) == map1.get(2);
+
+        codec.toMap(map1, XTypeUtils.toXType(new TypeRef<Map<Optional<Long>, Optional<String>>>() {
+        }.getType()));
+        codec.toMap(map1, XTypeUtils.toXType(new TypeRef<Map<Long, Optional<String>>>() {
+        }.getType()));
+        codec.toMap(map1, XTypeUtils.toXType(new TypeRef<Map<Optional<Long>, String>>() {
+        }.getType()));
+
+        codec.toMap(map1, XTypeUtils.toXType(new TypeRef<Map<Long, ?>>() {
+        }.getType()));
+        codec.toMap(map1, XTypeUtils.toXType(new TypeRef<Map<?, String>>() {
+        }.getType()));
+
+        Map map3 = new HashMap();
+        map3.put(Byte.valueOf((byte) 1), "hello");
+        codec.toMap(map3, XTypeUtils.toXType(new TypeRef<Map<Byte, byte[]>>() {
+        }.getType()));
     }
 
     @Test

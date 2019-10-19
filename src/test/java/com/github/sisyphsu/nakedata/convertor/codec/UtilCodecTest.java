@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 /**
@@ -66,7 +67,18 @@ public class UtilCodecTest {
         }.getType()));
         assert optional.isPresent() && optional.get().equals(l.intValue());
 
-        assert codec.toObject(optional, oType).equals(l);
+        assert Objects.equals(codec.toObject(optional, oType), l);
+
+        Object obj = codec.toObject(Optional.of(1), XTypeUtils.toXType(new TypeRef<AtomicReference<Long>>() {
+        }.getType()));
+        assert obj instanceof AtomicReference;
+        assert Objects.equals(((AtomicReference) obj).get(), 1L);
+
+        Optional opt2 = codec.toOptional(1, XTypeUtils.toXType(new TypeRef<Optional<AtomicReference<Long>>>() {
+        }.getType()));
+        assert opt2.isPresent();
+        assert opt2.get() instanceof AtomicReference;
+        assert Objects.equals(1L, ((AtomicReference) opt2.get()).get());
     }
 
     @Test
@@ -84,9 +96,17 @@ public class UtilCodecTest {
         }
 
         try {
-            codec.toUUID("1234");
+            codec.toUUID("");
+            assert false;
         } catch (Exception e) {
-            assert e instanceof IllegalArgumentException && e.getCause() == null;
+            assert e instanceof IllegalArgumentException;
+        }
+
+        try {
+            codec.toUUID("b8f7f030-e07d-44d3-bded-b6dce4cff-a3");
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof IllegalArgumentException;
         }
     }
 

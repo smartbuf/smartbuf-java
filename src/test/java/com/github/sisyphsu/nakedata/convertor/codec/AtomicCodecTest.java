@@ -8,12 +8,15 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.*;
 
 /**
  * @author sulin
  * @since 2019-08-03 16:26:30
  */
+@SuppressWarnings("ALL")
 public class AtomicCodecTest {
 
     private AtomicCodec codec = new AtomicCodec();
@@ -59,9 +62,13 @@ public class AtomicCodecTest {
         assert ref.get().toByteArray().length == bytes.length;
         assert ref.get().toByteArray()[2] == bytes[2];
 
-
         Object obj = codec.toObject(ref);
         assert obj instanceof BitSet;
+
+        AtomicReference ref2 = codec.toAtomicReference(0L, XTypeUtils.toXType(new TypeRef<AtomicReference<Optional<Integer>>>() {
+        }.getType()));
+        assert ref2.get() instanceof Optional;
+        assert Objects.equals(0, ((Optional) ref2.get()).get());
     }
 
 }

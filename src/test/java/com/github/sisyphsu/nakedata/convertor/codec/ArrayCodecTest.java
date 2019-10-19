@@ -8,9 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.Collection;
+import java.util.*;
 
 /**
  * @author sulin
@@ -37,6 +35,14 @@ public class ArrayCodecTest {
         String[] strs = (String[]) objects;
         assert strs[0].equals("100");
         assert strs[1].equals("200");
+
+        objects = codec.toArray(strs, XTypeUtils.toXType(new TypeRef<Optional<String>[]>() {
+        }.getType()));
+        assert objects.length == 2;
+        assert objects[0] instanceof Optional;
+
+        objects = codec.toArray(Arrays.asList(1L, null, 3L), XTypeUtils.toXType(Integer[].class));
+        assert Objects.deepEquals(objects, new Integer[]{1, null, 3});
     }
 
     @Test

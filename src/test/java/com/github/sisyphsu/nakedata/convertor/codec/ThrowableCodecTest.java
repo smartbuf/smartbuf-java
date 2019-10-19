@@ -18,6 +18,7 @@ import java.util.Objects;
  * @author sulin
  * @since 2019-08-04 18:59:00
  */
+@SuppressWarnings("ALL")
 public class ThrowableCodecTest {
 
     private ThrowableCodec codec = new ThrowableCodec();
@@ -53,6 +54,11 @@ public class ThrowableCodecTest {
         map.put("type", Object.class.getName());
         Throwable throwable4 = codec.toThrowable(map, XTypeUtils.toXType(Throwable.class));
         assert throwable4.getClass() == Throwable.class;
+
+        map.remove(ThrowableCodec.E_TYPE);
+        map.remove(ThrowableCodec.E_MSG);
+        map.remove(ThrowableCodec.E_STACKS);
+        codec.toThrowable(map, XTypeUtils.toXType(Throwable.class));
     }
 
     @Test

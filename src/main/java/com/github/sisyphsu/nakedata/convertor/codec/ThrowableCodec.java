@@ -18,14 +18,14 @@ import java.util.Map;
 public final class ThrowableCodec extends Codec {
 
     private static final String F_DECLARER = "declarer";
-    private static final String F_METHOD = "method";
-    private static final String F_FILE = "file";
-    private static final String F_LINE = "line";
+    private static final String F_METHOD   = "method";
+    private static final String F_FILE     = "file";
+    private static final String F_LINE     = "line";
 
-    private static final String E_TYPE = "type";
-    private static final String E_MSG = "msg";
-    private static final String E_CAUSE = "cause";
-    private static final String E_STACKS = "stacks";
+    public static final String E_TYPE   = "type";
+    public static final String E_MSG    = "msg";
+    public static final String E_CAUSE  = "cause";
+    public static final String E_STACKS = "stacks";
 
     /**
      * Convert Map to StackTraceElement
@@ -74,12 +74,9 @@ public final class ThrowableCodec extends Codec {
     @Converter
     public Throwable toThrowable(Map map, XType type) {
         String eType = convert(map.get(E_TYPE), String.class);
-        String eMsg = convert(map.get(E_MSG), String.class);
-        Throwable cause = convert(map.get(E_CAUSE), Throwable.class);
-        StackTraceElement[] stack = convert(map.get(E_STACKS), StackTraceElement[].class);
         // Decide class
         Class<?> clz = type.getRawType();
-        if (clz == Throwable.class && eType != null && eType.length() > 0) {
+        if (clz == Throwable.class && eType != null) {
             try {
                 Class<?> eClz = Class.forName(eType);
                 if (Throwable.class.isAssignableFrom(eClz)) {
@@ -92,8 +89,12 @@ public final class ThrowableCodec extends Codec {
             }
         }
         // Create Throwable
+        String eMsg = convert(map.get(E_MSG), String.class);
+        Throwable cause = convert(map.get(E_CAUSE), Throwable.class);
         Throwable result = createThrowable(clz, eMsg, cause);
-        result.setStackTrace(stack);
+        if (map.containsKey(E_STACKS)) {
+            result.setStackTrace(convert(map.get(E_STACKS), StackTraceElement[].class));
+        }
         return result;
     }
 

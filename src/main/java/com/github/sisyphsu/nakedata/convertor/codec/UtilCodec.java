@@ -77,6 +77,8 @@ public final class UtilCodec extends Codec {
                     for (int i = 0; i < 5; i++) {
                         components[i] = Long.valueOf(parts[i], 16);
                     }
+                } else {
+                    throw new IllegalArgumentException("Invalid UUID: " + s);
                 }
             } else if (s.length() == 32) {
                 components[0] = Long.valueOf(s.substring(0, 8), 16);
@@ -84,12 +86,11 @@ public final class UtilCodec extends Codec {
                 components[2] = Long.valueOf(s.substring(12, 16), 16);
                 components[3] = Long.valueOf(s.substring(16, 20), 16);
                 components[4] = Long.valueOf(s.substring(20, 32), 16);
+            } else {
+                throw new IllegalArgumentException("Invalid UUID: " + s);
             }
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid UUID string: " + s, e);
-        }
-        if (components[0] == null) {
-            throw new IllegalArgumentException("Invalid UUID string: " + s);
+            throw new IllegalArgumentException("Invalid UUID: " + s, e);
         }
         long mostSigBits = components[0];
         mostSigBits <<= 16;

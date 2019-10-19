@@ -11,6 +11,7 @@ import java.util.Map;
  * @author sulin
  * @since 2019-08-03 16:43:57
  */
+@SuppressWarnings("unchecked")
 public class AwtCodecTest {
 
     private AwtCodec codec = new AwtCodec();
@@ -52,6 +53,8 @@ public class AwtCodecTest {
         String rgba = "#00112233";
         Color rgbaColor = codec.toColor(rgba);
         assert rgba.equalsIgnoreCase(codec.toString(rgbaColor));
+
+        codec.toColor("001122330");
     }
 
 }

@@ -7,8 +7,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.ref.PhantomReference;
+import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author sulin
@@ -22,13 +25,6 @@ public class ReferenceCodecTest {
     @BeforeEach
     void setUp() {
         codec.setFactory(CodecFactory.Instance);
-    }
-
-    @Test
-    public void testToObject() {
-        SoftReference<Long> ref = new SoftReference<>(10000L);
-        assert codec.toObject(ref, XTypeUtils.toXType(Integer.class)) instanceof Integer;
-        assert codec.toObject(ref, XTypeUtils.toXType(Long.class)) == ref.get();
     }
 
     @Test
@@ -53,6 +49,28 @@ public class ReferenceCodecTest {
         } catch (Exception e) {
             assert e instanceof IllegalArgumentException;
         }
+
+        Reference result = codec.toReference("", XTypeUtils.toXType(new TypeRef<SoftReference<Optional<String>>>() {
+        }.getType()));
+        assert result.get() instanceof Optional;
+        assert Objects.equals("", ((Optional) result.get()).get());
+
+        Reference ref2 = codec.toReference(0L, XTypeUtils.toXType(new TypeRef<Reference<Long>>() {
+        }.getType()));
+        assert Objects.equals(0L, ref2.get());
+    }
+
+    @Test
+    public void testToObject() {
+        SoftReference<Long> ref = new SoftReference<>(10000L);
+        assert codec.toObject(ref, XTypeUtils.toXType(Integer.class)) instanceof Integer;
+        assert codec.toObject(ref, XTypeUtils.toXType(Long.class)) == ref.get();
+
+        SoftReference<String> ref2 = new SoftReference<>("");
+        Object result = codec.toObject(ref2, XTypeUtils.toXType(new TypeRef<Optional<String>>() {
+        }.getType()));
+        assert result instanceof Optional;
+        assert Objects.equals(((Optional) result).get(), "");
     }
 
 }

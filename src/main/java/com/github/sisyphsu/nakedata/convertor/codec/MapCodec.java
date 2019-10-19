@@ -31,13 +31,14 @@ public final class MapCodec extends Codec {
         XType<?>[] paramTypes = type.getParameterizedTypes();
         XType<?> keyType = paramTypes[0];
         XType<?> valType = paramTypes[1];
+        Class<?> keyRawType = keyType.getRawType();
+        Class<?> valRawType = valType.getRawType();
         boolean compatible = rawType.isInstance(map) && keyType.isPure() && valType.isPure();
-        if (compatible && !(keyType.getRawType() == Object.class && valType.getRawType() == Object.class)) {
+        if (compatible && !(keyRawType == Object.class && valRawType == Object.class)) {
             for (Map.Entry<?, ?> entry : map.entrySet()) {
                 Object key = entry.getKey();
                 Object val = entry.getValue();
-                if (!keyType.getRawType().isInstance(key) || !valType.getRawType().isInstance(val)) {
-                    compatible = false;
+                if (!(compatible = keyRawType.isInstance(key) && valRawType.isInstance(val))) {
                     break;
                 }
             }
