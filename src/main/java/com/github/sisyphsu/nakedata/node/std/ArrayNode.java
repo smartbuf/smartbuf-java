@@ -1,17 +1,18 @@
 package com.github.sisyphsu.nakedata.node.std;
 
-import com.github.sisyphsu.nakedata.NodeType;
-import com.github.sisyphsu.nakedata.SliceType;
+import com.github.sisyphsu.nakedata.node.NodeType;
+import com.github.sisyphsu.nakedata.node.SliceType;
 import com.github.sisyphsu.nakedata.node.Node;
 
 import java.util.List;
 
 /**
- * Slice represent an subarray of ArrayNode.
+ * ArrayNode represents all kinds of primary array or Object[].
  *
  * @author sulin
  * @since 2019-06-05 11:39:47
  */
+@SuppressWarnings("unchecked")
 public final class ArrayNode extends Node {
 
     public static final ArrayNode NULL  = new ArrayNode();
@@ -125,7 +126,6 @@ public final class ArrayNode extends Node {
         return slices;
     }
 
-    @SuppressWarnings("unchecked")
     public static class Slice {
 
         private final Object    data;

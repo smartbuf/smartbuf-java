@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.proto;
 
-import com.github.sisyphsu.nakedata.SliceType;
+import com.github.sisyphsu.nakedata.node.SliceType;
 
 /**
  * @author sulin

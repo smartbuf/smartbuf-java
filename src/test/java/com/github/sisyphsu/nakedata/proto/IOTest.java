@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.proto;
 
-import com.github.sisyphsu.nakedata.NodeType;
+import com.github.sisyphsu.nakedata.node.NodeType;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.std.*;
 import org.apache.commons.lang3.RandomStringUtils;

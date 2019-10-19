@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Object's Codec
+ * Object's Codec, convert Node from/to Map
  *
  * @author sulin
  * @since 2019-06-05 20:29:40
@@ -92,7 +92,7 @@ public final class BeanNodeCodec extends Codec {
         return objectKey;
     }
 
-    public static class BeanKey {
+    private static class BeanKey {
         private final boolean  stable;
         private final String[] fieldNames;
 

@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.node;
 
-import com.github.sisyphsu.nakedata.SliceType;
 import com.github.sisyphsu.nakedata.convertor.Codec;
 import com.github.sisyphsu.nakedata.convertor.Converter;
 import com.github.sisyphsu.nakedata.node.std.*;
@@ -147,12 +146,12 @@ public final class ArrayNodeCodec extends Codec {
             // create previous slice
             List sliceData;
             if (arr.length == 1) {
-                sliceData = new RefList(0, 1, arr);
+                sliceData = new SubList(0, 1, arr);
             } else if (continuous) {
-                sliceData = new RefList(sliceFrom, offset - sliceFrom, arr);// no more slice
+                sliceData = new SubList(sliceFrom, offset - sliceFrom, arr);// no more slice
                 sliceType = itemType;
             } else {
-                sliceData = new RefList(sliceFrom, offset - 1 - sliceFrom, arr);// has more slice
+                sliceData = new SubList(sliceFrom, offset - 1 - sliceFrom, arr);// has more slice
             }
             node.appendSlice(sliceData, sliceData.size(), sliceType);
             // prepare next slice

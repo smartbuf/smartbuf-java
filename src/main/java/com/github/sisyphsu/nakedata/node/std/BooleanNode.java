@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.node.std;
 
 import com.github.sisyphsu.nakedata.node.Node;
-import com.github.sisyphsu.nakedata.NodeType;
+import com.github.sisyphsu.nakedata.node.NodeType;
 
 /**
  * BooleanNode represents boolean and Boolean.

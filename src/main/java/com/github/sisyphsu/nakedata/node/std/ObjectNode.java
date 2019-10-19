@@ -1,14 +1,13 @@
 package com.github.sisyphsu.nakedata.node.std;
 
-import com.github.sisyphsu.nakedata.NodeType;
 import com.github.sisyphsu.nakedata.node.Node;
+import com.github.sisyphsu.nakedata.node.NodeType;
 
 import java.util.Collections;
 import java.util.Map;
 
 /**
  * ObjectNode represents JavaBean or Map.
- * TODO 建立与struct的关系
  *
  * @author sulin
  * @since 2019-05-08 21:02:12

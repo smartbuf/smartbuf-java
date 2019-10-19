@@ -1,9 +1,7 @@
 package com.github.sisyphsu.nakedata.node;
 
-import com.github.sisyphsu.nakedata.NodeType;
-
 /**
- * 属性树节点
+ * Base class of Node, and provider some common features.
  *
  * @author sulin
  * @since 2019-05-08 20:33:51
@@ -11,9 +9,9 @@ import com.github.sisyphsu.nakedata.NodeType;
 public abstract class Node {
 
     /**
-     * 是否是null值
+     * Chech whether this node represents null or not
      *
-     * @return true表示null值
+     * @return true means null
      */
     public abstract boolean isNull();
 

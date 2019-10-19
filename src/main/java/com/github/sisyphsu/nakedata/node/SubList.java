@@ -6,23 +6,18 @@ import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 /**
- * Inner ArrayList, don't copy Object[]
+ * SubList helps wrap Object[] as List, and don't need array copy.
  *
- * @param <E>
+ * @author sulin
+ * @since 2019-05-08 20:25:32
  */
-public class RefList<E> extends AbstractList<E> implements RandomAccess {
+public class SubList<E> extends AbstractList<E> implements RandomAccess {
 
     private final int from;
     private final int size;
     private final E[] data;
 
-    public RefList(E[] array, int size) {
-        this.from = 0;
-        this.size = size;
-        this.data = Objects.requireNonNull(array);
-    }
-
-    public RefList(int from, int size, E[] data) {
+    public SubList(int from, int size, E[] data) {
         this.from = from;
         this.size = size;
         this.data = data;

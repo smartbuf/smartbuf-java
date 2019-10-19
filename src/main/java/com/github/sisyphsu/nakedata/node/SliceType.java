@@ -1,10 +1,8 @@
-package com.github.sisyphsu.nakedata;
+package com.github.sisyphsu.nakedata.node;
 
 /**
- * 数组片段类型枚举：
- * 1. 原生数组，如boolean[], byte[], short[], int[], long[], float[], double[]
- * 2. 对象数组，如List<Byte>
- * 3. Node数组，如List<BooleanNode>
+ * SliceType represent the element type of slice, which composes ArrayNode,
+ * It support native array and part of Object[].
  *
  * @author sulin
  * @since 2019-09-24 20:24:54

@@ -1,6 +1,6 @@
 package com.github.sisyphsu.nakedata.node.std;
 
-import com.github.sisyphsu.nakedata.NodeType;
+import com.github.sisyphsu.nakedata.node.NodeType;
 import com.github.sisyphsu.nakedata.node.Node;
 
 /**
