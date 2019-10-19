@@ -90,7 +90,7 @@ public final class Output {
     /**
      * Ouput the specified Node into writer, all nodes need prefix an varuint as head-id.
      */
-    private void writeNode(Node node, OutputWriter writer) throws IOException {
+    void writeNode(Node node, OutputWriter writer) throws IOException {
         if (node.isNull()) {
             writer.writeVarUint((ID_NULL << 2) | FLAG_DATA);
             return;
@@ -120,17 +120,16 @@ public final class Output {
                 int dataId = stream ? dataPool.findSymbolID(symbol) : dataPool.findStringID(symbol);
                 writer.writeVarUint((dataId << 2) | FLAG_DATA);
                 break;
-            case OBJECT:
+            case ARRAY:
+                this.writeArrayNode((ArrayNode) node, writer, true);
+                break;
+            default:
                 ObjectNode objectNode = (ObjectNode) node;
                 String[] fields = objectNode.getFields();
                 writer.writeVarUint((structPool.findStructID(fields) << 2) | FLAG_STRUCT);
                 for (String field : fields) {
                     this.writeNode(objectNode.getField(field), writer);
                 }
-                break;
-            case ARRAY:
-                this.writeArrayNode((ArrayNode) node, writer, true);
-                break;
         }
     }
 
@@ -139,7 +138,7 @@ public final class Output {
      *
      * @param suffixFlag Need suffix FLAG_ARRAY at head or not
      */
-    private void writeArrayNode(ArrayNode node, OutputWriter writer, boolean suffixFlag) throws IOException {
+    void writeArrayNode(ArrayNode node, OutputWriter writer, boolean suffixFlag) throws IOException {
         ArrayNode.Slice[] slices = node.slices();
         for (int i = 0, len = node.size(); i < len; i++) {
             ArrayNode.Slice slice = slices[i];
@@ -186,11 +185,11 @@ public final class Output {
                 case FLOAT_NATIVE:
                     writer.writeFloatArray(slice.asFloatArray());
                     break;
-                case DOUBLE_NATIVE:
-                    writer.writeDoubleArray(slice.asDoubleArray());
-                    break;
                 case FLOAT:
                     writer.writeFloatSlice(slice.asFloatSlice());
+                    break;
+                case DOUBLE_NATIVE:
+                    writer.writeDoubleArray(slice.asDoubleArray());
                     break;
                 case DOUBLE:
                     writer.writeDoubleSlice(slice.asDoubleSlice());
@@ -210,7 +209,7 @@ public final class Output {
                         this.writeArrayNode(item, writer, false);
                     }
                     break;
-                case OBJECT:
+                default:
                     List<ObjectNode> nodes = slice.asObjectSlice();
                     String[] fields = nodes.get(0).getFields();
                     writer.writeVarUint(structPool.findStructID(fields)); // structId
@@ -219,7 +218,6 @@ public final class Output {
                             this.writeNode(item.getField(field), writer);
                         }
                     }
-                    break;
             }
         }
     }

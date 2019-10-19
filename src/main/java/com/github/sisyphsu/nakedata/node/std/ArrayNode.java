@@ -92,6 +92,10 @@ public final class ArrayNode extends Node {
         this.appendSlice(nodes, nodes.size(), SliceType.ARRAY);
     }
 
+    public void addObjectSlice(List<ObjectNode> nodes) {
+        this.appendSlice(nodes, nodes.size(), SliceType.OBJECT);
+    }
+
     public ArrayNode appendSlice(Object obj, int sliceSize, SliceType type) {
         Slice slice = new Slice(obj, sliceSize, type);
         if (size == slices.length - 1) {

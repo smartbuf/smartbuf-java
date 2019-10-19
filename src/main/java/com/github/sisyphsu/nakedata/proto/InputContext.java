@@ -52,15 +52,21 @@ public final class InputContext {
         // accept expired metadata
         len = schema.cxtNameExpired.size();
         for (int i = 0; i < len; i++) {
-            cxtNameId.release(schema.cxtNameExpired.get(i));
+            int offset = schema.cxtNameExpired.get(i);
+            cxtNameId.release(offset);
+            cxtNames.put(offset, null);
         }
         len = schema.cxtSymbolExpired.size();
         for (int i = 0; i < len; i++) {
-            cxtSymbolID.release(schema.cxtSymbolExpired.get(i));
+            int offset = schema.cxtSymbolExpired.get(i);
+            cxtSymbolID.release(offset);
+            cxtSymbols.put(offset, null);
         }
         len = schema.cxtStructExpired.size();
         for (int i = 0; i < len; i++) {
-            cxtStructID.release(schema.cxtStructExpired.get(i));
+            int offset = schema.cxtStructExpired.get(i);
+            cxtStructID.release(offset);
+            cxtStructs.put(offset, null);
         }
         // accept context metadata
         len = schema.cxtSymbolAdded.size();
@@ -106,7 +112,7 @@ public final class InputContext {
             return tmpNames.get(id);
         }
         id -= tmpNames.size();
-        if (id > cxtNameId.count()) {
+        if (id > cxtNames.cap()) {
             throw new IllegalArgumentException("invalid id: " + id);
         }
         String result = cxtNames.get(id);
@@ -130,7 +136,7 @@ public final class InputContext {
             return tmpStructs.get(id);
         }
         id -= tmpStructs.size();
-        if (id > cxtStructs.size()) {
+        if (id > cxtStructs.cap()) {
             throw new IllegalArgumentException("invalid id: " + id);
         }
         String[] struct = cxtStructs.get(id);

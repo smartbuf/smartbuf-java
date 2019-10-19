@@ -51,8 +51,6 @@ public interface Const {
 
     static byte toSliceType(SliceType type) {
         switch (type) {
-            case NULL:
-                return SLICE_NULL;
             case BOOL:
             case BOOL_NATIVE:
                 return SLICE_BOOL;
@@ -83,7 +81,7 @@ public interface Const {
             case OBJECT:
                 return SLICE_OBJECT;
             default:
-                throw new IllegalArgumentException("unknown ArrayType: " + type);
+                return SLICE_NULL;
         }
     }
 

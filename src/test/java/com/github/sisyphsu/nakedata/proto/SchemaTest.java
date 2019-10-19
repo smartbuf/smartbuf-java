@@ -1,5 +1,7 @@
 package com.github.sisyphsu.nakedata.proto;
 
+import com.github.sisyphsu.nakedata.node.std.BooleanNode;
+import com.github.sisyphsu.nakedata.node.std.SymbolNode;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.RepeatedTest;
@@ -41,6 +43,39 @@ public class SchemaTest {
             assert false;
         } catch (Exception e) {
             assert e instanceof RuntimeException;
+        }
+    }
+
+    @Test
+    public void testModeError() throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1 << 16);
+        Output output = new Output(outputStream, false);
+        output.write(BooleanNode.valueOf(true));
+
+        Input input = new Input(new ByteArrayInputStream(outputStream.toByteArray()), true);
+        try {
+            input.read();
+            assert false;
+        } catch (Exception e) {
+            assert true;
+        }
+    }
+
+    @Test
+    public void testSequenceError() throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1 << 16);
+        Output output = new Output(outputStream, true);
+        output.write(SymbolNode.valueOf("BLACK"));
+        output.write(SymbolNode.valueOf("WHITE"));
+        byte[] bytes = outputStream.toByteArray();
+        byte[] data = new byte[bytes.length / 2];
+        System.arraycopy(bytes, bytes.length / 2, data, 0, bytes.length / 2);
+        Input input = new Input(new ByteArrayInputStream(data), true);
+        try {
+            input.read();
+            assert false;
+        } catch (Exception e) {
+            assert true;
         }
     }
 

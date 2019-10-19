@@ -7,9 +7,7 @@ import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static com.github.sisyphsu.nakedata.proto.IOTest.enableCxt;
 import static com.github.sisyphsu.nakedata.proto.IOTest.transIO;
@@ -21,7 +19,35 @@ import static com.github.sisyphsu.nakedata.proto.IOTest.transIO;
 public class IOObjectTest {
 
     @Test
-    public void testSimpleObject() throws IOException {
+    public void testUnstable() throws IOException {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", RandomUtils.nextLong());
+        map.put("name", RandomStringUtils.randomAlphanumeric(16));
+        map.put("score", RandomUtils.nextDouble());
+        String[] fieldNames = map.keySet().toArray(new String[0]);
+        ObjectNode objectNode = buildObjectNode(false, fieldNames, map);
+
+        enableCxt = false;
+        Object result = transIO(objectNode);
+        assert result instanceof Map;
+        Map tgtMap = (Map) result;
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            Object tgtItem = tgtMap.get(entry.getKey());
+            assert Objects.deepEquals(entry.getValue(), tgtItem);
+        }
+
+        enableCxt = true;
+        result = transIO(objectNode);
+        assert result instanceof Map;
+        tgtMap = (Map) result;
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            Object tgtItem = tgtMap.get(entry.getKey());
+            assert Objects.deepEquals(entry.getValue(), tgtItem);
+        }
+    }
+
+    @Test
+    public void testObject() throws IOException {
         Map<String, Object> map = new HashMap<>();
         map.put("id", RandomUtils.nextLong());
         map.put("name", RandomStringUtils.randomAlphanumeric(64));
@@ -32,8 +58,83 @@ public class IOObjectTest {
         map.put("arr", RandomUtils.nextBytes(1024));
 
         String[] fieldNames = map.keySet().toArray(new String[0]);
+        ObjectNode objectNode = buildObjectNode(true, fieldNames, map);
+
+        Object result;
+        Map tgtMap;
+
+        enableCxt = false;
+        result = transIO(objectNode);
+        assert result instanceof Map;
+        tgtMap = (Map) result;
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            Object tgtItem = tgtMap.get(entry.getKey());
+            assert Objects.deepEquals(entry.getValue(), tgtItem);
+        }
+
+        enableCxt = true;
+        result = transIO(objectNode);
+        assert result instanceof Map;
+        tgtMap = (Map) result;
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            Object tgtItem = tgtMap.get(entry.getKey());
+            assert Objects.deepEquals(entry.getValue(), tgtItem);
+        }
+
+        // test for array
+        ArrayNode arrayNode = new ArrayNode();
+        arrayNode.addObjectSlice(Arrays.asList(objectNode, objectNode, objectNode));
+
+        // for temporary
+        enableCxt = false;
+        result = transIO(arrayNode);
+        assert result instanceof Object[];
+        tgtMap = (Map) ((Object[]) result)[0];
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            Object tgtItem = tgtMap.get(entry.getKey());
+            assert Objects.deepEquals(entry.getValue(), tgtItem);
+        }
+
+        // for context
+        enableCxt = true;
+        result = transIO(arrayNode);
+        assert result instanceof Object[];
+        tgtMap = (Map) ((Object[]) result)[0];
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            Object tgtItem = tgtMap.get(entry.getKey());
+            assert Objects.deepEquals(entry.getValue(), tgtItem);
+        }
+    }
+
+    @Test
+    public void testMixArray() throws IOException {
+        ArrayNode node = new ArrayNode();
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", RandomUtils.nextLong());
+        map.put("name", RandomStringUtils.randomAlphanumeric(16));
+        map.put("score", RandomUtils.nextDouble());
+        String[] fieldNames = map.keySet().toArray(new String[0]);
+        node.addObjectSlice(Collections.singletonList(buildObjectNode(false, fieldNames, map)));
+
+        int[] ints = new int[]{0, Integer.MIN_VALUE, Integer.MAX_VALUE};
+        float[] floats = new float[]{0.0F, Float.MIN_VALUE, Float.MAX_VALUE};
+        node.addArraySlice(Arrays.asList(ArrayNode.valueOf(ints), ArrayNode.valueOf(floats)));
+
+        Object[] objects = new Object[]{map, ints, floats};
+
+        enableCxt = true;
+        Object result = transIO(node);
+        assert Objects.deepEquals(objects, result);
+
+        enableCxt = false;
+        result = transIO(node);
+        assert Objects.deepEquals(objects, result);
+    }
+
+    ObjectNode buildObjectNode(boolean stable, String[] names, Map<String, Object> map) {
         Map<String, Node> nodeMap = new HashMap<>();
-        for (String fieldName : fieldNames) {
+        for (String fieldName : names) {
             Object data = map.get(fieldName);
             if (data == null) {
                 nodeMap.put(fieldName, BooleanNode.valueOf(null));
@@ -53,26 +154,7 @@ public class IOObjectTest {
                 throw new RuntimeException();
             }
         }
-        Object result;
-        Map tgtMap;
-
-        enableCxt = false;
-        result = transIO(ObjectNode.valueOf(true, fieldNames, nodeMap));
-        assert result instanceof Map;
-        tgtMap = (Map) result;
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            Object tgtItem = tgtMap.get(entry.getKey());
-            assert Objects.deepEquals(entry.getValue(), tgtItem);
-        }
-
-        enableCxt = true;
-        result = transIO(ObjectNode.valueOf(true, fieldNames, nodeMap));
-        assert result instanceof Map;
-        tgtMap = (Map) result;
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            Object tgtItem = tgtMap.get(entry.getKey());
-            assert Objects.deepEquals(entry.getValue(), tgtItem);
-        }
+        return ObjectNode.valueOf(stable, names, nodeMap);
     }
 
 }

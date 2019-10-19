@@ -49,7 +49,7 @@ public final class Input {
         return readNode();
     }
 
-    private Object readNode() throws IOException {
+    Object readNode() throws IOException {
         long nodeID = reader.readVarUint();
         byte flag = (byte) (nodeID & 0b0000_0011);
         switch (flag) {
@@ -65,14 +65,14 @@ public final class Input {
                 }
                 return tmp;
             default:
-                throw new RuntimeException("");
+                throw new IllegalArgumentException("Invalid data flag: " + flag);
         }
     }
 
     /**
      * Read an array
      */
-    private Object readArray(long head) throws IOException {
+    Object readArray(long head) throws IOException {
         if ((head & 1) == 0) {
             return readPureArray(head);
         }
@@ -161,7 +161,7 @@ public final class Input {
     /**
      * Read a pure array, which means all items has same type
      */
-    private Object readPureArray(long head) throws IOException {
+    Object readPureArray(long head) throws IOException {
         byte type = (byte) ((head >>> 1) & 0x0F);
         int size = (int) (head >>> 5);
         switch (type) {

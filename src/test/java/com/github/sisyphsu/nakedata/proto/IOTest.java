@@ -1,5 +1,6 @@
 package com.github.sisyphsu.nakedata.proto;
 
+import com.github.sisyphsu.nakedata.NodeType;
 import com.github.sisyphsu.nakedata.node.Node;
 import com.github.sisyphsu.nakedata.node.std.*;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -160,6 +161,50 @@ public class IOTest {
             assert false;
         } catch (Exception e) {
             assert e instanceof NullPointerException;
+        }
+
+        Input input = new Input(new ByteArrayInputStream(new byte[1024]), true);
+        try {
+            input.readNode();
+            assert false;
+        } catch (Exception e) {
+            assert true;
+        }
+        try {
+            input.readArray(0b1111_1111L);
+            assert false;
+        } catch (Exception e) {
+            assert true;
+        }
+        try {
+            input.readArray(0b1111_1111L);
+            assert false;
+        } catch (Exception e) {
+            assert true;
+        }
+        try {
+            input.readPureArray(0xFFL);
+            assert false;
+        } catch (Exception e) {
+            assert true;
+        }
+
+        Output output = new Output(null, true);
+        try {
+            output.writeNode(new Node() {
+                @Override
+                public boolean isNull() {
+                    return false;
+                }
+
+                @Override
+                public NodeType dataType() {
+                    return NodeType.UNKNOWN;
+                }
+            }, null);
+            assert false;
+        } catch (Exception e) {
+            assert true;
         }
     }
 

@@ -11,6 +11,9 @@ public class ArrayTest {
     @Test
     public void test() {
         Array<Long> array = new Array<>();
+        assert array.cap() == 0;
+        assert array.size() == 0;
+
         array.add(1L);
         array.add(2L);
         array.add(3L);

@@ -31,5 +31,5 @@ public enum SliceType {
     LONG_NATIVE,
     FLOAT_NATIVE,
     DOUBLE_NATIVE,
-    
+
 }
