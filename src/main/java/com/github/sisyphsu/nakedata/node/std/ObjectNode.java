@@ -16,25 +16,27 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public final class ObjectNode extends Node {
 
-    public final static ObjectNode NULL  = new ObjectNode(null, null);
-    public final static ObjectNode EMPTY = new ObjectNode(new Key(true, new String[0]), Collections.EMPTY_MAP);
+    public final static ObjectNode NULL  = new ObjectNode(true, null, null);
+    public final static ObjectNode EMPTY = new ObjectNode(true, new String[0], Collections.EMPTY_MAP);
 
-    private final Key               key;
+    private final boolean           stable;
+    private final String[]          fields;
     private final Map<String, Node> data;
 
-    private ObjectNode(Key key, Map<String, Node> map) {
-        this.key = key;
-        this.data = map;
+    public ObjectNode(boolean stable, String[] fields, Map<String, Node> data) {
+        this.stable = stable;
+        this.fields = fields;
+        this.data = data;
     }
 
-    public static ObjectNode valueOf(Key key, Map<String, Node> map) {
+    public static ObjectNode valueOf(boolean stable, String[] fields, Map<String, Node> map) {
         if (map == null) {
             return NULL;
         }
         if (map.isEmpty()) {
             return EMPTY;
         }
-        return new ObjectNode(key, map);
+        return new ObjectNode(stable, fields, map);
     }
 
     @Override
@@ -56,7 +58,7 @@ public final class ObjectNode extends Node {
     }
 
     public String[] getFields() {
-        return key.fields;
+        return fields;
     }
 
     public Node getField(String name) {
@@ -64,19 +66,7 @@ public final class ObjectNode extends Node {
     }
 
     public boolean isStable() {
-        return key.stable;
-    }
-
-    public static final class Key {
-
-        final boolean  stable;
-        final String[] fields;
-
-        public Key(boolean stable, String[] fields) {
-            this.stable = stable;
-            this.fields = fields;
-        }
-
+        return stable;
     }
 
 }

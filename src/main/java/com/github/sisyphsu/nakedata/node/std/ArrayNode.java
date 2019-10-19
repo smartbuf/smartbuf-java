@@ -88,6 +88,10 @@ public final class ArrayNode extends Node {
         this.appendSlice(symbols, symbols.size(), SliceType.SYMBOL);
     }
 
+    public void addArraySlice(List<ArrayNode> nodes) {
+        this.appendSlice(nodes, nodes.size(), SliceType.ARRAY);
+    }
+
     public ArrayNode appendSlice(Object obj, int sliceSize, SliceType type) {
         Slice slice = new Slice(obj, sliceSize, type);
         if (size == slices.length - 1) {
@@ -138,8 +142,8 @@ public final class ArrayNode extends Node {
             return size;
         }
 
-        public List asList() {
-            return (List) data;
+        public Object data() {
+            return data;
         }
 
         public boolean[] asBooleanArray() {

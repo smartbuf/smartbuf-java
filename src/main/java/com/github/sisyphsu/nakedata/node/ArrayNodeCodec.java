@@ -149,10 +149,10 @@ public final class ArrayNodeCodec extends Codec {
             if (arr.length == 1) {
                 sliceData = new RefList(0, 1, arr);
             } else if (continuous) {
-                sliceData = new RefList(sliceFrom, offset, arr);// no more slice
+                sliceData = new RefList(sliceFrom, offset - sliceFrom, arr);// no more slice
                 sliceType = itemType;
             } else {
-                sliceData = new RefList(sliceFrom, offset - 1, arr);// has more slice
+                sliceData = new RefList(sliceFrom, offset - 1 - sliceFrom, arr);// has more slice
             }
             node.appendSlice(sliceData, sliceData.size(), sliceType);
             // prepare next slice

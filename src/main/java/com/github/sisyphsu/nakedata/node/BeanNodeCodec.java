@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class BeanNodeCodec extends Codec {
 
-    private static final Map<Class, ObjectNode.Key> FIELDS_MAP = new ConcurrentHashMap<>();
+    private static final Map<Class, BeanKey> FIELDS_MAP = new ConcurrentHashMap<>();
 
     /**
      * encode map to ObjectNode, pojo should be encoded as map first.
@@ -42,14 +42,14 @@ public final class BeanNodeCodec extends Codec {
             }
             fields.put(key, convert(entry.getValue(), Node.class));
         }
-        ObjectNode.Key objectKey;
+        BeanKey key;
         if (map instanceof BeanMap) {
-            objectKey = parseBeanMapKey((BeanMap) map);
+            key = parseBeanMapKey((BeanMap) map);
         } else {
             String[] fieldNames = fields.keySet().toArray(new String[0]);
-            objectKey = new ObjectNode.Key(false, fieldNames);
+            key = new BeanKey(false, fieldNames);
         }
-        return ObjectNode.valueOf(objectKey, fields);
+        return ObjectNode.valueOf(key.stable, key.fieldNames, fields);
     }
 
     /**
@@ -75,9 +75,9 @@ public final class BeanNodeCodec extends Codec {
      * @param map Map
      * @return names as array
      */
-    public static ObjectNode.Key parseBeanMapKey(BeanMap map) {
+    public static BeanKey parseBeanMapKey(BeanMap map) {
         Class beanCls = map.getBean().getClass();
-        ObjectNode.Key objectKey = FIELDS_MAP.get(beanCls);
+        BeanKey objectKey = FIELDS_MAP.get(beanCls);
         if (objectKey == null) {
             String[] fieldNames = new String[map.size()];
             int i = 0;
@@ -86,10 +86,20 @@ public final class BeanNodeCodec extends Codec {
                 fieldNames[i++] = fieldName;
             }
             Arrays.sort(fieldNames);
-            objectKey = new ObjectNode.Key(true, fieldNames);
+            objectKey = new BeanKey(true, fieldNames);
             FIELDS_MAP.put(beanCls, objectKey);
         }
         return objectKey;
+    }
+
+    public static class BeanKey {
+        private final boolean  stable;
+        private final String[] fieldNames;
+
+        public BeanKey(boolean stable, String[] fieldNames) {
+            this.stable = stable;
+            this.fieldNames = fieldNames;
+        }
     }
 
 }

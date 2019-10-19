@@ -120,9 +120,6 @@ public final class Output {
                 int dataId = stream ? dataPool.findSymbolID(symbol) : dataPool.findStringID(symbol);
                 writer.writeVarUint((dataId << 2) | FLAG_DATA);
                 break;
-            case ARRAY:
-                this.writeArrayNode((ArrayNode) node, writer, true);
-                break;
             case OBJECT:
                 ObjectNode objectNode = (ObjectNode) node;
                 String[] fields = objectNode.getFields();
@@ -130,6 +127,9 @@ public final class Output {
                 for (String field : fields) {
                     this.writeNode(objectNode.getField(field), writer);
                 }
+                break;
+            case ARRAY:
+                this.writeArrayNode((ArrayNode) node, writer, true);
                 break;
         }
     }

@@ -49,7 +49,7 @@ public final class InputContext {
         this.tmpStructs.clear();
 
         int len;
-        // accept expires
+        // accept expired metadata
         len = schema.cxtNameExpired.size();
         for (int i = 0; i < len; i++) {
             cxtNameId.release(schema.cxtNameExpired.get(i));
@@ -62,14 +62,14 @@ public final class InputContext {
         for (int i = 0; i < len; i++) {
             cxtStructID.release(schema.cxtStructExpired.get(i));
         }
-        // accept add
+        // accept context metadata
         len = schema.cxtSymbolAdded.size();
         for (int i = 0; i < len; i++) {
-            cxtSymbols.add(schema.cxtSymbolAdded.get(i));
+            cxtSymbols.put(cxtSymbolID.acquire(), schema.cxtSymbolAdded.get(i));
         }
         len = schema.cxtNameAdded.size();
         for (int i = 0; i < len; i++) {
-            cxtNames.add(schema.cxtNameAdded.get(i));
+            cxtNames.put(cxtNameId.acquire(), schema.cxtNameAdded.get(i));
         }
         len = schema.cxtStructAdded.size();
         for (int i = 0; i < len; i++) {
@@ -78,7 +78,17 @@ public final class InputContext {
             for (int j = 0; j < nameIds.length; j++) {
                 fields[j] = findNameByID(nameIds[j]);
             }
-            cxtStructs.add(fields);
+            cxtStructs.put(cxtStructID.acquire(), fields);
+        }
+        // accept temporary struct
+        len = schema.tmpStructs.size();
+        for (int i = 0; i < len; i++) {
+            int[] nameIds = schema.tmpStructs.get(i);
+            String[] fields = new String[nameIds.length];
+            for (int j = 0; j < nameIds.length; j++) {
+                fields[j] = findNameByID(nameIds[j]);
+            }
+            tmpStructs.add(fields);
         }
     }
 
