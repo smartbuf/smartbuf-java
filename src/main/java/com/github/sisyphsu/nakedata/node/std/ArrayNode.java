@@ -15,7 +15,6 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public final class ArrayNode extends Node {
 
-    public static final ArrayNode NULL  = new ArrayNode();
     public static final ArrayNode EMPTY = new ArrayNode();
 
     private int     size;
@@ -115,7 +114,7 @@ public final class ArrayNode extends Node {
 
     @Override
     public boolean isNull() {
-        return this == NULL;
+        return false;
     }
 
     public int size() {

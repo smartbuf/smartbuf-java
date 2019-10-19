@@ -10,14 +10,16 @@ import java.lang.management.ManagementFactory;
  */
 public final class TimeUtils {
 
-    public static        int  INTERVAL = 500;
-    private static final long UP_TIME  = ManagementFactory.getRuntimeMXBean().getStartTime();
+    public static int INTERVAL = 500;
+
+    static final long   UP_TIME = ManagementFactory.getRuntimeMXBean().getStartTime();
+    static final Thread TIMER_THREAD;
 
     private static long now;
     private static long uptime;
 
     static {
-        Thread thread = new Thread(() -> {
+        TIMER_THREAD = new Thread(() -> {
             while (true) {
                 flush();
                 try {
@@ -26,9 +28,9 @@ public final class TimeUtils {
                 }
             }
         });
-        thread.setName("TimeUtils-Timer");
-        thread.setDaemon(true);
-        thread.start();
+        TIMER_THREAD.setName("TimeUtils-Timer");
+        TIMER_THREAD.setDaemon(true);
+        TIMER_THREAD.start();
         flush();
     }
 

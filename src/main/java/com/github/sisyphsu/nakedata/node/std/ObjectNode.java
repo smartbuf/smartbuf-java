@@ -28,16 +28,6 @@ public final class ObjectNode extends Node {
         this.data = data;
     }
 
-    public static ObjectNode valueOf(boolean stable, String[] fields, Map<String, Node> map) {
-        if (map == null) {
-            return NULL;
-        }
-        if (map.isEmpty()) {
-            return EMPTY;
-        }
-        return new ObjectNode(stable, fields, map);
-    }
-
     @Override
     public NodeType dataType() {
         return NodeType.OBJECT;
@@ -46,10 +36,6 @@ public final class ObjectNode extends Node {
     @Override
     public boolean isNull() {
         return this == NULL;
-    }
-
-    public int size() {
-        return data.size();
     }
 
     public Map<String, Node> getData() {

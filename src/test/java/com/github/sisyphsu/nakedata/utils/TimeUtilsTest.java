@@ -21,4 +21,11 @@ public class TimeUtilsTest {
         assert TimeUtils.fastUpTime() > uptime;
     }
 
+    @Test
+    public void testThread() throws InterruptedException {
+        TimeUtils.TIMER_THREAD.interrupt();
+
+        Thread.sleep(100);
+    }
+
 }

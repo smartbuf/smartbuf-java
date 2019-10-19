@@ -107,8 +107,13 @@ public class ArrayUtilsTest {
         arr[0] = "1";
         assert arr[0] == "1";
 
-        arr = ArrayUtils.put(null, 0, "1");
-        assert arr[0] == "1";
+        arr = ArrayUtils.put(null, 0, "0");
+        arr = ArrayUtils.put(arr, 1, "1");
+        arr = ArrayUtils.put(arr, 2, "2");
+        arr = ArrayUtils.put(arr, 3, "3");
+        arr = ArrayUtils.put(arr, 4, "4");
+
+        assert arr[0] == "0";
     }
 
 }

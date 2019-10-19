@@ -154,7 +154,7 @@ public class IOObjectTest {
                 throw new RuntimeException();
             }
         }
-        return ObjectNode.valueOf(stable, names, nodeMap);
+        return new ObjectNode(stable, names, nodeMap);
     }
 
 }

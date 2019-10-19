@@ -24,8 +24,9 @@ public final class BooleanNode extends Node {
     }
 
     public static BooleanNode valueOf(Boolean b) {
-        if (b == null)
+        if (b == null) {
             return NULL;
+        }
         return valueOf(b.booleanValue());
     }
 
@@ -41,9 +42,6 @@ public final class BooleanNode extends Node {
 
     @Override
     public boolean booleanValue() {
-        if (this == NULL) {
-            throw new NullPointerException();
-        }
         return this == TRUE;
     }
 

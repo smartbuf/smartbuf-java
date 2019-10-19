@@ -49,7 +49,7 @@ public final class BeanNodeCodec extends Codec {
             String[] fieldNames = fields.keySet().toArray(new String[0]);
             key = new BeanKey(false, fieldNames);
         }
-        return ObjectNode.valueOf(key.stable, key.fieldNames, fields);
+        return new ObjectNode(key.stable, key.fieldNames, fields);
     }
 
     /**
