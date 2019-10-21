@@ -2,6 +2,7 @@ package com.github.sisyphsu.datube.proto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sisyphsu.datube.convertor.CodecFactory;
+import com.github.sisyphsu.datube.model.MessageOuterClass;
 import com.github.sisyphsu.datube.node.ArrayNodeCodec;
 import com.github.sisyphsu.datube.node.BasicNodeCodec;
 import com.github.sisyphsu.datube.node.BeanNodeCodec;
@@ -38,33 +39,68 @@ public class IOFullTest {
 
     @Test
     public void test() throws IOException {
-        Message msg = new Message();
+        MMessage msg = new MMessage();
         for (int i = 0; i < 10; i++) {
-            msg.receivers.add(new Receiver());
+            msg.receivers.add(new MReceiver());
         }
         Node node = codec.convert(msg, Node.class);
         Object obj = transIO(node);
-        Message recvMsg = codec.convert(obj, Message.class);
+        MMessage recvMsg = codec.convert(obj, MMessage.class);
         assert msg.equals(recvMsg);
 
+        MessageOuterClass.Message msg2 = convert(msg);
+        byte[] protoBytes = msg2.toByteArray();
+
         String json = MAPPER.writeValueAsString(msg);
-        System.out.println("json: \t" + json.getBytes().length);
-        System.out.println("datube: \t" + bytes.length);
+        System.out.println("json: " + json.getBytes().length);
+        System.out.println("datube: " + bytes.length);
+        System.out.println("protobuf: " + protoBytes.length);
+
+        /*
+        json: 2348
+        datube: 1308
+        protobuf: 1261
+         */
+        // Object's metadata has 96 chars, if it's reused, datube will be around 1210, save 4%
+    }
+
+    static MessageOuterClass.Message convert(MMessage msg) {
+        List<MessageOuterClass.Receiver> receivers = new ArrayList<>();
+        for (MReceiver receiver : msg.receivers) {
+            receivers.add(MessageOuterClass.Receiver.newBuilder()
+                .setUserId(receiver.userId)
+                .setIconUrl(receiver.iconUrl)
+                .setRemark(receiver.remark)
+                .setFollowNum(receiver.followNum)
+                .setFanNum(receiver.fanNum)
+                .setCreateTime(receiver.createTime)
+                .setUpdateTime(receiver.updateTime)
+                .build());
+        }
+        return MessageOuterClass.Message.newBuilder()
+            .setId(msg.id)
+            .setEnable(msg.enable)
+            .setScore1(msg.score1)
+            .setScore2(msg.score2)
+            .setTimestamp(msg.timestamp)
+            .setText(msg.text)
+            .addAllReceivers(receivers)
+            .build();
     }
 
     @Data
-    public static class Message {
-        private int            id        = RandomUtils.nextInt();
-        private boolean        enable    = RandomUtils.nextBoolean();
-        private float          score1    = RandomUtils.nextFloat();
-        private double         score2    = RandomUtils.nextDouble();
-        private String         text      = RandomStringUtils.random(40);
-        private long           timestamp = System.currentTimeMillis();
-        private List<Receiver> receivers = new ArrayList<>();
+    public static class MMessage {
+        private int             id        = RandomUtils.nextInt();
+        private boolean         enable    = RandomUtils.nextBoolean();
+        private float           score1    = RandomUtils.nextFloat();
+        private double          score2    = RandomUtils.nextDouble();
+        private String          text      = RandomStringUtils.random(40);
+        private long            timestamp = System.currentTimeMillis();
+        private List<MReceiver> receivers = new ArrayList<>();
     }
 
     @Data
-    public static class Receiver {
+    public static class MReceiver {
         private int    userId     = RandomUtils.nextInt();
         private String iconUrl    = RandomStringUtils.random(20);
         private String remark     = RandomStringUtils.random(16);

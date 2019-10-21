@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package com.github.sisyphsu.datube.model;
+
+message Message {
+    int32 id = 1;
+    bool enable = 2;
+    float score1 = 3;
+    double score2 = 4;
+    string text = 5;
+    int64 timestamp = 6;
+    repeated Receiver receivers = 7;
+}
+
+message Receiver {
+    int32 userId = 1;
+    string iconUrl = 2;
+    string remark = 3;
+    int32 followNum = 4;
+    int32 fanNum = 5;
+    int64 createTime = 6;
+    int64 updateTime = 7;
+}
