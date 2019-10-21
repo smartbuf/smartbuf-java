@@ -1,6 +1,5 @@
 package com.github.sisyphsu.nakedata.node;
 
-import com.github.sisyphsu.nakedata.node.std.ArrayNode;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -18,9 +17,6 @@ public class NodeMapperTest {
         List<Bean> beans = new ArrayList<>();
         beans.add(new Bean(1, "hello"));
         beans.add(new Bean(2, "world"));
-
-        Node node = NodeMapper.convertNodeTree(beans);
-        assert node instanceof ArrayNode;
     }
 
     @Data
