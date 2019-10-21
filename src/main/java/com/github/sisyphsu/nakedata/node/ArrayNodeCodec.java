@@ -141,29 +141,57 @@ public final class ArrayNodeCodec extends Codec {
                 sliceType = itemType;
                 sliceStruct = itemStruct;
             }
-            // check continuous
-            boolean continuous = sliceType == itemType && Objects.deepEquals(sliceStruct, itemStruct);
-            if (continuous && offset < arr.length - 1) {
-                offset++;
-                continue;
-            }
-            // create previous slice
+            boolean hitEnd = offset == arr.length - 1;
             List sliceData;
-            if (arr.length == 1) {
-                sliceData = new SubList<>(0, 1, arr);
-            } else if (continuous) {
-                sliceData = new SubList<>(sliceFrom, arr.length, arr);// no more slice
-                sliceType = itemType;
+            if (sliceType == itemType && Objects.deepEquals(sliceStruct, itemStruct)) {
+                if (hitEnd) {
+                    sliceData = new SubList<>(sliceFrom, arr.length, arr); // no more slice
+                    node.appendSlice(sliceData, sliceData.size(), sliceType);
+                    break;
+                }
+                // continue for next item
+                offset++;
             } else {
-                sliceData = new SubList<>(sliceFrom, offset, arr);// has more slice
+                sliceData = new SubList<>(sliceFrom, offset, arr); // may has more slice
+                node.appendSlice(sliceData, sliceData.size(), sliceType);
+                if (hitEnd) {
+                    node.appendSlice(new SubList<>(offset, arr.length, arr), 1, itemType); // handle last item
+                    break;
+                }
+                // prepare for next slice
+                sliceFrom = offset++;
+                sliceType = itemType;
+                sliceStruct = itemStruct;
             }
-            node.appendSlice(sliceData, sliceData.size(), sliceType);
-            // prepare next slice
-            sliceFrom = offset++;
-            sliceType = itemType;
-            sliceStruct = itemStruct;
         }
         return node;
+    }
+
+    /**
+     * Convert ArrayNode to Array, in most case, toArray will not copy memory.
+     *
+     * @param node ArrayNode
+     * @return Object[]
+     */
+    @Converter
+    public Object[] toArray(ArrayNode node) {
+        if (node == ArrayNode.EMPTY) {
+            return new Object[0];
+        }
+        ArrayNode.Slice[] slices = node.slices();
+        if (node.size() == 1) {
+            return convert(slices[0].data(), Object[].class);
+        }
+        int size = 0;
+        for (int i = 0, len = node.size(); i < len; i++) {
+            size += slices[i].size();
+        }
+        Object[] result = new Object[size];
+        int off = 0;
+        for (int i = 0, len = node.size(); i < len; i++) {
+            result[off++] = slices[i].asList();
+        }
+        return result;
     }
 
 }

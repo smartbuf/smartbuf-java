@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public final class ConverterMap {
 
-    private Set<Class> classes = ConcurrentHashMap.newKeySet();
+    private Set<Class>                              classes   = ConcurrentHashMap.newKeySet();
     private Map<Class, Map<Class, ConverterMethod>> methodMap = new HashMap<>();
 
     /**

@@ -21,7 +21,7 @@ public final class LangCodec extends Codec {
     /**
      * Convert Map to Object
      */
-    @Converter
+    @Converter(extensible = true, distance = 10000)
     public Object toObject(Map<?, ?> map, XType<?> type) {
         if (type.getRawType() == Object.class) {
             return map; // dont need convert
@@ -46,7 +46,7 @@ public final class LangCodec extends Codec {
     /**
      * Convert Object to Map, use cglib directly
      */
-    @Converter
+    @Converter(distance = 10000)
     public Map toMap(Object obj) {
         return BeanMap.create(obj);
     }
@@ -54,7 +54,7 @@ public final class LangCodec extends Codec {
     /**
      * Convert String to Enum
      */
-    @Converter
+    @Converter(extensible = true)
     public Enum toEnum(String name, XType type) {
         return Enum.valueOf(type.getRawType(), name);
     }

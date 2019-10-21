@@ -14,6 +14,7 @@ import java.util.*;
  * @since 2019-10-21 11:12:04
  */
 public class ArrayNodeCodecTest {
+
     private ArrayNodeCodec codec = new ArrayNodeCodec();
 
     @BeforeEach
@@ -37,6 +38,7 @@ public class ArrayNodeCodecTest {
         slice = ((ArrayNode) node).slices()[0];
         assert Objects.deepEquals(slice.data(), booleans);
         assert Objects.equals(slice.elementType(), SliceType.BOOL_NATIVE);
+        codec.toArray((ArrayNode) node);
 
         byte[] bytes = RandomUtils.nextBytes(15);
         node = codec.toNode(bytes);
@@ -45,6 +47,7 @@ public class ArrayNodeCodecTest {
         slice = ((ArrayNode) node).slices()[0];
         assert Objects.deepEquals(slice.data(), bytes);
         assert Objects.equals(slice.elementType(), SliceType.BYTE_NATIVE);
+        codec.toArray((ArrayNode) node);
 
         short[] shorts = new short[]{0, Short.MIN_VALUE, Short.MAX_VALUE};
         node = codec.toNode(shorts);
@@ -53,6 +56,7 @@ public class ArrayNodeCodecTest {
         slice = ((ArrayNode) node).slices()[0];
         assert Objects.deepEquals(slice.data(), shorts);
         assert Objects.equals(slice.elementType(), SliceType.SHORT_NATIVE);
+        codec.toArray((ArrayNode) node);
 
         int[] ints = new int[]{0, Integer.MIN_VALUE, Integer.MAX_VALUE};
         node = codec.toNode(ints);
@@ -61,6 +65,7 @@ public class ArrayNodeCodecTest {
         slice = ((ArrayNode) node).slices()[0];
         assert Objects.deepEquals(slice.data(), ints);
         assert Objects.equals(slice.elementType(), SliceType.INT_NATIVE);
+        codec.toArray((ArrayNode) node);
 
         long[] longs = new long[]{0, Long.MIN_VALUE, Long.MAX_VALUE};
         node = codec.toNode(longs);
@@ -69,6 +74,7 @@ public class ArrayNodeCodecTest {
         slice = ((ArrayNode) node).slices()[0];
         assert Objects.deepEquals(slice.data(), longs);
         assert Objects.equals(slice.elementType(), SliceType.LONG_NATIVE);
+        codec.toArray((ArrayNode) node);
 
         float[] floats = new float[]{0, Float.MIN_VALUE, Float.MAX_VALUE};
         node = codec.toNode(floats);
@@ -77,6 +83,7 @@ public class ArrayNodeCodecTest {
         slice = ((ArrayNode) node).slices()[0];
         assert Objects.deepEquals(slice.data(), floats);
         assert Objects.equals(slice.elementType(), SliceType.FLOAT_NATIVE);
+        codec.toArray((ArrayNode) node);
 
         double[] doubles = new double[]{0, Double.MIN_VALUE, Double.MAX_VALUE};
         node = codec.toNode(doubles);
@@ -85,6 +92,7 @@ public class ArrayNodeCodecTest {
         slice = ((ArrayNode) node).slices()[0];
         assert Objects.deepEquals(slice.data(), doubles);
         assert Objects.equals(slice.elementType(), SliceType.DOUBLE_NATIVE);
+        codec.toArray((ArrayNode) node);
 
         char[] chars = RandomStringUtils.randomAlphanumeric(16).toCharArray();
         node = codec.toNode(chars);
@@ -266,6 +274,56 @@ public class ArrayNodeCodecTest {
                     assert Objects.equals(list.get(0), list.get(1));
                     break;
             }
+        }
+
+        Object[] obj = codec.toArray((ArrayNode) node);
+        assert obj.length == data.size();
+    }
+
+    @Test
+    public void test2DArray() {
+        byte[] bytes1 = RandomUtils.nextBytes(1024);
+        byte[] bytes2 = RandomUtils.nextBytes(1024);
+        List<Object> data = new ArrayList<>();
+        data.add(bytes1);
+        data.add(ArrayNode.valueOf(bytes2));
+
+        Node node = codec.toNode(data);
+        assert node instanceof ArrayNode;
+        assert ((ArrayNode) node).size() == 1;
+        ArrayNode.Slice slice = ((ArrayNode) node).slices()[0];
+
+        assert slice.elementType() == SliceType.ARRAY;
+        assert slice.asList().size() == 2;
+        ArrayNode subArr1 = (ArrayNode) slice.asList().get(0);
+        ArrayNode subArr2 = (ArrayNode) slice.asList().get(1);
+
+        assert subArr1.slices()[0].asByteArray() == bytes1;
+        assert subArr2.slices()[0].asByteArray() == bytes2;
+
+        Object[] obj = codec.toArray((ArrayNode) node);
+        assert obj.length == 2;
+    }
+
+    @Test
+    public void testToArray() {
+        Object[] objects = codec.toArray(ArrayNode.EMPTY);
+        assert objects.length == 0;
+    }
+
+    @Test
+    public void testErrorNode() {
+        List<Node> nodes = Collections.singletonList(new Node() {
+            @Override
+            public NodeType type() {
+                return NodeType.ARRAY;
+            }
+        });
+        try {
+            codec.toNode(nodes);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof UnsupportedOperationException;
         }
     }
 

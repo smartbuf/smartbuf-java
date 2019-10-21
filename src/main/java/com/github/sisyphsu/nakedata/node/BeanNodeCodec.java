@@ -59,9 +59,9 @@ public final class BeanNodeCodec extends Codec {
      * @return Map
      */
     @Converter
-    public Map toMap(ObjectNode node) {
+    public Map<String, Node> toMap(ObjectNode node) {
         if (node == ObjectNode.EMPTY) {
-            return new HashMap();
+            return new HashMap<>();
         }
         return node.getData();
     }

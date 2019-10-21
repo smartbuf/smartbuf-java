@@ -107,4 +107,5 @@ public final class BasicNodeCodec extends Codec {
     public Node toNode(Enum e) {
         return SymbolNode.valueOf(e);
     }
+
 }

@@ -17,6 +17,14 @@ import java.util.concurrent.*;
 public final class CollectionCodec extends Codec {
 
     /**
+     * Convert Object[] to Collection
+     */
+    @Converter
+    public Collection toCollection(Object[] arr) {
+        return Arrays.asList(arr);
+    }
+
+    /**
      * Convert Collection to Iterable
      */
     @Converter

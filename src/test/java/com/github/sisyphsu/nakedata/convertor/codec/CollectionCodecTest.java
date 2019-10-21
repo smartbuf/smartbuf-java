@@ -117,6 +117,9 @@ public class CollectionCodecTest {
         }.getType()));
         assert vector != null && vector.size() == 3;
         assert Objects.equals(vector.get(1), 200);
+
+        Collection coll = codec.toCollection(new Object[]{1, null, new Date()});
+        assert coll.size() == 3;
     }
 
     @Test

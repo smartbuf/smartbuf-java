@@ -22,9 +22,9 @@ public final class CodecFactory {
 
     public static final CodecFactory Instance = new CodecFactory();
 
-    private final Set<Codec> codecs = ConcurrentHashMap.newKeySet();
-    private final ConverterMap converterMap = new ConverterMap();
-    private final Map<PKey, ConverterPipeline> pipelineMap = new ConcurrentHashMap<>();
+    private final Set<Codec>                   codecs       = ConcurrentHashMap.newKeySet();
+    private final ConverterMap                 converterMap = new ConverterMap();
+    private final Map<PKey, ConverterPipeline> pipelineMap  = new ConcurrentHashMap<>();
 
     /**
      * Initialize CodecFactory with the specified Codec type.
@@ -112,13 +112,13 @@ public final class CodecFactory {
      * @param tgtClass Target class
      * @return ConverterPipeline, could be null
      */
-    protected ConverterPipeline getPipeline(Class srcClass, Class tgtClass) {
+    public ConverterPipeline getPipeline(Class srcClass, Class tgtClass) {
         ConverterPipeline pipeline = pipelineMap.get(new PKey(srcClass, tgtClass));
         if (pipeline == null) {
             converterMap.flushCastConverter(srcClass);
             converterMap.flushCastConverter(tgtClass);
             // find the shortest path
-            Path shortestPath = this.findShortestPath(null, srcClass, tgtClass);
+            Path shortestPath = this.findShortestPath(srcClass, tgtClass);
             if (shortestPath != null) {
                 pipeline = new ConverterPipeline(srcClass, tgtClass, shortestPath.methods);
                 pipelineMap.put(new PKey(srcClass, tgtClass), pipeline);
@@ -129,14 +129,22 @@ public final class CodecFactory {
 
     /**
      * Find the shortest path from srcClass to tgtClass
-     * Don't need care about inherit, because all subclass->class will be represent by TranConvertMethod
      *
-     * @param passed   Passed router which shouldn't be used again
      * @param srcClass Source Class
      * @param tgtClass Target Class
      * @return The shortest path, could be null
      */
-    protected Path findShortestPath(Map<Class, Integer> passed, Class<?> srcClass, Class<?> tgtClass) {
+    public Path findShortestPath(Class<?> srcClass, Class<?> tgtClass) {
+        return this.findShortestPath(null, srcClass, tgtClass);
+    }
+
+    /**
+     * Find the shortest path from srcClass to tgtClass
+     * Don't need care about inherit, because all subclass->class will be represent by TranConvertMethod
+     *
+     * @param passed Passed router which shouldn't be used again
+     */
+    private Path findShortestPath(Map<Class, Integer> passed, Class<?> srcClass, Class<?> tgtClass) {
         if (srcClass == tgtClass) {
             ConverterMethod method = converterMap.get(srcClass, tgtClass);
             return new Path(0, method);
@@ -178,7 +186,7 @@ public final class CodecFactory {
      * Converter's Path
      */
     private static class Path {
-        private final int distance;
+        private final int                   distance;
         private final List<ConverterMethod> methods = new ArrayList<>();
 
         public Path(int distance, ConverterMethod method) {
