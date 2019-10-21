@@ -23,7 +23,7 @@ public final class SymbolNode extends Node {
     }
 
     @Override
-    public NodeType dataType() {
+    public NodeType type() {
         return NodeType.SYMBOL;
     }
 

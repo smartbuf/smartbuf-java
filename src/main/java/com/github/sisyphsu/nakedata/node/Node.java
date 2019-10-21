@@ -13,7 +13,7 @@ public abstract class Node {
      *
      * @return DataType
      */
-    public abstract NodeType dataType();
+    public abstract NodeType type();
 
     public boolean booleanValue() {
         throw new UnsupportedOperationException();

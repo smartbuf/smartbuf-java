@@ -27,7 +27,7 @@ public final class StringNode extends Node {
     }
 
     @Override
-    public NodeType dataType() {
+    public NodeType type() {
         return NodeType.STRING;
     }
 

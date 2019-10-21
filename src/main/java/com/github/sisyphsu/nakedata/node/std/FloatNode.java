@@ -36,7 +36,7 @@ public final class FloatNode extends Node {
     }
 
     @Override
-    public NodeType dataType() {
+    public NodeType type() {
         return NodeType.FLOAT;
     }
 

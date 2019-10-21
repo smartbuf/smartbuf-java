@@ -36,7 +36,7 @@ public final class DoubleNode extends Node {
     }
 
     @Override
-    public NodeType dataType() {
+    public NodeType type() {
         return NodeType.DOUBLE;
     }
 

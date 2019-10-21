@@ -92,7 +92,7 @@ public final class Output {
             writer.writeVarUint((ID_NULL << 2) | FLAG_DATA);
             return;
         }
-        switch (node.dataType()) {
+        switch (node.type()) {
             case BOOL:
                 if (node.booleanValue()) {
                     writer.writeVarUint((ID_TRUE << 2) | FLAG_DATA);
@@ -226,7 +226,7 @@ public final class Output {
         if (node == null) {
             return;
         }
-        switch (node.dataType()) {
+        switch (node.type()) {
             case FLOAT:
                 dataPool.registerFloat(node.floatValue());
                 break;

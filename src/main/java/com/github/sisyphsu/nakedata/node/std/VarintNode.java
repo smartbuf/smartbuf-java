@@ -63,7 +63,7 @@ public final class VarintNode extends Node {
     }
 
     @Override
-    public NodeType dataType() {
+    public NodeType type() {
         return NodeType.VARINT;
     }
 

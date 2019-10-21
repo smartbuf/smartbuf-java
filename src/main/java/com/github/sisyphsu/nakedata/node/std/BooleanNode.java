@@ -26,7 +26,7 @@ public final class BooleanNode extends Node {
     }
 
     @Override
-    public NodeType dataType() {
+    public NodeType type() {
         return NodeType.BOOL;
     }
 

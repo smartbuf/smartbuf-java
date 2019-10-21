@@ -183,7 +183,7 @@ public class IOTest {
         try {
             output.writeNode(new Node() {
                 @Override
-                public NodeType dataType() {
+                public NodeType type() {
                     return NodeType.UNKNOWN;
                 }
             }, null);
