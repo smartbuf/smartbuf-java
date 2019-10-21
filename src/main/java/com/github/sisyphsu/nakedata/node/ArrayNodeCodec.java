@@ -16,7 +16,6 @@ import java.util.Objects;
  * @author sulin
  * @since 2019-06-05 19:53:57
  */
-@SuppressWarnings("unchecked")
 public final class ArrayNodeCodec extends Codec {
 
     @Converter
@@ -146,12 +145,12 @@ public final class ArrayNodeCodec extends Codec {
             // create previous slice
             List sliceData;
             if (arr.length == 1) {
-                sliceData = new SubList(0, 1, arr);
+                sliceData = new SubList<>(0, 1, arr);
             } else if (continuous) {
-                sliceData = new SubList(sliceFrom, offset - sliceFrom, arr);// no more slice
+                sliceData = new SubList<>(sliceFrom, offset - sliceFrom, arr);// no more slice
                 sliceType = itemType;
             } else {
-                sliceData = new SubList(sliceFrom, offset - 1 - sliceFrom, arr);// has more slice
+                sliceData = new SubList<>(sliceFrom, offset - 1 - sliceFrom, arr);// has more slice
             }
             node.appendSlice(sliceData, sliceData.size(), sliceType);
             // prepare next slice
