@@ -11,7 +11,7 @@ import java.util.function.UnaryOperator;
  * @author sulin
  * @since 2019-05-08 20:25:32
  */
-public class SubList<E> extends AbstractList<E> implements RandomAccess {
+public final class SubList<E> extends AbstractList<E> implements RandomAccess {
 
     private final int from;
     private final int size;

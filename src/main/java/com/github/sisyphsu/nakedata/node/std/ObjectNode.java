@@ -15,7 +15,6 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public final class ObjectNode extends Node {
 
-    public final static ObjectNode NULL  = new ObjectNode(true, null, null);
     public final static ObjectNode EMPTY = new ObjectNode(true, new String[0], Collections.EMPTY_MAP);
 
     private final boolean           stable;
@@ -31,11 +30,6 @@ public final class ObjectNode extends Node {
     @Override
     public NodeType dataType() {
         return NodeType.OBJECT;
-    }
-
-    @Override
-    public boolean isNull() {
-        return this == NULL;
     }
 
     public Map<String, Node> getData() {

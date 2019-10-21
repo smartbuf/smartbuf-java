@@ -11,8 +11,6 @@ import com.github.sisyphsu.nakedata.node.NodeType;
  */
 public final class BooleanNode extends Node {
 
-    public final static BooleanNode NULL = new BooleanNode();
-
     public final static BooleanNode TRUE  = new BooleanNode();
     public final static BooleanNode FALSE = new BooleanNode();
 
@@ -24,20 +22,12 @@ public final class BooleanNode extends Node {
     }
 
     public static BooleanNode valueOf(Boolean b) {
-        if (b == null) {
-            return NULL;
-        }
         return valueOf(b.booleanValue());
     }
 
     @Override
     public NodeType dataType() {
         return NodeType.BOOL;
-    }
-
-    @Override
-    public boolean isNull() {
-        return this == NULL;
     }
 
     @Override

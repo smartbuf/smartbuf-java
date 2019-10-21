@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.node.std;
 
-import com.github.sisyphsu.nakedata.node.NodeType;
 import com.github.sisyphsu.nakedata.node.Node;
+import com.github.sisyphsu.nakedata.node.NodeType;
 
 /**
  * FloatNode represents float and Float.
@@ -11,7 +11,6 @@ import com.github.sisyphsu.nakedata.node.Node;
  */
 public final class FloatNode extends Node {
 
-    public final static FloatNode NULL = new FloatNode(0);
     public final static FloatNode ZERO = new FloatNode(0);
 
     private final float value;
@@ -28,9 +27,6 @@ public final class FloatNode extends Node {
     }
 
     public static FloatNode valueOf(Float f) {
-        if (f == null) {
-            return NULL;
-        }
         return valueOf(f.floatValue());
     }
 
@@ -42,11 +38,6 @@ public final class FloatNode extends Node {
     @Override
     public NodeType dataType() {
         return NodeType.FLOAT;
-    }
-
-    @Override
-    public boolean isNull() {
-        return this == NULL;
     }
 
 }

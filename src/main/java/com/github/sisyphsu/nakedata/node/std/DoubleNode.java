@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.node.std;
 
-import com.github.sisyphsu.nakedata.node.NodeType;
 import com.github.sisyphsu.nakedata.node.Node;
+import com.github.sisyphsu.nakedata.node.NodeType;
 
 /**
  * DoubleNode represents double and Double.
@@ -11,7 +11,6 @@ import com.github.sisyphsu.nakedata.node.Node;
  */
 public final class DoubleNode extends Node {
 
-    public final static DoubleNode NULL = new DoubleNode(0);
     public final static DoubleNode ZERO = new DoubleNode(0);
 
     private final double value;
@@ -28,9 +27,6 @@ public final class DoubleNode extends Node {
     }
 
     public static DoubleNode valueOf(Double d) {
-        if (d == null) {
-            return NULL;
-        }
         return valueOf(d.doubleValue());
     }
 
@@ -42,11 +38,6 @@ public final class DoubleNode extends Node {
     @Override
     public NodeType dataType() {
         return NodeType.DOUBLE;
-    }
-
-    @Override
-    public boolean isNull() {
-        return this == NULL;
     }
 
 }

@@ -28,11 +28,6 @@ public final class SymbolNode extends Node {
     }
 
     @Override
-    public boolean isNull() {
-        return false;
-    }
-
-    @Override
     public String stringValue() {
         return data;
     }

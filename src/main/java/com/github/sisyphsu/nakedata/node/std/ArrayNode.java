@@ -112,11 +112,6 @@ public final class ArrayNode extends Node {
         return NodeType.ARRAY;
     }
 
-    @Override
-    public boolean isNull() {
-        return false;
-    }
-
     public int size() {
         return size;
     }

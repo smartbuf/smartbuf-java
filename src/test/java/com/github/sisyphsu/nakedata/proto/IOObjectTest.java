@@ -137,7 +137,7 @@ public class IOObjectTest {
         for (String fieldName : names) {
             Object data = map.get(fieldName);
             if (data == null) {
-                nodeMap.put(fieldName, BooleanNode.valueOf(null));
+                nodeMap.put(fieldName, null);
             } else if (data instanceof Boolean) {
                 nodeMap.put(fieldName, BooleanNode.valueOf((Boolean) data));
             } else if (data instanceof Long) {

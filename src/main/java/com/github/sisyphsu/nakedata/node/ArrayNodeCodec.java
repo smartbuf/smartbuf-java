@@ -107,7 +107,7 @@ public final class ArrayNodeCodec extends Codec {
                 itemType = SliceType.SYMBOL;
             } else {
                 Node itemNode = convert(item, Node.class);
-                if (itemNode == null || itemNode.isNull()) {
+                if (itemNode == null) {
                     item = null;
                     itemType = SliceType.NULL;
                 } else if (itemNode instanceof BooleanNode) {

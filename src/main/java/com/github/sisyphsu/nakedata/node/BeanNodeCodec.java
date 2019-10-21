@@ -60,9 +60,6 @@ public final class BeanNodeCodec extends Codec {
      */
     @Converter
     public Map toMap(ObjectNode node) {
-        if (node == ObjectNode.NULL) {
-            return null;
-        }
         if (node == ObjectNode.EMPTY) {
             return new HashMap();
         }

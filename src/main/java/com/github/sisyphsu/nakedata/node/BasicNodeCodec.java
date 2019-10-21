@@ -54,37 +54,37 @@ public final class BasicNodeCodec extends Codec {
 
     @Converter
     public Boolean toBoolean(BooleanNode node) {
-        return node.isNull() ? null : node.booleanValue();
+        return node.booleanValue();
     }
 
     @Converter
     public Byte toByte(VarintNode node) {
-        return node.isNull() ? null : (byte) node.longValue();
+        return (byte) node.longValue();
     }
 
     @Converter
     public Short toShort(VarintNode node) {
-        return node.isNull() ? null : (short) node.longValue();
+        return (short) node.longValue();
     }
 
     @Converter
     public Integer toInt(VarintNode node) {
-        return node.isNull() ? null : (int) node.longValue();
+        return (int) node.longValue();
     }
 
     @Converter
     public Long toLong(VarintNode node) {
-        return node.isNull() ? null : node.longValue();
+        return node.longValue();
     }
 
     @Converter
     public Float toFloat(FloatNode node) {
-        return node.isNull() ? null : node.floatValue();
+        return node.floatValue();
     }
 
     @Converter
     public Double toDouble(DoubleNode node) {
-        return node.isNull() ? null : node.doubleValue();
+        return node.doubleValue();
     }
 
     @Converter

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -23,9 +24,7 @@ public class IOTest {
 
     @Test
     public void testBoolean() throws IOException {
-        Object obj = transIO(BooleanNode.valueOf(null));
-        assert bytes.length == 2;
-        assert obj == null;
+        Object obj;
 
         obj = transIO(BooleanNode.valueOf(true));
         assert bytes.length == 2;
@@ -38,9 +37,7 @@ public class IOTest {
 
     @Test
     public void testFloat() throws IOException {
-        Object obj = transIO(FloatNode.valueOf(null));
-        assert bytes.length == 2;
-        assert obj == null;
+        Object obj;
 
         Float f = 0f;
         obj = transIO(FloatNode.valueOf(f));
@@ -65,9 +62,7 @@ public class IOTest {
 
     @Test
     public void testDouble() throws IOException {
-        Object obj = transIO(DoubleNode.valueOf(null));
-        assert bytes.length == 2;
-        assert obj == null;
+        Object obj;
 
         Double f = 0.0;
         obj = transIO(DoubleNode.valueOf(f));
@@ -92,9 +87,7 @@ public class IOTest {
 
     @Test
     public void testVarint() throws IOException {
-        Object obj = transIO(VarintNode.valueOf((Long) null));
-        assert bytes.length == 2;
-        assert obj == null;
+        Object obj;
 
         Long l = 0L;
         obj = transIO(VarintNode.valueOf(l));
@@ -116,9 +109,7 @@ public class IOTest {
 
     @Test
     public void testString() throws IOException {
-        Object obj = transIO(StringNode.valueOf(null));
-        assert bytes.length == 2;
-        assert obj == null;
+        Object obj;
 
         String str = "";
         obj = transIO(StringNode.valueOf(str));
@@ -149,20 +140,19 @@ public class IOTest {
 
     @Test
     public void testObject() throws IOException {
-        Object obj = transIO(ObjectNode.NULL);
+        Object obj;
+        Object result = transIO(null);
+        assert result == null;
         assert bytes.length == 2;
-        assert obj == null;
+
+        result = transIO(ObjectNode.EMPTY);
+        // assert bytes.length == 2; // TODO should add EMPTY_OBJECT to common pool, all all default value.
+        assert result instanceof Map;
+        assert ((Map) result).size() == 0;
     }
 
     @Test
     public void testError() {
-        try {
-            transIO(null);
-            assert false;
-        } catch (Exception e) {
-            assert e instanceof NullPointerException;
-        }
-
         Input input = new Input(new ByteArrayInputStream(new byte[1024]), true);
         try {
             input.readNode();
@@ -192,11 +182,6 @@ public class IOTest {
         Output output = new Output(null, true);
         try {
             output.writeNode(new Node() {
-                @Override
-                public boolean isNull() {
-                    return false;
-                }
-
                 @Override
                 public NodeType dataType() {
                     return NodeType.UNKNOWN;

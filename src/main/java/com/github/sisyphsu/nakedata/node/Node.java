@@ -9,13 +9,6 @@ package com.github.sisyphsu.nakedata.node;
 public abstract class Node {
 
     /**
-     * Chech whether this node represents null or not
-     *
-     * @return true means null
-     */
-    public abstract boolean isNull();
-
-    /**
      * Get Node's dataType
      *
      * @return DataType

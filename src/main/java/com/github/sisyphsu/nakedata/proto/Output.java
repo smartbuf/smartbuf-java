@@ -50,9 +50,6 @@ public final class Output {
      * @throws IOException Underlying io error
      */
     public void write(Node node) throws IOException {
-        if (node == null) {
-            throw new NullPointerException("node can't be null");
-        }
         this.schema.reset();
         this.namePool.reset();
         this.dataPool.reset();
@@ -91,7 +88,7 @@ public final class Output {
      * Ouput the specified Node into writer, all nodes need prefix an varuint as head-id.
      */
     void writeNode(Node node, OutputWriter writer) throws IOException {
-        if (node.isNull()) {
+        if (node == null) {
             writer.writeVarUint((ID_NULL << 2) | FLAG_DATA);
             return;
         }
@@ -226,7 +223,7 @@ public final class Output {
      * Scan the specified Node's metadata
      */
     private void scan(Node node) {
-        if (node.isNull()) {
+        if (node == null) {
             return;
         }
         switch (node.dataType()) {

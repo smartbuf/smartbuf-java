@@ -1,7 +1,7 @@
 package com.github.sisyphsu.nakedata.node.std;
 
-import com.github.sisyphsu.nakedata.node.NodeType;
 import com.github.sisyphsu.nakedata.node.Node;
+import com.github.sisyphsu.nakedata.node.NodeType;
 
 /**
  * StringNode represents String.
@@ -11,7 +11,6 @@ import com.github.sisyphsu.nakedata.node.Node;
  */
 public final class StringNode extends Node {
 
-    public final static StringNode NULL  = new StringNode(null);
     public final static StringNode EMPTY = new StringNode("");
 
     private final String value;
@@ -21,9 +20,6 @@ public final class StringNode extends Node {
     }
 
     public static StringNode valueOf(String str) {
-        if (str == null) {
-            return NULL;
-        }
         if (str.isEmpty()) {
             return EMPTY;
         }
@@ -33,11 +29,6 @@ public final class StringNode extends Node {
     @Override
     public NodeType dataType() {
         return NodeType.STRING;
-    }
-
-    @Override
-    public boolean isNull() {
-        return this == NULL;
     }
 
     @Override

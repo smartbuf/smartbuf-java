@@ -12,8 +12,6 @@ import com.github.sisyphsu.nakedata.utils.NumberUtils;
  */
 public final class VarintNode extends Node {
 
-    public final static VarintNode NULL = new VarintNode(0);
-
     private final static VarintNode[] TABLE = new VarintNode[256];
 
     static {
@@ -61,19 +59,12 @@ public final class VarintNode extends Node {
     }
 
     public static VarintNode valueOf(Long l) {
-        if (l == null)
-            return NULL;
         return valueOf(l.longValue());
     }
 
     @Override
     public NodeType dataType() {
         return NodeType.VARINT;
-    }
-
-    @Override
-    public boolean isNull() {
-        return this == NULL;
     }
 
     @Override
