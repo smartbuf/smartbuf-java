@@ -1,7 +1,6 @@
 package com.github.sisyphsu.datube.reflect;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
+import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
 
@@ -64,41 +63,20 @@ public class TypeTest {
         }
     }
 
-    @Test
-    public void testVariableType() {
-        Bean<String> bean = new Bean<>();
-        bean.name = new String[]{"test"};
-
-        String str = JSON.toJSONString(bean);
-        Bean<String> b2 = JSON.parseObject(str, new TypeReference<Bean<String>>() {
-        });
-        System.out.println(b2);
-
-        P<Double>.Item item = new P<Double>().new Item();
-        item.t = 10000.3;
-        str = JSON.toJSONString(item);
-//        P.Item item2 = JSON.parseObject(str, new TypeReference<P<Double>.Item>() {
-//        });
-//        System.out.println(item2);
-    }
-
+    @Data
     public static class Model<X, T> {
-        private long time;
-        private Map objectMap;
-        private Map<String, ? extends Date> strDateMap;
+        private long                                time;
+        private Map                                 objectMap;
+        private Map<String, ? extends Date>         strDateMap;
         private Map<? extends Date, ? super String> wildMap;
-        private List<Long> longs;
-        private T[] ts;
-        private Reference<T> ref;
+        private List<Long>                          longs;
+        private T[]                                 ts;
+        private Reference<T>                        ref;
     }
 
     @Data
     public static class Bean<T> {
         private T[] name;
-
-        public void setName(T[] name) {
-            this.name = name;
-        }
     }
 
     public static class P<T> {
