@@ -172,6 +172,10 @@ public final class ArrayNode extends Node {
             return (double[]) data;
         }
 
+        public <T> List<T> asList() {
+            return (List<T>) data;
+        }
+
         public List<Boolean> asBoolSlice() {
             return (List<Boolean>) data;
         }

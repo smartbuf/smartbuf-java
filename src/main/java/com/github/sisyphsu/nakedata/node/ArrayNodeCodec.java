@@ -58,11 +58,6 @@ public final class ArrayNodeCodec extends Codec {
         return StringNode.valueOf(String.valueOf(arr));
     }
 
-    @Converter
-    public char[] toArray(StringNode node) {
-        return node.stringValue().toCharArray();
-    }
-
     /**
      * Encode List to ArrayNode, all Object[] and Collection should be encode through List.
      *
@@ -83,12 +78,14 @@ public final class ArrayNodeCodec extends Codec {
         String[] sliceStruct = null;
         for (Object item : list) {
             Class cls = (item == null) ? null : item.getClass();
-            SliceType itemType = null;
+            SliceType itemType;
             String[] itemStruct = null;
             if (cls == null) {
                 itemType = SliceType.NULL;
             } else if (cls == Boolean.class) {
                 itemType = SliceType.BOOL;
+            } else if (cls == Byte.class) {
+                itemType = SliceType.BYTE;
             } else if (cls == Short.class) {
                 itemType = SliceType.SHORT;
             } else if (cls == Integer.class) {
@@ -103,6 +100,7 @@ public final class ArrayNodeCodec extends Codec {
                 item = String.valueOf(item);
                 itemType = SliceType.STRING;
             } else if (Enum.class.isAssignableFrom(cls)) {
+                item = ((Enum) item).name();
                 itemType = SliceType.SYMBOL;
             } else {
                 Node itemNode = convert(item, Node.class);
@@ -134,12 +132,19 @@ public final class ArrayNodeCodec extends Codec {
                     item = itemNode;
                     itemType = SliceType.OBJECT;
                     itemStruct = ((ObjectNode) itemNode).getFields();
+                } else {
+                    throw new UnsupportedOperationException("Unsupport node: " + itemNode.getClass());
                 }
             }
-            arr[offset++] = item;
+            arr[offset] = item;
+            if (offset == 0) {
+                sliceType = itemType;
+                sliceStruct = itemStruct;
+            }
             // check continuous
             boolean continuous = sliceType == itemType && Objects.deepEquals(sliceStruct, itemStruct);
-            if (continuous && offset < arr.length) {
+            if (continuous && offset < arr.length - 1) {
+                offset++;
                 continue;
             }
             // create previous slice
@@ -147,14 +152,14 @@ public final class ArrayNodeCodec extends Codec {
             if (arr.length == 1) {
                 sliceData = new SubList<>(0, 1, arr);
             } else if (continuous) {
-                sliceData = new SubList<>(sliceFrom, offset - sliceFrom, arr);// no more slice
+                sliceData = new SubList<>(sliceFrom, arr.length, arr);// no more slice
                 sliceType = itemType;
             } else {
-                sliceData = new SubList<>(sliceFrom, offset - 1 - sliceFrom, arr);// has more slice
+                sliceData = new SubList<>(sliceFrom, offset, arr);// has more slice
             }
             node.appendSlice(sliceData, sliceData.size(), sliceType);
             // prepare next slice
-            sliceFrom = offset;
+            sliceFrom = offset++;
             sliceType = itemType;
             sliceStruct = itemStruct;
         }

@@ -16,23 +16,23 @@ public class XType<T> {
     /**
      * Basic Object Type
      */
-    private final Class<T> rawType;
+    private final Class<T>            rawType;
     /**
      * Component type for Object[], support GenericArrayType
      */
-    private XType<?> componentType;
+    private       XType<?>            componentType;
     /**
      * ParameterizedType's name in decleared class, like [K, V] for Map<K, V>.
      */
-    private String[] parameteriedNames;
+    private       String[]            parameteriedNames;
     /**
      * Parsed types from ParameterizedType, like [String, Object] for HashMap<String, Object>
      */
-    private XType<?>[] parameteriedTypes;
+    private       XType<?>[]          parameteriedTypes;
     /**
      * Fields, only for no-stop-class
      */
-    private Map<String, XField> fields;
+    private       Map<String, XField> fields;
 
     public XType(Class<T> rawType) {
         this.rawType = rawType;
@@ -117,6 +117,12 @@ public class XType<T> {
 
     public XType<?> getComponentType() {
         return componentType;
+    }
+
+    @Override
+    public String toString() {
+        // TODO format string
+        return "XType{" + "rawType=" + rawType + '}';
     }
 
 }

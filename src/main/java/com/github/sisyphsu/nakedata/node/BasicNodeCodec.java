@@ -105,6 +105,6 @@ public final class BasicNodeCodec extends Codec {
      */
     @Converter
     public Node toNode(Enum e) {
-        return SymbolNode.valueOf(e.name());
+        return SymbolNode.valueOf(e);
     }
 }
