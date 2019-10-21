@@ -142,26 +142,25 @@ public final class ArrayNodeCodec extends Codec {
                 sliceStruct = itemStruct;
             }
             boolean hitEnd = offset == arr.length - 1;
+            boolean continuous = sliceType == itemType && Objects.deepEquals(sliceStruct, itemStruct);
             List sliceData;
-            if (sliceType == itemType && Objects.deepEquals(sliceStruct, itemStruct)) {
+            if (continuous) {
                 if (hitEnd) {
                     sliceData = new SubList<>(sliceFrom, arr.length, arr); // no more slice
                     node.appendSlice(sliceData, sliceData.size(), sliceType);
-                    break;
+                } else {
+                    offset++; // continue for next item
                 }
-                // continue for next item
-                offset++;
             } else {
                 sliceData = new SubList<>(sliceFrom, offset, arr); // may has more slice
                 node.appendSlice(sliceData, sliceData.size(), sliceType);
                 if (hitEnd) {
                     node.appendSlice(new SubList<>(offset, arr.length, arr), 1, itemType); // handle last item
-                    break;
+                } else {
+                    sliceFrom = offset++; // prepare for next slice
+                    sliceType = itemType;
+                    sliceStruct = itemStruct;
                 }
-                // prepare for next slice
-                sliceFrom = offset++;
-                sliceType = itemType;
-                sliceStruct = itemStruct;
             }
         }
         return node;
