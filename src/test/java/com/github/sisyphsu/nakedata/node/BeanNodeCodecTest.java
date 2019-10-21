@@ -31,19 +31,24 @@ public class BeanNodeCodecTest {
 
     @Test
     public void testMap() {
-        Map<String, Object> map = new HashMap<>();
+        Map<Object, Object> map = new HashMap<>();
+
+        assert codec.toNode(map) == ObjectNode.EMPTY;
+        assert codec.toMap(ObjectNode.EMPTY).isEmpty();
+
         map.put("id", RandomUtils.nextLong());
         map.put("name", RandomStringUtils.randomAlphanumeric(16));
         map.put("score", RandomUtils.nextDouble());
+        map.put(System.currentTimeMillis(), RandomUtils.nextDouble());
         Node node = codec.toNode(map);
         assert node instanceof ObjectNode;
 
         Map<String, Node> map2 = codec.toMap((ObjectNode) node);
         assert map.size() == map2.size();
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
+        for (Map.Entry<Object, Object> entry : map.entrySet()) {
             Object key = entry.getKey();
             Object val = entry.getValue();
-            Node val2 = map2.get(key);
+            Node val2 = map2.get(String.valueOf(key));
             if (val instanceof Long) {
                 assert Objects.equals(val, val2.longValue());
             } else if (val instanceof String) {
