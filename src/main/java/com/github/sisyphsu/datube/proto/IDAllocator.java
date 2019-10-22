@@ -57,13 +57,4 @@ public final class IDAllocator {
         this.reuseCount++;
     }
 
-    /**
-     * The total count of id that has been allocated.
-     *
-     * @return total count include released
-     */
-    public int count() {
-        return nextId;
-    }
-
 }
