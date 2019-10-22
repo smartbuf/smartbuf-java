@@ -87,6 +87,8 @@ public final class CodecFactory {
 
     /**
      * Execute data convert, convert src to the specified type target
+     * <p>
+     * TODO Handle two-way references, avoid endless loop.
      *
      * @param srcObj  Source Object
      * @param tgtType Target Type

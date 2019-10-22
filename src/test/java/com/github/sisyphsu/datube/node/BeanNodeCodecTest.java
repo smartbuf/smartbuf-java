@@ -61,24 +61,24 @@ public class BeanNodeCodecTest {
 
     @Test
     public void testBeanMap() {
-        Persion persion = new Persion();
-        Map map = codec.convert(persion, Map.class);
+        Person person = new Person();
+        Map map = codec.convert(person, Map.class);
         assert map instanceof BeanMap;
 
         ObjectNode node = (ObjectNode) codec.toNode(map);
-        Persion persion1 = codec.convert(node, Persion.class);
+        Person person1 = codec.convert(node, Person.class);
 
-        assert persion.equals(persion1);
+        assert person.equals(person1);
     }
 
     @Test
     public void testArray() {
         Group group = new Group();
-        group.persions.add(new Persion());
-        group.persions.add(new Persion());
-        group.persions.add(new Persion());
-        group.persions.add(new Persion());
-        group.persions.add(new Persion());
+        group.persons.add(new Person());
+        group.persons.add(new Person());
+        group.persons.add(new Person());
+        group.persons.add(new Person());
+        group.persons.add(new Person());
 
         Node node = codec.convert(group, Node.class);
         assert node instanceof ObjectNode;
@@ -91,14 +91,14 @@ public class BeanNodeCodecTest {
     public void testObjectNodeArray() {
         List<Object> list = new ArrayList<>();
         list.add(new Group());
-        list.add(new Persion());
+        list.add(new Person());
         Node node = codec.convert(list, Node.class);
         assert node instanceof ArrayNode;
         assert ((ArrayNode) node).size() == 2;
     }
 
     @Data
-    public static class Persion {
+    public static class Person {
         private int     id    = RandomUtils.nextInt();
         private float   score = RandomUtils.nextFloat();
         private boolean old   = RandomUtils.nextBoolean();
@@ -108,9 +108,9 @@ public class BeanNodeCodecTest {
 
     @Data
     public static class Group {
-        private Date          date     = new Date();
-        private Thread.State  state    = Thread.State.BLOCKED;
-        private List<Persion> persions = new ArrayList<>();
+        private Date         date    = new Date();
+        private Thread.State state   = Thread.State.BLOCKED;
+        private List<Person> persons = new ArrayList<>();
     }
 
 }

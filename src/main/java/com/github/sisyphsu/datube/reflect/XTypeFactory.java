@@ -6,17 +6,17 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Factory for XType, implement Type's reflection and GenericType's resolving.
- * For better performance, It cache XType for all Type, which shouldn't too many.
+ * For better performance, it will cache XType for all Type, which shouldn't too many.
  *
  * @author sulin
  * @since 2019-07-22 14:43:00
  */
-public class XTypeFactory {
+public final class XTypeFactory {
 
     /**
      * Stop-Class means some indivisible classes which shouldn't be split
      */
-    private final List<Class> stopClasses;
+    private final List<Class>         stopClasses;
     /**
      * XType's global cache, for performance optimization
      */

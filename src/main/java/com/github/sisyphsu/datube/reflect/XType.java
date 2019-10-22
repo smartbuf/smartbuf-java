@@ -11,7 +11,7 @@ import java.util.Objects;
  * @author sulin
  * @since 2019-07-15 20:40:47
  */
-public class XType<T> {
+public final class XType<T> {
 
     /**
      * Basic Object Type
