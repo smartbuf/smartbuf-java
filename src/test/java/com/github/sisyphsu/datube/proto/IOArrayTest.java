@@ -25,6 +25,10 @@ public class IOArrayTest {
         }
         Object result = transIO(ArrayNode.valueOf(data));
         assert Objects.deepEquals(data, result);
+
+        result = transIO(ArrayNode.EMPTY);
+        assert result instanceof Object[];
+        assert ((Object[]) result).length == 0;
     }
 
     @Test

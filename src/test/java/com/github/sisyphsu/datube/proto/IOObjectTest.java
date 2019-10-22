@@ -44,6 +44,10 @@ public class IOObjectTest {
             Object tgtItem = tgtMap.get(entry.getKey());
             assert Objects.deepEquals(entry.getValue(), tgtItem);
         }
+
+        Object obj = transIO(ObjectNode.EMPTY);
+        assert obj instanceof Map;
+        assert ((Map) obj).isEmpty();
     }
 
     @Test

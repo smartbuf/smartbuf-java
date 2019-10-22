@@ -1,5 +1,7 @@
 package com.github.sisyphsu.datube.proto;
 
+import java.util.HashMap;
+
 import static com.github.sisyphsu.datube.proto.Const.*;
 
 /**
@@ -208,6 +210,10 @@ public final class InputContext {
                 return 0L;
             case ID_ZERO_STRING:
                 return "";
+            case ID_ZERO_ARRAY:
+                return new Object[0];
+            case ID_ZERO_OBJECT:
+                return new HashMap<>();
         }
         int len;
 

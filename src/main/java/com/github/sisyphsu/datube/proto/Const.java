@@ -8,7 +8,7 @@ import com.github.sisyphsu.datube.node.SliceType;
  */
 public interface Const {
 
-    int  ID_PREFIX      = 8;
+    int  ID_PREFIX      = 10;
     byte ID_NULL        = 0x00;
     byte ID_FALSE       = 0x01;
     byte ID_TRUE        = 0x02;

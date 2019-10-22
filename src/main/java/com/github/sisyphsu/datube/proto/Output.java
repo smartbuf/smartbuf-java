@@ -118,15 +118,26 @@ public final class Output {
                 writer.writeVarUint((dataId << 2) | FLAG_DATA);
                 break;
             case ARRAY:
+                if (node == ArrayNode.EMPTY) {
+                    writer.writeVarUint((ID_ZERO_ARRAY << 2) | FLAG_DATA);
+                    break;
+                }
                 this.writeArrayNode((ArrayNode) node, writer, true);
                 break;
-            default:
+            case OBJECT:
+                if (node == ObjectNode.EMPTY) {
+                    writer.writeVarUint((ID_ZERO_OBJECT << 2) | FLAG_DATA);
+                    break;
+                }
                 ObjectNode objectNode = (ObjectNode) node;
                 String[] fields = objectNode.getFields();
                 writer.writeVarUint((structPool.findStructID(fields) << 2) | FLAG_STRUCT);
                 for (String field : fields) {
                     this.writeNode(objectNode.getField(field), writer);
                 }
+                break;
+            default:
+                throw new UnsupportedOperationException("Unsupported node type: " + node.type());
         }
     }
 
@@ -206,7 +217,7 @@ public final class Output {
                         this.writeArrayNode(item, writer, false);
                     }
                     break;
-                default:
+                case OBJECT:
                     List<ObjectNode> nodes = slice.asObjectSlice();
                     String[] fields = nodes.get(0).getFields();
                     writer.writeVarUint(structPool.findStructID(fields)); // structId
@@ -215,6 +226,9 @@ public final class Output {
                             this.writeNode(item.getField(field), writer);
                         }
                     }
+                    break;
+                default:
+                    throw new UnsupportedOperationException("Unsupported slice type: " + slice.type());
             }
         }
     }
