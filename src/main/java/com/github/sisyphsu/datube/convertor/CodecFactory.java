@@ -88,7 +88,7 @@ public final class CodecFactory {
     /**
      * Execute data convert, convert src to the specified type target
      * <p>
-     * TODO Handle two-way references, avoid endless loop.
+     * TODO Handle loop references, avoid endless loop.
      * Should add convert context, after convert deep is large than 100, start monitor two-way references.
      *
      * @param srcObj  Source Object
