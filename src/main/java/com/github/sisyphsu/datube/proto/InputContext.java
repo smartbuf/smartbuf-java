@@ -1,6 +1,6 @@
 package com.github.sisyphsu.datube.proto;
 
-import java.util.HashMap;
+import com.github.sisyphsu.datube.node.std.ObjectNode;
 
 import static com.github.sisyphsu.datube.proto.Const.*;
 
@@ -131,6 +131,10 @@ public final class InputContext {
      * @return Struct's fields
      */
     public String[] findStructByID(int id) {
+        if (id == 0) {
+            return ObjectNode.EMPTY.getFields();
+        }
+        id -= 1;
         if (id < 0) {
             throw new IllegalArgumentException("negative id: " + id);
         }
@@ -212,8 +216,6 @@ public final class InputContext {
                 return "";
             case ID_ZERO_ARRAY:
                 return new Object[0];
-            case ID_ZERO_OBJECT:
-                return new HashMap<>();
         }
         int len;
 

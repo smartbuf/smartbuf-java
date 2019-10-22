@@ -141,13 +141,12 @@ public class IOTest {
 
     @Test
     public void testObject() throws IOException {
-        Object obj;
         Object result = transIO(null);
         assert result == null;
         assert bytes.length == 2;
 
         result = transIO(ObjectNode.EMPTY);
-        // assert bytes.length == 2; // TODO should add EMPTY_OBJECT to common pool, all all default value.
+        assert bytes.length == 2;
         assert result instanceof Map;
         assert ((Map) result).size() == 0;
     }

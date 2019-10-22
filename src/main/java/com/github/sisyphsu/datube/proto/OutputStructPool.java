@@ -48,6 +48,9 @@ public final class OutputStructPool {
         if (names == null) {
             throw new NullPointerException();
         }
+        if (names.length == 0) {
+            return;
+        }
         int now = (int) TimeUtils.fastUpTime();
         Struct struct = index.get(reuseKey.wrap(names));
         if (struct != null) {
@@ -81,14 +84,17 @@ public final class OutputStructPool {
      * @return Its unique id
      */
     public int findStructID(String[] fields) {
+        if (fields.length == 0) {
+            return 0;
+        }
         Struct struct = index.get(reuseKey.wrap(fields));
         if (struct == null) {
             throw new IllegalArgumentException("struct not exists: " + Arrays.toString(fields));
         }
         if (struct.temporary) {
-            return struct.offset;
+            return 1 + struct.offset;
         }
-        return tmpStructs.size() + struct.offset;
+        return 1 + tmpStructs.size() + struct.offset;
     }
 
     /**

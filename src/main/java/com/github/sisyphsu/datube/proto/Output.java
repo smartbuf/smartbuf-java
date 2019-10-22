@@ -125,10 +125,6 @@ public final class Output {
                 }
                 break;
             case OBJECT:
-                if (node == ObjectNode.EMPTY) {
-                    writer.writeVarUint((ID_ZERO_OBJECT << 2) | FLAG_DATA);
-                    break;
-                }
                 ObjectNode objectNode = (ObjectNode) node;
                 String[] fields = objectNode.getFields();
                 writer.writeVarUint((structPool.findStructID(fields) << 2) | FLAG_STRUCT);

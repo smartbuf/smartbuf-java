@@ -28,8 +28,8 @@ public class OutputStructPoolTest {
         pool.register(true, new String[]{"id1", "name"});
 
         assert pool.size() == 5;
-        assert pool.findStructID(new String[]{"id1", "name"}) == 0;
-        assert pool.findStructID(new String[]{"id.5", "name"}) == 4;
+        assert pool.findStructID(new String[]{"id1", "name"}) == 1;
+        assert pool.findStructID(new String[]{"id.5", "name"}) == 5;
 
         pool.register(false, new String[]{"id1", "name", "desc"});
         pool.register(false, new String[]{"id2", "name", "desc"});
@@ -40,8 +40,8 @@ public class OutputStructPoolTest {
         pool.register(false, new String[]{"id1", "name", "desc"});
 
         assert pool.size() == 11;
-        assert pool.findStructID(new String[]{"id2", "name", "desc"}) == 6;
-        assert pool.findStructID(new String[]{"id6", "name", "desc"}) == 10;
+        assert pool.findStructID(new String[]{"id2", "name", "desc"}) == 7;
+        assert pool.findStructID(new String[]{"id6", "name", "desc"}) == 11;
 
         try {
             pool.findStructID(new String[]{"ssd"});
@@ -51,21 +51,21 @@ public class OutputStructPoolTest {
         }
 
         pool.register(true, new String[]{"id7", "name"});
-        assert pool.findStructID(new String[]{"id7", "name"}) == 5;
+        assert pool.findStructID(new String[]{"id7", "name"}) == 6;
         assert pool.size() == 12;
 
         pool.register(false, new String[]{"id7", "name"});
-        assert pool.findStructID(new String[]{"id7", "name"}) == 11;
+        assert pool.findStructID(new String[]{"id7", "name"}) == 12;
         assert pool.size() == 12;
 
         pool.register(false, new String[]{"id1", "name"});
-        assert pool.findStructID(new String[]{"id1", "name"}) == 11;
-        assert pool.findStructID(new String[]{"id.5", "name"}) == 0;
+        assert pool.findStructID(new String[]{"id1", "name"}) == 12;
+        assert pool.findStructID(new String[]{"id.5", "name"}) == 1;
         assert pool.size() == 12;
 
         pool.reset();
         assert pool.size() == 8;
-        assert pool.findStructID(new String[]{"id1", "name", "desc"}) == 0;
+        assert pool.findStructID(new String[]{"id1", "name", "desc"}) == 1;
     }
 
     @Test
@@ -113,7 +113,7 @@ public class OutputStructPoolTest {
 
         pool.reset();
         assert pool.size() == 8;
-        assert pool.findStructID(new String[]{"id1", "name"}) == 0;
+        assert pool.findStructID(new String[]{"id1", "name"}) == 1;
 
         // id2 & id3 released
         try {
@@ -136,7 +136,7 @@ public class OutputStructPoolTest {
 
         pool.reset();
         assert pool.size() == 8;
-        assert pool.findStructID(new String[]{"id5", "name"}) == 4;
+        assert pool.findStructID(new String[]{"id5", "name"}) == 5;
 
         // id4 & id1 released
         try {
