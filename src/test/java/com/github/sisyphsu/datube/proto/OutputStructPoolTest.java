@@ -3,8 +3,6 @@ package com.github.sisyphsu.datube.proto;
 import com.github.sisyphsu.datube.utils.TimeUtils;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-
 /**
  * @author sulin
  * @since 2019-10-08 16:02:37
@@ -32,7 +30,6 @@ public class OutputStructPoolTest {
         assert pool.size() == 5;
         assert pool.findStructID(new String[]{"id1", "name"}) == 0;
         assert pool.findStructID(new String[]{"id.5", "name"}) == 4;
-        assert Arrays.deepEquals(pool.findStructByID(4), new String[]{"id.5", "name"});
 
         pool.register(false, new String[]{"id1", "name", "desc"});
         pool.register(false, new String[]{"id2", "name", "desc"});
@@ -45,24 +42,9 @@ public class OutputStructPoolTest {
         assert pool.size() == 11;
         assert pool.findStructID(new String[]{"id2", "name", "desc"}) == 6;
         assert pool.findStructID(new String[]{"id6", "name", "desc"}) == 10;
-        assert Arrays.deepEquals(pool.findStructByID(7), new String[]{"id3", "name", "desc"});
 
         try {
             pool.findStructID(new String[]{"ssd"});
-            assert false;
-        } catch (Exception e) {
-            assert e instanceof IllegalArgumentException;
-        }
-
-        try {
-            pool.findStructByID(-1);
-            assert false;
-        } catch (Exception e) {
-            assert e instanceof IllegalArgumentException;
-        }
-
-        try {
-            pool.findStructByID(100);
             assert false;
         } catch (Exception e) {
             assert e instanceof IllegalArgumentException;
@@ -165,13 +147,6 @@ public class OutputStructPoolTest {
         }
         try {
             pool.findStructID(new String[]{"id1", "name"});
-            assert false;
-        } catch (Exception e) {
-            assert e instanceof IllegalArgumentException;
-        }
-
-        try {
-            pool.findStructByID(0);
             assert false;
         } catch (Exception e) {
             assert e instanceof IllegalArgumentException;

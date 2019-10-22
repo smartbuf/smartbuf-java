@@ -34,7 +34,7 @@ public final class Input {
         schema.read(reader);
         // valid schema
         if (schema.stream != stream) {
-            throw new RuntimeException("invalid mode");
+            throw new RuntimeException("invalid mode"); // TODO customize exception
         }
         if (schema.hasCxtMeta) {
             if ((schema.sequence & 0xFF) != ((sequence + 1) & 0xFF)) {

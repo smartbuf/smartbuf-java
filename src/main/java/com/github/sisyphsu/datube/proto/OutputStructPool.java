@@ -92,30 +92,6 @@ public final class OutputStructPool {
     }
 
     /**
-     * Find the specified struct's fields by its unique id
-     *
-     * @param id Struct's unique ID
-     * @return Struct's fields
-     */
-    public String[] findStructByID(int id) {
-        if (id < 0) {
-            throw new IllegalArgumentException("negative id: " + id);
-        }
-        if (id < tmpStructs.size()) {
-            return tmpStructs.get(id).names;
-        }
-        id -= tmpStructs.size();
-        if (id > cxtStructs.size()) {
-            throw new IllegalArgumentException("invalid id: " + id);
-        }
-        Struct struct = cxtStructs.get(id);
-        if (struct == null) {
-            throw new IllegalArgumentException("invalid id: " + id);
-        }
-        return struct.names;
-    }
-
-    /**
      * Fetch total number of struct in temporary and context area.
      *
      * @return Total number

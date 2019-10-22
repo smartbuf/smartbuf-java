@@ -132,6 +132,7 @@ public final class ArrayNode extends Node {
             this.type = type;
         }
 
+        // TODO rename
         public SliceType elementType() {
             return type;
         }

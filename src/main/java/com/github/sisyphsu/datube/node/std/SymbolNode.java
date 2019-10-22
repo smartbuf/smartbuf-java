@@ -18,8 +18,7 @@ public final class SymbolNode extends Node {
     }
 
     public static SymbolNode valueOf(Enum en) {
-        // TODO should cache???
-        return new SymbolNode(en.name());
+        return new SymbolNode(en.name()); // don't need cache
     }
 
     public static SymbolNode valueOf(String data) {

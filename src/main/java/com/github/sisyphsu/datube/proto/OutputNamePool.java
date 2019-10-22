@@ -100,30 +100,6 @@ public final class OutputNamePool {
     }
 
     /**
-     * Fetch the specified name by its unique id
-     *
-     * @param id The unique id
-     * @return name
-     */
-    public String findNameByID(int id) {
-        if (id < 0) {
-            throw new IllegalArgumentException("negative id: " + id);
-        }
-        if (id < tmpNames.size()) {
-            return tmpNames.get(id).name;
-        }
-        id -= tmpNames.size();
-        if (id > cxtIdAlloc.count()) {
-            throw new IllegalArgumentException("invalid id: " + id);
-        }
-        Name result = cxtNames.get(id);
-        if (result == null) {
-            throw new IllegalArgumentException("invalid id: " + id);
-        }
-        return result.name;
-    }
-
-    /**
      * Fetch total number of name in temporary and context area.
      *
      * @return Total number
