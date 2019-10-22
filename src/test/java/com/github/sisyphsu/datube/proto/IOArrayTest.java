@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,10 +26,6 @@ public class IOArrayTest {
         }
         Object result = transIO(ArrayNode.valueOf(data));
         assert Objects.deepEquals(data, result);
-
-        result = transIO(ArrayNode.EMPTY);
-        assert result instanceof Object[];
-        assert ((Object[]) result).length == 0;
     }
 
     @Test
@@ -106,6 +103,20 @@ public class IOArrayTest {
         node.addStringSlice(list);
         Object result = transIO(node);
         assert Objects.deepEquals(list.toArray(), result);
+    }
+
+    @Test
+    public void testEmpty() throws IOException {
+        Object result = transIO(ArrayNode.EMPTY);
+        assert result instanceof Object[];
+        assert ((Object[]) result).length == 0;
+
+        ArrayNode node = new ArrayNode();
+        node.addArraySlice(Collections.singletonList(ArrayNode.EMPTY));
+        result = transIO(node);
+        assert result instanceof Object[];
+        assert ((Object[]) result).length == 1;
+        assert Objects.deepEquals(((Object[]) result)[0], new Object[0]);
     }
 
     @Test

@@ -73,6 +73,9 @@ public final class Input {
      * Read an array
      */
     Object readArray(long head) throws IOException {
+        if (head == ID_ZERO_ARRAY) {
+            return new Object[0];
+        }
         if ((head & 1) == 0) {
             return readPureArray(head);
         }

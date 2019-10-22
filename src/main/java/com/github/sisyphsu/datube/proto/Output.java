@@ -120,9 +120,9 @@ public final class Output {
             case ARRAY:
                 if (node == ArrayNode.EMPTY) {
                     writer.writeVarUint((ID_ZERO_ARRAY << 2) | FLAG_DATA);
-                    break;
+                } else {
+                    this.writeArrayNode((ArrayNode) node, writer, true);
                 }
-                this.writeArrayNode((ArrayNode) node, writer, true);
                 break;
             case OBJECT:
                 if (node == ObjectNode.EMPTY) {
@@ -212,7 +212,11 @@ public final class Output {
                     break;
                 case ARRAY:
                     for (ArrayNode item : slice.asArraySlice()) {
-                        this.writeArrayNode(item, writer, false);
+                        if (item == ArrayNode.EMPTY) {
+                            writer.writeVarUint(ID_ZERO_ARRAY);
+                        } else {
+                            this.writeArrayNode(item, writer, false);
+                        }
                     }
                     break;
                 case OBJECT:
