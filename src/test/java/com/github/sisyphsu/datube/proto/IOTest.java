@@ -1,7 +1,8 @@
 package com.github.sisyphsu.datube.proto;
 
-import com.github.sisyphsu.datube.node.NodeType;
 import com.github.sisyphsu.datube.node.Node;
+import com.github.sisyphsu.datube.node.NodeType;
+import com.github.sisyphsu.datube.node.SliceType;
 import com.github.sisyphsu.datube.node.std.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -189,7 +190,16 @@ public class IOTest {
             }, null);
             assert false;
         } catch (Exception e) {
-            assert true;
+            assert e instanceof UnsupportedOperationException;
+        }
+
+        try {
+            ArrayNode arrayNode = new ArrayNode();
+            arrayNode.appendSlice(new Object(), 0, SliceType.UNKNOWN);
+            output.writeArrayNode(arrayNode, null, false);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof UnsupportedOperationException;
         }
     }
 

@@ -158,8 +158,6 @@ public final class Output {
             writer.writeVarUint(sliceHead);
             // output slice body
             switch (slice.type()) {
-                case NULL:
-                    break;
                 case BOOL_NATIVE:
                     writer.writeBooleanArray(slice.asBooleanArray());
                     break;
@@ -228,7 +226,7 @@ public final class Output {
                     }
                     break;
                 default:
-                    throw new UnsupportedOperationException("Unsupported slice type: " + slice.type());
+                    // NULL, do nothing
             }
         }
     }

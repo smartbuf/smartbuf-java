@@ -9,6 +9,8 @@ package com.github.sisyphsu.datube.node;
  */
 public enum SliceType {
 
+    UNKNOWN,
+
     NULL,
     BOOL,
     BYTE,
