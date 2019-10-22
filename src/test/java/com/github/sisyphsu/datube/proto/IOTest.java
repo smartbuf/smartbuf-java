@@ -1,5 +1,8 @@
 package com.github.sisyphsu.datube.proto;
 
+import com.github.sisyphsu.datube.exception.InvalidReadException;
+import com.github.sisyphsu.datube.exception.InvalidVersionException;
+import com.github.sisyphsu.datube.exception.MismatchModeException;
 import com.github.sisyphsu.datube.node.Node;
 import com.github.sisyphsu.datube.node.NodeType;
 import com.github.sisyphsu.datube.node.SliceType;
@@ -153,30 +156,53 @@ public class IOTest {
 
     @Test
     public void testError() {
-        Input input = new Input(new ByteArrayInputStream(new byte[1024]), true);
+        Input input = new Input(new ByteArrayInputStream(new byte[]{Const.VER}), true);
+        try {
+            input.read();
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof MismatchModeException;
+        }
+
+        input = new Input(new ByteArrayInputStream(new byte[]{Const.VER | Const.VER_STREAM}), false);
+        try {
+            input.read();
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof MismatchModeException;
+        }
+
+        input = new Input(new ByteArrayInputStream(new byte[1024]), true);
+        try {
+            input.read();
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof InvalidVersionException;
+        }
+
         try {
             input.readNode();
+        } catch (Exception e) {
+            assert e instanceof InvalidReadException;
+        }
+
+        try {
+            input.readArray(0b1111_1111L);
             assert false;
         } catch (Exception e) {
-            assert true;
+            assert e instanceof InvalidReadException;
         }
         try {
             input.readArray(0b1111_1111L);
             assert false;
         } catch (Exception e) {
-            assert true;
-        }
-        try {
-            input.readArray(0b1111_1111L);
-            assert false;
-        } catch (Exception e) {
-            assert true;
+            assert e instanceof InvalidReadException;
         }
         try {
             input.readPureArray(0xFFL);
             assert false;
         } catch (Exception e) {
-            assert true;
+            assert e instanceof InvalidReadException;
         }
 
         Output output = new Output(null, true);

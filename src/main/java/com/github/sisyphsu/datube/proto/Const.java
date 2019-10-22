@@ -3,6 +3,8 @@ package com.github.sisyphsu.datube.proto;
 import com.github.sisyphsu.datube.node.SliceType;
 
 /**
+ * Constants that shared between input and output
+ *
  * @author sulin
  * @since 2019-10-02 16:42:24
  */

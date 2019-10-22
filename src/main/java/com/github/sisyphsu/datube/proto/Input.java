@@ -1,5 +1,10 @@
 package com.github.sisyphsu.datube.proto;
 
+import com.github.sisyphsu.datube.exception.InvalidReadException;
+import com.github.sisyphsu.datube.exception.InvalidVersionException;
+import com.github.sisyphsu.datube.exception.MismatchModeException;
+import com.github.sisyphsu.datube.exception.UnexpectedSequenceException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -33,12 +38,15 @@ public final class Input {
         schema.reset();
         schema.read(reader);
         // valid schema
+        if ((schema.head & 0b1111_0000) != VER) {
+            throw new InvalidVersionException(schema.head & 0b1111_0000);
+        }
         if (schema.stream != stream) {
-            throw new RuntimeException("invalid mode"); // TODO customize exception
+            throw new MismatchModeException(stream);
         }
         if (schema.hasCxtMeta) {
             if ((schema.sequence & 0xFF) != ((sequence + 1) & 0xFF)) {
-                throw new RuntimeException("invalid sequence");
+                throw new UnexpectedSequenceException(schema.sequence & 0xFF, (int) ((sequence + 1) & 0xFF));
             }
             this.sequence++;
         }
@@ -65,7 +73,7 @@ public final class Input {
                 }
                 return tmp;
             default:
-                throw new IllegalArgumentException("Invalid data flag: " + flag);
+                throw new InvalidReadException("run into invalid data flag: " + flag);
         }
     }
 
@@ -143,7 +151,7 @@ public final class Input {
                     }
                     break;
                 default:
-                    throw new IllegalArgumentException("invalid data");
+                    throw new InvalidReadException("run into invalid slice type: " + type);
             }
             slices.add(slice);
             if ((head & 1) == 0) {
@@ -216,7 +224,7 @@ public final class Input {
                 }
                 return objects;
             default:
-                throw new IllegalArgumentException("invalid data");
+                throw new InvalidReadException("run into invalid slice type: " + type);
         }
     }
 
