@@ -1,7 +1,9 @@
 package com.github.sisyphsu.datube.convertor.codec;
 
 import com.github.sisyphsu.datube.convertor.Codec;
+import com.github.sisyphsu.datube.convertor.CodecState;
 import com.github.sisyphsu.datube.convertor.Converter;
+import com.github.sisyphsu.datube.exception.CircleReferenceException;
 import com.github.sisyphsu.datube.reflect.XField;
 import com.github.sisyphsu.datube.reflect.XType;
 import net.sf.cglib.beans.BeanMap;
@@ -17,6 +19,8 @@ import java.util.Map;
  */
 @SuppressWarnings("unchecked")
 public final class LangCodec extends Codec {
+
+    private static final int CHECK_THRESHOD = 64;
 
     /**
      * Convert Map to Object
@@ -48,6 +52,11 @@ public final class LangCodec extends Codec {
      */
     @Converter(distance = 10000)
     public Map toMap(Object obj) {
+        // check loop references
+        CodecState state = CodecState.get();
+        if (state.depth() > CHECK_THRESHOD && !state.record(obj)) {
+            throw new CircleReferenceException();
+        }
         return BeanMap.create(obj);
     }
 

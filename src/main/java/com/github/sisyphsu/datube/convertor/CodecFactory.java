@@ -1,6 +1,7 @@
 package com.github.sisyphsu.datube.convertor;
 
 import com.github.sisyphsu.datube.reflect.XType;
+import com.github.sisyphsu.datube.reflect.XTypeUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -86,16 +87,27 @@ public final class CodecFactory {
     }
 
     /**
+     * Factory's doConvert convinence.
+     *
+     * @param src source data
+     * @param clz target class
+     * @param <T> Target template type
+     * @return target instance
+     */
+    @SuppressWarnings("unchecked")
+    public final <T> T convert(Object src, Class<T> clz) {
+        CodecState.reset();
+        return (T) this.doConvert(src, XTypeUtils.toXType(clz));
+    }
+
+    /**
      * Execute data convert, convert src to the specified type target
-     * <p>
-     * TODO Handle loop references, avoid endless loop.
-     * Should add convert context, after convert deep is large than 100, start monitor two-way references.
      *
      * @param srcObj  Source Object
      * @param tgtType Target Type
      * @return Target Instance
      */
-    public Object doConvert(Object srcObj, XType tgtType) {
+    protected Object doConvert(Object srcObj, XType tgtType) {
         if (srcObj == null) {
             return null;
         }

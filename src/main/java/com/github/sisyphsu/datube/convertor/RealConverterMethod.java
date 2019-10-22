@@ -1,5 +1,6 @@
 package com.github.sisyphsu.datube.convertor;
 
+import com.github.sisyphsu.datube.exception.CircleReferenceException;
 import com.github.sisyphsu.datube.reflect.XType;
 import lombok.extern.slf4j.Slf4j;
 import sun.reflect.MethodAccessor;
@@ -17,10 +18,10 @@ import java.lang.reflect.Method;
 @Slf4j
 public final class RealConverterMethod extends ConverterMethod {
 
-    private Codec codec;
-    private boolean hasTypeArg;
-    private Converter annotation;
-    private Method method;
+    private Codec          codec;
+    private boolean        hasTypeArg;
+    private Converter      annotation;
+    private Method         method;
     private MethodAccessor function;
 
     private RealConverterMethod(Class<?> srcClass, Class<?> tgtClass) {
@@ -82,6 +83,10 @@ public final class RealConverterMethod extends ConverterMethod {
                 return function.invoke(codec, new Object[]{data});
             }
         } catch (InvocationTargetException e) {
+            Throwable throwable = e.getCause();
+            if (throwable instanceof CircleReferenceException) {
+                throw (CircleReferenceException) throwable;
+            }
             throw new IllegalStateException("invoke codec failed.", e);
         }
     }
