@@ -6,7 +6,7 @@ import com.github.sisyphsu.datube.utils.TimeUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.github.sisyphsu.datube.proto.Const.ID_PREFIX;
+import static com.github.sisyphsu.datube.proto.Const.*;
 
 /**
  * DataPool represents an area holds data properties like float/double/varint/string/symbol.
@@ -57,6 +57,9 @@ public final class OutputDataPool {
      * @param f Float data
      */
     public void registerFloat(float f) {
+        if (f == 0) {
+            return;
+        }
         if (!dataIndex.containsKey(f)) {
             dataIndex.put(f, tmpFloats.add(f));
         }
@@ -68,6 +71,9 @@ public final class OutputDataPool {
      * @param d Double data
      */
     public void registerDouble(double d) {
+        if (d == 0) {
+            return;
+        }
         if (!dataIndex.containsKey(d)) {
             dataIndex.put(d, tmpDoubles.add(d));
         }
@@ -79,6 +85,9 @@ public final class OutputDataPool {
      * @param l Varint data
      */
     public void registerVarint(long l) {
+        if (l == 0) {
+            return;
+        }
         if (!dataIndex.containsKey(l)) {
             dataIndex.put(l, tmpVarints.add(l));
         }
@@ -92,6 +101,9 @@ public final class OutputDataPool {
     public void registerString(String str) {
         if (str == null) {
             throw new NullPointerException();
+        }
+        if (str.isEmpty()) {
+            return;
         }
         if (!dataIndex.containsKey(str)) {
             dataIndex.put(str, tmpStrings.add(str));
@@ -124,6 +136,9 @@ public final class OutputDataPool {
      * @return Its unique ID
      */
     public int findFloatID(float f) {
+        if (f == 0) {
+            return ID_ZERO_FLOAT;
+        }
         Integer offset = dataIndex.get(f);
         if (offset == null) {
             throw new IllegalArgumentException("float not exists: " + f);
@@ -138,6 +153,9 @@ public final class OutputDataPool {
      * @return Its unique ID
      */
     public int findDoubleID(double d) {
+        if (d == 0) {
+            return ID_ZERO_DOUBLE;
+        }
         Integer offset = dataIndex.get(d);
         if (offset == null) {
             throw new IllegalArgumentException("double not exists: " + d);
@@ -152,6 +170,9 @@ public final class OutputDataPool {
      * @return Its unique ID
      */
     public int findVarintID(long l) {
+        if (l == 0) {
+            return ID_ZERO_VARINT;
+        }
         Integer offset = dataIndex.get(l);
         if (offset == null) {
             throw new IllegalArgumentException("varint not exists: " + l);
@@ -166,6 +187,9 @@ public final class OutputDataPool {
      * @return Its unique ID
      */
     public int findStringID(String str) {
+        if (str.isEmpty()) {
+            return ID_ZERO_STRING;
+        }
         Integer offset = dataIndex.get(str);
         if (offset == null) {
             throw new IllegalArgumentException("string not exists: " + str);

@@ -200,6 +200,14 @@ public final class InputContext {
                 return true;
             case ID_FALSE:
                 return false;
+            case ID_ZERO_FLOAT:
+                return 0.0f;
+            case ID_ZERO_DOUBLE:
+                return 0.0;
+            case ID_ZERO_VARINT:
+                return 0L;
+            case ID_ZERO_STRING:
+                return "";
         }
         int len;
 

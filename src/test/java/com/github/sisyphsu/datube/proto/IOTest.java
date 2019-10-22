@@ -41,7 +41,7 @@ public class IOTest {
 
         Float f = 0f;
         obj = transIO(FloatNode.valueOf(f));
-        assert bytes.length == 7;
+        assert bytes.length == 2;
         assert Objects.equals(obj, f);
 
         f = Float.MIN_VALUE;
@@ -66,7 +66,7 @@ public class IOTest {
 
         Double f = 0.0;
         obj = transIO(DoubleNode.valueOf(f));
-        assert bytes.length == 11;
+        assert bytes.length == 2;
         assert Objects.equals(obj, f);
 
         f = Double.MIN_VALUE;
@@ -91,7 +91,7 @@ public class IOTest {
 
         Long l = 0L;
         obj = transIO(VarintNode.valueOf(l));
-        assert bytes.length == 4;
+        assert bytes.length == 2;
         assert Objects.equals(obj, l);
 
         l = Long.MIN_VALUE;
@@ -113,7 +113,7 @@ public class IOTest {
 
         String str = "";
         obj = transIO(StringNode.valueOf(str));
-        assert bytes.length == 4;
+        assert bytes.length == 2;
         assert Objects.equals(obj, str);
 
         str = RandomStringUtils.randomAlphanumeric(10);
