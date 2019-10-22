@@ -37,7 +37,7 @@ public class ArrayNodeCodecTest {
         assert ((ArrayNode) node).size() == 1;
         slice = ((ArrayNode) node).slices()[0];
         assert Objects.deepEquals(slice.data(), booleans);
-        assert Objects.equals(slice.elementType(), SliceType.BOOL_NATIVE);
+        assert Objects.equals(slice.type(), SliceType.BOOL_NATIVE);
         codec.toArray((ArrayNode) node);
 
         byte[] bytes = RandomUtils.nextBytes(15);
@@ -46,7 +46,7 @@ public class ArrayNodeCodecTest {
         assert ((ArrayNode) node).size() == 1;
         slice = ((ArrayNode) node).slices()[0];
         assert Objects.deepEquals(slice.data(), bytes);
-        assert Objects.equals(slice.elementType(), SliceType.BYTE_NATIVE);
+        assert Objects.equals(slice.type(), SliceType.BYTE_NATIVE);
         codec.toArray((ArrayNode) node);
 
         short[] shorts = new short[]{0, Short.MIN_VALUE, Short.MAX_VALUE};
@@ -55,7 +55,7 @@ public class ArrayNodeCodecTest {
         assert ((ArrayNode) node).size() == 1;
         slice = ((ArrayNode) node).slices()[0];
         assert Objects.deepEquals(slice.data(), shorts);
-        assert Objects.equals(slice.elementType(), SliceType.SHORT_NATIVE);
+        assert Objects.equals(slice.type(), SliceType.SHORT_NATIVE);
         codec.toArray((ArrayNode) node);
 
         int[] ints = new int[]{0, Integer.MIN_VALUE, Integer.MAX_VALUE};
@@ -64,7 +64,7 @@ public class ArrayNodeCodecTest {
         assert ((ArrayNode) node).size() == 1;
         slice = ((ArrayNode) node).slices()[0];
         assert Objects.deepEquals(slice.data(), ints);
-        assert Objects.equals(slice.elementType(), SliceType.INT_NATIVE);
+        assert Objects.equals(slice.type(), SliceType.INT_NATIVE);
         codec.toArray((ArrayNode) node);
 
         long[] longs = new long[]{0, Long.MIN_VALUE, Long.MAX_VALUE};
@@ -73,7 +73,7 @@ public class ArrayNodeCodecTest {
         assert ((ArrayNode) node).size() == 1;
         slice = ((ArrayNode) node).slices()[0];
         assert Objects.deepEquals(slice.data(), longs);
-        assert Objects.equals(slice.elementType(), SliceType.LONG_NATIVE);
+        assert Objects.equals(slice.type(), SliceType.LONG_NATIVE);
         codec.toArray((ArrayNode) node);
 
         float[] floats = new float[]{0, Float.MIN_VALUE, Float.MAX_VALUE};
@@ -82,7 +82,7 @@ public class ArrayNodeCodecTest {
         assert ((ArrayNode) node).size() == 1;
         slice = ((ArrayNode) node).slices()[0];
         assert Objects.deepEquals(slice.data(), floats);
-        assert Objects.equals(slice.elementType(), SliceType.FLOAT_NATIVE);
+        assert Objects.equals(slice.type(), SliceType.FLOAT_NATIVE);
         codec.toArray((ArrayNode) node);
 
         double[] doubles = new double[]{0, Double.MIN_VALUE, Double.MAX_VALUE};
@@ -91,7 +91,7 @@ public class ArrayNodeCodecTest {
         assert ((ArrayNode) node).size() == 1;
         slice = ((ArrayNode) node).slices()[0];
         assert Objects.deepEquals(slice.data(), doubles);
-        assert Objects.equals(slice.elementType(), SliceType.DOUBLE_NATIVE);
+        assert Objects.equals(slice.type(), SliceType.DOUBLE_NATIVE);
         codec.toArray((ArrayNode) node);
 
         char[] chars = RandomStringUtils.randomAlphanumeric(16).toCharArray();
@@ -112,9 +112,9 @@ public class ArrayNodeCodecTest {
         assert node instanceof ArrayNode;
         assert ((ArrayNode) node).size() == 1;
         slice = ((ArrayNode) node).slices()[0];
-        assert slice.elementType() == SliceType.NULL;
+        assert slice.type() == SliceType.NULL;
         slice = ((ArrayNode) node).slices()[0];
-        assert slice.elementType() == SliceType.NULL;
+        assert slice.type() == SliceType.NULL;
         assert slice.asList().size() == 1;
 
         List nulls = Arrays.asList(new Object[10]);
@@ -122,7 +122,7 @@ public class ArrayNodeCodecTest {
         assert node instanceof ArrayNode;
         assert ((ArrayNode) node).size() == 1;
         slice = ((ArrayNode) node).slices()[0];
-        assert slice.elementType() == SliceType.NULL;
+        assert slice.type() == SliceType.NULL;
         assert Objects.deepEquals(nulls.toArray(), slice.asList().toArray());
 
         List<Boolean> bools = Arrays.asList(true, false, false);
@@ -130,7 +130,7 @@ public class ArrayNodeCodecTest {
         assert node instanceof ArrayNode;
         assert ((ArrayNode) node).size() == 1;
         slice = ((ArrayNode) node).slices()[0];
-        assert slice.elementType() == SliceType.BOOL;
+        assert slice.type() == SliceType.BOOL;
         assert Objects.deepEquals(bools.toArray(), slice.asList().toArray());
 
         List<Byte> bytes = Arrays.asList(Byte.MIN_VALUE, Byte.MAX_VALUE);
@@ -138,7 +138,7 @@ public class ArrayNodeCodecTest {
         assert node instanceof ArrayNode;
         assert ((ArrayNode) node).size() == 1;
         slice = ((ArrayNode) node).slices()[0];
-        assert slice.elementType() == SliceType.BYTE;
+        assert slice.type() == SliceType.BYTE;
         assert Objects.deepEquals(bytes.toArray(), slice.asList().toArray());
 
         List<Short> shorts = Arrays.asList(Short.MIN_VALUE, Short.MAX_VALUE);
@@ -146,7 +146,7 @@ public class ArrayNodeCodecTest {
         assert node instanceof ArrayNode;
         assert ((ArrayNode) node).size() == 1;
         slice = ((ArrayNode) node).slices()[0];
-        assert slice.elementType() == SliceType.SHORT;
+        assert slice.type() == SliceType.SHORT;
         assert Objects.deepEquals(shorts.toArray(), slice.asList().toArray());
 
         List<Integer> ints = Arrays.asList(1, 2, 3, 4, 5, 6);
@@ -154,7 +154,7 @@ public class ArrayNodeCodecTest {
         assert node instanceof ArrayNode;
         assert ((ArrayNode) node).size() == 1;
         slice = ((ArrayNode) node).slices()[0];
-        assert slice.elementType() == SliceType.INT;
+        assert slice.type() == SliceType.INT;
         assert Objects.deepEquals(ints.toArray(), slice.asList().toArray());
 
         List<Long> longs = Arrays.asList(Long.MIN_VALUE, Long.MAX_VALUE, 0L);
@@ -162,7 +162,7 @@ public class ArrayNodeCodecTest {
         assert node instanceof ArrayNode;
         assert ((ArrayNode) node).size() == 1;
         slice = ((ArrayNode) node).slices()[0];
-        assert slice.elementType() == SliceType.LONG;
+        assert slice.type() == SliceType.LONG;
         assert Objects.deepEquals(longs.toArray(), slice.asList().toArray());
 
         List<Float> floats = Arrays.asList(Float.MIN_VALUE, Float.MAX_VALUE, 0f);
@@ -170,7 +170,7 @@ public class ArrayNodeCodecTest {
         assert node instanceof ArrayNode;
         assert ((ArrayNode) node).size() == 1;
         slice = ((ArrayNode) node).slices()[0];
-        assert slice.elementType() == SliceType.FLOAT;
+        assert slice.type() == SliceType.FLOAT;
         assert Objects.deepEquals(floats.toArray(), slice.asList().toArray());
 
         List<Double> doubles = Arrays.asList(Double.MIN_VALUE, Double.MAX_VALUE, 0.0);
@@ -178,7 +178,7 @@ public class ArrayNodeCodecTest {
         assert node instanceof ArrayNode;
         assert ((ArrayNode) node).size() == 1;
         slice = ((ArrayNode) node).slices()[0];
-        assert slice.elementType() == SliceType.DOUBLE;
+        assert slice.type() == SliceType.DOUBLE;
         assert Objects.deepEquals(doubles.toArray(), slice.asList().toArray());
 
         List<String> strings = Arrays.asList("hello", "", "world");
@@ -186,7 +186,7 @@ public class ArrayNodeCodecTest {
         assert node instanceof ArrayNode;
         assert ((ArrayNode) node).size() == 1;
         slice = ((ArrayNode) node).slices()[0];
-        assert slice.elementType() == SliceType.STRING;
+        assert slice.type() == SliceType.STRING;
         assert Objects.deepEquals(strings.toArray(), slice.asList().toArray());
 
         List<Enum> symbols = Arrays.asList(Thread.State.values());
@@ -194,7 +194,7 @@ public class ArrayNodeCodecTest {
         assert node instanceof ArrayNode;
         assert ((ArrayNode) node).size() == 1;
         slice = ((ArrayNode) node).slices()[0];
-        assert slice.elementType() == SliceType.SYMBOL;
+        assert slice.type() == SliceType.SYMBOL;
         for (int i = 0, len = symbols.size(); i < len; i++) {
             Enum en = symbols.get(i);
             assert en.name().equals(slice.asList().get(i));
@@ -258,7 +258,7 @@ public class ArrayNodeCodecTest {
             if (slice == null) {
                 continue;
             }
-            switch (slice.elementType()) {
+            switch (slice.type()) {
                 case BOOL:
                 case LONG:
                 case FLOAT:
@@ -293,7 +293,7 @@ public class ArrayNodeCodecTest {
         assert ((ArrayNode) node).size() == 1;
         ArrayNode.Slice slice = ((ArrayNode) node).slices()[0];
 
-        assert slice.elementType() == SliceType.ARRAY;
+        assert slice.type() == SliceType.ARRAY;
         assert slice.asList().size() == 2;
         ArrayNode subArr1 = (ArrayNode) slice.asList().get(0);
         ArrayNode subArr2 = (ArrayNode) slice.asList().get(1);

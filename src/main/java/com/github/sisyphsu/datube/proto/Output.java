@@ -140,13 +140,13 @@ public final class Output {
         for (int i = 0, len = node.size(); i < len; i++) {
             ArrayNode.Slice slice = slices[i];
             // output array|slice header
-            long sliceHead = (slice.size() << 5) | (Const.toSliceType(slice.elementType()) << 1) | ((i == len - 1) ? 0 : 1);
+            long sliceHead = (slice.size() << 5) | (Const.toSliceType(slice.type()) << 1) | ((i == len - 1) ? 0 : 1);
             if (suffixFlag && i == 0) {
                 sliceHead = (sliceHead << 2) | FLAG_ARRAY; // only the first slice need bring body-flag
             }
             writer.writeVarUint(sliceHead);
             // output slice body
-            switch (slice.elementType()) {
+            switch (slice.type()) {
                 case NULL:
                     break;
                 case BOOL_NATIVE:
@@ -262,7 +262,7 @@ public final class Output {
         ArrayNode.Slice[] slices = array.slices();
         for (int i = 0, len = array.size(); i < len; i++) {
             ArrayNode.Slice slice = slices[i];
-            switch (slice.elementType()) {
+            switch (slice.type()) {
                 case STRING:
                     for (String str : slice.asStringSlice()) {
                         dataPool.registerString(str);
