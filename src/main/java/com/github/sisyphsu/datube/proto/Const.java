@@ -8,10 +8,16 @@ import com.github.sisyphsu.datube.node.SliceType;
  */
 public interface Const {
 
-    byte ID_NULL   = 0x00;
-    byte ID_FALSE  = 0x01;
-    byte ID_TRUE   = 0x02;
-    int  ID_PREFIX = 4;
+    int  ID_PREFIX      = 8;
+    byte ID_NULL        = 0x00;
+    byte ID_FALSE       = 0x01;
+    byte ID_TRUE        = 0x02;
+    byte ID_ZERO_FLOAT  = 0x03;
+    byte ID_ZERO_DOUBLE = 0x04;
+    byte ID_ZERO_VARINT = 0x05;
+    byte ID_ZERO_STRING = 0x06;
+    byte ID_ZERO_ARRAY  = 0x07;
+    byte ID_ZERO_OBJECT = 0x08;
 
     byte VER          = 0b0001_0000;
     byte VER_STREAM   = 0b0000_1000;
