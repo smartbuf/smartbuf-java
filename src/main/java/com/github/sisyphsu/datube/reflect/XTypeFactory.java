@@ -18,7 +18,7 @@ public final class XTypeFactory {
     /**
      * Stop-Class means some indivisible classes which shouldn't be split
      */
-    private final List<Class>         stopClasses;
+    private final Set<Class>          stopClasses;
     /**
      * XType's global cache, for performance optimization
      */
@@ -30,7 +30,7 @@ public final class XTypeFactory {
      * @param stopClasses Stop-Classes
      */
     public XTypeFactory(Collection<Class> stopClasses) {
-        this.stopClasses = new ArrayList<>(stopClasses);
+        this.stopClasses = new HashSet<>(stopClasses);
         this.cacheMap = new ConcurrentHashMap<>();
     }
 
