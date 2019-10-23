@@ -1,6 +1,5 @@
 package com.github.sisyphsu.datube.reflect;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -34,10 +33,7 @@ public final class XType<T> {
     /**
      * Fields, only for no-stop-class
      */
-    final Map<String, XField> fields = new HashMap<>();
-
-    protected XType() {
-    }
+    Map<String, XField> fields;
 
     protected XType(Class<T> rawType) {
         this.rawType = rawType;
@@ -55,16 +51,6 @@ public final class XType<T> {
         this.rawType = rawType;
         this.parameteriedNames = parameteriedNames;
         this.parameteriedTypes = parameteriedTypes;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected void copy(XType xType) {
-        this.rawType = xType.rawType;
-        this.componentType = xType.componentType;
-        this.parameteriedNames = xType.parameteriedNames;
-        this.parameteriedTypes = xType.parameteriedTypes;
-        this.fields.clear();
-        this.fields.putAll(xType.fields);
     }
 
     /**
@@ -122,7 +108,7 @@ public final class XType<T> {
     }
 
     public XField<?> getField(String name) {
-        return this.fields.get(name);
+        return fields == null ? null : fields.get(name);
     }
 
     public Map<String, XField> getFields() {

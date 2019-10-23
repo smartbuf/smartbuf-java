@@ -1,5 +1,7 @@
 package com.github.sisyphsu.datube.reflect;
 
+import com.github.sisyphsu.datube.exception.CircleReferenceException;
+
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,7 +43,8 @@ public final class XTypeFactory {
     public XType<?> toXType(Type type) {
         XType<?> result = cacheMap.get(type);
         if (result == null) {
-            result = toXType(null, type);
+            Context cxt = new Context(type);
+            result = toXType(cxt, null, type);
             cacheMap.put(type, result);
         }
         return result;
@@ -56,18 +59,18 @@ public final class XTypeFactory {
      * @param owner Owner Type, help to decide TypeVariable's real type
      * @param type  Target which need be resolved
      */
-    protected XType<?> toXType(XType<?> owner, Type type) {
+    private XType<?> toXType(Context cxt, XType<?> owner, Type type) {
         XType<?> xType;
         if (type instanceof ParameterizedType) {
-            xType = convertParameterizedType(owner, (ParameterizedType) type);
+            xType = convertParameterizedType(cxt, owner, (ParameterizedType) type);
         } else if (type instanceof GenericArrayType) {
-            xType = convertGenericArrayType(owner, (GenericArrayType) type);
+            xType = convertGenericArrayType(cxt, owner, (GenericArrayType) type);
         } else if (type instanceof WildcardType) {
-            xType = convertWildcardType(owner, (WildcardType) type);
+            xType = convertWildcardType(cxt, owner, (WildcardType) type);
         } else if (type instanceof TypeVariable) {
-            xType = convertTypeVariable(owner, (TypeVariable) type);
+            xType = convertTypeVariable(cxt, owner, (TypeVariable) type);
         } else if (type instanceof Class) {
-            xType = convertClass((Class<?>) type);
+            xType = convertClass(cxt, (Class<?>) type);
         } else {
             throw new UnsupportedOperationException("Unsupport Type: " + type);
         }
@@ -77,7 +80,7 @@ public final class XTypeFactory {
     /**
      * Convert ParameterizedType to XType
      */
-    private XType<?> convertParameterizedType(XType<?> owner, ParameterizedType type) {
+    private XType<?> convertParameterizedType(Context cxt, XType<?> owner, ParameterizedType type) {
         if (!(type.getRawType() instanceof Class)) {
             throw new IllegalArgumentException("Cant parse rawType from " + type); // no way
         }
@@ -85,7 +88,7 @@ public final class XTypeFactory {
         // Parse parameterized types
         Type[] argTypes = type.getActualTypeArguments();
         TypeVariable<?>[] variables = rawType.getTypeParameters();
-        if (argTypes == null || variables == null || argTypes.length != variables.length) {
+        if (argTypes.length != variables.length) {
             throw new IllegalStateException("Cant parse ParameterizedType " + type); // no way
         }
         String[] names = new String[variables.length];
@@ -93,9 +96,9 @@ public final class XTypeFactory {
         for (int i = 0; i < argTypes.length; i++) {
             TypeVariable var = variables[i];
             // XType from class declared, like `class Bean<T extends Number>{}`
-            XType<?> boundXType = toXType(null, var);
+            XType<?> boundXType = toXType(cxt, null, var);
             // XType from field described, like `private Bean<?> bean`
-            XType<?> argXType = toXType(owner, argTypes[i]);
+            XType<?> argXType = toXType(cxt, owner, argTypes[i]);
             XType<?> finalXType;
             // Don't support combined generic-type, adopt genericType from Type or declaredType from Class
             if (argXType.getRawType().isAssignableFrom(boundXType.getRawType())) {
@@ -107,32 +110,32 @@ public final class XTypeFactory {
             types[i] = finalXType;
         }
         XType<?> result = new XType<>(rawType, names, types);
-        parseFields(result);
+        parseFields(cxt, result);
         return result;
     }
 
     /**
      * Convert GenericArrayType to XType
      */
-    private XType<?> convertGenericArrayType(XType<?> owner, GenericArrayType type) {
+    private XType<?> convertGenericArrayType(Context cxt, XType<?> owner, GenericArrayType type) {
         Class<?> rawClass = Object[].class;
-        XType<?> xType = toXType(owner, type.getGenericComponentType());
+        XType<?> xType = toXType(cxt, owner, type.getGenericComponentType());
         XType<?> result = new XType<>(rawClass, xType);
-        parseFields(result);
+        parseFields(cxt, result);
         return result;
     }
 
     /**
      * Convert WildcardType to XType
      */
-    private XType<?> convertWildcardType(XType<?> owner, WildcardType type) {
+    private XType<?> convertWildcardType(Context cxt, XType<?> owner, WildcardType type) {
         Type[] uppers = type.getUpperBounds();
         Type[] lowers = type.getLowerBounds();
-        if (lowers != null && lowers.length == 1) {
-            return toXType(owner, lowers[0]); // treat <? super T> as <T>
+        if (lowers.length == 1) {
+            return toXType(cxt, owner, lowers[0]); // treat <? super T> as <T>
         }
-        if (uppers != null && uppers.length == 1) {
-            return toXType(owner, uppers[0]); // treat <? extends T> as <T>
+        if (uppers.length == 1) {
+            return toXType(cxt, owner, uppers[0]); // treat <? extends T> as <T>
         }
         throw new IllegalArgumentException("unresolved WildcardType: " + type);
     }
@@ -140,9 +143,9 @@ public final class XTypeFactory {
     /**
      * Convert TypeVariable to XType
      */
-    private XType<?> convertTypeVariable(XType<?> owner, TypeVariable type) {
-        String varName = type.getName();
+    private XType<?> convertTypeVariable(Context cxt, XType<?> owner, TypeVariable type) {
         if (owner != null) {
+            String varName = type.getName();
             XType<?> xType = owner.getParameterizedType(varName);
             if (xType == null) {
                 throw new IllegalArgumentException("unresolved type for TypeVariable " + type);
@@ -150,16 +153,16 @@ public final class XTypeFactory {
             return xType;
         }
         Type[] bounds = type.getBounds();
-        if (bounds == null || bounds.length != 1) {
+        if (bounds.length != 1) {
             throw new IllegalArgumentException("unresolved TypeVariable " + type);
         }
-        return toXType(null, bounds[0]);
+        return toXType(cxt, null, bounds[0]);
     }
 
     /**
      * Convert Class to XType
      */
-    private <T> XType<T> convertClass(Class<T> cls) {
+    private <T> XType<T> convertClass(Context cxt, Class<T> cls) {
         XType<T> result;
         TypeVariable[] vars = cls.getTypeParameters();
         if (vars.length > 0) {
@@ -169,14 +172,14 @@ public final class XTypeFactory {
             for (int i = 0; i < vars.length; i++) {
                 TypeVariable var = vars[i];
                 names[i] = var.getName();
-                types[i] = convertTypeVariable(null, var);// no owner
+                types[i] = convertTypeVariable(cxt, null, var);// no owner
             }
             result = new XType<>(cls, names, types);
         } else {
             // Class dont support generic type
             result = new XType<>(cls);
         }
-        parseFields(result);
+        parseFields(cxt, result);
         return result;
     }
 
@@ -184,24 +187,53 @@ public final class XTypeFactory {
      * Parse fields of XType and fill them
      */
     @SuppressWarnings("unchecked")
-    private void parseFields(XType<?> type) {
-        // TODO handle circular reference
+    private void parseFields(Context cxt, XType<?> type) {
+        Class rawCls = type.getRawType();
+        // If rawCls is a stop-class, return directly
         for (Class<?> stopType : this.stopClasses) {
             if (stopType.isAssignableFrom(type.getRawType())) {
-                return; // type is stop class like Number/Collection...
+                return;
             }
         }
-        for (Field field : type.getRawType().getDeclaredFields()) {
+        boolean pure = rawCls.getTypeParameters().length == 0;
+        // If rawCls is pure and pre-parsed, use the pre-cached fields directly to avoid infinity loop
+        if (pure && cxt.pureClassFieldMap.containsKey(rawCls)) {
+            type.fields = cxt.pureClassFieldMap.get(rawCls);
+            return;
+        }
+        // Precheck to prevent circular reference
+        if (cxt.parsing.contains(rawCls)) {
+            throw new CircleReferenceException("Circular Reference in: " + rawCls);
+        }
+        // execute fields parsing
+        Map<String, XField> fields = new HashMap<>();
+        if (pure) {
+            cxt.pureClassFieldMap.put(rawCls, fields);
+        }
+        cxt.parsing.add(rawCls);
+        for (Field field : rawCls.getDeclaredFields()) {
             if (Modifier.isStatic(field.getModifiers())) {
                 continue; // ignore static
             }
-            XType fieldType = toXType(type, field.getGenericType());
+            XType fieldType = toXType(cxt, type, field.getGenericType());
             XField<?> xField = new XField<>();
             xField.setName(field.getName());
             xField.setType(fieldType);
             xField.setField(field);
+            fields.put(xField.getName(), xField);
+        }
+        cxt.parsing.remove(rawCls);
+        type.fields = fields;
+    }
 
-            type.fields.put(xField.getName(), xField);
+    static class Context {
+        Type       root;
+        Set<Class> parsing = new HashSet<>();
+
+        Map<Class, Map<String, XField>> pureClassFieldMap = new HashMap<>();
+
+        Context(Type root) {
+            this.root = root;
         }
     }
 

@@ -11,5 +11,9 @@ public class CircleReferenceException extends RuntimeException {
 
     public CircleReferenceException() {
     }
-    
+
+    public CircleReferenceException(String message) {
+        super(message);
+    }
+
 }

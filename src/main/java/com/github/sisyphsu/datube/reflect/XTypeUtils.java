@@ -1,7 +1,10 @@
 package com.github.sisyphsu.datube.reflect;
 
+import java.lang.ref.Reference;
 import java.lang.reflect.Type;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * This is a convenience utils for XTypeFactory, use common Classes as Stop-Classes by default.
@@ -12,7 +15,15 @@ import java.util.Collections;
 public final class XTypeUtils {
 
     // Global default XTypeFactory
-    private static final XTypeFactory factory = new XTypeFactory(Collections.emptyList());
+    private static final XTypeFactory factory = new XTypeFactory(Arrays.asList(
+        Object[].class,
+        Boolean.class,
+        Number.class,
+        CharSequence.class,
+        Collection.class,
+        Map.class,
+        Reference.class
+    ));
 
     private XTypeUtils() {
     }

@@ -1,12 +1,13 @@
 package com.github.sisyphsu.datube.reflect;
 
+import com.github.sisyphsu.datube.exception.CircleReferenceException;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.annotation.Annotation;
+import java.lang.ref.Reference;
+import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.Collections;
 
 /**
  * @author sulin
@@ -14,23 +15,27 @@ import java.util.Collections;
  */
 public class XTypeFactoryTest<T> {
 
-    private static final XTypeFactory factory = new XTypeFactory(Collections.emptyList());
-
     @Test
     public void stopClass() {
-        XType type = factory.toXType(BitSet.class);
+        XType type = XTypeUtils.toXType(BitSet.class);
         assert type.getField("words") != null;
 
         XTypeFactory fac = new XTypeFactory(Arrays.asList(Number.class, BitSet.class));
         type = fac.toXType(BitSet.class);
         assert type.getField("words") == null;
+
+        try {
+            fac.toXType(Reference.class);
+        } catch (Exception e) {
+            assert e instanceof CircleReferenceException;
+        }
     }
 
     @Test
     public void errorCase() {
         // Unsupported Type
         try {
-            factory.toXType(new Type() {
+            XTypeUtils.toXType(new Type() {
             });
             assert false;
         } catch (Exception e) {
@@ -39,7 +44,7 @@ public class XTypeFactoryTest<T> {
 
         // Unresolved TypeVariable
         try {
-            factory.toXType(new Object() {
+            XTypeUtils.toXType(new Object() {
                 private T[] ts;
             }.getClass());
             assert false;
@@ -47,9 +52,16 @@ public class XTypeFactoryTest<T> {
             assert e instanceof IllegalArgumentException;
         }
 
+        try {
+            XTypeUtils.toXType(new TypeVariableImpl2());
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof IllegalArgumentException;
+        }
+
         // Invalid ParameterizedType
         try {
-            factory.toXType(new ParameterizedType() {
+            XTypeUtils.toXType(new ParameterizedType() {
                 @Override
                 public Type[] getActualTypeArguments() {
                     return new Type[0];
@@ -71,7 +83,7 @@ public class XTypeFactoryTest<T> {
 
         // Invalid ParameterizedType
         try {
-            factory.toXType(new ParameterizedType() {
+            XTypeUtils.toXType(new ParameterizedType() {
                 @Override
                 public Type[] getActualTypeArguments() {
                     return new Type[1];
@@ -90,6 +102,59 @@ public class XTypeFactoryTest<T> {
         } catch (Exception e) {
             assert e instanceof IllegalStateException;
         }
+
+        try {
+            XTypeUtils.toXType(new WildcardType() {
+                @Override
+                public Type[] getUpperBounds() {
+                    return new Type[2];
+                }
+
+                @Override
+                public Type[] getLowerBounds() {
+                    return new Type[2];
+                }
+            });
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof IllegalArgumentException;
+        }
     }
 
+    static class TypeVariableImpl2 implements TypeVariable<Class> {
+        @Override
+        public Type[] getBounds() {
+            return new Type[2];
+        }
+
+        @Override
+        public Class getGenericDeclaration() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return null;
+        }
+
+        @Override
+        public AnnotatedType[] getAnnotatedBounds() {
+            return new AnnotatedType[0];
+        }
+
+        @Override
+        public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+            return null;
+        }
+
+        @Override
+        public Annotation[] getAnnotations() {
+            return new Annotation[0];
+        }
+
+        @Override
+        public Annotation[] getDeclaredAnnotations() {
+            return new Annotation[0];
+        }
+    }
 }
