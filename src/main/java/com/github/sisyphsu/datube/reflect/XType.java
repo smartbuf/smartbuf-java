@@ -17,37 +17,35 @@ public final class XType<T> {
     /**
      * Basic Object Type
      */
-    private final Class<T>   rawType;
+    Class<T>   rawType;
     /**
      * Component type for Object[], support GenericArrayType
      */
-    private final XType<?>   componentType;
+    XType<?>   componentType;
     /**
      * ParameterizedType's name in decleared class, like [K, V] for Map<K, V>.
      */
-    private final String[]   parameteriedNames;
+    String[]   parameteriedNames;
     /**
      * Parsed types from ParameterizedType, like [String, Object] for HashMap<String, Object>
      */
-    private final XType<?>[] parameteriedTypes;
+    XType<?>[] parameteriedTypes;
 
     /**
      * Fields, only for no-stop-class
      */
     final Map<String, XField> fields = new HashMap<>();
 
+    protected XType() {
+    }
+
     protected XType(Class<T> rawType) {
         this.rawType = rawType;
-        this.componentType = null;
-        this.parameteriedNames = null;
-        this.parameteriedTypes = null;
     }
 
     protected XType(Class<T> rawType, XType<?> componentType) {
         this.rawType = rawType;
         this.componentType = componentType;
-        this.parameteriedNames = null;
-        this.parameteriedTypes = null;
     }
 
     protected XType(Class<T> rawType, String[] parameteriedNames, XType<?>[] parameteriedTypes) {
@@ -55,9 +53,18 @@ public final class XType<T> {
             throw new IllegalArgumentException();
         }
         this.rawType = rawType;
-        this.componentType = null;
         this.parameteriedNames = parameteriedNames;
         this.parameteriedTypes = parameteriedTypes;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void copy(XType xType) {
+        this.rawType = xType.rawType;
+        this.componentType = xType.componentType;
+        this.parameteriedNames = xType.parameteriedNames;
+        this.parameteriedTypes = xType.parameteriedTypes;
+        this.fields.clear();
+        this.fields.putAll(xType.fields);
     }
 
     /**
@@ -78,7 +85,6 @@ public final class XType<T> {
      * @param name Parameterized name
      * @return Parameterized type
      */
-    @SuppressWarnings("ConstantConditions")
     public XType<?> getParameterizedType(String name) {
         if (this.parameteriedNames != null) {
             for (int i = 0; i < this.parameteriedNames.length; i++) {

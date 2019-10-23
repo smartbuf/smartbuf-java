@@ -42,12 +42,7 @@ public final class XTypeFactory {
      * @return XType
      */
     public XType<?> toXType(Type type) {
-        XType<?> result = cacheMap.get(type);
-        if (result == null) {
-            result = toXType(null, type);
-            cacheMap.put(type, result);
-        }
-        return result;
+        return toXType(null, type);
     }
 
     /**
@@ -60,21 +55,33 @@ public final class XTypeFactory {
      * @param type  Target which need be resolved
      */
     protected XType<?> toXType(XType<?> owner, Type type) {
-        XType<?> xType;
-        if (type instanceof ParameterizedType) {
-            xType = convertParameterizedType(owner, (ParameterizedType) type);
-        } else if (type instanceof GenericArrayType) {
-            xType = convertGenericArrayType(owner, (GenericArrayType) type);
-        } else if (type instanceof WildcardType) {
-            xType = convertWildcardType(owner, (WildcardType) type);
-        } else if (type instanceof TypeVariable) {
-            xType = convertTypeVariable(owner, (TypeVariable) type);
-        } else if (type instanceof Class) {
-            xType = convertClass((Class<?>) type);
-        } else {
-            throw new UnsupportedOperationException("Unsupport Type: " + type);
+        XType result = cacheMap.get(type);
+        if (result != null) {
+            return result;
         }
-        return xType;
+        result = new XType<>();
+        cacheMap.put(type, result);
+        try {
+            XType xType;
+            if (type instanceof ParameterizedType) {
+                xType = convertParameterizedType(owner, (ParameterizedType) type);
+            } else if (type instanceof GenericArrayType) {
+                xType = convertGenericArrayType(owner, (GenericArrayType) type);
+            } else if (type instanceof WildcardType) {
+                xType = convertWildcardType(owner, (WildcardType) type);
+            } else if (type instanceof TypeVariable) {
+                xType = convertTypeVariable(owner, (TypeVariable) type);
+            } else if (type instanceof Class) {
+                xType = convertClass((Class<?>) type);
+            } else {
+                throw new UnsupportedOperationException("Unsupport Type: " + type);
+            }
+            result.copy(xType);
+        } catch (RuntimeException e) {
+            cacheMap.remove(type);
+            throw e;
+        }
+        return result;
     }
 
     /**

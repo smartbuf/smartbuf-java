@@ -32,8 +32,9 @@ public class XTypeUtilsTest {
 
     @Test
     public void testReference() {
-        XTypeUtils.toXType(new TypeRef<Reference<Long>>() {
+        XType type = XTypeUtils.toXType(new TypeRef<Reference<Long>>() {
         }.getType());
+        System.out.println(type);
     }
 
     @Test

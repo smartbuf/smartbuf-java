@@ -4,6 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.Collections;
 
 /**
  * @author sulin
@@ -11,15 +14,23 @@ import java.lang.reflect.Type;
  */
 public class XTypeFactoryTest<T> {
 
+    private static final XTypeFactory factory = new XTypeFactory(Collections.emptyList());
+
     @Test
-    public void toXType() {
+    public void stopClass() {
+        XType type = factory.toXType(BitSet.class);
+        assert type.getField("words") != null;
+
+        XTypeFactory fac = new XTypeFactory(Arrays.asList(Number.class, BitSet.class));
+        type = fac.toXType(BitSet.class);
+        assert type.getField("words") == null;
     }
 
     @Test
     public void errorCase() {
         // Unsupported Type
         try {
-            XTypeUtils.toXType(new Type() {
+            factory.toXType(new Type() {
             });
             assert false;
         } catch (Exception e) {
@@ -28,7 +39,7 @@ public class XTypeFactoryTest<T> {
 
         // Unresolved TypeVariable
         try {
-            XTypeUtils.toXType(new Object() {
+            factory.toXType(new Object() {
                 private T[] ts;
             }.getClass());
             assert false;
@@ -38,7 +49,7 @@ public class XTypeFactoryTest<T> {
 
         // Invalid ParameterizedType
         try {
-            XTypeUtils.toXType(new ParameterizedType() {
+            factory.toXType(new ParameterizedType() {
                 @Override
                 public Type[] getActualTypeArguments() {
                     return new Type[0];
@@ -60,7 +71,7 @@ public class XTypeFactoryTest<T> {
 
         // Invalid ParameterizedType
         try {
-            XTypeUtils.toXType(new ParameterizedType() {
+            factory.toXType(new ParameterizedType() {
                 @Override
                 public Type[] getActualTypeArguments() {
                     return new Type[1];
