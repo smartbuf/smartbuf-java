@@ -24,21 +24,20 @@ public final class XTypeUtils {
 
     static {
         factory = new XTypeFactory(Arrays.asList(
-                Boolean.class,
-                Number.class,
-                Character.class,
-                Object[].class,
-                Collection.class,
-                Map.class,
-                Map.Entry.class,
-                Throwable.class,
-                ByteBuffer.class,
-                Charset.class,
-                CharSequence.class,
-                InputStream.class,
-                Date.class,
-                Reference.class, // TODO why stackoverflow
-                AtomicReference.class
+            Boolean.class,
+            Number.class,
+            Character.class,
+            Object[].class,
+            Collection.class,
+            Map.class,
+            Map.Entry.class,
+            Throwable.class,
+            ByteBuffer.class,
+            Charset.class,
+            CharSequence.class,
+            InputStream.class,
+            Date.class,
+            AtomicReference.class
         ));
     }
 

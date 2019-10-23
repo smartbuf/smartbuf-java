@@ -3,6 +3,7 @@ package com.github.sisyphsu.datube.reflect;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
+import java.lang.ref.Reference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -27,6 +28,12 @@ public class XTypeUtilsTest {
         TypeVariable returnType = (TypeVariable) method.getGenericReturnType();
         Type[] returnBounds = returnType.getBounds();
         System.out.println(returnBounds);
+    }
+
+    @Test
+    public void testReference() {
+        XTypeUtils.toXType(new TypeRef<Reference<Long>>() {
+        }.getType());
     }
 
     @Test
@@ -71,7 +78,7 @@ public class XTypeUtilsTest {
 
     public static class TypeVariableBean<T extends Date> {
 
-        private T t;
+        private T                  t;
         private List<? super Date> list;
 
         public <X extends Number> X hh() {

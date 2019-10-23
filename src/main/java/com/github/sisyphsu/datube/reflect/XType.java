@@ -1,5 +1,6 @@
 package com.github.sisyphsu.datube.reflect;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -16,35 +17,45 @@ public final class XType<T> {
     /**
      * Basic Object Type
      */
-    private final Class<T>            rawType;
+    private final Class<T>   rawType;
     /**
      * Component type for Object[], support GenericArrayType
      */
-    private       XType<?>            componentType;
+    private final XType<?>   componentType;
     /**
      * ParameterizedType's name in decleared class, like [K, V] for Map<K, V>.
      */
-    private       String[]            parameteriedNames;
+    private final String[]   parameteriedNames;
     /**
      * Parsed types from ParameterizedType, like [String, Object] for HashMap<String, Object>
      */
-    private       XType<?>[]          parameteriedTypes;
+    private final XType<?>[] parameteriedTypes;
+
     /**
      * Fields, only for no-stop-class
      */
-    private       Map<String, XField> fields;
+    final Map<String, XField> fields = new HashMap<>();
 
-    public XType(Class<T> rawType) {
+    protected XType(Class<T> rawType) {
         this.rawType = rawType;
+        this.componentType = null;
+        this.parameteriedNames = null;
+        this.parameteriedTypes = null;
     }
 
-    public XType(Class<T> rawType, XType<?> componentType) {
+    protected XType(Class<T> rawType, XType<?> componentType) {
         this.rawType = rawType;
         this.componentType = componentType;
+        this.parameteriedNames = null;
+        this.parameteriedTypes = null;
     }
 
-    public XType(Class<T> rawType, String[] parameteriedNames, XType<?>[] parameteriedTypes) {
+    protected XType(Class<T> rawType, String[] parameteriedNames, XType<?>[] parameteriedTypes) {
+        if (parameteriedNames.length != parameteriedTypes.length) {
+            throw new IllegalArgumentException();
+        }
         this.rawType = rawType;
+        this.componentType = null;
         this.parameteriedNames = parameteriedNames;
         this.parameteriedTypes = parameteriedTypes;
     }
@@ -67,6 +78,7 @@ public final class XType<T> {
      * @param name Parameterized name
      * @return Parameterized type
      */
+    @SuppressWarnings("ConstantConditions")
     public XType<?> getParameterizedType(String name) {
         if (this.parameteriedNames != null) {
             for (int i = 0; i < this.parameteriedNames.length; i++) {
@@ -103,10 +115,6 @@ public final class XType<T> {
         return rawType;
     }
 
-    protected void setFields(Map<String, XField> fields) {
-        this.fields = fields;
-    }
-
     public XField<?> getField(String name) {
         return this.fields.get(name);
     }
@@ -121,8 +129,28 @@ public final class XType<T> {
 
     @Override
     public String toString() {
-        // TODO format string
-        return "XType{" + "rawType=" + rawType + '}';
+        // T[]
+        if (componentType != null) {
+            return componentType + "[]";
+        }
+
+        // X<T>
+        if (parameteriedTypes != null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(rawType.getName());
+            sb.append("<");
+            for (int i = 0; i < parameteriedTypes.length; i++) {
+                if (i > 0) {
+                    sb.append(", ");
+                }
+                sb.append(parameteriedTypes[i].toString());
+            }
+            sb.append(">");
+            return sb.toString();
+        }
+
+        // Object
+        return rawType.getName();
     }
 
 }

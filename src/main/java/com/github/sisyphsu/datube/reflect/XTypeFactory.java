@@ -1,7 +1,10 @@
 package com.github.sisyphsu.datube.reflect;
 
 import java.lang.reflect.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -190,7 +193,6 @@ public final class XTypeFactory {
                 return; // type is stop class like Number/Collection...
             }
         }
-        Map<String, XField> fields = new HashMap<>();
         for (Field field : type.getRawType().getDeclaredFields()) {
             if (Modifier.isStatic(field.getModifiers())) {
                 continue; // ignore static
@@ -201,9 +203,8 @@ public final class XTypeFactory {
             xField.setType(fieldType);
             xField.setField(field);
 
-            fields.put(xField.getName(), xField);
+            type.fields.put(xField.getName(), xField);
         }
-        type.setFields(fields);
     }
 
 }

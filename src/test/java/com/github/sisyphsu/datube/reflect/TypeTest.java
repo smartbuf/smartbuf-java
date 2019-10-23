@@ -56,7 +56,6 @@ public class TypeTest {
         System.out.println(genArrType.getGenericDeclaration());
         System.out.println(tsType);
 
-        // 变量泛型通过声明类的TypeParameters进行坐标定位，然后结合Type进行具体值判定。
         Class decClass = (Class) genArrType.getGenericDeclaration();
         for (TypeVariable parameter : decClass.getTypeParameters()) {
             System.out.println(parameter.getName());
