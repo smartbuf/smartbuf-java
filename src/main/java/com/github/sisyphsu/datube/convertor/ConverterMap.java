@@ -146,4 +146,9 @@ public final class ConverterMap {
         return nodeName;
     }
 
+    public void clear() {
+        this.classes.clear();
+        this.methodMap.clear();
+    }
+
 }

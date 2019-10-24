@@ -1,14 +1,13 @@
 package com.github.sisyphsu.datube.convertor;
 
 import com.github.sisyphsu.datube.reflect.XType;
+import com.github.sisyphsu.datube.reflect.XTypeUtils;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.Timestamp;
+import java.util.*;
 
 /**
  * @author sulin
@@ -42,24 +41,38 @@ public class ConverterMethodTest {
         assert methodMap.get("valid1") != null;
         assert methodMap.get("valid2") != null;
 
-        assert methodMap.get("valid1").getTgtClass() == Object.class;
+        assert methodMap.get("valid1").getTgtClass() == BitSet.class;
         assert methodMap.get("valid1").getSrcClass() == String.class;
         assert !methodMap.get("valid1").isHasTypeArg();
 
-        assert methodMap.get("valid2").getTgtClass() == Object.class;
+        assert methodMap.get("valid2").getTgtClass() == Timestamp.class;
         assert methodMap.get("valid2").getSrcClass() == String.class;
         assert methodMap.get("valid2").isHasTypeArg();
+
+        RealConverterMethod method = methodMap.get("valid1");
+        try {
+            method.convert(new Date(), null);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof IllegalArgumentException;
+        }
+        try {
+            method.convert(null, XTypeUtils.toXType(BitSet.class));
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof IllegalStateException;
+        }
     }
 
-    private static class TestCodec extends Codec {
+    private static class TestCodec extends Codec implements IC {
 
-        @Converter
-        public Object valid1(String s) {
-            return null;
+        @Converter(nullable = true)
+        public BitSet valid1(String s) {
+            throw new UnsupportedOperationException();
         }
 
         @Converter
-        public Object valid2(String s, XType type) {
+        public Timestamp valid2(String s, XType type) {
             return null;
         }
 
@@ -89,6 +102,15 @@ public class ConverterMethodTest {
         public Object invalid6(String... s) {
             return null;
         }
+
+        @Override
+        public void setFactory(CodecFactory factory) {
+            super.setFactory(factory);
+        }
     }
 
+    interface IC {
+        default void test() {
+        }
+    }
 }

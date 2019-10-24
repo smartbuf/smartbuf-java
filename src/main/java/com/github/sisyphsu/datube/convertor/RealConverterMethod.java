@@ -43,11 +43,11 @@ public final class RealConverterMethod extends ConverterMethod {
             log.debug("ignore method that don't have @Converter: {}", method);
             return null;
         }
-        if (method.isBridge() || method.isVarArgs() || method.isDefault() || method.isSynthetic()) {
-            log.debug("ignore method by flags: {}", method);
+        if (method.isVarArgs()) {
+            log.debug("ignore varargs method: {}", method);
             return null;
         }
-        if (rtType == void.class || rtType == Void.class) {
+        if (rtType == void.class) {
             log.debug("ignore method by void return: {}", method);
             return null; // ignore void return
         }

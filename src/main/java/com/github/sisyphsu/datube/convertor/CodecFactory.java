@@ -2,8 +2,6 @@ package com.github.sisyphsu.datube.convertor;
 
 import com.github.sisyphsu.datube.reflect.XType;
 import com.github.sisyphsu.datube.reflect.XTypeUtils;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
@@ -64,7 +62,7 @@ public final class CodecFactory {
      *
      * @param codecs new codec
      */
-    public void installCodec(Set<Codec> codecs) {
+    public void installCodec(Collection<Codec> codecs) {
         if (codecs == null) {
             return;
         }
@@ -200,7 +198,7 @@ public final class CodecFactory {
     /**
      * Converter's Path
      */
-    private static class Path {
+    static class Path {
         private final int                   distance;
         private final List<ConverterMethod> methods = new ArrayList<>();
 
@@ -221,11 +219,29 @@ public final class CodecFactory {
     /**
      * Pipeline's key, used for Map
      */
-    @Data
-    @AllArgsConstructor
-    private static class PKey {
+    static class PKey {
         private final Class<?> srcClass;
         private final Class<?> tgtClass;
+
+        public PKey(Class<?> srcClass, Class<?> tgtClass) {
+            this.srcClass = srcClass;
+            this.tgtClass = tgtClass;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+            PKey pKey = (PKey) o;
+            return Objects.equals(srcClass, pKey.srcClass) && Objects.equals(tgtClass, pKey.tgtClass);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(srcClass, tgtClass);
+        }
     }
 
 }
