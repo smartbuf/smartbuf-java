@@ -4,27 +4,35 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
+ * CodecContext used for recording context.
+ * It helps codec recording call depth to prevent infinity loop.
+ *
  * @author sulin
  * @since 2019-10-22 20:41:53
  */
-public final class CodecState {
+public final class CodecContext {
 
-    private static final Object NULL = new Object();
-
-    private static final ThreadLocal<CodecState> STATE_LOCAL = new ThreadLocal<>();
+    private static final Object                    NULL  = new Object();
+    private static final ThreadLocal<CodecContext> LOCAL = new ThreadLocal<>();
 
     private int                 depth;
     private Map<Object, Object> objectMap;
 
+    /**
+     * Reset the current thread's codec-context, should be called at the very first.
+     */
     public static void reset() {
-        STATE_LOCAL.remove();
+        LOCAL.remove();
     }
 
-    public static CodecState get() {
-        CodecState state = STATE_LOCAL.get();
+    /**
+     * Fetch the current thread's codec-context
+     */
+    public static CodecContext get() {
+        CodecContext state = LOCAL.get();
         if (state == null) {
-            state = new CodecState();
-            STATE_LOCAL.set(state);
+            state = new CodecContext();
+            LOCAL.set(state);
         }
         return state;
     }
@@ -44,8 +52,4 @@ public final class CodecState {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return String.format("%d, %d", depth, objectMap == null ? 0 : objectMap.size());
-    }
 }

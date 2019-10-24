@@ -96,7 +96,7 @@ public final class CodecFactory {
      */
     @SuppressWarnings("unchecked")
     public final <T> T convert(Object src, Class<T> clz) {
-        CodecState.reset();
+        CodecContext.reset();
         return (T) this.doConvert(src, XTypeUtils.toXType(clz));
     }
 
