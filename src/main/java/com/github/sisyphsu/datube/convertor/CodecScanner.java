@@ -66,7 +66,7 @@ public final class CodecScanner {
         try {
             resources = classLoader.getResources(path);
         } catch (IOException e) {
-            throw new IllegalStateException("load resources failed for " + path, e);
+            throw new IllegalArgumentException("load resources failed for " + path, e);
         }
         List<Class> classes = new ArrayList<>();
         while (resources.hasMoreElements()) {
@@ -83,7 +83,7 @@ public final class CodecScanner {
      * @param packageName The package name for classes found inside the base directory
      * @return The classes
      */
-    private static List<Class> scanAllClasses(File directory, String packageName) {
+    static List<Class> scanAllClasses(File directory, String packageName) {
         List<Class> classes = new ArrayList<>();
         if (!directory.exists()) {
             return classes;
@@ -101,7 +101,7 @@ public final class CodecScanner {
                     classes.add(Class.forName(className));
                     log.trace("load class [{}]", className);
                 } catch (ClassNotFoundException e) {
-                    log.warn("load class [{}] failed.", className, e);
+                    log.warn("load class [{}] failed: {}", className, e.getLocalizedMessage());
                 }
             }
         }

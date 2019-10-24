@@ -34,6 +34,8 @@ public final class ConverterMap {
                 log.debug("replace Tran by new one: {} -> {}", method.getSrcClass(), method.getTgtClass());
             } else if (method instanceof RealConverterMethod) {
                 log.debug("replace Tran by Real: {} -> {}", method.getSrcClass(), method.getTgtClass());
+            } else {
+                throw new IllegalArgumentException("unknown ConverterMethod: " + method);
             }
             tgtMap.put(method.getTgtClass(), method);
         } else if (oldMethod instanceof RealConverterMethod) {
@@ -42,7 +44,11 @@ public final class ConverterMap {
             } else if (method instanceof RealConverterMethod) {
                 log.debug("replace Real by new one: {} -> {}", method.getSrcClass(), method.getTgtClass());
                 tgtMap.put(method.getTgtClass(), method);
+            } else {
+                throw new IllegalArgumentException("unknown ConverterMethod: " + method);
             }
+        } else {
+            throw new IllegalArgumentException("unknown oldMethod: " + oldMethod);
         }
     }
 
@@ -128,9 +134,6 @@ public final class ConverterMap {
             return itemName + "[]";
         }
         String[] parts = cls.getName().split("\\.");
-        if (parts.length <= 0) {
-            return "";
-        }
         String nodeName = parts[parts.length - 1];
         if (parts.length > 1 && !parts[0].equals("java") && !parts[0].equals("javax")) {
             StringBuilder sb = new StringBuilder();
