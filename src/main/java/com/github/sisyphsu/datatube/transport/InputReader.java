@@ -1,10 +1,10 @@
 package com.github.sisyphsu.datatube.transport;
 
+import com.github.sisyphsu.datatube.IOReader;
 import com.github.sisyphsu.datatube.utils.NumberUtils;
 
 import java.io.EOFException;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Encapsulate all serialization operations of input side.
@@ -14,9 +14,9 @@ import java.io.InputStream;
  */
 public final class InputReader {
 
-    private final InputStream stream;
+    private final IOReader stream;
 
-    public InputReader(InputStream stream) {
+    public InputReader(IOReader stream) {
         this.stream = stream;
     }
 

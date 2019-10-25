@@ -54,7 +54,7 @@ public class ReaderWriterTest {
 
         Collections.shuffle(list);
 
-        OutputWriter output = new OutputWriter(outputStream);
+        OutputWriter output = new OutputWriter(outputStream::write);
         for (Object o : list) {
             if (o instanceof Byte) {
                 output.writeByte((Byte) o);
@@ -73,7 +73,7 @@ public class ReaderWriterTest {
             }
         }
 
-        InputReader input = new InputReader(new ByteArrayInputStream(outputStream.toByteArray()));
+        InputReader input = new InputReader(new ByteArrayInputStream(outputStream.toByteArray())::read);
         for (Object o : list) {
             if (o instanceof Byte) {
                 assert input.readByte() == (Byte) o;
@@ -104,7 +104,7 @@ public class ReaderWriterTest {
         list.add(new double[]{0, Double.MIN_VALUE, Double.MAX_VALUE, RandomUtils.nextDouble()});
         Collections.shuffle(list);
 
-        OutputWriter output = new OutputWriter(outputStream);
+        OutputWriter output = new OutputWriter(outputStream::write);
         for (Object o : list) {
             if (o instanceof boolean[]) {
                 output.writeBooleanArray((boolean[]) o);
@@ -125,7 +125,7 @@ public class ReaderWriterTest {
             }
         }
 
-        InputReader input = new InputReader(new ByteArrayInputStream(outputStream.toByteArray()));
+        InputReader input = new InputReader(new ByteArrayInputStream(outputStream.toByteArray())::read);
         for (Object o : list) {
             if (o instanceof boolean[]) {
                 assert Objects.deepEquals(o, input.readBooleanArray(((boolean[]) o).length));
@@ -159,7 +159,7 @@ public class ReaderWriterTest {
         List<Float> floats = Arrays.asList(0.0f, Float.MIN_VALUE, Float.MAX_VALUE, RandomUtils.nextFloat());
         List<Double> doubles = Arrays.asList(0.0, Double.MIN_VALUE, Double.MAX_VALUE, RandomUtils.nextDouble());
 
-        OutputWriter output = new OutputWriter(outputStream);
+        OutputWriter output = new OutputWriter(outputStream::write);
         output.writeBooleanSlice(booleans);
         output.writeByteSlice(bytes);
         output.writeShortSlice(shorts);
@@ -168,7 +168,7 @@ public class ReaderWriterTest {
         output.writeFloatSlice(floats);
         output.writeDoubleSlice(doubles);
 
-        InputReader input = new InputReader(new ByteArrayInputStream(outputStream.toByteArray()));
+        InputReader input = new InputReader(new ByteArrayInputStream(outputStream.toByteArray())::read);
         assert Objects.deepEquals(booleans.toArray(), input.readBooleanSlice(booleans.size()));
         assert Objects.deepEquals(bytes.toArray(), input.readByteSlice(bytes.size()));
         assert Objects.deepEquals(shorts.toArray(), input.readShortSlice(shorts.size()));
@@ -180,7 +180,7 @@ public class ReaderWriterTest {
 
     @Test
     public void testError() {
-        InputReader input = new InputReader(new ByteArrayInputStream(new byte[2]));
+        InputReader input = new InputReader(new ByteArrayInputStream(new byte[2])::read);
         try {
             input.readDouble();
             assert false;
@@ -190,7 +190,7 @@ public class ReaderWriterTest {
 
         byte[] bytes = new byte[20];
         Arrays.fill(bytes, (byte) 0xFF);
-        input = new InputReader(new ByteArrayInputStream(bytes));
+        input = new InputReader(new ByteArrayInputStream(bytes)::read);
         try {
             input.readVarInt();
             assert false;
@@ -205,10 +205,10 @@ public class ReaderWriterTest {
         System.out.println(val);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1 << 16);
-        OutputWriter output = new OutputWriter(outputStream);
+        OutputWriter output = new OutputWriter(outputStream::write);
         output.writeString(val);
 
-        InputReader input = new InputReader(new ByteArrayInputStream(outputStream.toByteArray()));
+        InputReader input = new InputReader(new ByteArrayInputStream(outputStream.toByteArray())::read);
         String tmp = input.readString();
         System.out.println(tmp);
 

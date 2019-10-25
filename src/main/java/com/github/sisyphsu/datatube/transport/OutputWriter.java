@@ -1,5 +1,6 @@
 package com.github.sisyphsu.datatube.transport;
 
+import com.github.sisyphsu.datatube.IOWriter;
 import com.github.sisyphsu.datatube.utils.NumberUtils;
 
 import java.io.IOException;
@@ -14,14 +15,14 @@ import java.util.List;
  */
 public final class OutputWriter {
 
-    private final OutputStream stream;
+    private final IOWriter writer;
 
-    public OutputWriter(OutputStream stream) {
-        this.stream = stream;
+    public OutputWriter(IOWriter writer) {
+        this.writer = writer;
     }
 
     public void writeByte(byte b) throws IOException {
-        stream.write(b);
+        writer.write(b);
     }
 
     public void writeVarInt(long n) throws IOException {
@@ -31,9 +32,9 @@ public final class OutputWriter {
     public void writeVarUint(long n) throws IOException {
         do {
             if ((n & 0xFFFFFFFFFFFFFF80L) == 0) {
-                stream.write((byte) n);
+                writer.write((byte) n);
             } else {
-                stream.write((byte) ((n | 0x80) & 0xFF));
+                writer.write((byte) ((n | 0x80) & 0xFF));
             }
             n >>>= 7;
         } while (n != 0);
@@ -42,7 +43,7 @@ public final class OutputWriter {
     public void writeFloat(float f) throws IOException {
         int bits = NumberUtils.floatToBits(f);
         for (int i = 0; i < 4; i++) {
-            stream.write((byte) (bits & 0xFF));
+            writer.write((byte) (bits & 0xFF));
             bits >>>= 8;
         }
     }
@@ -50,7 +51,7 @@ public final class OutputWriter {
     public void writeDouble(double d) throws IOException {
         long bits = NumberUtils.doubleToBits(d);
         for (int i = 0; i < 8; i++) {
-            stream.write((byte) (bits & 0xFF));
+            writer.write((byte) (bits & 0xFF));
             bits >>>= 8;
         }
     }
@@ -59,7 +60,7 @@ public final class OutputWriter {
         byte[] bytes = str.getBytes();
         this.writeVarUint(bytes.length);
         for (byte b : bytes) {
-            stream.write(b);
+            writer.write(b);
         }
     }
 
@@ -76,20 +77,20 @@ public final class OutputWriter {
                     b |= 1 << j;
                 }
             }
-            stream.write(b);
+            writer.write(b);
         }
     }
 
     public void writeByteArray(byte[] bytes) throws IOException {
         for (byte b : bytes) {
-            stream.write(b);
+            writer.write(b);
         }
     }
 
     public void writeShortArray(short[] shorts) throws IOException {
         for (short s : shorts) {
-            stream.write((byte) (s >> 8));
-            stream.write((byte) (s & 0xFF));
+            writer.write((byte) (s >> 8));
+            writer.write((byte) (s & 0xFF));
         }
     }
 
@@ -130,20 +131,20 @@ public final class OutputWriter {
                     b |= 1 << j;
                 }
             }
-            stream.write(b);
+            writer.write(b);
         }
     }
 
     public void writeByteSlice(List<Byte> bytes) throws IOException {
         for (byte b : bytes) {
-            stream.write(b);
+            writer.write(b);
         }
     }
 
     public void writeShortSlice(List<Short> shorts) throws IOException {
         for (short s : shorts) {
-            stream.write((byte) (s >>> 8));
-            stream.write((byte) (s & 0xFF));
+            writer.write((byte) (s >>> 8));
+            writer.write((byte) (s & 0xFF));
         }
     }
 

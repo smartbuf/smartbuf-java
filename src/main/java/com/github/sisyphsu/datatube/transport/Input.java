@@ -1,12 +1,12 @@
 package com.github.sisyphsu.datatube.transport;
 
+import com.github.sisyphsu.datatube.IOReader;
 import com.github.sisyphsu.datatube.exception.InvalidReadException;
 import com.github.sisyphsu.datatube.exception.InvalidVersionException;
 import com.github.sisyphsu.datatube.exception.MismatchModeException;
 import com.github.sisyphsu.datatube.exception.UnexpectedSequenceException;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,10 +27,10 @@ public final class Input {
     private final InputReader  reader;
     private final InputContext context;
 
-    public Input(InputStream inputStream, boolean stream) {
-        this.stream = stream;
-        this.schema = new Schema(stream);
-        this.reader = new InputReader(inputStream);
+    public Input(IOReader reader, boolean enableStreamMode) {
+        this.stream = enableStreamMode;
+        this.schema = new Schema(enableStreamMode);
+        this.reader = new InputReader(reader);
         this.context = new InputContext(schema);
     }
 

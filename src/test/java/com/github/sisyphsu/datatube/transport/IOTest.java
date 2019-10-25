@@ -156,7 +156,7 @@ public class IOTest {
 
     @Test
     public void testError() {
-        Input input = new Input(new ByteArrayInputStream(new byte[]{Const.VER}), true);
+        Input input = new Input(new ByteArrayInputStream(new byte[]{Const.VER})::read, true);
         try {
             input.read();
             assert false;
@@ -164,7 +164,7 @@ public class IOTest {
             assert e instanceof MismatchModeException;
         }
 
-        input = new Input(new ByteArrayInputStream(new byte[]{Const.VER | Const.VER_STREAM}), false);
+        input = new Input(new ByteArrayInputStream(new byte[]{Const.VER | Const.VER_STREAM})::read, false);
         try {
             input.read();
             assert false;
@@ -172,7 +172,7 @@ public class IOTest {
             assert e instanceof MismatchModeException;
         }
 
-        input = new Input(new ByteArrayInputStream(new byte[1024]), true);
+        input = new Input(new ByteArrayInputStream(new byte[1024])::read, true);
         try {
             input.read();
             assert false;
@@ -231,12 +231,12 @@ public class IOTest {
     // exec node -> output -> input -> object
     static Object transIO(Node node) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1 << 20);
-        Output output = new Output(outputStream, enableCxt);
+        Output output = new Output(outputStream::write, enableCxt);
         output.write(node);
 
         bytes = outputStream.toByteArray();
         ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-        Input input = new Input(inputStream, enableCxt);
+        Input input = new Input(inputStream::read, enableCxt);
         return input.read();
     }
 

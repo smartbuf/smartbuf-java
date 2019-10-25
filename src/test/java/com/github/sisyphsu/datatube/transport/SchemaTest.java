@@ -29,7 +29,7 @@ public class SchemaTest {
 
     @Test
     public void testError() {
-        InputReader reader = new InputReader(new ByteArrayInputStream(new byte[]{0b00010100, 0, 0, 0}));
+        InputReader reader = new InputReader(new ByteArrayInputStream(new byte[]{0b00010100, 0, 0, 0})::read);
         Schema tmp = new Schema(false);
         try {
             tmp.read(reader);
@@ -37,7 +37,7 @@ public class SchemaTest {
         } catch (Exception e) {
             assert e instanceof RuntimeException;
         }
-        reader = new InputReader(new ByteArrayInputStream(new byte[]{0b00010010, 0, 0, 0}));
+        reader = new InputReader(new ByteArrayInputStream(new byte[]{0b00010010, 0, 0, 0})::read);
         try {
             tmp.read(reader);
             assert false;
@@ -49,10 +49,10 @@ public class SchemaTest {
     @Test
     public void testModeError() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1 << 16);
-        Output output = new Output(outputStream, false);
+        Output output = new Output(outputStream::write, false);
         output.write(BooleanNode.valueOf(true));
 
-        Input input = new Input(new ByteArrayInputStream(outputStream.toByteArray()), true);
+        Input input = new Input(new ByteArrayInputStream(outputStream.toByteArray())::read, true);
         try {
             input.read();
             assert false;
@@ -64,13 +64,13 @@ public class SchemaTest {
     @Test
     public void testSequenceError() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1 << 16);
-        Output output = new Output(outputStream, true);
+        Output output = new Output(outputStream::write, true);
         output.write(SymbolNode.valueOf("BLACK"));
         output.write(SymbolNode.valueOf("WHITE"));
         byte[] bytes = outputStream.toByteArray();
         byte[] data = new byte[bytes.length / 2];
         System.arraycopy(bytes, bytes.length / 2, data, 0, bytes.length / 2);
-        Input input = new Input(new ByteArrayInputStream(data), true);
+        Input input = new Input(new ByteArrayInputStream(data)::read, true);
         try {
             input.read();
             assert false;
@@ -195,12 +195,12 @@ public class SchemaTest {
     // help for test's reuse
     private static Schema trans(Schema schema) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1 << 16);
-        OutputWriter outputWriter = new OutputWriter(outputStream);
+        OutputWriter outputWriter = new OutputWriter(outputStream::write);
         schema.output(outputWriter);
 
         byte[] bytes = outputStream.toByteArray();
         Schema result = new Schema(true);
-        InputReader reader = new InputReader(new ByteArrayInputStream(bytes));
+        InputReader reader = new InputReader(new ByteArrayInputStream(bytes)::read);
         result.read(reader);
         return result;
     }

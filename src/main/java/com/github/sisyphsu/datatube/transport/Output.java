@@ -1,11 +1,11 @@
 package com.github.sisyphsu.datatube.transport;
 
+import com.github.sisyphsu.datatube.IOWriter;
 import com.github.sisyphsu.datatube.node.Node;
 import com.github.sisyphsu.datatube.node.std.ArrayNode;
 import com.github.sisyphsu.datatube.node.std.ObjectNode;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 
 import static com.github.sisyphsu.datatube.transport.Const.*;
@@ -18,7 +18,7 @@ import static com.github.sisyphsu.datatube.transport.Const.*;
  */
 public final class Output {
 
-    private final boolean      stream;
+    private final boolean      enableStreamMode;
     private final Schema       schema;
     private final OutputWriter writer;
 
@@ -29,13 +29,13 @@ public final class Output {
     /**
      * Initialize Output, it is reusable
      *
-     * @param stream    Underlying output stream
-     * @param enableCxt Enable context-model or not
+     * @param writer           Underlying output stream
+     * @param enableStreamMode Enable stream-model or not
      */
-    public Output(OutputStream stream, boolean enableCxt) {
-        this.stream = enableCxt;
-        this.schema = new Schema(enableCxt);
-        this.writer = new OutputWriter(stream);
+    public Output(IOWriter writer, boolean enableStreamMode) {
+        this.enableStreamMode = enableStreamMode;
+        this.schema = new Schema(enableStreamMode);
+        this.writer = new OutputWriter(writer);
         this.dataPool = new OutputDataPool(schema, 1 << 16);
         this.namePool = new OutputNamePool(schema);
         this.structPool = new OutputStructPool(schema, 1 << 12);
@@ -114,7 +114,7 @@ public final class Output {
                 break;
             case SYMBOL:
                 String symbol = node.stringValue();
-                int dataId = stream ? dataPool.findSymbolID(symbol) : dataPool.findStringID(symbol);
+                int dataId = enableStreamMode ? dataPool.findSymbolID(symbol) : dataPool.findStringID(symbol);
                 writer.writeVarUint((dataId << 2) | FLAG_DATA);
                 break;
             case ARRAY:
@@ -203,7 +203,7 @@ public final class Output {
                     break;
                 case SYMBOL:
                     for (String item : slice.asSymbolSlice()) {
-                        writer.writeVarUint(stream ? dataPool.findSymbolID(item) : dataPool.findStringID(item));
+                        writer.writeVarUint(enableStreamMode ? dataPool.findSymbolID(item) : dataPool.findStringID(item));
                     }
                     break;
                 case ARRAY:
@@ -252,7 +252,7 @@ public final class Output {
                 dataPool.registerString(node.stringValue());
                 break;
             case SYMBOL:
-                if (stream) {
+                if (enableStreamMode) {
                     dataPool.registerSymbol(node.stringValue());
                 } else {
                     dataPool.registerString(node.stringValue());
@@ -282,7 +282,7 @@ public final class Output {
                     break;
                 case SYMBOL:
                     for (Object item : slice.asSymbolSlice()) {
-                        if (stream) {
+                        if (enableStreamMode) {
                             dataPool.registerSymbol((String) item);
                         } else {
                             dataPool.registerString((String) item);
@@ -310,8 +310,8 @@ public final class Output {
         String[] fieldNames = node.getFields();
         boolean stable = node.isStable();
         // reigster object's metadata
-        namePool.register(!stream || !stable, fieldNames);
-        structPool.register(!stream || !stable, fieldNames);
+        namePool.register(!enableStreamMode || !stable, fieldNames);
+        structPool.register(!enableStreamMode || !stable, fieldNames);
         // scan children nodes
         for (Node subNode : node.getData().values()) {
             this.scan(subNode);
