@@ -3,10 +3,7 @@ package com.github.sisyphsu.datube.convertor;
 import com.github.sisyphsu.datube.exception.CircleReferenceException;
 import com.github.sisyphsu.datube.reflect.XType;
 import lombok.extern.slf4j.Slf4j;
-import sun.reflect.MethodAccessor;
-import sun.reflect.ReflectionFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -18,11 +15,10 @@ import java.lang.reflect.Method;
 @Slf4j
 public final class RealConverterMethod extends ConverterMethod {
 
-    private Codec          codec;
-    private boolean        hasTypeArg;
-    private Converter      annotation;
-    private Method         method;
-    private MethodAccessor function;
+    private Codec     codec;
+    private boolean   hasTypeArg;
+    private Converter annotation;
+    private Method    method;
 
     private RealConverterMethod(Class<?> srcClass, Class<?> tgtClass) {
         super(srcClass, tgtClass);
@@ -64,7 +60,6 @@ public final class RealConverterMethod extends ConverterMethod {
         result.method = method;
         result.codec = codec;
         result.hasTypeArg = argTypes.length == 2;
-        result.function = ReflectionFactory.getReflectionFactory().newMethodAccessor(method);
         return result;
     }
 
@@ -78,11 +73,11 @@ public final class RealConverterMethod extends ConverterMethod {
         }
         try {
             if (hasTypeArg) {
-                return function.invoke(codec, new Object[]{data, tgtType});
+                return method.invoke(codec, data, tgtType);
             } else {
-                return function.invoke(codec, new Object[]{data});
+                return method.invoke(codec, data);
             }
-        } catch (InvocationTargetException e) {
+        } catch (Exception e) {
             Throwable throwable = e.getCause();
             if (throwable instanceof CircleReferenceException) {
                 throw (CircleReferenceException) throwable;
