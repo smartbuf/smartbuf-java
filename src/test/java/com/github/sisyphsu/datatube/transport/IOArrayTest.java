@@ -1,4 +1,4 @@
-package com.github.sisyphsu.datatube.proto;
+package com.github.sisyphsu.datatube.transport;
 
 import com.github.sisyphsu.datatube.node.std.ArrayNode;
 import org.apache.commons.lang3.RandomUtils;
@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static com.github.sisyphsu.datatube.proto.IOTest.*;
+import static com.github.sisyphsu.datatube.transport.IOTest.*;
 
 /**
  * @author sulin

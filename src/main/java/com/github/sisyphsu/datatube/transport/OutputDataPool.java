@@ -1,4 +1,4 @@
-package com.github.sisyphsu.datatube.proto;
+package com.github.sisyphsu.datatube.transport;
 
 import com.github.sisyphsu.datatube.utils.ArrayUtils;
 import com.github.sisyphsu.datatube.utils.TimeUtils;
@@ -6,7 +6,7 @@ import com.github.sisyphsu.datatube.utils.TimeUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.github.sisyphsu.datatube.proto.Const.*;
+import static com.github.sisyphsu.datatube.transport.Const.*;
 
 /**
  * DataPool represents an area holds data properties like float/double/varint/string/symbol.

@@ -1,4 +1,4 @@
-package com.github.sisyphsu.datatube.proto;
+package com.github.sisyphsu.datatube.transport;
 
 import com.github.sisyphsu.datatube.node.std.ArrayNode;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -11,8 +11,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import static com.github.sisyphsu.datatube.proto.IOTest.enableCxt;
-import static com.github.sisyphsu.datatube.proto.IOTest.transIO;
+import static com.github.sisyphsu.datatube.transport.IOTest.enableCxt;
+import static com.github.sisyphsu.datatube.transport.IOTest.transIO;
 
 /**
  * @author sulin

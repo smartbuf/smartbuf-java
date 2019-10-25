@@ -1,8 +1,8 @@
-package com.github.sisyphsu.datatube.proto;
+package com.github.sisyphsu.datatube.transport;
 
 import com.github.sisyphsu.datatube.node.std.ObjectNode;
 
-import static com.github.sisyphsu.datatube.proto.Const.*;
+import static com.github.sisyphsu.datatube.transport.Const.*;
 
 /**
  * InputContext holds the state of input's context, it helps decompress data and metadata's reusing.

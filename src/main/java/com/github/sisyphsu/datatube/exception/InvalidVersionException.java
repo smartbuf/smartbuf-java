@@ -2,7 +2,7 @@ package com.github.sisyphsu.datatube.exception;
 
 import java.io.IOException;
 
-import static com.github.sisyphsu.datatube.proto.Const.VER;
+import static com.github.sisyphsu.datatube.transport.Const.VER;
 
 /**
  * Exception that indicate the specified data has an invalid version

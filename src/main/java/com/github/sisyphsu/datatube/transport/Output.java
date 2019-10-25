@@ -1,4 +1,4 @@
-package com.github.sisyphsu.datatube.proto;
+package com.github.sisyphsu.datatube.transport;
 
 import com.github.sisyphsu.datatube.node.Node;
 import com.github.sisyphsu.datatube.node.std.ArrayNode;
@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import static com.github.sisyphsu.datatube.proto.Const.*;
+import static com.github.sisyphsu.datatube.transport.Const.*;
 
 /**
  * Output wraps the logic that scans the source data and serializes the output message into highly compressed data

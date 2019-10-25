@@ -1,4 +1,4 @@
-package com.github.sisyphsu.datatube.proto;
+package com.github.sisyphsu.datatube.transport;
 
 import com.github.sisyphsu.datatube.exception.InvalidReadException;
 import com.github.sisyphsu.datatube.exception.InvalidVersionException;

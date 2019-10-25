@@ -1,4 +1,4 @@
-package com.github.sisyphsu.datatube.proto;
+package com.github.sisyphsu.datatube.transport;
 
 import com.github.sisyphsu.datatube.exception.InvalidReadException;
 import com.github.sisyphsu.datatube.exception.InvalidVersionException;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.sisyphsu.datatube.proto.Const.*;
+import static com.github.sisyphsu.datatube.transport.Const.*;
 
 /**
  * @author sulin

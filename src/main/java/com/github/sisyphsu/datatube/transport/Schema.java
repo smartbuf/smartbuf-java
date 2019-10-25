@@ -1,8 +1,8 @@
-package com.github.sisyphsu.datatube.proto;
+package com.github.sisyphsu.datatube.transport;
 
 import java.io.IOException;
 
-import static com.github.sisyphsu.datatube.proto.Const.*;
+import static com.github.sisyphsu.datatube.transport.Const.*;
 
 /**
  * Schema represents data's meta info, used for discribe and explain data area

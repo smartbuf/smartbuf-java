@@ -1,4 +1,4 @@
-package com.github.sisyphsu.datatube.proto;
+package com.github.sisyphsu.datatube.transport;
 
 import com.github.sisyphsu.datatube.node.Node;
 import com.github.sisyphsu.datatube.node.std.*;
@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.*;
 
-import static com.github.sisyphsu.datatube.proto.IOTest.enableCxt;
-import static com.github.sisyphsu.datatube.proto.IOTest.transIO;
+import static com.github.sisyphsu.datatube.transport.IOTest.enableCxt;
+import static com.github.sisyphsu.datatube.transport.IOTest.transIO;
 
 /**
  * @author sulin

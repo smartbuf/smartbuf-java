@@ -1,4 +1,4 @@
-package com.github.sisyphsu.datatube.proto;
+package com.github.sisyphsu.datatube.transport;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sisyphsu.datatube.convertor.CodecFactory;
@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.sisyphsu.datatube.proto.IOTest.*;
+import static com.github.sisyphsu.datatube.transport.IOTest.*;
 
 /**
  * @author sulin
