@@ -4,7 +4,6 @@ import com.github.sisyphsu.datatube.IOWriter;
 import com.github.sisyphsu.datatube.utils.NumberUtils;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 
 /**
