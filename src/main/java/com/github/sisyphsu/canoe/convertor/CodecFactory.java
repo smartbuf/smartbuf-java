@@ -5,6 +5,7 @@ import com.github.sisyphsu.canoe.reflect.XTypeUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -85,17 +86,29 @@ public final class CodecFactory {
     }
 
     /**
-     * Factory's doConvert convinence.
+     * Convert the specified object to instance of the specified class
      *
      * @param src source data
      * @param clz target class
      * @param <T> Target template type
-     * @return target instance
+     * @return instance of the specified class
      */
     @SuppressWarnings("unchecked")
     public final <T> T convert(Object src, Class<T> clz) {
         CodecContext.reset();
         return (T) this.doConvert(src, XTypeUtils.toXType(clz));
+    }
+
+    /**
+     * Convert the specified object to the specified type
+     *
+     * @param src  Source data
+     * @param type Target type
+     * @return instance of the specified type
+     */
+    public final Object convert(Object src, Type type) {
+        CodecContext.reset();
+        return this.doConvert(src, XTypeUtils.toXType(type));
     }
 
     /**

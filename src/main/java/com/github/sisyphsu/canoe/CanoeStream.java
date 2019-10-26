@@ -4,12 +4,12 @@ import com.github.sisyphsu.canoe.transport.Input;
 import com.github.sisyphsu.canoe.transport.Output;
 
 /**
- * StreamTube provides stream-mode implementation of "datatube" protocol.
+ * StreamTube provides stream-mode implementation of "canoe" protocol.
  *
  * @author sulin
  * @since 2019-10-25 14:40:52
  */
-public class StreamTube {
+public final class CanoeStream {
 
     private IOReader reader;
     private IOWriter writer;
@@ -25,5 +25,5 @@ public class StreamTube {
 
     public void close() {
     }
-    
+
 }
