@@ -1,11 +1,6 @@
 package com.github.sisyphsu.canoe.node;
 
-import lombok.Data;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author sulin
@@ -51,27 +46,6 @@ public class NodeTest {
             assert false;
         } catch (Exception e) {
             assert e instanceof UnsupportedOperationException;
-        }
-    }
-
-    //    @Test
-    void test() {
-        List<Bean> beans = new ArrayList<>();
-        beans.add(new Bean(1, "hello"));
-        beans.add(new Bean(2, "world"));
-    }
-
-    @Data
-    public static class Bean {
-
-        private int    id;
-        private String name;
-        private Date   timestamp;
-
-        public Bean(int id, String name) {
-            this.id = id;
-            this.name = name;
-            this.timestamp = new Date();
         }
     }
 

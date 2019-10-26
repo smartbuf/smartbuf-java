@@ -25,7 +25,7 @@ public final class LangCodec extends Codec {
     /**
      * Convert Map to Object
      */
-    @Converter(extensible = true, distance = 10000)
+    @Converter(extensible = true, distance = 1 << 24)
     public Object toObject(Map<?, ?> map, XType<?> type) {
         if (type.getRawType() == Object.class) {
             return map; // dont need convert
@@ -50,7 +50,7 @@ public final class LangCodec extends Codec {
     /**
      * Convert Object to Map, use cglib directly
      */
-    @Converter(distance = 10000)
+    @Converter(distance = 1 << 24)
     public Map toMap(Object obj) {
         // check loop references
         CodecContext state = CodecContext.get();

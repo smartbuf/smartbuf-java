@@ -34,10 +34,10 @@ public final class CanoePacket {
 
     public static int PACKET_LIMIT = 1024 * 1024 * 64;
 
-    private static final ThreadLocal<ByteArrayReader> INPUT_LOCAL  = new ThreadLocal<>();
-    private static final ThreadLocal<ByteArrayWriter> OUTPUT_LOCAL = new ThreadLocal<>();
+    static final ThreadLocal<ByteArrayReader> INPUT_LOCAL  = new ThreadLocal<>();
+    static final ThreadLocal<ByteArrayWriter> OUTPUT_LOCAL = new ThreadLocal<>();
 
-    private static final CodecFactory CODEC = new CodecFactory();
+    static final CodecFactory CODEC = new CodecFactory();
 
     static {
         CODEC.installCodec(BeanNodeCodec.class);

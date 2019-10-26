@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.*;
  * @author sulin
  * @since 2019-10-26 14:01:01
  */
-public class PacketSimpleTest {
+public class PacketTest {
 
     @Test
     public void testWriter() throws IOException {
@@ -140,6 +140,21 @@ public class PacketSimpleTest {
         longAdder.add(RandomUtils.nextLong());
         data = CanoePacket.serialize(longAdder);
         assert longAdder.longValue() == CanoePacket.deserialize(data, LongAdder.class).longValue();
+    }
+
+    @Test
+    public void testWorld() throws IOException {
+        byte[] data;
+
+        World oldWorld = new World();
+        data = CanoePacket.serialize(oldWorld);
+        World newWorld = CanoePacket.deserialize(data, World.class);
+
+        assert Objects.equals(oldWorld, newWorld);
+    }
+
+    @Test
+    public void test2() {
     }
 
 }

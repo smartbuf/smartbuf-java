@@ -36,19 +36,19 @@ public class SqlCodecTest {
         assert str.equals(codec.convert(reader, String.class));
 
         Date date = new Date(System.currentTimeMillis());
-        Date date2 = codec.toDate(codec.toLocalDate(date));
+        Date date2 = codec.toDate(codec.toLong(date));
         assert date2.getYear() == date.getYear();
         assert date2.getMonth() == date.getMonth();
         assert date2.getDay() == date.getDay();
 
         Time time = new Time(System.currentTimeMillis());
-        Time time2 = codec.toTime(codec.toLocalTime(time));
+        Time time2 = codec.toTime(codec.toLong(time));
         assert time.getHours() == time2.getHours();
         assert time.getMinutes() == time2.getMinutes();
         assert time.getSeconds() == time2.getSeconds();
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        assert timestamp.equals(codec.toTimestamp(codec.toLocalDateTime(timestamp)));
+        assert timestamp.equals(codec.toTimestamp(codec.toLong(timestamp)));
     }
 
 }

@@ -159,6 +159,9 @@ public final class InputContext {
      * @return String's value
      */
     public String findStringByID(int id) {
+        if (id == ID_ZERO_STRING) {
+            return "";
+        }
         id -= ID_PREFIX;
         id -= tmpFloats.size();
         id -= tmpDoubles.size();

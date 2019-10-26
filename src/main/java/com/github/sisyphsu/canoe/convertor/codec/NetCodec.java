@@ -64,7 +64,7 @@ public final class NetCodec extends Codec {
      */
     @Converter
     public String toString(InetAddress addr) {
-        return addr.getHostName();
+        return addr.getHostAddress();
     }
 
     /**
@@ -92,8 +92,7 @@ public final class NetCodec extends Codec {
      */
     @Converter
     public String toString(InetSocketAddress addr) {
-        String addrStr = convert(addr.getAddress(), String.class);
-        return addrStr + ":" + addr.getPort();
+        return addr.getHostString() + ":" + addr.getPort();
     }
 
 }
