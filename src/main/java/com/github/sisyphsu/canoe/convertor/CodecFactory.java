@@ -119,14 +119,14 @@ public final class CodecFactory {
      * @return Target Instance
      */
     protected Object doConvert(Object srcObj, XType tgtType) {
-        if (srcObj == null) {
-            return null;
-        }
-        Class srcClass = srcObj.getClass();
+        Class srcClass = srcObj == null ? Object.class : srcObj.getClass();
         Class tgtClass = tgtType.getRawType();
         ConverterPipeline pipeline = this.getPipeline(srcClass, tgtClass);
         if (pipeline == null) {
-            throw new IllegalStateException("Can't convert " + srcObj.getClass() + " to " + tgtType);
+            if (srcObj == null) {
+                return null;
+            }
+            throw new IllegalStateException("Can't convert " + srcClass + " to " + tgtType);
         }
         return pipeline.convert(srcObj, tgtType);
     }
