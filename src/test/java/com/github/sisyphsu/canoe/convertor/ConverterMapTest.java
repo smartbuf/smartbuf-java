@@ -14,7 +14,7 @@ public class ConverterMapTest {
     @Test
     public void printChart() {
         ConverterMap map = CodecFactory.Instance.getConverterMap();
-        System.out.println(map.printDot());
+        map.printDot();
     }
 
     @Test

@@ -113,7 +113,7 @@ public class World {
         private LongBuffer   lb = LongBuffer.wrap(new long[]{0L, 1L, -1L, Long.MIN_VALUE, Long.MAX_VALUE});
         private FloatBuffer  fb = FloatBuffer.wrap(new float[]{0.0f, Float.MIN_VALUE, Float.MAX_VALUE});
         private DoubleBuffer db = DoubleBuffer.wrap(new double[]{0.0, Double.MIN_VALUE, Double.MAX_VALUE});
-        private CharBuffer   cb = CharBuffer.wrap("hello world".toCharArray());
+        private CharBuffer   cb = CharBuffer.wrap(Arrays.copyOf("hello world".toCharArray(), 11));
 
         @Override
         public boolean equals(Object o) {

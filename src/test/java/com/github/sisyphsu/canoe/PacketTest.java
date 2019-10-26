@@ -145,10 +145,15 @@ public class PacketTest {
     @Test
     public void testWorld() throws IOException {
         byte[] data;
-
         World oldWorld = new World();
-        data = CanoePacket.serialize(oldWorld);
-        World newWorld = CanoePacket.deserialize(data, World.class);
+        World newWorld = null;
+
+        try {
+            data = CanoePacket.serialize(oldWorld);
+            newWorld = CanoePacket.deserialize(data, World.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         assert Objects.equals(oldWorld, newWorld);
     }

@@ -18,7 +18,9 @@ public final class BufferCodec extends Codec {
      */
     @Converter
     public byte[] toByteArray(ByteBuffer buf) {
-        return buf.array();
+        byte[] arr = new byte[buf.remaining()];
+        buf.get(arr, 0, arr.length);
+        return arr;
     }
 
     /**
@@ -34,7 +36,9 @@ public final class BufferCodec extends Codec {
      */
     @Converter
     public char[] toCharArray(CharBuffer buf) {
-        return buf.array();
+        char[] arr = new char[buf.remaining()];
+        buf.get(arr, 0, arr.length);
+        return arr;
     }
 
     /**
@@ -58,7 +62,9 @@ public final class BufferCodec extends Codec {
      */
     @Converter
     public float[] toFloatArray(FloatBuffer buf) {
-        return buf.array();
+        float[] arr = new float[buf.remaining()];
+        buf.get(arr, 0, arr.length);
+        return arr;
     }
 
     /**
@@ -82,7 +88,9 @@ public final class BufferCodec extends Codec {
      */
     @Converter
     public double[] toDoubleArray(DoubleBuffer buf) {
-        return buf.array();
+        double[] arr = new double[buf.remaining()];
+        buf.get(arr, 0, arr.length);
+        return arr;
     }
 
     /**
@@ -106,7 +114,9 @@ public final class BufferCodec extends Codec {
      */
     @Converter
     public short[] toShortArray(ShortBuffer buf) {
-        return buf.array();
+        short[] arr = new short[buf.remaining()];
+        buf.get(arr, 0, arr.length);
+        return arr;
     }
 
     /**
@@ -130,7 +140,9 @@ public final class BufferCodec extends Codec {
      */
     @Converter
     public int[] toIntArray(IntBuffer buf) {
-        return buf.array();
+        int[] arr = new int[buf.remaining()];
+        buf.get(arr, 0, arr.length);
+        return arr;
     }
 
     /**
@@ -154,7 +166,9 @@ public final class BufferCodec extends Codec {
      */
     @Converter
     public long[] toLongArray(LongBuffer buf) {
-        return buf.array();
+        long[] arr = new long[buf.remaining()];
+        buf.get(arr, 0, arr.length);
+        return arr;
     }
 
     /**
