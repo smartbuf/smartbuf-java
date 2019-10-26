@@ -21,7 +21,7 @@ public final class TranConverterMethod extends ConverterMethod {
 
     @Override
     public int getDistance() {
-        return 1 << 10;
+        return 1 << 4;
     }
 
     @Override
