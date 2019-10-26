@@ -18,6 +18,7 @@ public final class ConverterPipeline {
 
     private final Class srcClass;
     private final Class tgtClass;
+
     private final List<ConverterMethod> methods;
 
     public ConverterPipeline(Class srcClass, Class tgtClass, List<ConverterMethod> methods) {

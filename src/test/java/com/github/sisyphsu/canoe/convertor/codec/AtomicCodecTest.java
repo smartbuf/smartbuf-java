@@ -62,7 +62,7 @@ public class AtomicCodecTest {
         assert ref.get().toByteArray().length == bytes.length;
         assert ref.get().toByteArray()[2] == bytes[2];
 
-        Object obj = codec.toObject(ref);
+        Object obj = codec.toObject(ref, XTypeUtils.toXType(Object.class));
         assert obj instanceof BitSet;
 
         AtomicReference ref2 = codec.toAtomicReference(0L, XTypeUtils.toXType(new TypeRef<AtomicReference<Optional<Integer>>>() {

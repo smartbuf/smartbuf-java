@@ -116,11 +116,11 @@ public final class AtomicCodec extends Codec {
 
     /**
      * Convert AtomicReference to Object
-     * TODO should support generic-type, In this case, Object should be treat as its real type
      */
-    @Converter
-    public Object toObject(AtomicReference ref) {
-        return ref.get();
+    @Converter(extensible = true)
+    public Object toObject(AtomicReference ref, XType type) {
+        Object data = ref.get();
+        return convert(data, type);
     }
 
     /**

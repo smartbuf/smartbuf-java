@@ -161,7 +161,7 @@ public final class UtilCodec extends Codec {
     /**
      * Convert Optional to Object
      */
-    @Converter
+    @Converter(extensible = true)
     public Object toObject(Optional optional, XType type) {
         if (!optional.isPresent()) {
             return null;

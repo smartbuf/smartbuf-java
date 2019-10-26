@@ -127,18 +127,19 @@ public class PacketSimpleTest {
 
         AtomicReference<String> stringRef = new AtomicReference<>("hello world");
         data = CanoePacket.serialize(stringRef);
-        assert stringRef.equals(CanoePacket.deserialize(data, new TypeRef<AtomicReference<String>>() {
-        }));
+        AtomicReference<String> stringRef2 = CanoePacket.deserialize(data, new TypeRef<AtomicReference<String>>() {
+        });
+        assert Objects.equals(stringRef.get(), stringRef2.get());
 
         DoubleAdder doubleAdder = new DoubleAdder();
         doubleAdder.add(RandomUtils.nextDouble());
         data = CanoePacket.serialize(doubleAdder);
-        assert doubleAdder.equals(CanoePacket.deserialize(data, DoubleAdder.class));
+        assert doubleAdder.doubleValue() == CanoePacket.deserialize(data, DoubleAdder.class).doubleValue();
 
         LongAdder longAdder = new LongAdder();
         longAdder.add(RandomUtils.nextLong());
         data = CanoePacket.serialize(longAdder);
-        assert longAdder.equals(CanoePacket.deserialize(data, LongAdder.class));
+        assert longAdder.longValue() == CanoePacket.deserialize(data, LongAdder.class).longValue();
     }
 
 }
