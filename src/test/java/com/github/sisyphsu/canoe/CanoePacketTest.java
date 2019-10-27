@@ -1,9 +1,11 @@
 package com.github.sisyphsu.canoe;
 
+import com.github.sisyphsu.canoe.exception.OutOfSpaceException;
 import com.github.sisyphsu.canoe.reflect.TypeRef;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.atomic.*;
@@ -12,7 +14,7 @@ import java.util.concurrent.atomic.*;
  * @author sulin
  * @since 2019-10-26 14:01:01
  */
-public class PacketTest {
+public class CanoePacketTest {
 
     @Test
     public void testWriter() throws IOException {
@@ -143,6 +145,23 @@ public class PacketTest {
     }
 
     @Test
+    public void testError() {
+        try {
+            CanoePacket.deserialize(new byte[0], Object.class);
+            assert false;
+        } catch (IOException e) {
+            assert e instanceof EOFException;
+        }
+
+        try {
+            CanoePacket.serialize(new byte[CanoePacket.PACKET_LIMIT + 1]);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof OutOfSpaceException;
+        }
+    }
+
+    @Test
     public void testWorld() throws IOException {
         byte[] data;
         World oldWorld = new World();
@@ -156,10 +175,6 @@ public class PacketTest {
         }
 
         assert Objects.equals(oldWorld, newWorld);
-    }
-
-    @Test
-    public void test2() {
     }
 
 }

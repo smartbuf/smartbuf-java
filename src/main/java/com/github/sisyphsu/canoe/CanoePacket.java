@@ -1,6 +1,7 @@
 package com.github.sisyphsu.canoe;
 
 import com.github.sisyphsu.canoe.convertor.CodecFactory;
+import com.github.sisyphsu.canoe.exception.OutOfSpaceException;
 import com.github.sisyphsu.canoe.node.ArrayNodeCodec;
 import com.github.sisyphsu.canoe.node.BasicNodeCodec;
 import com.github.sisyphsu.canoe.node.BeanNodeCodec;
@@ -43,6 +44,9 @@ public final class CanoePacket {
         CODEC.installCodec(BeanNodeCodec.class);
         CODEC.installCodec(BasicNodeCodec.class);
         CODEC.installCodec(ArrayNodeCodec.class);
+    }
+
+    private CanoePacket() {
     }
 
     /**
@@ -141,7 +145,7 @@ public final class CanoePacket {
         @Override
         public void write(byte b) throws IOException {
             if (off >= PACKET_LIMIT) {
-                throw new EOFException();
+                throw new OutOfSpaceException("hit packet_limit: " + PACKET_LIMIT);
             }
             int pos = off++;
             int sliceOff = pos / 1024;
