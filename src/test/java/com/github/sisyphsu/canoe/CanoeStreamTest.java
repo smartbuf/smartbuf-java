@@ -173,6 +173,8 @@ public class CanoeStreamTest {
         } catch (Exception e) {
             assert e instanceof CanoeClosedException;
         }
+
+        stream.close();
     }
 
 }
