@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import java.lang.annotation.Annotation;
 import java.lang.ref.Reference;
 import java.lang.reflect.*;
-import java.util.Arrays;
 import java.util.BitSet;
 
 /**
@@ -20,7 +19,7 @@ public class XTypeFactoryTest<T> {
         XType type = XTypeUtils.toXType(BitSet.class);
         assert type.getField("words") != null;
 
-        XTypeFactory fac = new XTypeFactory(Arrays.asList(Number.class, BitSet.class));
+        XTypeFactory fac = new XTypeFactory().addStopClass(Number.class, BitSet.class);
         type = fac.toXType(BitSet.class);
         assert type.getField("words") == null;
 

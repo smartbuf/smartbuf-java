@@ -1,7 +1,7 @@
 package com.github.sisyphsu.canoe.convertor;
 
 import com.github.sisyphsu.canoe.reflect.XType;
-import com.github.sisyphsu.canoe.reflect.XTypeUtils;
+import com.github.sisyphsu.canoe.reflect.XTypeFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
@@ -25,6 +25,7 @@ public final class CodecFactory {
     private final Set<Codec>                   codecs       = ConcurrentHashMap.newKeySet();
     private final ConverterMap                 converterMap = new ConverterMap();
     private final Map<PKey, ConverterPipeline> pipelineMap  = new ConcurrentHashMap<>();
+    private final XTypeFactory                 xTypeFactory = new XTypeFactory();
 
     /**
      * Initialize CodecFactory with the specified Codec type.
@@ -78,6 +79,12 @@ public final class CodecFactory {
                     continue;
                 }
                 converterMap.put(convertMethod);
+                if (convertMethod.getSrcClass() != Object.class) {
+                    xTypeFactory.addStopClass(convertMethod.getSrcClass());
+                }
+                if (convertMethod.getTgtClass() != Object.class) {
+                    xTypeFactory.addStopClass(convertMethod.getTgtClass());
+                }
             }
             codec.setFactory(this);
         }
@@ -131,8 +138,8 @@ public final class CodecFactory {
         return pipeline.convert(srcObj, tgtType);
     }
 
-    protected XType<?> toXType(Type type){
-        return XTypeUtils.toXType(type);
+    protected XType<?> toXType(Type type) {
+        return xTypeFactory.toXType(type);
     }
 
     /**

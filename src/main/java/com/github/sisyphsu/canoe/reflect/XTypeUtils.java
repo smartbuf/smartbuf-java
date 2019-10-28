@@ -2,7 +2,6 @@ package com.github.sisyphsu.canoe.reflect;
 
 import java.lang.ref.Reference;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
@@ -16,7 +15,7 @@ public final class XTypeUtils {
 
     // Global default XTypeFactory
     // TODO perfect stop classes
-    private static final XTypeFactory factory = new XTypeFactory(Arrays.asList(
+    private static final XTypeFactory factory = new XTypeFactory().addStopClass(
         Object[].class,
         Boolean.class,
         Number.class,
@@ -24,7 +23,7 @@ public final class XTypeUtils {
         Collection.class,
         Map.class,
         Reference.class
-    ));
+    );
 
     private XTypeUtils() {
     }

@@ -18,20 +18,16 @@ public final class XTypeFactory {
     /**
      * Stop-Class means some indivisible classes which shouldn't be split
      */
-    private final Set<Class>          stopClasses;
+    private Set<Class>          stopClasses = new HashSet<>();
     /**
      * XType's global cache, for performance optimization
      */
-    private final Map<Type, XType<?>> cacheMap;
+    private Map<Type, XType<?>> cacheMap    = new ConcurrentHashMap<>();
 
-    /**
-     * Initialize XTypeFactory by specified stopClasses
-     *
-     * @param stopClasses Stop-Classes
-     */
-    public XTypeFactory(Collection<Class> stopClasses) {
-        this.stopClasses = new HashSet<>(stopClasses);
-        this.cacheMap = new ConcurrentHashMap<>();
+    public synchronized XTypeFactory addStopClass(Class<?>... classes) {
+        this.stopClasses.addAll(Arrays.asList(classes));
+        this.cacheMap.clear();
+        return this;
     }
 
     /**
@@ -187,7 +183,7 @@ public final class XTypeFactory {
      * Parse fields of XType and fill them
      */
     @SuppressWarnings("unchecked")
-    private void parseFields(Context cxt, XType<?> type) {
+    private synchronized void parseFields(Context cxt, XType<?> type) {
         Class rawCls = type.getRawType();
         // If rawCls is a stop-class, return directly
         for (Class<?> stopType : this.stopClasses) {
