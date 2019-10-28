@@ -15,6 +15,7 @@ import java.util.Map;
 public final class XTypeUtils {
 
     // Global default XTypeFactory
+    // TODO perfect stop classes
     private static final XTypeFactory factory = new XTypeFactory(Arrays.asList(
         Object[].class,
         Boolean.class,

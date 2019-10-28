@@ -1,7 +1,8 @@
 package com.github.sisyphsu.canoe.convertor;
 
 import com.github.sisyphsu.canoe.reflect.XType;
-import com.github.sisyphsu.canoe.reflect.XTypeUtils;
+
+import java.lang.reflect.Type;
 
 /**
  * Codec's base class.
@@ -38,7 +39,11 @@ public abstract class Codec {
      */
     @SuppressWarnings("unchecked")
     public final <T> T convert(Object src, Class<T> clz) {
-        return (T) factory.doConvert(src, XTypeUtils.toXType(clz));
+        return (T) factory.doConvert(src, toXType(clz));
+    }
+
+    public final XType<?> toXType(Type type) {
+        return factory.toXType(type);
     }
 
 }

@@ -96,7 +96,7 @@ public final class CodecFactory {
     @SuppressWarnings("unchecked")
     public final <T> T convert(Object src, Class<T> clz) {
         CodecContext.reset();
-        return (T) this.doConvert(src, XTypeUtils.toXType(clz));
+        return (T) this.doConvert(src, toXType(clz));
     }
 
     /**
@@ -108,7 +108,7 @@ public final class CodecFactory {
      */
     public final Object convert(Object src, Type type) {
         CodecContext.reset();
-        return this.doConvert(src, XTypeUtils.toXType(type));
+        return this.doConvert(src, toXType(type));
     }
 
     /**
@@ -129,6 +129,10 @@ public final class CodecFactory {
             throw new IllegalStateException("Can't convert " + srcClass + " to " + tgtType);
         }
         return pipeline.convert(srcObj, tgtType);
+    }
+
+    protected XType<?> toXType(Type type){
+        return XTypeUtils.toXType(type);
     }
 
     /**

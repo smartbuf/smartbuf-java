@@ -3,7 +3,6 @@ package com.github.sisyphsu.canoe.convertor.codec;
 import com.github.sisyphsu.canoe.convertor.Codec;
 import com.github.sisyphsu.canoe.convertor.Converter;
 import com.github.sisyphsu.canoe.reflect.XType;
-import com.github.sisyphsu.canoe.reflect.XTypeUtils;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -40,7 +39,7 @@ public final class ArrayCodec extends Codec {
     public Object[] toArray(Collection list, XType<?> type) {
         XType<?> itemType = type.getComponentType();
         if (itemType == null) {
-            itemType = XTypeUtils.toXType(type.getRawType().getComponentType());
+            itemType = toXType(type.getRawType().getComponentType());
         }
         Object[] result = (Object[]) Array.newInstance(itemType.getRawType(), list.size());
         int i = 0;
