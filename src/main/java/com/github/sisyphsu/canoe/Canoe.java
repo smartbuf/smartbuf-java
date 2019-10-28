@@ -35,10 +35,10 @@ public final class Canoe {
         CODEC.installCodec(ArrayNodeCodec.class);
     }
 
-    final   IOReader reader;
-    final   IOWriter writer;
-    private Input    input;
-    private Output   output;
+    final IOReader reader;
+    final IOWriter writer;
+    Input  input;
+    Output output;
 
     private volatile boolean closed;
 

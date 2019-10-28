@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package com.github.sisyphsu.datube.model;
+package com.github.sisyphsu.canoe.model;
 
 message Message {
     int32 id = 1;
