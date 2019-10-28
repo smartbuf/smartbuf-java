@@ -25,9 +25,9 @@ import java.util.TimeZone;
  */
 public final class TimeCodec extends Codec {
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
-    private static DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
-    private static final ZoneOffset LOCAL_OFFSET = ZoneOffset.ofTotalSeconds(TimeZone.getDefault().getRawOffset() / 1000);
+    private static final SimpleDateFormat  DATE_FORMAT  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
+    private static       DateTimeFormatter FORMATTER    = DateTimeFormatter.ISO_DATE_TIME;
+    private static final ZoneOffset        LOCAL_OFFSET = ZoneOffset.ofTotalSeconds(TimeZone.getDefault().getRawOffset() / 1000);
 
     // ------------------ Date <==> String | Long
 
@@ -58,7 +58,7 @@ public final class TimeCodec extends Codec {
     /**
      * Convert Date to String
      */
-    @Converter
+    @Converter(distance = 500)
     public String toString(Date d) {
         return DATE_FORMAT.format(d);
     }

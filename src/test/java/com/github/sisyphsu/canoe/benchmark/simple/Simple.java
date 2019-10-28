@@ -71,30 +71,6 @@ public final class Simple {
      * @return The createTime.
      */
     long getCreateTime();
-
-    /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-     */
-    java.util.List<com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag> 
-        getTagsList();
-    /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-     */
-    com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag getTags(int index);
-    /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-     */
-    int getTagsCount();
-    /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-     */
-    java.util.List<? extends com.github.sisyphsu.canoe.benchmark.simple.Simple.TagOrBuilder> 
-        getTagsOrBuilderList();
-    /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-     */
-    com.github.sisyphsu.canoe.benchmark.simple.Simple.TagOrBuilder getTagsOrBuilder(
-        int index);
   }
   /**
    * Protobuf type {@code com.github.sisyphsu.canoe.benchmark.simple.User}
@@ -111,7 +87,6 @@ public final class Simple {
     private User() {
       nickname_ = "";
       portrait_ = "";
-      tags_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -134,7 +109,6 @@ public final class Simple {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
-      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -182,15 +156,6 @@ public final class Simple {
               createTime_ = input.readInt64();
               break;
             }
-            case 66: {
-              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                tags_ = new java.util.ArrayList<com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag>();
-                mutable_bitField0_ |= 0x00000001;
-              }
-              tags_.add(
-                  input.readMessage(com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag.parser(), extensionRegistry));
-              break;
-            }
             default: {
               if (!parseUnknownField(
                   input, unknownFields, extensionRegistry, tag)) {
@@ -206,9 +171,6 @@ public final class Simple {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000001) != 0)) {
-          tags_ = java.util.Collections.unmodifiableList(tags_);
-        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -348,41 +310,6 @@ public final class Simple {
       return createTime_;
     }
 
-    public static final int TAGS_FIELD_NUMBER = 8;
-    private java.util.List<com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag> tags_;
-    /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-     */
-    public java.util.List<com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag> getTagsList() {
-      return tags_;
-    }
-    /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-     */
-    public java.util.List<? extends com.github.sisyphsu.canoe.benchmark.simple.Simple.TagOrBuilder> 
-        getTagsOrBuilderList() {
-      return tags_;
-    }
-    /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-     */
-    public int getTagsCount() {
-      return tags_.size();
-    }
-    /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-     */
-    public com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag getTags(int index) {
-      return tags_.get(index);
-    }
-    /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-     */
-    public com.github.sisyphsu.canoe.benchmark.simple.Simple.TagOrBuilder getTagsOrBuilder(
-        int index) {
-      return tags_.get(index);
-    }
-
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -417,9 +344,6 @@ public final class Simple {
       }
       if (createTime_ != 0L) {
         output.writeInt64(7, createTime_);
-      }
-      for (int i = 0; i < tags_.size(); i++) {
-        output.writeMessage(8, tags_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -456,10 +380,6 @@ public final class Simple {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(7, createTime_);
       }
-      for (int i = 0; i < tags_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(8, tags_.get(i));
-      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -490,8 +410,6 @@ public final class Simple {
           != other.getLoginTimes()) return false;
       if (getCreateTime()
           != other.getCreateTime()) return false;
-      if (!getTagsList()
-          .equals(other.getTagsList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -521,10 +439,6 @@ public final class Simple {
       hash = (37 * hash) + CREATETIME_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getCreateTime());
-      if (getTagsCount() > 0) {
-        hash = (37 * hash) + TAGS_FIELD_NUMBER;
-        hash = (53 * hash) + getTagsList().hashCode();
-      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -653,7 +567,6 @@ public final class Simple {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
-          getTagsFieldBuilder();
         }
       }
       @java.lang.Override
@@ -673,12 +586,6 @@ public final class Simple {
 
         createTime_ = 0L;
 
-        if (tagsBuilder_ == null) {
-          tags_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000001);
-        } else {
-          tagsBuilder_.clear();
-        }
         return this;
       }
 
@@ -705,7 +612,6 @@ public final class Simple {
       @java.lang.Override
       public com.github.sisyphsu.canoe.benchmark.simple.Simple.User buildPartial() {
         com.github.sisyphsu.canoe.benchmark.simple.Simple.User result = new com.github.sisyphsu.canoe.benchmark.simple.Simple.User(this);
-        int from_bitField0_ = bitField0_;
         result.id_ = id_;
         result.blocked_ = blocked_;
         result.nickname_ = nickname_;
@@ -713,15 +619,6 @@ public final class Simple {
         result.score_ = score_;
         result.loginTimes_ = loginTimes_;
         result.createTime_ = createTime_;
-        if (tagsBuilder_ == null) {
-          if (((bitField0_ & 0x00000001) != 0)) {
-            tags_ = java.util.Collections.unmodifiableList(tags_);
-            bitField0_ = (bitField0_ & ~0x00000001);
-          }
-          result.tags_ = tags_;
-        } else {
-          result.tags_ = tagsBuilder_.build();
-        }
         onBuilt();
         return result;
       }
@@ -793,32 +690,6 @@ public final class Simple {
         if (other.getCreateTime() != 0L) {
           setCreateTime(other.getCreateTime());
         }
-        if (tagsBuilder_ == null) {
-          if (!other.tags_.isEmpty()) {
-            if (tags_.isEmpty()) {
-              tags_ = other.tags_;
-              bitField0_ = (bitField0_ & ~0x00000001);
-            } else {
-              ensureTagsIsMutable();
-              tags_.addAll(other.tags_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.tags_.isEmpty()) {
-            if (tagsBuilder_.isEmpty()) {
-              tagsBuilder_.dispose();
-              tagsBuilder_ = null;
-              tags_ = other.tags_;
-              bitField0_ = (bitField0_ & ~0x00000001);
-              tagsBuilder_ = 
-                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
-                   getTagsFieldBuilder() : null;
-            } else {
-              tagsBuilder_.addAllMessages(other.tags_);
-            }
-          }
-        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -847,7 +718,6 @@ public final class Simple {
         }
         return this;
       }
-      private int bitField0_;
 
       private long id_ ;
       /**
@@ -1150,246 +1020,6 @@ public final class Simple {
         onChanged();
         return this;
       }
-
-      private java.util.List<com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag> tags_ =
-        java.util.Collections.emptyList();
-      private void ensureTagsIsMutable() {
-        if (!((bitField0_ & 0x00000001) != 0)) {
-          tags_ = new java.util.ArrayList<com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag>(tags_);
-          bitField0_ |= 0x00000001;
-         }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilderV3<
-          com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag, com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag.Builder, com.github.sisyphsu.canoe.benchmark.simple.Simple.TagOrBuilder> tagsBuilder_;
-
-      /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-       */
-      public java.util.List<com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag> getTagsList() {
-        if (tagsBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(tags_);
-        } else {
-          return tagsBuilder_.getMessageList();
-        }
-      }
-      /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-       */
-      public int getTagsCount() {
-        if (tagsBuilder_ == null) {
-          return tags_.size();
-        } else {
-          return tagsBuilder_.getCount();
-        }
-      }
-      /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-       */
-      public com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag getTags(int index) {
-        if (tagsBuilder_ == null) {
-          return tags_.get(index);
-        } else {
-          return tagsBuilder_.getMessage(index);
-        }
-      }
-      /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-       */
-      public Builder setTags(
-          int index, com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag value) {
-        if (tagsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureTagsIsMutable();
-          tags_.set(index, value);
-          onChanged();
-        } else {
-          tagsBuilder_.setMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-       */
-      public Builder setTags(
-          int index, com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag.Builder builderForValue) {
-        if (tagsBuilder_ == null) {
-          ensureTagsIsMutable();
-          tags_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          tagsBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-       */
-      public Builder addTags(com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag value) {
-        if (tagsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureTagsIsMutable();
-          tags_.add(value);
-          onChanged();
-        } else {
-          tagsBuilder_.addMessage(value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-       */
-      public Builder addTags(
-          int index, com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag value) {
-        if (tagsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureTagsIsMutable();
-          tags_.add(index, value);
-          onChanged();
-        } else {
-          tagsBuilder_.addMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-       */
-      public Builder addTags(
-          com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag.Builder builderForValue) {
-        if (tagsBuilder_ == null) {
-          ensureTagsIsMutable();
-          tags_.add(builderForValue.build());
-          onChanged();
-        } else {
-          tagsBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-       */
-      public Builder addTags(
-          int index, com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag.Builder builderForValue) {
-        if (tagsBuilder_ == null) {
-          ensureTagsIsMutable();
-          tags_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          tagsBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-       */
-      public Builder addAllTags(
-          java.lang.Iterable<? extends com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag> values) {
-        if (tagsBuilder_ == null) {
-          ensureTagsIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(
-              values, tags_);
-          onChanged();
-        } else {
-          tagsBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-       */
-      public Builder clearTags() {
-        if (tagsBuilder_ == null) {
-          tags_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000001);
-          onChanged();
-        } else {
-          tagsBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-       */
-      public Builder removeTags(int index) {
-        if (tagsBuilder_ == null) {
-          ensureTagsIsMutable();
-          tags_.remove(index);
-          onChanged();
-        } else {
-          tagsBuilder_.remove(index);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-       */
-      public com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag.Builder getTagsBuilder(
-          int index) {
-        return getTagsFieldBuilder().getBuilder(index);
-      }
-      /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-       */
-      public com.github.sisyphsu.canoe.benchmark.simple.Simple.TagOrBuilder getTagsOrBuilder(
-          int index) {
-        if (tagsBuilder_ == null) {
-          return tags_.get(index);  } else {
-          return tagsBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-       */
-      public java.util.List<? extends com.github.sisyphsu.canoe.benchmark.simple.Simple.TagOrBuilder> 
-           getTagsOrBuilderList() {
-        if (tagsBuilder_ != null) {
-          return tagsBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(tags_);
-        }
-      }
-      /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-       */
-      public com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag.Builder addTagsBuilder() {
-        return getTagsFieldBuilder().addBuilder(
-            com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-       */
-      public com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag.Builder addTagsBuilder(
-          int index) {
-        return getTagsFieldBuilder().addBuilder(
-            index, com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.simple.Tag tags = 8;</code>
-       */
-      public java.util.List<com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag.Builder> 
-           getTagsBuilderList() {
-        return getTagsFieldBuilder().getBuilderList();
-      }
-      private com.google.protobuf.RepeatedFieldBuilderV3<
-          com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag, com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag.Builder, com.github.sisyphsu.canoe.benchmark.simple.Simple.TagOrBuilder> 
-          getTagsFieldBuilder() {
-        if (tagsBuilder_ == null) {
-          tagsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag, com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag.Builder, com.github.sisyphsu.canoe.benchmark.simple.Simple.TagOrBuilder>(
-                  tags_,
-                  ((bitField0_ & 0x00000001) != 0),
-                  getParentForChildren(),
-                  isClean());
-          tags_ = null;
-        }
-        return tagsBuilder_;
-      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -1443,650 +1073,11 @@ public final class Simple {
 
   }
 
-  public interface TagOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:com.github.sisyphsu.canoe.benchmark.simple.Tag)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>int32 code = 1;</code>
-     * @return The code.
-     */
-    int getCode();
-
-    /**
-     * <code>string name = 2;</code>
-     * @return The name.
-     */
-    java.lang.String getName();
-    /**
-     * <code>string name = 2;</code>
-     * @return The bytes for name.
-     */
-    com.google.protobuf.ByteString
-        getNameBytes();
-  }
-  /**
-   * Protobuf type {@code com.github.sisyphsu.canoe.benchmark.simple.Tag}
-   */
-  public  static final class Tag extends
-      com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:com.github.sisyphsu.canoe.benchmark.simple.Tag)
-      TagOrBuilder {
-  private static final long serialVersionUID = 0L;
-    // Use Tag.newBuilder() to construct.
-    private Tag(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-      super(builder);
-    }
-    private Tag() {
-      name_ = "";
-    }
-
-    @java.lang.Override
-    @SuppressWarnings({"unused"})
-    protected java.lang.Object newInstance(
-        UnusedPrivateParameter unused) {
-      return new Tag();
-    }
-
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private Tag(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 8: {
-
-              code_ = input.readInt32();
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              name_ = s;
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return com.github.sisyphsu.canoe.benchmark.simple.Simple.internal_static_com_github_sisyphsu_canoe_benchmark_simple_Tag_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return com.github.sisyphsu.canoe.benchmark.simple.Simple.internal_static_com_github_sisyphsu_canoe_benchmark_simple_Tag_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag.class, com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag.Builder.class);
-    }
-
-    public static final int CODE_FIELD_NUMBER = 1;
-    private int code_;
-    /**
-     * <code>int32 code = 1;</code>
-     * @return The code.
-     */
-    public int getCode() {
-      return code_;
-    }
-
-    public static final int NAME_FIELD_NUMBER = 2;
-    private volatile java.lang.Object name_;
-    /**
-     * <code>string name = 2;</code>
-     * @return The name.
-     */
-    public java.lang.String getName() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        name_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string name = 2;</code>
-     * @return The bytes for name.
-     */
-    public com.google.protobuf.ByteString
-        getNameBytes() {
-      java.lang.Object ref = name_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        name_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    private byte memoizedIsInitialized = -1;
-    @java.lang.Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    @java.lang.Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (code_ != 0) {
-        output.writeInt32(1, code_);
-      }
-      if (!getNameBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, name_);
-      }
-      unknownFields.writeTo(output);
-    }
-
-    @java.lang.Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (code_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, code_);
-      }
-      if (!getNameBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, name_);
-      }
-      size += unknownFields.getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag)) {
-        return super.equals(obj);
-      }
-      com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag other = (com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag) obj;
-
-      if (getCode()
-          != other.getCode()) return false;
-      if (!getName()
-          .equals(other.getName())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
-      return true;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + CODE_FIELD_NUMBER;
-      hash = (53 * hash) + getCode();
-      hash = (37 * hash) + NAME_FIELD_NUMBER;
-      hash = (53 * hash) + getName().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-    public static com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    @java.lang.Override
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    @java.lang.Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * Protobuf type {@code com.github.sisyphsu.canoe.benchmark.simple.Tag}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:com.github.sisyphsu.canoe.benchmark.simple.Tag)
-        com.github.sisyphsu.canoe.benchmark.simple.Simple.TagOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return com.github.sisyphsu.canoe.benchmark.simple.Simple.internal_static_com_github_sisyphsu_canoe_benchmark_simple_Tag_descriptor;
-      }
-
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return com.github.sisyphsu.canoe.benchmark.simple.Simple.internal_static_com_github_sisyphsu_canoe_benchmark_simple_Tag_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag.class, com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag.Builder.class);
-      }
-
-      // Construct using com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
-      }
-      @java.lang.Override
-      public Builder clear() {
-        super.clear();
-        code_ = 0;
-
-        name_ = "";
-
-        return this;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return com.github.sisyphsu.canoe.benchmark.simple.Simple.internal_static_com_github_sisyphsu_canoe_benchmark_simple_Tag_descriptor;
-      }
-
-      @java.lang.Override
-      public com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag getDefaultInstanceForType() {
-        return com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag.getDefaultInstance();
-      }
-
-      @java.lang.Override
-      public com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag build() {
-        com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @java.lang.Override
-      public com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag buildPartial() {
-        com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag result = new com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag(this);
-        result.code_ = code_;
-        result.name_ = name_;
-        onBuilt();
-        return result;
-      }
-
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
-      }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
-      @java.lang.Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag) {
-          return mergeFrom((com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag other) {
-        if (other == com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag.getDefaultInstance()) return this;
-        if (other.getCode() != 0) {
-          setCode(other.getCode());
-        }
-        if (!other.getName().isEmpty()) {
-          name_ = other.name_;
-          onChanged();
-        }
-        this.mergeUnknownFields(other.unknownFields);
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag) e.getUnfinishedMessage();
-          throw e.unwrapIOException();
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-
-      private int code_ ;
-      /**
-       * <code>int32 code = 1;</code>
-       * @return The code.
-       */
-      public int getCode() {
-        return code_;
-      }
-      /**
-       * <code>int32 code = 1;</code>
-       * @param value The code to set.
-       * @return This builder for chaining.
-       */
-      public Builder setCode(int value) {
-        
-        code_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int32 code = 1;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearCode() {
-        
-        code_ = 0;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object name_ = "";
-      /**
-       * <code>string name = 2;</code>
-       * @return The name.
-       */
-      public java.lang.String getName() {
-        java.lang.Object ref = name_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          name_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string name = 2;</code>
-       * @return The bytes for name.
-       */
-      public com.google.protobuf.ByteString
-          getNameBytes() {
-        java.lang.Object ref = name_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          name_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string name = 2;</code>
-       * @param value The name to set.
-       * @return This builder for chaining.
-       */
-      public Builder setName(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        name_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string name = 2;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearName() {
-        
-        name_ = getDefaultInstance().getName();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string name = 2;</code>
-       * @param value The bytes for name to set.
-       * @return This builder for chaining.
-       */
-      public Builder setNameBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        name_ = value;
-        onChanged();
-        return this;
-      }
-      @java.lang.Override
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFields(unknownFields);
-      }
-
-      @java.lang.Override
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.mergeUnknownFields(unknownFields);
-      }
-
-
-      // @@protoc_insertion_point(builder_scope:com.github.sisyphsu.canoe.benchmark.simple.Tag)
-    }
-
-    // @@protoc_insertion_point(class_scope:com.github.sisyphsu.canoe.benchmark.simple.Tag)
-    private static final com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag();
-    }
-
-    public static com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<Tag>
-        PARSER = new com.google.protobuf.AbstractParser<Tag>() {
-      @java.lang.Override
-      public Tag parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Tag(input, extensionRegistry);
-      }
-    };
-
-    public static com.google.protobuf.Parser<Tag> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<Tag> getParserForType() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.github.sisyphsu.canoe.benchmark.simple.Simple.Tag getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_com_github_sisyphsu_canoe_benchmark_simple_User_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_com_github_sisyphsu_canoe_benchmark_simple_User_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_com_github_sisyphsu_canoe_benchmark_simple_Tag_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_com_github_sisyphsu_canoe_benchmark_simple_Tag_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -2098,12 +1089,10 @@ public final class Simple {
     java.lang.String[] descriptorData = {
       "\n%src/test/resources/proto/simple.proto\022" +
       "*com.github.sisyphsu.canoe.benchmark.sim" +
-      "ple\"\275\001\n\004User\022\n\n\002id\030\001 \001(\003\022\017\n\007blocked\030\002 \001(" +
-      "\010\022\020\n\010nickname\030\003 \001(\t\022\020\n\010portrait\030\004 \001(\t\022\r\n" +
-      "\005score\030\005 \001(\002\022\022\n\nloginTimes\030\006 \001(\005\022\022\n\ncrea" +
-      "teTime\030\007 \001(\003\022=\n\004tags\030\010 \003(\0132/.com.github." +
-      "sisyphsu.canoe.benchmark.simple.Tag\"!\n\003T" +
-      "ag\022\014\n\004code\030\001 \001(\005\022\014\n\004name\030\002 \001(\tb\006proto3"
+      "ple\"~\n\004User\022\n\n\002id\030\001 \001(\003\022\017\n\007blocked\030\002 \001(\010" +
+      "\022\020\n\010nickname\030\003 \001(\t\022\020\n\010portrait\030\004 \001(\t\022\r\n\005" +
+      "score\030\005 \001(\002\022\022\n\nloginTimes\030\006 \001(\005\022\022\n\ncreat" +
+      "eTime\030\007 \001(\003b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -2114,13 +1103,7 @@ public final class Simple {
     internal_static_com_github_sisyphsu_canoe_benchmark_simple_User_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_github_sisyphsu_canoe_benchmark_simple_User_descriptor,
-        new java.lang.String[] { "Id", "Blocked", "Nickname", "Portrait", "Score", "LoginTimes", "CreateTime", "Tags", });
-    internal_static_com_github_sisyphsu_canoe_benchmark_simple_Tag_descriptor =
-      getDescriptor().getMessageTypes().get(1);
-    internal_static_com_github_sisyphsu_canoe_benchmark_simple_Tag_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_com_github_sisyphsu_canoe_benchmark_simple_Tag_descriptor,
-        new java.lang.String[] { "Code", "Name", });
+        new java.lang.String[] { "Id", "Blocked", "Nickname", "Portrait", "Score", "LoginTimes", "CreateTime", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

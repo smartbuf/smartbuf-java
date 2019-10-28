@@ -24,12 +24,34 @@ public class DataTest {
 
     @Test
     public void json() throws Exception {
-        STREAM.serialize(USER);
-
         byte[] json = OBJECT_MAPPER.writeValueAsBytes(USER);
         byte[] packet = CanoePacket.serialize(USER);
         byte[] stream = STREAM.serialize(USER);
         byte[] pb = USER.toPB().toByteArray();
+
+        System.out.println("json: " + json.length);
+        System.out.println("packet: " + packet.length);
+        System.out.println("stream: " + stream.length);
+        System.out.println("protobuf: " + pb.length);
+
+        System.out.println();
+
+        json = OBJECT_MAPPER.writeValueAsBytes(USER);
+        packet = CanoePacket.serialize(USER);
+        stream = STREAM.serialize(USER);
+        pb = USER.toPB().toByteArray();
+
+        System.out.println("json: " + json.length);
+        System.out.println("packet: " + packet.length);
+        System.out.println("stream: " + stream.length);
+        System.out.println("protobuf: " + pb.length);
+
+        System.out.println();
+
+        json = OBJECT_MAPPER.writeValueAsBytes(USER);
+        packet = CanoePacket.serialize(USER);
+        stream = STREAM.serialize(USER);
+        pb = USER.toPB().toByteArray();
 
         System.out.println("json: " + json.length);
         System.out.println("packet: " + packet.length);
