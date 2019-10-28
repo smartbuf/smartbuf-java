@@ -1,6 +1,7 @@
 package com.github.sisyphsu.canoe;
 
 import com.github.sisyphsu.canoe.convertor.CodecFactory;
+import com.github.sisyphsu.canoe.exception.CanoeClosedException;
 import com.github.sisyphsu.canoe.node.ArrayNodeCodec;
 import com.github.sisyphsu.canoe.node.BasicNodeCodec;
 import com.github.sisyphsu.canoe.node.BeanNodeCodec;
@@ -67,7 +68,7 @@ public final class Canoe {
     @SuppressWarnings("unchecked")
     public <T> T read(TypeRef<T> tRef) throws IOException {
         if (closed) {
-            throw new IllegalStateException("Canoe is closed");
+            throw new CanoeClosedException("Canoe is closed");
         }
         Object obj = input.read();
         return (T) CODEC.convert(obj, tRef.getType());
@@ -83,7 +84,7 @@ public final class Canoe {
      */
     public <T> T read(Class<T> tCls) throws IOException {
         if (closed) {
-            throw new IllegalStateException("Canoe is closed");
+            throw new CanoeClosedException("Canoe is closed");
         }
         Object obj = input.read();
         return CODEC.convert(obj, tCls);
@@ -97,7 +98,7 @@ public final class Canoe {
      */
     public void write(Object obj) throws IOException {
         if (closed) {
-            throw new IllegalStateException("Canoe is closed");
+            throw new CanoeClosedException("Canoe is closed");
         }
         Node node = CODEC.convert(obj, Node.class);
         output.write(node);
