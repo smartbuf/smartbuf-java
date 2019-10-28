@@ -21,4 +21,12 @@ public interface IOReader {
      */
     int read() throws IOException;
 
+    /**
+     * Reader could provide a optional closer.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
+    default void close() throws IOException {
+    }
+
 }

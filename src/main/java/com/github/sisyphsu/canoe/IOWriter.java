@@ -21,4 +21,12 @@ public interface IOWriter {
      */
     void write(byte b) throws IOException;
 
+    /**
+     * Writer could provide a optional closer.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
+    default void close() throws IOException {
+    }
+
 }

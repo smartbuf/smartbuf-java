@@ -19,7 +19,7 @@ public class CanoePacketTest {
     @Test
     public void testWriter() throws IOException {
         final int size = 1 << 24;
-        CanoePacket.ByteArrayWriter writer = new CanoePacket.ByteArrayWriter();
+        ByteArrayWriter writer = new ByteArrayWriter(Canoe.PACKET_LIMIT);
         for (int i = 0; i < size; i++) {
             writer.write((byte) i);
         }
@@ -154,7 +154,7 @@ public class CanoePacketTest {
         }
 
         try {
-            CanoePacket.serialize(new byte[CanoePacket.PACKET_LIMIT + 1]);
+            CanoePacket.serialize(new byte[Canoe.PACKET_LIMIT + 1]);
             assert false;
         } catch (Exception e) {
             assert e instanceof OutOfSpaceException;
