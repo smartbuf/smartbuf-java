@@ -21,6 +21,14 @@ public final class BeanNodeCodec extends Codec {
     private static final Map<Class, BeanKey> FIELDS_MAP = new ConcurrentHashMap<>();
 
     /**
+     * Convert POJO to ObjectNode, for better performance
+     */
+    @Converter(distance = 1 << 16)
+    public Node toNode(Object pojo) {
+        return null;
+    }
+
+    /**
      * encode map to ObjectNode, pojo should be encoded as map first.
      *
      * @param map Map
