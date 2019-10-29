@@ -8,11 +8,13 @@ import lombok.Data;
  */
 public class Test {
 
-    public interface Getter {
-        Object[] getAll();
+    public interface Accessor {
+        void getAll(Object[] vals);
+
+        void setAll(Object[] vals);
     }
 
-    public static class BeanGetter implements Getter {
+    public static class BeanGetter implements Accessor {
 
         private Bean bean;
 
@@ -21,12 +23,17 @@ public class Test {
         }
 
         @Override
-        public Object[] getAll() {
-            Object[] result = new Object[3];
+        public void getAll(Object[] result) {
             result[0] = bean.getId();
             result[1] = bean.getName();
-            result[2] = bean.getTime();
-            return result;
+            result[2] = bean.time;
+        }
+
+        @Override
+        public void setAll(Object[] vals) {
+            bean.setId((Integer) vals[0]);
+            bean.setName((String) vals[1]);
+            bean.time = ((Long) vals[2]);
         }
     }
 
@@ -34,7 +41,6 @@ public class Test {
     public static class Bean {
         private int    id;
         private String name;
-        private Long   time;
-
+        public  Long   time;
     }
 }
