@@ -132,7 +132,7 @@ public final class InputContext {
      */
     public String[] findStructByID(int id) {
         if (id == 0) {
-            return ObjectNode.EMPTY.getFields();
+            return ObjectNode.EMPTY.keys();
         }
         id -= 1;
         if (id < 0) {

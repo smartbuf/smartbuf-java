@@ -137,28 +137,29 @@ public class IOObjectTest {
     }
 
     ObjectNode buildObjectNode(boolean stable, String[] names, Map<String, Object> map) {
-        Map<String, Node> nodeMap = new HashMap<>();
+        Node[] nodes = new Node[map.size()];
+        int off = 0;
         for (String fieldName : names) {
             Object data = map.get(fieldName);
             if (data == null) {
-                nodeMap.put(fieldName, null);
+                nodes[off++] = null;
             } else if (data instanceof Boolean) {
-                nodeMap.put(fieldName, BooleanNode.valueOf((Boolean) data));
+                nodes[off++] = BooleanNode.valueOf((Boolean) data);
             } else if (data instanceof Long) {
-                nodeMap.put(fieldName, VarintNode.valueOf((Long) data));
+                nodes[off++] = VarintNode.valueOf((Long) data);
             } else if (data instanceof String) {
-                nodeMap.put(fieldName, StringNode.valueOf((String) data));
+                nodes[off++] = StringNode.valueOf((String) data);
             } else if (data instanceof Float) {
-                nodeMap.put(fieldName, FloatNode.valueOf((Float) data));
+                nodes[off++] = FloatNode.valueOf((Float) data);
             } else if (data instanceof Double) {
-                nodeMap.put(fieldName, DoubleNode.valueOf((Double) data));
+                nodes[off++] = DoubleNode.valueOf((Double) data);
             } else if (data instanceof byte[]) {
-                nodeMap.put(fieldName, ArrayNode.valueOf((byte[]) data));
+                nodes[off++] = ArrayNode.valueOf((byte[]) data);
             } else {
                 throw new RuntimeException();
             }
         }
-        return new ObjectNode(stable, names, nodeMap);
+        return new ObjectNode(stable, names, nodes);
     }
 
 }

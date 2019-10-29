@@ -20,13 +20,13 @@ public final class BeanNodeCodec extends Codec {
 
     private static final Map<Class, BeanKey> FIELDS_MAP = new ConcurrentHashMap<>();
 
-    /**
-     * Convert POJO to ObjectNode, for better performance
-     */
-    @Converter(distance = 1 << 16)
-    public Node toNode(Object pojo) {
-        return null;
-    }
+//    /**
+//     * Convert POJO to ObjectNode, for better performance
+//     */
+//    @Converter(distance = 1 << 16)
+//    public Node toNode(Object pojo) {
+//        return null;
+//    }
 
     /**
      * encode map to ObjectNode, pojo should be encoded as map first.
@@ -36,10 +36,14 @@ public final class BeanNodeCodec extends Codec {
      */
     @Converter
     public Node toNode(Map<?, ?> map) {
-        if (map.isEmpty()) {
+        final int len = map.size();
+        if (len == 0) {
             return ObjectNode.EMPTY;
         }
-        final HashMap<String, Node> fields = new HashMap<>();
+        boolean stable = map instanceof BeanMap;
+        String[] keys = new String[len];
+        Object[] values = new Object[len];
+        int offset = 0;
         for (Object item : map.entrySet()) {
             Map.Entry entry = (Map.Entry) item;
             String key;
@@ -48,16 +52,11 @@ public final class BeanNodeCodec extends Codec {
             } else {
                 key = convert(entry.getKey(), String.class);
             }
-            fields.put(key, convert(entry.getValue(), Node.class));
+            keys[offset] = key;
+            values[offset] = convert(entry.getValue(), Node.class);
+            offset++;
         }
-        BeanKey key;
-        if (map instanceof BeanMap) {
-            key = parseBeanMapKey((BeanMap) map);
-        } else {
-            String[] fieldNames = fields.keySet().toArray(new String[0]);
-            key = new BeanKey(false, fieldNames);
-        }
-        return new ObjectNode(key.stable, key.fieldNames, fields);
+        return new ObjectNode(stable, keys, values);
     }
 
     /**
@@ -68,10 +67,15 @@ public final class BeanNodeCodec extends Codec {
      */
     @Converter
     public Map<String, Node> toMap(ObjectNode node) {
-        if (node == ObjectNode.EMPTY) {
-            return new HashMap<>();
+        Map<String, Node> result = new HashMap<>();
+        if (node != ObjectNode.EMPTY) {
+            String[] keys = node.keys();
+            Object[] values = node.values();
+            for (int i = 0, len = keys.length; i < len; i++) {
+                result.put(keys[i], (Node) values[i]);
+            }
         }
-        return node.getData();
+        return result;
     }
 
     /**

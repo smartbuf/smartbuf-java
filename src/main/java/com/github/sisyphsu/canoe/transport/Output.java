@@ -126,10 +126,11 @@ public final class Output {
                 break;
             case OBJECT:
                 ObjectNode objectNode = (ObjectNode) node;
-                String[] fields = objectNode.getFields();
+                String[] fields = objectNode.keys();
                 writer.writeVarUint((structPool.findStructID(fields) << 2) | FLAG_STRUCT);
-                for (String field : fields) {
-                    this.writeNode(objectNode.getField(field), writer);
+                for (Object tmp : objectNode.values()) {
+                    Node subNode = (Node) tmp;
+                    this.writeNode(subNode, writer);
                 }
                 break;
             default:
@@ -217,11 +218,12 @@ public final class Output {
                     break;
                 case OBJECT:
                     List<ObjectNode> nodes = slice.asObjectSlice();
-                    String[] fields = nodes.get(0).getFields();
+                    String[] fields = nodes.get(0).keys();
                     writer.writeVarUint(structPool.findStructID(fields)); // structId
                     for (ObjectNode item : nodes) {
-                        for (String field : fields) {
-                            this.writeNode(item.getField(field), writer);
+                        for (Object tmp : item.values()) {
+                            Node subNode = (Node) tmp;
+                            this.writeNode(subNode, writer);
                         }
                     }
                     break;
@@ -307,14 +309,14 @@ public final class Output {
      * Scan the specified ObjectNode, collect it's relevant metadata and children's
      */
     private void scanObjectNode(ObjectNode node) {
-        String[] fieldNames = node.getFields();
+        String[] fieldNames = node.keys();
         boolean stable = node.isStable();
         // reigster object's metadata
         namePool.register(!enableStreamMode || !stable, fieldNames);
         structPool.register(!enableStreamMode || !stable, fieldNames);
         // scan children nodes
-        for (Node subNode : node.getData().values()) {
-            this.scan(subNode);
+        for (Object o : node.values()) {
+            this.scan((Node) o);
         }
     }
 

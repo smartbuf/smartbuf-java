@@ -3,28 +3,24 @@ package com.github.sisyphsu.canoe.node.std;
 import com.github.sisyphsu.canoe.node.Node;
 import com.github.sisyphsu.canoe.node.NodeType;
 
-import java.util.Collections;
-import java.util.Map;
-
 /**
  * ObjectNode represents JavaBean or Map.
  *
  * @author sulin
  * @since 2019-05-08 21:02:12
  */
-@SuppressWarnings("unchecked")
 public final class ObjectNode extends Node {
 
-    public final static ObjectNode EMPTY = new ObjectNode(true, new String[0], Collections.EMPTY_MAP);
+    public final static ObjectNode EMPTY = new ObjectNode(true, new String[0], new Object[0]);
 
-    private final boolean           stable;
-    private final String[]          fields;
-    private final Map<String, Node> data;
+    private final boolean  stable;
+    private final String[] keys;
+    private final Object[] nodes;
 
-    public ObjectNode(boolean stable, String[] fields, Map<String, Node> data) {
+    public ObjectNode(boolean stable, String[] fields, Object[] nodes) {
         this.stable = stable;
-        this.fields = fields;
-        this.data = data;
+        this.keys = fields;
+        this.nodes = nodes;
     }
 
     @Override
@@ -32,16 +28,12 @@ public final class ObjectNode extends Node {
         return NodeType.OBJECT;
     }
 
-    public Map<String, Node> getData() {
-        return data;
+    public String[] keys() {
+        return keys;
     }
 
-    public String[] getFields() {
-        return fields;
-    }
-
-    public Node getField(String name) {
-        return data.get(name);
+    public Object[] values() {
+        return nodes;
     }
 
     public boolean isStable() {

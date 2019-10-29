@@ -131,7 +131,7 @@ public final class ArrayNodeCodec extends Codec {
                 } else if (itemNode instanceof ObjectNode) {
                     item = itemNode;
                     itemType = SliceType.OBJECT;
-                    itemStruct = ((ObjectNode) itemNode).getFields();
+                    itemStruct = ((ObjectNode) itemNode).keys();
                 } else {
                     throw new UnsupportedOperationException("Unsupport node: " + itemNode.getClass());
                 }
