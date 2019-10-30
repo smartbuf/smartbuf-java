@@ -207,7 +207,7 @@ public class IOTest {
 
         Output output = new Output(null, true);
         try {
-            output.writeNode(new Node() {
+            output.doWrite(new Node() {
                 @Override
                 public NodeType type() {
                     return NodeType.UNKNOWN;
@@ -221,7 +221,7 @@ public class IOTest {
         try {
             ArrayNode arrayNode = new ArrayNode();
             arrayNode.appendSlice(new Object(), 0, SliceType.UNKNOWN);
-            output.writeArrayNode(arrayNode, null, false);
+            output.doWriteArray(arrayNode, null, false);
             assert false;
         } catch (Exception e) {
             assert e instanceof UnsupportedOperationException;

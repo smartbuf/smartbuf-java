@@ -4,7 +4,7 @@ import com.github.sisyphsu.canoe.convertor.Codec;
 import com.github.sisyphsu.canoe.convertor.CodecContext;
 import com.github.sisyphsu.canoe.convertor.Converter;
 import com.github.sisyphsu.canoe.exception.CircleReferenceException;
-import com.github.sisyphsu.canoe.node.std.ObjectNode;
+import com.github.sisyphsu.canoe.node.std.*;
 import com.github.sisyphsu.canoe.reflect.BeanHelper;
 
 import java.util.HashMap;
@@ -18,55 +18,6 @@ import java.util.Map;
  */
 @SuppressWarnings("unchecked")
 public final class BeanNodeCodec extends Codec {
-
-    /**
-     * encode map to ObjectNode, pojo should be encoded as map first.
-     *
-     * @param map Map
-     * @return ObjectNode
-     */
-    @Converter
-    public Node toNode(Map<?, ?> map) {
-        final int len = map.size();
-        if (len == 0) {
-            return ObjectNode.EMPTY;
-        }
-        String[] keys = new String[len];
-        Object[] values = new Object[len];
-        int offset = 0;
-        for (Object item : map.entrySet()) {
-            Map.Entry entry = (Map.Entry) item;
-            String key;
-            if (entry.getKey() instanceof String) {
-                key = (String) entry.getKey();
-            } else {
-                key = convert(entry.getKey(), String.class);
-            }
-            keys[offset] = key;
-            values[offset] = convert(entry.getValue(), Node.class);
-            offset++;
-        }
-        return new ObjectNode(false, keys, values);
-    }
-
-    /**
-     * Convert POJO to ObjectNode, for better performance
-     */
-    @Converter(distance = 1 << 16)
-    public Node toNode(Object pojo) {
-        // check loop references
-        CodecContext state = CodecContext.get();
-        if (state.depth() > 64 && !state.record(pojo)) {
-            throw new CircleReferenceException();
-        }
-        BeanHelper helper = BeanHelper.valueOf(pojo.getClass());
-        String[] names = helper.getNames();
-        Object[] values = helper.getValues(pojo);
-        for (int i = 0, len = values.length; i < len; i++) {
-            values[i] = convert(values[i], Node.class);
-        }
-        return new ObjectNode(true, names, values);
-    }
 
     /**
      * decode ObjectNode to map, expose fields directly.
@@ -85,6 +36,85 @@ public final class BeanNodeCodec extends Codec {
             }
         }
         return result;
+    }
+
+    /**
+     * encode map to ObjectNode, pojo should be encoded as map first.
+     *
+     * @param map Map
+     * @return ObjectNode
+     */
+    @Converter
+    public Node toNode(Map<?, ?> map) {
+        int len = map.size();
+        if (len == 0) {
+            return ObjectNode.EMPTY;
+        }
+        String[] keys = new String[len];
+        Object[] values = new Object[len];
+        int offset = 0;
+        for (Object item : map.entrySet()) {
+            Map.Entry entry = (Map.Entry) item;
+            String key;
+            if (entry.getKey() instanceof String) {
+                key = (String) entry.getKey();
+            } else {
+                key = convert(entry.getKey(), String.class);
+            }
+            keys[offset] = key;
+            values[offset] = entry.getValue();
+            offset++;
+        }
+        return buildObjectNode(false, keys, values);
+    }
+
+    /**
+     * Convert POJO to ObjectNode, for better performance
+     */
+    @Converter(distance = 1 << 16)
+    public Node toNode(Object pojo) {
+        // check loop references
+        CodecContext state = CodecContext.get();
+        if (state.depth() > 64 && !state.record(pojo)) {
+            throw new CircleReferenceException();
+        }
+        BeanHelper helper = BeanHelper.valueOf(pojo.getClass());
+        String[] names = helper.getNames();
+        Object[] values = helper.getValues(pojo);
+        return buildObjectNode(true, names, values);
+    }
+
+    // build ObjectNode
+    private ObjectNode buildObjectNode(boolean stable, String[] keys, Object[] values) {
+        for (int i = 0, len = values.length; i < len; i++) {
+            Object o = values[i];
+            if (o == null || o instanceof Boolean || o instanceof Float || o instanceof Double || o instanceof Long || o instanceof String) {
+                continue;
+            }
+            if (o instanceof CharSequence) {
+                values[i] = o.toString();
+                continue;
+            }
+            if (o instanceof Byte || o instanceof Short || o instanceof Integer) {
+                values[i] = ((Number) o).longValue();
+                continue;
+            }
+            Node node = convert(o, Node.class);
+            if (node instanceof BooleanNode) {
+                values[i] = node.booleanValue();
+            } else if (node instanceof FloatNode) {
+                values[i] = node.floatValue();
+            } else if (node instanceof DoubleNode) {
+                values[i] = node.doubleValue();
+            } else if (node instanceof VarintNode) {
+                values[i] = node.longValue();
+            } else if (node instanceof StringNode) {
+                values[i] = node.stringValue();
+            } else {
+                values[i] = node;
+            }
+        }
+        return new ObjectNode(stable, keys, values);
     }
 
 }

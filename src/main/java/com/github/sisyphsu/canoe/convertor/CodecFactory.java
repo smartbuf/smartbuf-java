@@ -22,7 +22,7 @@ public final class CodecFactory {
 
     public static final CodecFactory Instance = new CodecFactory();
 
-    private final Set<Codec>                   codecs       = ConcurrentHashMap.newKeySet();
+    public final Set<Codec>                   codecs       = ConcurrentHashMap.newKeySet();
     private final ConverterMap                 converterMap = new ConverterMap();
     private final Map<PKey, ConverterPipeline> pipelineMap  = new ConcurrentHashMap<>();
     private final XTypeFactory                 xTypeFactory = new XTypeFactory();

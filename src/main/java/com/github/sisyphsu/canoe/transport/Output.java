@@ -2,8 +2,7 @@ package com.github.sisyphsu.canoe.transport;
 
 import com.github.sisyphsu.canoe.IOWriter;
 import com.github.sisyphsu.canoe.node.Node;
-import com.github.sisyphsu.canoe.node.std.ArrayNode;
-import com.github.sisyphsu.canoe.node.std.ObjectNode;
+import com.github.sisyphsu.canoe.node.std.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -55,7 +54,20 @@ public final class Output {
         this.dataPool.reset();
         this.structPool.reset();
 
-        this.scan(node);
+        Object data = node;
+        if (data instanceof BooleanNode) {
+            data = ((BooleanNode) data).booleanValue();
+        } else if (data instanceof FloatNode) {
+            data = ((FloatNode) data).floatValue();
+        } else if (data instanceof DoubleNode) {
+            data = ((DoubleNode) data).doubleValue();
+        } else if (data instanceof StringNode) {
+            data = ((StringNode) data).stringValue();
+        } else if (data instanceof VarintNode) {
+            data = ((VarintNode) data).longValue();
+        }
+
+        this.doScan(data);
 
         for (int i = 0, len = namePool.tmpNames.size(); i < len; i++) {
             schema.tmpNames.add(namePool.tmpNames.get(i).name);
@@ -81,60 +93,47 @@ public final class Output {
         }
 
         schema.output(writer);
-        this.writeNode(node, writer);
+        this.doWrite(data, writer);
     }
 
     /**
      * Ouput the specified Node into writer, all nodes need prefix an varuint as head-id.
      */
-    void writeNode(Node node, OutputWriter writer) throws IOException {
-        if (node == null) {
+    void doWrite(Object data, OutputWriter writer) throws IOException {
+        if (data == null) {
             writer.writeVarUint((ID_NULL << 2) | FLAG_DATA);
-            return;
-        }
-        switch (node.type()) {
-            case BOOL:
-                if (node.booleanValue()) {
-                    writer.writeVarUint((ID_TRUE << 2) | FLAG_DATA);
-                } else {
-                    writer.writeVarUint((ID_FALSE << 2) | FLAG_DATA);
-                }
-                break;
-            case FLOAT:
-                writer.writeVarUint((dataPool.findFloatID(node.floatValue()) << 2) | FLAG_DATA);
-                break;
-            case DOUBLE:
-                writer.writeVarUint((dataPool.findDoubleID(node.doubleValue()) << 2) | FLAG_DATA);
-                break;
-            case VARINT:
-                writer.writeVarUint((dataPool.findVarintID(node.longValue()) << 2) | FLAG_DATA);
-                break;
-            case STRING:
-                writer.writeVarUint((dataPool.findStringID(node.stringValue()) << 2) | FLAG_DATA);
-                break;
-            case SYMBOL:
-                String symbol = node.stringValue();
-                int dataId = enableStreamMode ? dataPool.findSymbolID(symbol) : dataPool.findStringID(symbol);
-                writer.writeVarUint((dataId << 2) | FLAG_DATA);
-                break;
-            case ARRAY:
-                if (node == ArrayNode.EMPTY) {
-                    writer.writeVarUint((ID_ZERO_ARRAY << 2) | FLAG_DATA);
-                } else {
-                    this.writeArrayNode((ArrayNode) node, writer, true);
-                }
-                break;
-            case OBJECT:
-                ObjectNode objectNode = (ObjectNode) node;
-                String[] fields = objectNode.keys();
-                writer.writeVarUint((structPool.findStructID(fields) << 2) | FLAG_STRUCT);
-                for (Object tmp : objectNode.values()) {
-                    Node subNode = (Node) tmp;
-                    this.writeNode(subNode, writer);
-                }
-                break;
-            default:
-                throw new UnsupportedOperationException("Unsupported node type: " + node.type());
+        } else if (data instanceof Boolean) {
+            byte code = ((Boolean) data) ? ID_TRUE : ID_FALSE;
+            writer.writeVarUint((code << 2) | FLAG_DATA);
+        } else if (data instanceof Float) {
+            writer.writeVarUint((dataPool.findFloatID((Float) data) << 2) | FLAG_DATA);
+        } else if (data instanceof Double) {
+            writer.writeVarUint((dataPool.findDoubleID((Double) data) << 2) | FLAG_DATA);
+        } else if (data instanceof Number) {
+            long varint = ((Number) data).longValue();
+            writer.writeVarUint((dataPool.findVarintID(varint) << 2) | FLAG_DATA);
+        } else if (data instanceof String) {
+            writer.writeVarUint((dataPool.findStringID((String) data) << 2) | FLAG_DATA);
+        } else if (data instanceof SymbolNode) {
+            String symbol = ((SymbolNode) data).stringValue();
+            int dataId = enableStreamMode ? dataPool.findSymbolID(symbol) : dataPool.findStringID(symbol);
+            writer.writeVarUint((dataId << 2) | FLAG_DATA);
+        } else if (data instanceof ObjectNode) {
+            ObjectNode objectNode = (ObjectNode) data;
+            String[] fields = objectNode.keys();
+            writer.writeVarUint((structPool.findStructID(fields) << 2) | FLAG_STRUCT);
+            for (Object tmp : objectNode.values()) {
+                this.doWrite(tmp, writer);
+            }
+        } else if (data instanceof ArrayNode) {
+            ArrayNode node = (ArrayNode) data;
+            if (node == ArrayNode.EMPTY) {
+                writer.writeVarUint((ID_ZERO_ARRAY << 2) | FLAG_DATA);
+            } else {
+                this.doWriteArray(node, writer, true);
+            }
+        } else {
+            throw new UnsupportedOperationException("Unsupported data: " + data);
         }
     }
 
@@ -143,7 +142,7 @@ public final class Output {
      *
      * @param suffixFlag Need suffix FLAG_ARRAY at head or not
      */
-    void writeArrayNode(ArrayNode node, OutputWriter writer, boolean suffixFlag) throws IOException {
+    void doWriteArray(ArrayNode node, OutputWriter writer, boolean suffixFlag) throws IOException {
         ArrayNode.Slice[] slices = node.slices();
         for (int i = 0, len = node.size(); i < len; i++) {
             ArrayNode.Slice slice = slices[i];
@@ -212,7 +211,7 @@ public final class Output {
                         if (item == ArrayNode.EMPTY) {
                             writer.writeVarUint(ID_ZERO_ARRAY);
                         } else {
-                            this.writeArrayNode(item, writer, false);
+                            this.doWriteArray(item, writer, false);
                         }
                     }
                     break;
@@ -222,8 +221,7 @@ public final class Output {
                     writer.writeVarUint(structPool.findStructID(fields)); // structId
                     for (ObjectNode item : nodes) {
                         for (Object tmp : item.values()) {
-                            Node subNode = (Node) tmp;
-                            this.writeNode(subNode, writer);
+                            this.doWrite(tmp, writer);
                         }
                     }
                     break;
@@ -236,43 +234,33 @@ public final class Output {
     /**
      * Scan the specified Node's metadata
      */
-    private void scan(Node node) {
-        if (node == null) {
-            return;
-        }
-        switch (node.type()) {
-            case FLOAT:
-                dataPool.registerFloat(node.floatValue());
-                break;
-            case DOUBLE:
-                dataPool.registerDouble(node.doubleValue());
-                break;
-            case VARINT:
-                dataPool.registerVarint(node.longValue());
-                break;
-            case STRING:
-                dataPool.registerString(node.stringValue());
-                break;
-            case SYMBOL:
-                if (enableStreamMode) {
-                    dataPool.registerSymbol(node.stringValue());
-                } else {
-                    dataPool.registerString(node.stringValue());
-                }
-                break;
-            case ARRAY:
-                this.scanArrayNode((ArrayNode) node);
-                break;
-            case OBJECT:
-                this.scanObjectNode((ObjectNode) node);
-                break;
+    private void doScan(Object data) {
+        if (data instanceof Float) {
+            dataPool.registerFloat((Float) data);
+        } else if (data instanceof Double) {
+            dataPool.registerDouble((Double) data);
+        } else if (data instanceof Number) {
+            dataPool.registerVarint(((Number) data).longValue());
+        } else if (data instanceof String) {
+            dataPool.registerString((String) data);
+        } else if (data instanceof SymbolNode) {
+            String symbol = ((SymbolNode) data).stringValue();
+            if (enableStreamMode) {
+                dataPool.registerSymbol(symbol);
+            } else {
+                dataPool.registerString(symbol);
+            }
+        } else if (data instanceof ObjectNode) {
+            this.doScanObject((ObjectNode) data);
+        } else if (data instanceof ArrayNode) {
+            this.doScanArray((ArrayNode) data);
         }
     }
 
     /**
      * Scan the specified ArrayNode, support all kinds array exclude native array.
      */
-    private void scanArrayNode(ArrayNode array) {
+    private void doScanArray(ArrayNode array) {
         ArrayNode.Slice[] slices = array.slices();
         for (int i = 0, len = array.size(); i < len; i++) {
             ArrayNode.Slice slice = slices[i];
@@ -293,12 +281,12 @@ public final class Output {
                     break;
                 case OBJECT:
                     for (ObjectNode item : slice.asObjectSlice()) {
-                        this.scanObjectNode(item);
+                        this.doScanObject(item);
                     }
                     break;
                 case ARRAY:
                     for (ArrayNode item : slice.asArraySlice()) {
-                        this.scanArrayNode(item);
+                        this.doScanArray(item);
                     }
                     break;
             }
@@ -308,7 +296,7 @@ public final class Output {
     /**
      * Scan the specified ObjectNode, collect it's relevant metadata and children's
      */
-    private void scanObjectNode(ObjectNode node) {
+    private void doScanObject(ObjectNode node) {
         String[] fieldNames = node.keys();
         boolean stable = node.isStable();
         // reigster object's metadata
@@ -316,7 +304,7 @@ public final class Output {
         structPool.register(!enableStreamMode || !stable, fieldNames);
         // scan children nodes
         for (Object o : node.values()) {
-            this.scan((Node) o);
+            this.doScan(o);
         }
     }
 
