@@ -5,27 +5,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sisyphsu.canoe.Canoe;
 import com.github.sisyphsu.canoe.CanoePacket;
 import com.github.sisyphsu.canoe.CanoeStream;
-import com.github.sisyphsu.canoe.convertor.CodecContext;
 import com.github.sisyphsu.canoe.node.BeanNodeCodec;
 import com.github.sisyphsu.canoe.node.Node;
 import org.openjdk.jmh.annotations.*;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Benchmark            Mode  Cnt     Score    Error  Units
- * PBenchmark.json      avgt    6   784.020 ±  4.480  ns/op
- * PBenchmark.packet    avgt    6  1656.127 ± 24.591  ns/op
- * PBenchmark.protobuf  avgt    6   201.575 ±  3.216  ns/op
- * PBenchmark.stream    avgt    6   952.618 ± 38.461  ns/op
+ * PBenchmark.json      avgt    6   791.704 ± 13.024  ns/op
+ * PBenchmark.packet    avgt    6  1665.642 ± 41.077  ns/op
+ * PBenchmark.protobuf  avgt    6   201.356 ±  9.072  ns/op
+ * PBenchmark.stream    avgt    6   952.161 ± 31.328  ns/op
  * <p>
  * Need more works to do to improve performace~
  * <p>
  * Convert USER to Node cost:
  * Benchmark          Mode  Cnt    Score   Error  Units
  * PBenchmark.toNode  avgt    6  539.704 ± 7.713  ns/op
+ * <p>
+ * 690ns for Output.write???
  *
  * @author sulin
  * @since 2019-10-28 17:32:33
@@ -67,7 +67,7 @@ public class PBenchmark {
         USER.toPB().toByteArray();
     }
 
-    @Benchmark
+    //    @Benchmark
     public void toNode() {
 //        USER.toModel(); // 27ns
 
@@ -91,9 +91,9 @@ public class PBenchmark {
 //        }
 //        new ObjectNode(true, names, values);
 
-        // 527 ns.op
+        // 263ns = 27ns(toModel) + 11ns(getPipeline) + 178ns(BeanNodeCodec.toNode)
+        // Pipeline.convert cost 50ns ???
         Canoe.CODEC.convert(USER.toModel(), Node.class);
     }
 
-    static Date date = new Date();
 }

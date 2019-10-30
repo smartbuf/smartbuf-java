@@ -239,8 +239,8 @@ public final class Output {
             dataPool.registerFloat((Float) data);
         } else if (data instanceof Double) {
             dataPool.registerDouble((Double) data);
-        } else if (data instanceof Number) {
-            dataPool.registerVarint(((Number) data).longValue());
+        } else if (data instanceof Long) {
+            dataPool.registerVarint(((Long) data));
         } else if (data instanceof String) {
             dataPool.registerString((String) data);
         } else if (data instanceof SymbolNode) {
