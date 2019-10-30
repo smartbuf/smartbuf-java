@@ -21,10 +21,6 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * Need more works to do to improve performace~
  * <p>
- * Convert USER to Node cost:
- * Benchmark          Mode  Cnt    Score   Error  Units
- * PBenchmark.toNode  avgt    6  539.704 ± 7.713  ns/op
- * <p>
  * 690ns for Output.write???
  *
  * @author sulin
