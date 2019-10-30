@@ -14,10 +14,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Benchmark            Mode  Cnt     Score    Error  Units
- * PBenchmark.json      avgt    6   791.704 ± 13.024  ns/op
- * PBenchmark.packet    avgt    6  1665.642 ± 41.077  ns/op
- * PBenchmark.protobuf  avgt    6   201.356 ±  9.072  ns/op
- * PBenchmark.stream    avgt    6   952.161 ± 31.328  ns/op
+ * PBenchmark.json      avgt    6   790.779 ± 34.492  ns/op
+ * PBenchmark.packet    avgt    6  1481.061 ± 30.322  ns/op
+ * PBenchmark.protobuf  avgt    6   205.835 ±  7.227  ns/op
+ * PBenchmark.stream    avgt    6   842.893 ± 15.566  ns/op
  * <p>
  * Need more works to do to improve performace~
  * <p>
