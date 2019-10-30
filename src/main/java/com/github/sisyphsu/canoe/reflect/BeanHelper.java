@@ -1,6 +1,5 @@
 package com.github.sisyphsu.canoe.reflect;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -21,7 +20,7 @@ import java.util.regex.Pattern;
  * @since 2019-10-29 18:03:17
  */
 @SuppressWarnings("unchecked")
-public class BeanHelper<T> {
+public final class BeanHelper<T> {
 
     private static final Map<Class, BeanHelper> MAPPERS = new ConcurrentHashMap<>();
 
@@ -29,29 +28,30 @@ public class BeanHelper<T> {
     private static final Pattern RE_GET = Pattern.compile("^get[A-Z].*$");
     private static final Pattern RE_SET = Pattern.compile("^set[A-Z].*$");
 
-    private final Class<T>       tClass;
-    private final String[]       names;
-    private final BeanProperty[] properties;
+    private final Class<T> tClass;
+    public final  Accessor accessor;
 
-    private final Constructor<? extends Accessor> constructor;
+    private final String[]    names;
+    private final BeanField[] fields;
+    private final int         fieldCount;
 
     // initialize BeanMapper, each class should has only one mapper
     private BeanHelper(Class<T> cls) {
         this.tClass = cls;
-        this.properties = findProperties(cls);
-        this.names = new String[properties.length];
-        for (int i = 0; i < properties.length; i++) {
-            names[i] = properties[i].name;
+        this.fields = findProperties(cls);
+        this.fieldCount = fields.length;
+        this.names = new String[fields.length];
+        for (int i = 0, len = fields.length; i < len; i++) {
+            names[i] = fields[i].name;
         }
-        Class<? extends Accessor> accessorCls = AccessorBuilder.buildAccessor(cls, properties);
         try {
-            this.constructor = accessorCls.getDeclaredConstructor(cls);
-        } catch (NoSuchMethodException e) {
-            throw new IllegalStateException("BUG: accessor should has constructor", e);
+            this.accessor = AccessorBuilder.buildAccessor(cls, fields);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("build bean accessor failed: " + cls, e);
         }
     }
 
-    public static <S> BeanHelper<S> valueOf(Class<S> cls) {
+    public static <T> BeanHelper<T> valueOf(Class<T> cls) {
         BeanHelper mapper = MAPPERS.get(cls);
         if (mapper == null) {
             mapper = new BeanHelper(cls);
@@ -65,25 +65,16 @@ public class BeanHelper<T> {
     }
 
     public Object[] getValues(T t) {
-        Accessor accessor;
-        try {
-            accessor = constructor.newInstance(t);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("build accessor failed for " + t, e);
-        }
-        Object[] result = new Object[names.length];
-        accessor.getAll(result);
+        Object[] result = new Object[fieldCount];
+        accessor.getAll(t, result);
         return result;
     }
 
     public void setValues(T t, Object[] vals) {
-        Accessor accessor;
-        try {
-            accessor = constructor.newInstance(t);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("build accessor failed for " + t, e);
+        if (vals == null || vals.length != fieldCount) {
+            throw new IllegalArgumentException("invalid values");
         }
-        accessor.setAll(vals);
+        accessor.setAll(t, vals);
     }
 
     /**
@@ -92,8 +83,8 @@ public class BeanHelper<T> {
      * @param cls The specified class
      * @return All properties which support mapper, like public field and field with getter/setter
      */
-    public static BeanProperty[] findProperties(Class<?> cls) {
-        Map<String, BeanProperty> propMap = new TreeMap<>();
+    public static BeanField[] findProperties(Class<?> cls) {
+        Map<String, BeanField> propMap = new TreeMap<>();
         // collect public field
         for (Field field : cls.getFields()) {
             String name = field.getName();
@@ -101,7 +92,7 @@ public class BeanHelper<T> {
             if (Modifier.isStatic(mod) || Modifier.isTransient(mod)) {
                 continue; // ignore non-public and transient
             }
-            propMap.computeIfAbsent(name, BeanProperty::new).field = field;
+            propMap.computeIfAbsent(name, BeanField::new).field = field;
         }
         // collect getter and setter field
         for (Method method : cls.getMethods()) {
@@ -122,7 +113,7 @@ public class BeanHelper<T> {
                 continue; // ignore invalid method
             }
             name = (char) (name.charAt(0) + 32) + name.substring(1);
-            BeanProperty prop = propMap.computeIfAbsent(name, BeanProperty::new);
+            BeanField prop = propMap.computeIfAbsent(name, BeanField::new);
             if (getter) {
                 prop.getter = method;
             } else {
@@ -130,9 +121,9 @@ public class BeanHelper<T> {
             }
         }
         // clean properties
-        List<BeanProperty> properties = new ArrayList<>();
+        List<BeanField> properties = new ArrayList<>();
         for (String name : new ArrayList<>(propMap.keySet())) {
-            BeanProperty prop = propMap.get(name);
+            BeanField prop = propMap.get(name);
             Field field = prop.field;
             if (prop.field == null) {
                 try {
@@ -145,7 +136,7 @@ public class BeanHelper<T> {
             }
             properties.add(prop);
         }
-        return properties.toArray(new BeanProperty[0]);
+        return properties.toArray(new BeanField[0]);
     }
 
 }

@@ -15,6 +15,15 @@ import java.util.concurrent.TimeUnit;
  * SimpleBenchmark.packet    avgt    6  8817.210 ± 325.374  ns/op
  * SimpleBenchmark.protobuf  avgt    6  1271.790 ±  19.230  ns/op
  * SimpleBenchmark.stream    avgt    6  8208.368 ± 243.626  ns/op
+ * <p>
+ * Discard the stupid BeanMap of cglib:
+ * Benchmark            Mode  Cnt     Score    Error  Units
+ * PBenchmark.json      avgt    6   779.621 ± 48.142  ns/op
+ * PBenchmark.packet    avgt    6  2024.849 ± 35.366  ns/op
+ * PBenchmark.protobuf  avgt    6   198.849 ±  5.530  ns/op
+ * PBenchmark.stream    avgt    6  1293.726 ± 24.640  ns/op
+ * <p>
+ * Need more works to do to improve performace~
  *
  * @author sulin
  * @since 2019-10-28 17:32:33
@@ -24,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 @Measurement(iterations = 3, time = 3)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
-public class PerformanceBenchmark {
+public class PBenchmark {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 

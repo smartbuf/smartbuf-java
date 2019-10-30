@@ -7,18 +7,18 @@ import java.lang.reflect.Method;
  * @author sulin
  * @since 2019-10-29 15:46:00
  */
-public class BeanProperty {
+public final class BeanField {
 
     String name;
     Field  field;
     Method getter;
     Method setter;
 
-    public BeanProperty(String name) {
+    public BeanField(String name) {
         this.name = name;
     }
 
-    public BeanProperty(Field field, Method getter, Method setter) {
+    public BeanField(Field field, Method getter, Method setter) {
         this.field = field;
         this.getter = getter;
         this.setter = setter;

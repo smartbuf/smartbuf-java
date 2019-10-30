@@ -5,12 +5,17 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * @author sulin
  * @since 2019-10-29 15:42:49
  */
 @SuppressWarnings("unchecked")
-public final class AccessorBuilder {
+final class AccessorBuilder {
+
+    private static final Map<Class, Class<? extends Accessor>> ACCESSOR_CLS_MAP = new ConcurrentHashMap<>();
 
     private static final String BOOLEAN_NAME   = Boolean.class.getName().replace('.', '/');
     private static final String BYTE_NAME      = Byte.class.getName().replace('.', '/');
@@ -30,39 +35,47 @@ public final class AccessorBuilder {
     private static final String DOUBLE_DESCRIPTOR    = Type.getDescriptor(Double.class);
     private static final String CHARACTER_DESCRIPTOR = Type.getDescriptor(Character.class);
 
-    public static Class<? extends Accessor> buildAccessor(Class<?> cls, BeanProperty... properties) {
-        String accessorClassName = cls.getName() + "$Accessor";
-        String accessorName = accessorClassName.replace('.', '/');
+    public static Accessor buildAccessor(Class<?> cls, BeanField... properties) {
+        Class<? extends Accessor> accessorCls = ACCESSOR_CLS_MAP.get(cls);
+        if (accessorCls == null) {
+            accessorCls = buildAccessorClass(cls, properties);
+            ACCESSOR_CLS_MAP.put(cls, accessorCls);
+        }
+        try {
+            return accessorCls.newInstance();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("build accessor for " + cls + " failed.", e);
+        }
+    }
+
+    public static Class<? extends Accessor> buildAccessorClass(Class<?> cls, BeanField... properties) {
         String clsName = cls.getName().replace('.', '/');
-        String clsDescriptor = Type.getDescriptor(cls);
+        String accessorClassName = cls.getName() + "$$$Accessor";
+        String accessorName = accessorClassName.replace('.', '/');
 
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
         cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, accessorName, null, "java/lang/Object", new String[]{Accessor.NAME});
 
-        // private T t;
-        cw.visitField(Opcodes.ACC_PRIVATE, "t", clsDescriptor, null, null);
-
-        // public T$$$Getter(T t)
-        MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "(" + clsDescriptor + ")V", null, null);
+        // public T$$$Accessor()
+        MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null);
         mv.visitCode();
         mv.visitVarInsn(Opcodes.ALOAD, 0);
         mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
-        mv.visitVarInsn(Opcodes.ALOAD, 0);
-        mv.visitVarInsn(Opcodes.ALOAD, 1);
-        mv.visitFieldInsn(Opcodes.PUTFIELD, accessorName, "t", clsDescriptor);
         mv.visitInsn(Opcodes.RETURN);
         mv.visitMaxs(0, 0);
         mv.visitEnd();
 
-        // public void getAll(Object[] vals)
-        mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "getAll", "([Ljava/lang/Object;)V", null, null);
+        // public void getAll(Object o, Object[] values)
+        mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "getAll", "(Ljava/lang/Object;[Ljava/lang/Object;)V", null, null);
         mv.visitCode();
+        mv.visitVarInsn(Opcodes.ALOAD, 1);
+        mv.visitTypeInsn(Opcodes.CHECKCAST, clsName);
+        mv.visitVarInsn(Opcodes.ASTORE, 3);
         for (int i = 0, len = properties.length; i < len; i++) {
-            BeanProperty prop = properties[i];
-            mv.visitVarInsn(Opcodes.ALOAD, 1);
+            BeanField prop = properties[i];
+            mv.visitVarInsn(Opcodes.ALOAD, 2); // values
             mv.visitIntInsn(Opcodes.BIPUSH, i);
-            mv.visitVarInsn(Opcodes.ALOAD, 0);
-            mv.visitFieldInsn(Opcodes.GETFIELD, accessorName, "t", clsDescriptor);
+            mv.visitVarInsn(Opcodes.ALOAD, 3); // t.
             if (prop.getter == null) {
                 String fieldName = prop.field.getName();
                 String fieldDescriptor = Type.getDescriptor(prop.field.getType());
@@ -80,14 +93,16 @@ public final class AccessorBuilder {
         mv.visitMaxs(0, 0);
         mv.visitEnd();
 
-        // public void setAll(Object[] vals)
-        mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "setAll", "([Ljava/lang/Object;)V", null, null);
+        // public void setAll(T t, Object[] values)
+        mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "setAll", "(Ljava/lang/Object;[Ljava/lang/Object;)V", null, null);
         mv.visitCode();
+        mv.visitVarInsn(Opcodes.ALOAD, 1);
+        mv.visitTypeInsn(Opcodes.CHECKCAST, clsName);
+        mv.visitVarInsn(Opcodes.ASTORE, 3);
         for (int i = 0, len = properties.length; i < len; i++) {
-            BeanProperty prop = properties[i];
-            mv.visitVarInsn(Opcodes.ALOAD, 0);
-            mv.visitFieldInsn(Opcodes.GETFIELD, accessorName, "t", clsDescriptor);
-            mv.visitVarInsn(Opcodes.ALOAD, 1);
+            BeanField prop = properties[i];
+            mv.visitVarInsn(Opcodes.ALOAD, 3); // t
+            mv.visitVarInsn(Opcodes.ALOAD, 2); // values
             mv.visitIntInsn(Opcodes.BIPUSH, i);
             mv.visitInsn(Opcodes.AALOAD);
             if (prop.setter == null) {

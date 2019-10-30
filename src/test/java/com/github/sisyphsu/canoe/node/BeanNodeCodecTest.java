@@ -4,7 +4,6 @@ import com.github.sisyphsu.canoe.convertor.CodecFactory;
 import com.github.sisyphsu.canoe.node.std.ArrayNode;
 import com.github.sisyphsu.canoe.node.std.ObjectNode;
 import lombok.Data;
-import net.sf.cglib.beans.BeanMap;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,12 +59,12 @@ public class BeanNodeCodecTest {
     }
 
     @Test
-    public void testBeanMap() {
+    public void testBean() {
         Person person = new Person();
-        Map map = codec.convert(person, Map.class);
-        assert map instanceof BeanMap;
+        Node node = codec.toNode(person);
 
-        ObjectNode node = (ObjectNode) codec.toNode(map);
+        assert node instanceof ObjectNode;
+
         Person person1 = codec.convert(node, Person.class);
 
         assert person.equals(person1);

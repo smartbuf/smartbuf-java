@@ -29,7 +29,6 @@ public class CircleRefTest {
         Comment comment = new Comment();
         post.comment = comment;
         comment.post = post;
-
         try {
             CodecFactory.Instance.convert(post, Node.class);
             assert false;

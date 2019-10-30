@@ -1,14 +1,14 @@
 package com.github.sisyphsu.canoe.node;
 
 import com.github.sisyphsu.canoe.convertor.Codec;
+import com.github.sisyphsu.canoe.convertor.CodecContext;
 import com.github.sisyphsu.canoe.convertor.Converter;
+import com.github.sisyphsu.canoe.exception.CircleReferenceException;
 import com.github.sisyphsu.canoe.node.std.ObjectNode;
-import net.sf.cglib.beans.BeanMap;
+import com.github.sisyphsu.canoe.reflect.BeanHelper;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Object's Codec, convert Node from/to Map
@@ -16,17 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author sulin
  * @since 2019-06-05 20:29:40
  */
+@SuppressWarnings("unchecked")
 public final class BeanNodeCodec extends Codec {
-
-    private static final Map<Class, BeanKey> FIELDS_MAP = new ConcurrentHashMap<>();
-
-//    /**
-//     * Convert POJO to ObjectNode, for better performance
-//     */
-//    @Converter(distance = 1 << 16)
-//    public Node toNode(Object pojo) {
-//        return null;
-//    }
 
     /**
      * encode map to ObjectNode, pojo should be encoded as map first.
@@ -40,7 +31,6 @@ public final class BeanNodeCodec extends Codec {
         if (len == 0) {
             return ObjectNode.EMPTY;
         }
-        boolean stable = map instanceof BeanMap;
         String[] keys = new String[len];
         Object[] values = new Object[len];
         int offset = 0;
@@ -56,7 +46,26 @@ public final class BeanNodeCodec extends Codec {
             values[offset] = convert(entry.getValue(), Node.class);
             offset++;
         }
-        return new ObjectNode(stable, keys, values);
+        return new ObjectNode(false, keys, values);
+    }
+
+    /**
+     * Convert POJO to ObjectNode, for better performance
+     */
+    @Converter(distance = 1 << 16)
+    public Node toNode(Object pojo) {
+        // check loop references
+        CodecContext state = CodecContext.get();
+        if (state.depth() > 64 && !state.record(pojo)) {
+            throw new CircleReferenceException();
+        }
+        BeanHelper helper = BeanHelper.valueOf(pojo.getClass());
+        String[] names = helper.getNames();
+        Object[] values = helper.getValues(pojo);
+        for (int i = 0, len = values.length; i < len; i++) {
+            values[i] = convert(values[i], Node.class);
+        }
+        return new ObjectNode(true, names, values);
     }
 
     /**
@@ -76,39 +85,6 @@ public final class BeanNodeCodec extends Codec {
             }
         }
         return result;
-    }
-
-    /**
-     * Get the sorted names from the specified Map, which maybe BeanMap
-     *
-     * @param map Map
-     * @return names as array
-     */
-    public static BeanKey parseBeanMapKey(BeanMap map) {
-        Class beanCls = map.getBean().getClass();
-        BeanKey objectKey = FIELDS_MAP.get(beanCls);
-        if (objectKey == null) {
-            String[] fieldNames = new String[map.size()];
-            int i = 0;
-            for (Object key : map.keySet()) {
-                String fieldName = String.valueOf(key);
-                fieldNames[i++] = fieldName;
-            }
-            Arrays.sort(fieldNames);
-            objectKey = new BeanKey(true, fieldNames);
-            FIELDS_MAP.put(beanCls, objectKey);
-        }
-        return objectKey;
-    }
-
-    private static class BeanKey {
-        private final boolean  stable;
-        private final String[] fieldNames;
-
-        public BeanKey(boolean stable, String[] fieldNames) {
-            this.stable = stable;
-            this.fieldNames = fieldNames;
-        }
     }
 
 }
