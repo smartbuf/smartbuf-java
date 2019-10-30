@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * WriteByte
  * Benchmark              Mode  Cnt    Score   Error  Units
  * WriteBenchmark.direct  avgt    6  274.103 ± 1.252  ns/op
  * WriteBenchmark.writer  avgt    6  301.634 ± 0.801  ns/op

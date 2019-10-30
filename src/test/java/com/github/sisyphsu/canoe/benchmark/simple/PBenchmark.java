@@ -6,7 +6,6 @@ import com.github.sisyphsu.canoe.Canoe;
 import com.github.sisyphsu.canoe.CanoePacket;
 import com.github.sisyphsu.canoe.CanoeStream;
 import com.github.sisyphsu.canoe.node.BeanNodeCodec;
-import com.github.sisyphsu.canoe.node.Node;
 import org.openjdk.jmh.annotations.*;
 
 import java.io.IOException;
@@ -21,7 +20,8 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * Need more works to do to improve performace~
  * <p>
- * 690ns for Output.write???
+ * 190ns for Output#scan
+ * 500ns for Output#doWrite and others
  *
  * @author sulin
  * @since 2019-10-28 17:32:33
@@ -63,7 +63,7 @@ public class PBenchmark {
         USER.toPB().toByteArray();
     }
 
-    //    @Benchmark
+    @Benchmark
     public void toNode() {
 //        USER.toModel(); // 27ns
 
@@ -89,7 +89,7 @@ public class PBenchmark {
 
         // 263ns = 27ns(toModel) + 11ns(getPipeline) + 178ns(BeanNodeCodec.toNode)
         // Pipeline.convert cost 50ns ???
-        Canoe.CODEC.convert(USER.toModel(), Node.class);
+//        Canoe.CODEC.convert(USER.toModel(), Node.class);
     }
 
 }
