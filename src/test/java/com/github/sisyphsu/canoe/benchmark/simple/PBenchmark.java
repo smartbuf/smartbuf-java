@@ -67,7 +67,7 @@ public class PBenchmark {
         USER.toPB().toByteArray();
     }
 
-    //    @Benchmark
+    @Benchmark
     public void toNode() {
 //        USER.toModel(); // 27ns
 
@@ -97,7 +97,7 @@ public class PBenchmark {
 
         // 263ns = 27ns(toModel) + 11ns(getPipeline) + 178ns(BeanNodeCodec.toNode)
         // Pipeline.convert cost 50ns ???
-        // use ASM optimize ConverterPipeline, 263ns -> 169ns
+        // use ASM optimize ConverterPipeline, 263ns -> 155ns
         Canoe.CODEC.convert(USER.toModel(), Node.class);
 
         // 169ns = toModel[27ns] + beanNodeCodec#toNode[123ns] + getPipeline[5ns] + [14ns]
