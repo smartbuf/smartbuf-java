@@ -65,20 +65,6 @@ public class CodecFactoryTest {
     }
 
     @Test
-    public void testKey() {
-        CodecFactory.PKey pKey = new CodecFactory.PKey(Long.class, Number.class);
-        assert pKey.equals(pKey);
-        assert !pKey.equals(null);
-        assert !pKey.equals(new Object());
-
-        CodecFactory.PKey pKey2 = new CodecFactory.PKey(Long.class, Object.class);
-        assert !pKey.equals(pKey2);
-
-        CodecFactory.PKey pKey3 = new CodecFactory.PKey(Integer.class, Number.class);
-        assert !pKey.equals(pKey3);
-    }
-
-    @Test
     public void testNullable() {
         Date date = new Date();
         Optional<Long> opt = (Optional<Long>) factory.convert(new Date(), new TypeRef<Optional<Long>>() {

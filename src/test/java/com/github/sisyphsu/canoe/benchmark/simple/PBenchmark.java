@@ -64,11 +64,11 @@ public class PBenchmark {
         USER.toPB().toByteArray();
     }
 
-    //    @Benchmark
+    @Benchmark
     public void toNode() {
 //        USER.toModel(); // 27ns
 
-//        Canoe.CODEC.getPipeline(UserModel.class, Node.class); // 11ns
+        Canoe.CODEC.getPipeline(UserModel.class, Node.class); // 11ns -> 5ns
 
         // 441ns, CodecContext cost 20ns
         // 178ns, 48ns if not convert value, 75ns if no Date
@@ -91,7 +91,7 @@ public class PBenchmark {
         // 263ns = 27ns(toModel) + 11ns(getPipeline) + 178ns(BeanNodeCodec.toNode)
         // Pipeline.convert cost 50ns ???
         // use ASM optimize ConverterPipeline, 263ns -> 188ns
-        Canoe.CODEC.convert(USER.toModel(), Node.class);
+//        Canoe.CODEC.convert(USER.toModel(), Node.class);
     }
 
 }

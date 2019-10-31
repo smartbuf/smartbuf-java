@@ -22,10 +22,10 @@ public final class CodecFactory {
 
     public static final CodecFactory Instance = new CodecFactory();
 
-    private final Set<Codec>                   codecs       = ConcurrentHashMap.newKeySet();
-    private final ConverterMap                 converterMap = new ConverterMap();
-    private final Map<PKey, ConverterPipeline> pipelineMap  = new ConcurrentHashMap<>();
-    private final XTypeFactory                 xTypeFactory = new XTypeFactory();
+    private final XTypeFactory                   xTypeFactory = new XTypeFactory();
+    private final Set<Codec>                     codecs       = ConcurrentHashMap.newKeySet();
+    private final ConverterMap                   converterMap = new ConverterMap();
+    private final Map<Object, ConverterPipeline> pipelineMap  = new ConcurrentHashMap<>();
 
     /**
      * Initialize CodecFactory with the specified Codec type.
@@ -150,7 +150,8 @@ public final class CodecFactory {
      * @return ConverterPipeline, could be null
      */
     public ConverterPipeline getPipeline(Class srcClass, Class tgtClass) {
-        ConverterPipeline pipeline = pipelineMap.get(new PKey(srcClass, tgtClass));
+        Long key = ((long) srcClass.hashCode()) << 32 | tgtClass.hashCode(); // this is faster, but would go wrong???
+        ConverterPipeline pipeline = pipelineMap.get(key);
         if (pipeline == null) {
             converterMap.flushCastConverter(srcClass);
             converterMap.flushCastConverter(tgtClass);
@@ -158,7 +159,7 @@ public final class CodecFactory {
             Path shortestPath = this.findShortestPath(srcClass, tgtClass);
             if (shortestPath != null) {
                 pipeline = new ConverterPipeline(shortestPath.methods);
-                pipelineMap.put(new PKey(srcClass, tgtClass), pipeline);
+                pipelineMap.put(key, pipeline);
             }
         }
         return pipeline;
@@ -237,34 +238,6 @@ public final class CodecFactory {
             this.distance = route.getDistance() + next.distance;
             this.methods.add(route);
             this.methods.addAll(next.methods);
-        }
-    }
-
-    /**
-     * Pipeline's key, used for Map
-     */
-    static class PKey {
-        private final Class<?> srcClass;
-        private final Class<?> tgtClass;
-
-        public PKey(Class<?> srcClass, Class<?> tgtClass) {
-            this.srcClass = srcClass;
-            this.tgtClass = tgtClass;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-            PKey pKey = (PKey) o;
-            return Objects.equals(srcClass, pKey.srcClass) && Objects.equals(tgtClass, pKey.tgtClass);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(srcClass, tgtClass);
         }
     }
 
