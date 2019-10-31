@@ -138,7 +138,7 @@ public final class CodecFactory {
         return pipeline.convert(srcObj, tgtType);
     }
 
-    public XType<?> toXType(Type type) {
+    protected XType<?> toXType(Type type) {
         return xTypeFactory.toXType(type);
     }
 

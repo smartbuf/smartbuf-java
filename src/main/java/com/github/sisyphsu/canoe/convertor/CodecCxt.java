@@ -19,5 +19,21 @@ public final class CodecCxt {
     public CodecCxt(XType targetType) {
         this.targetType = targetType;
     }
-    
+
+    public int getDepth() {
+        return depth;
+    }
+
+    public void setDepth(int depth) {
+        this.depth = depth;
+    }
+
+    public Set<Object> getVisits() {
+        return visits;
+    }
+
+    public XType getTargetType() {
+        return targetType;
+    }
+
 }
