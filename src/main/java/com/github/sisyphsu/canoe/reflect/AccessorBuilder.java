@@ -1,5 +1,6 @@
 package com.github.sisyphsu.canoe.reflect;
 
+import com.github.sisyphsu.canoe.utils.ASMUtils;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -16,24 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 final class AccessorBuilder {
 
     private static final Map<Class, Class<? extends Accessor>> ACCESSOR_CLS_MAP = new ConcurrentHashMap<>();
-
-    private static final String BOOLEAN_NAME   = Boolean.class.getName().replace('.', '/');
-    private static final String BYTE_NAME      = Byte.class.getName().replace('.', '/');
-    private static final String SHORT_NAME     = Short.class.getName().replace('.', '/');
-    private static final String INTEGER_NAME   = Integer.class.getName().replace('.', '/');
-    private static final String LONG_NAME      = Long.class.getName().replace('.', '/');
-    private static final String FLOAT_NAME     = Float.class.getName().replace('.', '/');
-    private static final String DOUBLE_NAME    = Double.class.getName().replace('.', '/');
-    private static final String CHARACTER_NAME = Character.class.getName().replace('.', '/');
-
-    private static final String BOOLEAN_DESCRIPTOR   = Type.getDescriptor(Boolean.class);
-    private static final String BYTE_DESCRIPTOR      = Type.getDescriptor(Byte.class);
-    private static final String SHORT_DESCRIPTOR     = Type.getDescriptor(Short.class);
-    private static final String INTEGER_DESCRIPTOR   = Type.getDescriptor(Integer.class);
-    private static final String LONG_DESCRIPTOR      = Type.getDescriptor(Long.class);
-    private static final String FLOAT_DESCRIPTOR     = Type.getDescriptor(Float.class);
-    private static final String DOUBLE_DESCRIPTOR    = Type.getDescriptor(Double.class);
-    private static final String CHARACTER_DESCRIPTOR = Type.getDescriptor(Character.class);
 
     public static Accessor buildAccessor(Class<?> cls, BeanField... properties) {
         Class<? extends Accessor> accessorCls = ACCESSOR_CLS_MAP.get(cls);
@@ -78,14 +61,19 @@ final class AccessorBuilder {
             mv.visitVarInsn(Opcodes.ALOAD, 3); // t.
             if (prop.getter == null) {
                 String fieldName = prop.field.getName();
-                String fieldDescriptor = Type.getDescriptor(prop.field.getType());
-                mv.visitFieldInsn(Opcodes.GETFIELD, clsName, fieldName, fieldDescriptor);
-                optionalBox(mv, fieldDescriptor);
+                Class<?> fieldType = prop.field.getType();
+                mv.visitFieldInsn(Opcodes.GETFIELD, clsName, fieldName, Type.getDescriptor(fieldType));
+                if (fieldType.isPrimitive()) {
+                    ASMUtils.addBoxInstruction(mv, fieldType);
+                }
             } else {
                 String methodName = prop.getter.getName();
-                String retDescriptor = org.objectweb.asm.Type.getDescriptor(prop.getter.getReturnType());
+                Class<?> retType = prop.getter.getReturnType();
+                String retDescriptor = Type.getDescriptor(retType);
                 mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, clsName, methodName, "()" + retDescriptor, false);
-                optionalBox(mv, retDescriptor);
+                if (retType.isPrimitive()) {
+                    ASMUtils.addBoxInstruction(mv, retType);
+                }
             }
             mv.visitInsn(Opcodes.AASTORE);
         }
@@ -110,14 +98,18 @@ final class AccessorBuilder {
                 String fieldName = prop.field.getName();
                 String fieldDestriptor = Type.getDescriptor(fieldType);
                 mv.visitTypeInsn(Opcodes.CHECKCAST, toNonPrimitiveClass(fieldType).getName().replace('.', '/'));
-                optionalUnBox(mv, fieldDestriptor);
+                if (fieldType.isPrimitive()) {
+                    ASMUtils.addUnboxInstruction(mv, fieldType);
+                }
                 mv.visitFieldInsn(Opcodes.PUTFIELD, clsName, fieldName, fieldDestriptor);
             } else {
                 Class<?> paramType = prop.setter.getParameterTypes()[0];
                 String methodName = prop.setter.getName();
                 String paramDestriptor = Type.getDescriptor(paramType);
                 mv.visitTypeInsn(Opcodes.CHECKCAST, toNonPrimitiveClass(paramType).getName().replace('.', '/'));
-                optionalUnBox(mv, paramDestriptor);
+                if (paramType.isPrimitive()) {
+                    ASMUtils.addUnboxInstruction(mv, paramType);
+                }
                 mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, clsName, methodName, "(" + paramDestriptor + ")V", false);
             }
         }
@@ -127,65 +119,7 @@ final class AccessorBuilder {
 
         cw.visitEnd();
 
-        return (Class<? extends Accessor>) ByteArrayClassLoader.loadClass(accessorClassName, cw.toByteArray());
-    }
-
-    static void optionalBox(MethodVisitor mv, String descriptor) {
-        switch (descriptor) {
-            case "Z":
-                mv.visitMethodInsn(Opcodes.INVOKESTATIC, BOOLEAN_NAME, "valueOf", "(Z)" + BOOLEAN_DESCRIPTOR, false);
-                break;
-            case "B":
-                mv.visitMethodInsn(Opcodes.INVOKESTATIC, BYTE_NAME, "valueOf", "(B)" + BYTE_DESCRIPTOR, false);
-                break;
-            case "S":
-                mv.visitMethodInsn(Opcodes.INVOKESTATIC, SHORT_NAME, "valueOf", "(S)" + SHORT_DESCRIPTOR, false);
-                break;
-            case "I":
-                mv.visitMethodInsn(Opcodes.INVOKESTATIC, INTEGER_NAME, "valueOf", "(I)" + INTEGER_DESCRIPTOR, false);
-                break;
-            case "J":
-                mv.visitMethodInsn(Opcodes.INVOKESTATIC, LONG_NAME, "valueOf", "(J)" + LONG_DESCRIPTOR, false);
-                break;
-            case "F":
-                mv.visitMethodInsn(Opcodes.INVOKESTATIC, FLOAT_NAME, "valueOf", "(F)" + FLOAT_DESCRIPTOR, false);
-                break;
-            case "D":
-                mv.visitMethodInsn(Opcodes.INVOKESTATIC, DOUBLE_NAME, "valueOf", "(D)" + DOUBLE_DESCRIPTOR, false);
-                break;
-            case "C":
-                mv.visitMethodInsn(Opcodes.INVOKESTATIC, CHARACTER_NAME, "valueOf", "(C)" + CHARACTER_DESCRIPTOR, false);
-                break;
-        }
-    }
-
-    static void optionalUnBox(MethodVisitor mv, String descriptor) {
-        switch (descriptor) {
-            case "Z":
-                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, BOOLEAN_NAME, "booleanValue", "()Z", false);
-                break;
-            case "B":
-                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, BYTE_NAME, "byteValue", "()B", false);
-                break;
-            case "S":
-                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, SHORT_NAME, "shortValue", "()S", false);
-                break;
-            case "I":
-                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, INTEGER_NAME, "intValue", "()I", false);
-                break;
-            case "J":
-                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, LONG_NAME, "longValue", "()J", false);
-                break;
-            case "F":
-                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, FLOAT_NAME, "floatValue", "()F", false);
-                break;
-            case "D":
-                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, DOUBLE_NAME, "doubleValue", "()D", false);
-                break;
-            case "C":
-                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, FLOAT_NAME, "charValue", "()C", false);
-                break;
-        }
+        return (Class<? extends Accessor>) ASMUtils.loadClass(cw, accessorClassName);
     }
 
     /**
@@ -212,22 +146,6 @@ final class AccessorBuilder {
             }
         }
         return type;
-    }
-
-    /**
-     * Helps load byte[] as class
-     */
-    static final class ByteArrayClassLoader extends ClassLoader {
-
-        static final ByteArrayClassLoader INSTANCE = new ByteArrayClassLoader();
-
-        ByteArrayClassLoader() {
-            super(ByteArrayClassLoader.class.getClassLoader());
-        }
-
-        static synchronized Class<?> loadClass(String name, byte[] code) {
-            return INSTANCE.defineClass(name, code, 0, code.length);
-        }
     }
 
 }

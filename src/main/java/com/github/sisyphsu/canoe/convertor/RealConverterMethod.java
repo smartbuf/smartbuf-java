@@ -15,10 +15,10 @@ import java.lang.reflect.Method;
 @Slf4j
 public final class RealConverterMethod extends ConverterMethod {
 
-    private Codec     codec;
-    private boolean   hasTypeArg;
-    private Converter annotation;
-    private Method    method;
+    protected Codec     codec;
+    protected boolean   hasTypeArg;
+    protected Converter annotation;
+    protected Method    method;
 
     private RealConverterMethod(Class<?> srcClass, Class<?> tgtClass) {
         super(srcClass, tgtClass);

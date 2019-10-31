@@ -2,6 +2,7 @@ package com.github.sisyphsu.canoe.convertor;
 
 import com.github.sisyphsu.canoe.convertor.codec.LangCodec;
 import com.github.sisyphsu.canoe.node.Node;
+import com.github.sisyphsu.canoe.reflect.TypeRef;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +12,7 @@ import java.util.*;
  * @author sulin
  * @since 2019-08-02 14:10:30
  */
+@SuppressWarnings("ALL")
 public class CodecFactoryTest {
 
     private CodecFactory factory;
@@ -76,4 +78,24 @@ public class CodecFactoryTest {
         assert !pKey.equals(pKey3);
     }
 
+    @Test
+    public void testNullable() {
+        Date date = new Date();
+        Optional<Long> opt = (Optional<Long>) factory.convert(new Date(), new TypeRef<Optional<Long>>() {
+        }.getType());
+
+        assert opt.get() == date.getTime();
+
+        opt = (Optional<Long>) factory.convert(null, new TypeRef<Optional<Long>>() {
+        }.getType());
+
+        assert !opt.isPresent();
+    }
+
+    @Test
+    public void testPrimary() {
+        int i = 100;
+        long l = factory.convert(i, long.class);
+        assert l == 100L;
+    }
 }

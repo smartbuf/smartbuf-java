@@ -22,7 +22,7 @@ public final class CodecFactory {
 
     public static final CodecFactory Instance = new CodecFactory();
 
-    public final Set<Codec>                   codecs       = ConcurrentHashMap.newKeySet();
+    private final Set<Codec>                   codecs       = ConcurrentHashMap.newKeySet();
     private final ConverterMap                 converterMap = new ConverterMap();
     private final Map<PKey, ConverterPipeline> pipelineMap  = new ConcurrentHashMap<>();
     private final XTypeFactory                 xTypeFactory = new XTypeFactory();
@@ -157,7 +157,7 @@ public final class CodecFactory {
             // find the shortest path
             Path shortestPath = this.findShortestPath(srcClass, tgtClass);
             if (shortestPath != null) {
-                pipeline = new ConverterPipeline(srcClass, tgtClass, shortestPath.methods);
+                pipeline = new ConverterPipeline(shortestPath.methods);
                 pipelineMap.put(new PKey(srcClass, tgtClass), pipeline);
             }
         }

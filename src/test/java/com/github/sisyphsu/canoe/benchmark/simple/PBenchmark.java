@@ -6,6 +6,7 @@ import com.github.sisyphsu.canoe.Canoe;
 import com.github.sisyphsu.canoe.CanoePacket;
 import com.github.sisyphsu.canoe.CanoeStream;
 import com.github.sisyphsu.canoe.node.BeanNodeCodec;
+import com.github.sisyphsu.canoe.node.Node;
 import org.openjdk.jmh.annotations.*;
 
 import java.io.IOException;
@@ -13,10 +14,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Benchmark            Mode  Cnt     Score    Error  Units
- * PBenchmark.json      avgt    6   790.779 ± 34.492  ns/op
- * PBenchmark.packet    avgt    6  1481.061 ± 30.322  ns/op
- * PBenchmark.protobuf  avgt    6   205.835 ±  7.227  ns/op
- * PBenchmark.stream    avgt    6   842.893 ± 15.566  ns/op
+ * PBenchmark.json      avgt    6   778.082 ± 24.979  ns/op
+ * PBenchmark.packet    avgt    6  1422.418 ± 14.461  ns/op
+ * PBenchmark.protobuf  avgt    6   203.624 ±  2.301  ns/op
+ * PBenchmark.stream    avgt    6   763.398 ± 21.665  ns/op
  * <p>
  * Need more works to do to improve performace~
  * <p>
@@ -63,7 +64,7 @@ public class PBenchmark {
         USER.toPB().toByteArray();
     }
 
-    @Benchmark
+    //    @Benchmark
     public void toNode() {
 //        USER.toModel(); // 27ns
 
@@ -89,7 +90,8 @@ public class PBenchmark {
 
         // 263ns = 27ns(toModel) + 11ns(getPipeline) + 178ns(BeanNodeCodec.toNode)
         // Pipeline.convert cost 50ns ???
-//        Canoe.CODEC.convert(USER.toModel(), Node.class);
+        // use ASM optimize ConverterPipeline, 263ns -> 188ns
+        Canoe.CODEC.convert(USER.toModel(), Node.class);
     }
 
 }
