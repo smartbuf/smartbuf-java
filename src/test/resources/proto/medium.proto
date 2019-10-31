@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package com.github.sisyphsu.canoe.benchmark.medium;
+
+message User {
+    int64 id = 1;
+    string nickname = 2;
+    string portrait = 3;
+    float score = 4;
+    string mail = 5;
+    string mobile = 6;
+    string token = 7;
+    int32 type = 8;
+    int32 source = 9;
+    bool blocked = 10;
+    int32 loginTimes = 11;
+    int64 updateTime = 12;
+    int64 createTime = 13;
+
+    repeated Message msgs = 20;
+    repeated Tag tags = 21;
+}
+
+message Message {
+    int64 id = 1;
+    int64 from = 2;
+    int64 to = 3;
+    string msg = 4;
+    int64 timestamp = 5;
+}
+
+message Tag {
+    int32 code = 1;
+    string name = 2;
+}
