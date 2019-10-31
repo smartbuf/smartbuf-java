@@ -26,13 +26,13 @@ public final class BeanNodeCodec extends Codec {
      * @return Map
      */
     @Converter
-    public Map<String, Node> toMap(ObjectNode node) {
-        Map<String, Node> result = new HashMap<>();
+    public Map<String, Object> toMap(ObjectNode node) {
+        Map<String, Object> result = new HashMap<>();
         if (node != ObjectNode.EMPTY) {
             String[] keys = node.keys();
             Object[] values = node.values();
             for (int i = 0, len = keys.length; i < len; i++) {
-                result.put(keys[i], (Node) values[i]);
+                result.put(keys[i], values[i]);
             }
         }
         return result;

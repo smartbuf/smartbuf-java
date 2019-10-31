@@ -1,7 +1,7 @@
 package com.github.sisyphsu.canoe.transport;
 
-import com.github.sisyphsu.canoe.node.Node;
-import com.github.sisyphsu.canoe.node.std.*;
+import com.github.sisyphsu.canoe.node.std.ArrayNode;
+import com.github.sisyphsu.canoe.node.std.ObjectNode;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
@@ -137,26 +137,14 @@ public class IOObjectTest {
     }
 
     ObjectNode buildObjectNode(boolean stable, String[] names, Map<String, Object> map) {
-        Node[] nodes = new Node[map.size()];
+        Object[] nodes = new Object[map.size()];
         int off = 0;
         for (String fieldName : names) {
             Object data = map.get(fieldName);
-            if (data == null) {
-                nodes[off++] = null;
-            } else if (data instanceof Boolean) {
-                nodes[off++] = BooleanNode.valueOf((Boolean) data);
-            } else if (data instanceof Long) {
-                nodes[off++] = VarintNode.valueOf((Long) data);
-            } else if (data instanceof String) {
-                nodes[off++] = StringNode.valueOf((String) data);
-            } else if (data instanceof Float) {
-                nodes[off++] = FloatNode.valueOf((Float) data);
-            } else if (data instanceof Double) {
-                nodes[off++] = DoubleNode.valueOf((Double) data);
-            } else if (data instanceof byte[]) {
+            if (data instanceof byte[]) {
                 nodes[off++] = ArrayNode.valueOf((byte[]) data);
             } else {
-                throw new RuntimeException();
+                nodes[off++] = data;
             }
         }
         return new ObjectNode(stable, names, nodes);

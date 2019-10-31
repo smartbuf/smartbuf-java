@@ -42,19 +42,13 @@ public class BeanNodeCodecTest {
         Node node = codec.toNode(map);
         assert node instanceof ObjectNode;
 
-        Map<String, Node> map2 = codec.toMap((ObjectNode) node);
+        Map<String, Object> map2 = codec.toMap((ObjectNode) node);
         assert map.size() == map2.size();
         for (Map.Entry<Object, Object> entry : map.entrySet()) {
             Object key = entry.getKey();
             Object val = entry.getValue();
-            Node val2 = map2.get(String.valueOf(key));
-            if (val instanceof Long) {
-                assert Objects.equals(val, val2.longValue());
-            } else if (val instanceof String) {
-                assert Objects.equals(val, val2.stringValue());
-            } else {
-                assert Objects.equals(val, val2.doubleValue());
-            }
+            Object val2 = map2.get(String.valueOf(key));
+            assert Objects.equals(val, val2);
         }
     }
 
