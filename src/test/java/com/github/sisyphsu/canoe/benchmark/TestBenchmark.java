@@ -1,8 +1,13 @@
 package com.github.sisyphsu.canoe.benchmark;
 
+import com.github.sisyphsu.canoe.Canoe;
+import com.github.sisyphsu.canoe.convertor.ConverterPipeline;
+import com.github.sisyphsu.canoe.node.Node;
+import com.github.sisyphsu.canoe.node.std.VarintNode;
 import com.github.sisyphsu.canoe.transport.Schema;
 import org.openjdk.jmh.annotations.*;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -16,11 +21,17 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 public class TestBenchmark {
 
-    static Schema schema = new Schema(true);
+    static Schema            schema   = new Schema(true);
+    static ConverterPipeline pipeline = Canoe.CODEC.getPipeline(Date.class, Node.class);
+    static Date              date     = new Date();
 
     @Benchmark
     public void test() {
-        schema.reset(); // 4ns
+//        schema.reset(); // 4ns
+//        Canoe.CODEC.toXType(Node.class); // 3ns
+
+//        pipeline.convert(date, Canoe.CODEC.toXType(Node.class)); // 44ns
+        VarintNode.valueOf(date.getTime()); // 1.3ns
     }
 
 }
