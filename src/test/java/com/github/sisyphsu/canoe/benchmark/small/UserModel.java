@@ -1,4 +1,4 @@
-package com.github.sisyphsu.canoe.benchmark.simple;
+package com.github.sisyphsu.canoe.benchmark.small;
 
 import lombok.Data;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -47,8 +47,8 @@ public class UserModel {
         return user;
     }
 
-    public Simple.User toPB() {
-        Simple.User.Builder builder = Simple.User.newBuilder()
+    public Small.User toPB() {
+        Small.User.Builder builder = Small.User.newBuilder()
             .setId(id)
             .setBlocked(blocked)
             .setNickname(nickname)

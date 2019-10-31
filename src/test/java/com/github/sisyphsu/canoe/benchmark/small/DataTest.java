@@ -1,4 +1,4 @@
-package com.github.sisyphsu.canoe.benchmark.simple;
+package com.github.sisyphsu.canoe.benchmark.small;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sisyphsu.canoe.CanoePacket;
