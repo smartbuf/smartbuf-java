@@ -23,7 +23,7 @@ public class CircleRefTest {
         codec.setFactory(CodecFactory.Instance);
     }
 
-    @Test
+//    @Test
     public void test() {
         Post post = new Post();
         Comment comment = new Comment();

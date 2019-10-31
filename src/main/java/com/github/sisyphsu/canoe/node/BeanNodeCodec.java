@@ -1,9 +1,7 @@
 package com.github.sisyphsu.canoe.node;
 
 import com.github.sisyphsu.canoe.convertor.Codec;
-import com.github.sisyphsu.canoe.convertor.CodecContext;
 import com.github.sisyphsu.canoe.convertor.Converter;
-import com.github.sisyphsu.canoe.exception.CircleReferenceException;
 import com.github.sisyphsu.canoe.node.std.*;
 import com.github.sisyphsu.canoe.reflect.BeanHelper;
 
@@ -73,11 +71,6 @@ public final class BeanNodeCodec extends Codec {
      */
     @Converter(distance = 1 << 16)
     public Node toNode(Object pojo) {
-        // check loop references
-        CodecContext state = CodecContext.get();
-        if (state.depth() > 64 && !state.record(pojo)) {
-            throw new CircleReferenceException();
-        }
         BeanHelper helper = BeanHelper.valueOf(pojo.getClass());
         String[] names = helper.getNames();
         Object[] values = helper.getValues(pojo);

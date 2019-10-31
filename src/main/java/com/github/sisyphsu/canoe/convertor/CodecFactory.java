@@ -102,7 +102,6 @@ public final class CodecFactory {
      */
     @SuppressWarnings("unchecked")
     public final <T> T convert(Object src, Class<T> clz) {
-        CodecContext.reset();
         return (T) this.doConvert(src, toXType(clz));
     }
 
@@ -114,7 +113,6 @@ public final class CodecFactory {
      * @return instance of the specified type
      */
     public final Object convert(Object src, Type type) {
-        CodecContext.reset();
         return this.doConvert(src, toXType(type));
     }
 

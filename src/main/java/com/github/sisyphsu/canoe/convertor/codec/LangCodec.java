@@ -1,9 +1,7 @@
 package com.github.sisyphsu.canoe.convertor.codec;
 
 import com.github.sisyphsu.canoe.convertor.Codec;
-import com.github.sisyphsu.canoe.convertor.CodecContext;
 import com.github.sisyphsu.canoe.convertor.Converter;
-import com.github.sisyphsu.canoe.exception.CircleReferenceException;
 import com.github.sisyphsu.canoe.reflect.XField;
 import com.github.sisyphsu.canoe.reflect.XType;
 import net.sf.cglib.beans.BeanMap;
@@ -19,8 +17,6 @@ import java.util.Map;
  */
 @SuppressWarnings("unchecked")
 public final class LangCodec extends Codec {
-
-    private static final int CHECK_THRESHOD = 64;
 
     /**
      * Convert Map to Object
@@ -52,11 +48,6 @@ public final class LangCodec extends Codec {
      */
     @Converter(distance = 1 << 24)
     public Map toMap(Object obj) {
-        // check loop references
-        CodecContext state = CodecContext.get();
-        if (state.depth() > CHECK_THRESHOD && !state.record(obj)) {
-            throw new CircleReferenceException();
-        }
         return BeanMap.create(obj);
     }
 

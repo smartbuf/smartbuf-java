@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sisyphsu.canoe.Canoe;
 import com.github.sisyphsu.canoe.CanoePacket;
 import com.github.sisyphsu.canoe.CanoeStream;
-import com.github.sisyphsu.canoe.convertor.CodecContext;
 import com.github.sisyphsu.canoe.node.BeanNodeCodec;
 import com.github.sisyphsu.canoe.node.Node;
 import org.openjdk.jmh.annotations.*;
@@ -16,10 +15,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Benchmark            Mode  Cnt     Score    Error  Units
- * PBenchmark.json      avgt    6   770.976 ± 87.242  ns/op
- * PBenchmark.packet    avgt    6  1424.902 ± 30.773  ns/op
- * PBenchmark.protobuf  avgt    6   207.731 ±  2.853  ns/op
- * PBenchmark.stream    avgt    6   742.396 ± 15.128  ns/op
+ * PBenchmark.json      avgt    6   727.796 ± 63.093  ns/op
+ * PBenchmark.packet    avgt    6  1392.294 ± 27.676  ns/op
+ * PBenchmark.protobuf  avgt    6   211.894 ± 13.259  ns/op
+ * PBenchmark.stream    avgt    6   701.970 ± 10.048  ns/op
  * <p>
  * Need more works to do to improve performace~
  * <p>
