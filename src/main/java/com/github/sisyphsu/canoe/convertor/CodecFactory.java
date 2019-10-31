@@ -150,7 +150,7 @@ public final class CodecFactory {
      * @return ConverterPipeline, could be null
      */
     public ConverterPipeline getPipeline(Class srcClass, Class tgtClass) {
-        Long key = ((long) srcClass.hashCode()) << 32 | tgtClass.hashCode(); // this is faster, but would go wrong???
+        Long key = ((long) srcClass.hashCode()) << 32 | tgtClass.hashCode(); // TODO this is faster, but would go wrong???
         ConverterPipeline pipeline = pipelineMap.get(key);
         if (pipeline == null) {
             converterMap.flushCastConverter(srcClass);

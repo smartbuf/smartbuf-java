@@ -5,19 +5,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sisyphsu.canoe.Canoe;
 import com.github.sisyphsu.canoe.CanoePacket;
 import com.github.sisyphsu.canoe.CanoeStream;
+import com.github.sisyphsu.canoe.convertor.CodecContext;
 import com.github.sisyphsu.canoe.node.BeanNodeCodec;
 import com.github.sisyphsu.canoe.node.Node;
 import org.openjdk.jmh.annotations.*;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Benchmark            Mode  Cnt     Score    Error  Units
- * PBenchmark.json      avgt    6   778.082 ± 24.979  ns/op
- * PBenchmark.packet    avgt    6  1422.418 ± 14.461  ns/op
- * PBenchmark.protobuf  avgt    6   203.624 ±  2.301  ns/op
- * PBenchmark.stream    avgt    6   763.398 ± 21.665  ns/op
+ * PBenchmark.json      avgt    6   797.952 ± 22.770  ns/op
+ * PBenchmark.packet    avgt    6  1430.961 ± 52.840  ns/op
+ * PBenchmark.protobuf  avgt    6   206.669 ± 10.114  ns/op
+ * PBenchmark.stream    avgt    6   745.434 ± 13.311  ns/op
  * <p>
  * Need more works to do to improve performace~
  * <p>
@@ -33,6 +35,8 @@ import java.util.concurrent.TimeUnit;
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 public class PBenchmark {
+
+    static final Date date = new Date();
 
     private static final BeanNodeCodec beanNodeCodec = new BeanNodeCodec();
     private static final ObjectMapper  OBJECT_MAPPER = new ObjectMapper();
@@ -68,16 +72,20 @@ public class PBenchmark {
     public void toNode() {
 //        USER.toModel(); // 27ns
 
-        Canoe.CODEC.getPipeline(UserModel.class, Node.class); // 11ns -> 5ns
+//        Canoe.CODEC.getPipeline(UserModel.class, Node.class); // 11ns -> 5ns
 
         // 441ns, CodecContext cost 20ns
-        // 178ns, 48ns if not convert value, 75ns if no Date
+        // 123ns, 48ns if not convert value, 75ns if no Date
         // [date -> node] cost 100ns???
 //        USER.setCreateTime(null);
 //        beanNodeCodec.toNode(USER);
 //        CodecContext.reset();
 
-//         Canoe.CODEC.convert(date, Node.class); // 60ns
+        // 123ns
+//        beanNodeCodec.toNode(USER);
+//        CodecContext.reset();
+
+//        Canoe.CODEC.convert(date, Node.class); // 60ns -> 17ns
 
         // 380ns, Convert all fields into Node
 //        BeanHelper helper = BeanHelper.valueOf(USER.getClass());
@@ -90,8 +98,11 @@ public class PBenchmark {
 
         // 263ns = 27ns(toModel) + 11ns(getPipeline) + 178ns(BeanNodeCodec.toNode)
         // Pipeline.convert cost 50ns ???
-        // use ASM optimize ConverterPipeline, 263ns -> 188ns
-//        Canoe.CODEC.convert(USER.toModel(), Node.class);
+        // use ASM optimize ConverterPipeline, 263ns -> 169ns
+        Canoe.CODEC.convert(USER.toModel(), Node.class);
+
+        // 169ns = toModel[27ns] + beanNodeCodec#toNode[123ns] + getPipeline[5ns] + [14ns]
+        // CodecContext/ThreadLocal may cost 20~30ns
     }
 
 }
