@@ -43,9 +43,9 @@ public class IOFullTest {
         for (int i = 0; i < 10; i++) {
             msg.receivers.add(new MReceiver());
         }
-        Node node = codec.convert(msg, Node.class);
+        Node node = CodecFactory.Instance.convert(msg, Node.class);
         Object obj = transIO(node);
-        MMessage recvMsg = codec.convert(obj, MMessage.class);
+        MMessage recvMsg = CodecFactory.Instance.convert(obj, MMessage.class);
         assert msg.equals(recvMsg);
 
         MessageOuterClass.Message msg2 = convert(msg);

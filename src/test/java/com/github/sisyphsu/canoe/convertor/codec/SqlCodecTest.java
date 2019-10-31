@@ -28,12 +28,12 @@ public class SqlCodecTest {
         byte[] bytes = new byte[]{1, 2, 3, 4, 5, 6, 7, 8};
         Blob blob = codec.toBlob(bytes);
         InputStream is = codec.toInputStream(blob);
-        assert Arrays.equals(codec.convert(is, byte[].class), bytes);
+        assert Arrays.equals(CodecFactory.Instance.convert(is, byte[].class), bytes);
 
         String str = "hello world";
         Clob clob = codec.toClob(str);
         Reader reader = codec.toReader(clob);
-        assert str.equals(codec.convert(reader, String.class));
+        assert str.equals(CodecFactory.Instance.convert(reader, String.class));
 
         Date date = new Date(System.currentTimeMillis());
         Date date2 = codec.toDate(codec.toLong(date));

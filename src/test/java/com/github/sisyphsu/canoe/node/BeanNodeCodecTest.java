@@ -59,7 +59,7 @@ public class BeanNodeCodecTest {
 
         assert node instanceof ObjectNode;
 
-        Person person1 = codec.convert(node, Person.class);
+        Person person1 = CodecFactory.Instance.convert(node, Person.class);
 
         assert person.equals(person1);
     }
@@ -73,10 +73,10 @@ public class BeanNodeCodecTest {
         group.persons.add(new Person());
         group.persons.add(new Person());
 
-        Node node = codec.convert(group, Node.class);
+        Node node = CodecFactory.Instance.convert(group, Node.class);
         assert node instanceof ObjectNode;
 
-        Group group1 = codec.convert(node, Group.class);
+        Group group1 = CodecFactory.Instance.convert(node, Group.class);
         assert group.equals(group1);
     }
 
@@ -85,7 +85,7 @@ public class BeanNodeCodecTest {
         List<Object> list = new ArrayList<>();
         list.add(new Group());
         list.add(new Person());
-        Node node = codec.convert(list, Node.class);
+        Node node = CodecFactory.Instance.convert(list, Node.class);
         assert node instanceof ArrayNode;
         assert ((ArrayNode) node).size() == 2;
     }

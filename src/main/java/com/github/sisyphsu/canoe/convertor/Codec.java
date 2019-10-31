@@ -14,36 +14,35 @@ public abstract class Codec {
 
     private CodecFactory factory;
 
+    /**
+     * Setup {@link CodecFactory} which owns this codec instance.
+     *
+     * @param factory The CodecFactory owns this
+     */
     public void setFactory(CodecFactory factory) {
         this.factory = factory;
     }
 
     /**
-     * Factory's doConvert convience.
-     *
-     * @param src     Source Data
-     * @param tgtType Target Type
-     * @return Target Instance
+     * Proxy of {@link CodecFactory#toXType(Type)}
      */
-    public final Object convert(Object src, XType tgtType) {
+    protected final XType<?> toXType(Type type) {
+        return factory.toXType(type);
+    }
+
+    /**
+     * Proxy of {@link CodecFactory#doConvert(Object, XType)}
+     */
+    protected final Object convert(Object src, XType tgtType) {
         return factory.doConvert(src, tgtType);
     }
 
     /**
-     * Factory's doConvert convinence.
-     *
-     * @param src source data
-     * @param clz target class
-     * @param <T> Target template type
-     * @return target instance
+     * Proxy of {@link CodecFactory#doConvert(Object, XType)}
      */
     @SuppressWarnings("unchecked")
-    public final <T> T convert(Object src, Class<T> clz) {
+    protected final <T> T convert(Object src, Class<T> clz) {
         return (T) factory.doConvert(src, toXType(clz));
-    }
-
-    public final XType<?> toXType(Type type) {
-        return factory.toXType(type);
     }
 
 }
