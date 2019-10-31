@@ -16,10 +16,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Benchmark            Mode  Cnt     Score    Error  Units
- * PBenchmark.json      avgt    6   797.952 ± 22.770  ns/op
- * PBenchmark.packet    avgt    6  1430.961 ± 52.840  ns/op
- * PBenchmark.protobuf  avgt    6   206.669 ± 10.114  ns/op
- * PBenchmark.stream    avgt    6   745.434 ± 13.311  ns/op
+ * PBenchmark.json      avgt    6   770.976 ± 87.242  ns/op
+ * PBenchmark.packet    avgt    6  1424.902 ± 30.773  ns/op
+ * PBenchmark.protobuf  avgt    6   207.731 ±  2.853  ns/op
+ * PBenchmark.stream    avgt    6   742.396 ± 15.128  ns/op
  * <p>
  * Need more works to do to improve performace~
  * <p>
@@ -68,7 +68,7 @@ public class PBenchmark {
         USER.toPB().toByteArray();
     }
 
-    @Benchmark
+    //    @Benchmark
     public void toNode() {
 //        USER.toModel(); // 27ns
 
