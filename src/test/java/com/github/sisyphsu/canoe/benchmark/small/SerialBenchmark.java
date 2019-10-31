@@ -14,11 +14,11 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Benchmark            Mode  Cnt     Score    Error  Units
- * PBenchmark.json      avgt    6   727.796 ± 63.093  ns/op
- * PBenchmark.packet    avgt    6  1392.294 ± 27.676  ns/op
- * PBenchmark.protobuf  avgt    6   211.894 ± 13.259  ns/op
- * PBenchmark.stream    avgt    6   701.970 ± 10.048  ns/op
+ * Benchmark                 Mode  Cnt     Score    Error  Units
+ * SerialBenchmark.json      avgt    6   722.865 ± 59.575  ns/op
+ * SerialBenchmark.packet    avgt    6  1275.657 ± 43.733  ns/op
+ * SerialBenchmark.protobuf  avgt    6   198.970 ±  2.297  ns/op
+ * SerialBenchmark.stream    avgt    6   621.402 ± 19.251  ns/op
  * <p>
  * Need more works to do to improve performace~
  * <p>
@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 @Measurement(iterations = 3, time = 3)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
-public class PBenchmark {
+public class SerialBenchmark {
 
     static final Date date = new Date();
 
@@ -67,7 +67,7 @@ public class PBenchmark {
         USER.toPB().toByteArray();
     }
 
-    @Benchmark
+//    @Benchmark
     public void toNode() {
 //        USER.toModel(); // 27ns
 
