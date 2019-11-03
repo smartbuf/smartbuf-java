@@ -4,9 +4,8 @@ import com.github.sisyphsu.canoe.exception.InvalidReadException;
 import com.github.sisyphsu.canoe.exception.InvalidVersionException;
 import com.github.sisyphsu.canoe.exception.MismatchModeException;
 import com.github.sisyphsu.canoe.node.Node;
-import com.github.sisyphsu.canoe.node.NodeType;
 import com.github.sisyphsu.canoe.node.SliceType;
-import com.github.sisyphsu.canoe.node.std.*;
+import com.github.sisyphsu.canoe.node.standard.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
@@ -208,10 +207,6 @@ public class IOTest {
         Output output = new Output(null, true);
         try {
             output.doWrite(new Node() {
-                @Override
-                public NodeType type() {
-                    return NodeType.UNKNOWN;
-                }
             }, null);
             assert false;
         } catch (Exception e) {

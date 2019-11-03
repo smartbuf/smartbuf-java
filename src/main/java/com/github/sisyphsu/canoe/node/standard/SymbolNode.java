@@ -1,7 +1,6 @@
-package com.github.sisyphsu.canoe.node.std;
+package com.github.sisyphsu.canoe.node.standard;
 
 import com.github.sisyphsu.canoe.node.Node;
-import com.github.sisyphsu.canoe.node.NodeType;
 
 /**
  * SymbolNode represents constant String or Enum etc.
@@ -26,8 +25,8 @@ public final class SymbolNode extends Node {
     }
 
     @Override
-    public NodeType type() {
-        return NodeType.SYMBOL;
+    public Object value() {
+        return data;
     }
 
     @Override

@@ -1,7 +1,6 @@
-package com.github.sisyphsu.canoe.node.std;
+package com.github.sisyphsu.canoe.node.standard;
 
 import com.github.sisyphsu.canoe.node.Node;
-import com.github.sisyphsu.canoe.node.NodeType;
 
 /**
  * ObjectNode represents JavaBean or Map.
@@ -23,11 +22,6 @@ public final class ObjectNode extends Node {
         this.nodes = nodes;
     }
 
-    @Override
-    public NodeType type() {
-        return NodeType.OBJECT;
-    }
-
     public String[] keys() {
         return keys;
     }
@@ -40,4 +34,8 @@ public final class ObjectNode extends Node {
         return stable;
     }
 
+    @Override
+    public Object value() {
+        throw new UnsupportedOperationException();
+    }
 }

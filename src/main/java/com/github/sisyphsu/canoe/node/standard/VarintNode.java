@@ -1,6 +1,5 @@
-package com.github.sisyphsu.canoe.node.std;
+package com.github.sisyphsu.canoe.node.standard;
 
-import com.github.sisyphsu.canoe.node.NodeType;
 import com.github.sisyphsu.canoe.node.Node;
 import com.github.sisyphsu.canoe.utils.NumberUtils;
 
@@ -63,8 +62,8 @@ public final class VarintNode extends Node {
     }
 
     @Override
-    public NodeType type() {
-        return NodeType.VARINT;
+    public Object value() {
+        return value;
     }
 
     @Override

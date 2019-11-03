@@ -1,7 +1,6 @@
-package com.github.sisyphsu.canoe.node.std;
+package com.github.sisyphsu.canoe.node.standard;
 
 import com.github.sisyphsu.canoe.node.Node;
-import com.github.sisyphsu.canoe.node.NodeType;
 
 /**
  * BooleanNode represents boolean and Boolean.
@@ -26,8 +25,8 @@ public final class BooleanNode extends Node {
     }
 
     @Override
-    public NodeType type() {
-        return NodeType.BOOL;
+    public Object value() {
+        return this == TRUE;
     }
 
     @Override

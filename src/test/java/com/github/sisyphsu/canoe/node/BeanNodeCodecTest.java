@@ -1,8 +1,8 @@
 package com.github.sisyphsu.canoe.node;
 
 import com.github.sisyphsu.canoe.convertor.CodecFactory;
-import com.github.sisyphsu.canoe.node.std.ArrayNode;
-import com.github.sisyphsu.canoe.node.std.ObjectNode;
+import com.github.sisyphsu.canoe.node.standard.ArrayNode;
+import com.github.sisyphsu.canoe.node.standard.ObjectNode;
 import lombok.Data;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;

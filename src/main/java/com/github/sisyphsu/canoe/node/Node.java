@@ -1,5 +1,7 @@
 package com.github.sisyphsu.canoe.node;
 
+import java.util.List;
+
 /**
  * Base class of Node, and provider some common features.
  *
@@ -8,12 +10,7 @@ package com.github.sisyphsu.canoe.node;
  */
 public abstract class Node {
 
-    /**
-     * Get Node's dataType
-     *
-     * @return DataType
-     */
-    public abstract NodeType type();
+    public abstract Object value();
 
     public boolean booleanValue() {
         throw new UnsupportedOperationException();
@@ -32,6 +29,38 @@ public abstract class Node {
     }
 
     public String stringValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    public List<?> arrayValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean[] booleanArrayValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    public byte[] byteArrayValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    public short[] shortArrayValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    public int[] intArrayValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    public long[] longArrayValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    public float[] floatArrayValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    public double[] doubleArrayValue() {
         throw new UnsupportedOperationException();
     }
 

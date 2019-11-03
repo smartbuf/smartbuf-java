@@ -1,7 +1,7 @@
 package com.github.sisyphsu.canoe.transport;
 
-import com.github.sisyphsu.canoe.node.std.BooleanNode;
-import com.github.sisyphsu.canoe.node.std.SymbolNode;
+import com.github.sisyphsu.canoe.node.standard.BooleanNode;
+import com.github.sisyphsu.canoe.node.standard.SymbolNode;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.RepeatedTest;

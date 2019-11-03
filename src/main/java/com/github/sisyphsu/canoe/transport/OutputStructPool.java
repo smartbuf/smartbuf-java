@@ -1,11 +1,8 @@
 package com.github.sisyphsu.canoe.transport;
 
-import com.github.sisyphsu.canoe.utils.ArrayUtils;
 import com.github.sisyphsu.canoe.utils.TimeUtils;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * StructPool represents an area holds struct for sharing, which support temporary and context using.
@@ -17,160 +14,153 @@ import java.util.Map;
  */
 public final class OutputStructPool {
 
-    final Array<Struct>  tmpStructs     = new Array<>();
-    final Array<Struct>  cxtStructAdded = new Array<>();
-    final Array<Integer> cxtStructExpired;
+    private final int   cxtStructLimit;
+    private final Names key = new Names();
 
-    private final int                 cxtLimit;
-    private final IDAllocator         cxtIdAlloc = new IDAllocator();
-    private final Array<Struct>       cxtStructs = new Array<>();
-    private final Map<Struct, Struct> index      = new HashMap<>();
+    final Array<String>        tmpNames     = new Array<>();
+    final Map<String, Integer> tmpNameIndex = new HashMap<>();
 
-    private final Struct reuseKey = new Struct(false, 0, 0, null);
+    final Array<Struct>      tmpStructs     = new Array<>();
+    final Map<Names, Struct> tmpStructIndex = new HashMap<>();
+
+    final IDAllocator       cxtIdAlloc     = new IDAllocator();
+    final Array<Name>       cxtNames       = new Array<>();
+    final Array<Name>       cxtNameAdded   = new Array<>();
+    final Array<Integer>    cxtNameExpired = new Array<>();
+    final Map<String, Name> cxtNameIndex   = new HashMap<>();
+
+    final IDAllocator        cxtStructIdAlloc = new IDAllocator();
+    final Array<Struct>      cxtStructs       = new Array<>();
+    final Array<Struct>      cxtStructAdded   = new Array<>();
+    final Array<Struct>      cxtStructExpired = new Array<>();
+    final Map<Names, Struct> cxtStructIndex   = new HashMap<>();
 
     /**
      * Initialize StructPool with the specified limit of context-struct
      *
      * @param limit Max number of context-struct
      */
-    public OutputStructPool(Schema schema, int limit) {
-        this.cxtLimit = limit;
-        this.cxtStructExpired = schema.cxtStructExpired;
+    public OutputStructPool(int limit) {
+        this.cxtStructLimit = limit;
+    }
+
+    /**
+     * Register an struct for temporary using
+     *
+     * @param names Names which represents an temporary struct
+     * @return Struct's ID
+     */
+    public int getTmpStructID(String[] names) {
+        this.key.names = names;
+        Struct struct = tmpStructIndex.get(key);
+        if (struct == null) {
+            int[] nameIds = new int[names.length];
+            int off = 0;
+            for (String name : names) {
+                Integer nameId = tmpNameIndex.get(name);
+                if (nameId == null) {
+                    nameId = tmpNames.add(name);
+                    tmpNameIndex.put(name, nameId);
+                }
+                nameIds[off++] = nameId;
+            }
+            struct = new Struct(names, nameIds);
+            struct.index = tmpStructs.add(struct);
+            tmpStructIndex.put(key, struct);
+        }
+        return struct.index;
     }
 
     /**
      * Register the specified struct into pool by its field-names.
      *
-     * @param temporary It's temporary or not
-     * @param names     FieldNames which represents an struct
+     * @param names FieldNames which represents an struct
+     * @return Struct ID
      */
-    public void register(boolean temporary, String[] names) {
-        if (names == null) {
-            throw new NullPointerException();
-        }
-        if (names.length == 0) {
-            return;
-        }
-        int now = (int) TimeUtils.fastUpTime();
-        Struct struct = index.get(reuseKey.wrap(names));
-        if (struct != null) {
-            if (temporary || !struct.temporary) {
-                struct.lastTime = now;
-                return;
-            }
-            Struct lastStruct = tmpStructs.popLast();
-            if (lastStruct != struct) {
-                lastStruct.offset = struct.offset;
-                tmpStructs.put(struct.offset, lastStruct);
-            }
-            this.index.remove(struct);
-        }
-        if (temporary) {
-            struct = new Struct(true, tmpStructs.size(), now, names);
-            this.tmpStructs.add(struct);
-        } else {
-            int offset = cxtIdAlloc.acquire();
-            struct = new Struct(false, offset, now, names);
-            this.cxtStructs.put(offset, struct);
-            this.cxtStructAdded.add(struct);
-        }
-        this.index.put(struct, struct);
-    }
-
-    /**
-     * Find unique id of the specified struct by its field-names
-     *
-     * @param fields field-names which represents an struct
-     * @return Its unique id
-     */
-    public int findStructID(String[] fields) {
-        if (fields.length == 0) {
-            return 0;
-        }
-        Struct struct = index.get(reuseKey.wrap(fields));
+    public int getCxtStructID(String[] names) {
+        this.key.names = names;
+        Struct struct = cxtStructIndex.get(key);
         if (struct == null) {
-            throw new IllegalArgumentException("struct not exists: " + Arrays.toString(fields));
+            int[] nameIds = new int[names.length];
+            int off = 0;
+            for (String str : names) {
+                Name name = cxtNameIndex.get(str);
+                if (name == null) {
+                    int index = cxtIdAlloc.acquire();
+                    name = new Name(str, index);
+                    this.cxtNames.put(index, name);
+                    this.cxtNameAdded.add(name); // record for outter using
+                }
+                nameIds[off++] = name.index;
+            }
+            struct = new Struct(names, nameIds);
+            struct.index = cxtStructIdAlloc.acquire();
+            this.cxtStructs.put(struct.index, struct);
+            this.cxtStructAdded.add(struct);
+            this.cxtStructIndex.put(key, struct);
         }
-        if (struct.temporary) {
-            return 1 + struct.offset;
-        }
-        return 1 + tmpStructs.size() + struct.offset;
-    }
-
-    /**
-     * Fetch total number of struct in temporary and context area.
-     *
-     * @return Total number
-     */
-    public int size() {
-        return index.size();
+        struct.lastTime = (int) TimeUtils.fastUpTime();
+        return struct.index;
     }
 
     /**
      * Reset this struct pool, and execute struct-expire automatically
      */
     public void reset() {
-        for (int i = 0, len = tmpStructs.size(); i < len; i++) {
-            index.remove(tmpStructs.get(i));
-        }
+        this.tmpNames.clear();
+        this.tmpNameIndex.clear();
+        this.cxtNameAdded.clear();
+        this.cxtNameExpired.clear();
+
         this.tmpStructs.clear();
+        this.tmpStructIndex.clear();
         this.cxtStructAdded.clear();
+        this.cxtStructExpired.clear();
 
         // execute automatically expire for context-struct
-        int expireCount = index.size() - cxtLimit;
+        int expireCount = cxtStructIndex.size() - cxtStructLimit;
         if (expireCount <= 0) {
             return;
         }
-        int heapStatus = 0; // 0 means init, 1 means stable, -1 means not-stable.
-        int heapOffset = 0;
-        long[] heap = new long[expireCount];
-        for (int i = 0, size = cxtStructs.cap(); i < size; i++) {
-            if (cxtStructs.get(i) == null) {
-                continue;
+        List<Struct> structs = new ArrayList<>(cxtStructIndex.values());
+        structs.sort(Comparator.comparingInt(s -> s.lastTime));
+        for (int i = 0, len = Math.min(expireCount, structs.size()); i < len; i++) {
+            Struct expiredStruct = structs.get(i);
+            cxtStructExpired.add(expiredStruct);
+            cxtStructIndex.remove(expiredStruct);
+            cxtStructIdAlloc.release(expiredStruct.index);
+            cxtStructs.put(expiredStruct.index, null);
+            // synchronize cxtNames
+            for (int nameId : expiredStruct.nameIds) {
+                Name meta = cxtNames.get(nameId);
+                cxtNames.put(meta.index, null);
+                cxtIdAlloc.release(meta.index);
+                cxtNameExpired.add(meta.index);
+                cxtNameIndex.remove(meta.name);
             }
-            int itemTime = cxtStructs.get(i).lastTime;
-            int itemOffset = cxtStructs.get(i).offset;
-            if (heapOffset < expireCount) {
-                heap[heapOffset++] = ((long) itemTime) << 32 | (long) itemOffset;
-                continue;
-            }
-            if (heapStatus == 0) {
-                ArrayUtils.descFastSort(heap, 0, expireCount - 1); // sort by activeTime, heap[0] has biggest activeTime
-                heapStatus = 1;
-            } else if (heapStatus == -1) {
-                ArrayUtils.maxHeapAdjust(heap, 0, expireCount); // make sure heap[0] has biggest activeTime
-                heapStatus = 1;
-            }
-            if (itemTime > (int) (heap[0] >>> 32)) {
-                continue; // item is newer than all items in heap
-            }
-            heap[0] = ((long) itemTime) << 32 | (long) itemOffset;
-            heapStatus = -1;
-        }
-        for (long l : heap) {
-            Struct expiredStruct = cxtStructs.get((int) (l));
-            index.remove(expiredStruct);
-            cxtIdAlloc.release(expiredStruct.offset);
-            cxtStructs.put(expiredStruct.offset, null);
-            this.cxtStructExpired.add(expiredStruct.offset);
         }
     }
 
     /**
-     * Struct model for inner usage
+     * field-name's metadata
      */
-    static final class Struct {
-        boolean  temporary;
-        int      offset;
-        int      lastTime;
-        String[] names;
+    static class Name {
+        String name;
+        int    index;
+        int    refCount;
 
-        public Struct(boolean temporary, int offset, int lastTime, String[] names) {
-            this.temporary = temporary;
-            this.offset = offset;
-            this.lastTime = lastTime;
-            this.names = names;
+        public Name(String name, int index) {
+            this.name = name;
+            this.index = index;
+            this.refCount = 1;
         }
+    }
+
+    /**
+     * used for String[] mapping
+     */
+    static class Names {
+        String[] names;
 
         @Override
         public int hashCode() {
@@ -179,16 +169,21 @@ public final class OutputStructPool {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj instanceof Struct) {
-                return Arrays.equals(names, ((Struct) obj).names);
-            }
-            return false;
-        }
-
-        Struct wrap(String[] names) {
-            this.names = names;
-            return this;
+            return obj instanceof Struct && Arrays.equals(names, ((Struct) obj).names);
         }
     }
 
+    /**
+     * Struct model for inner usage
+     */
+    static class Struct extends Names {
+        int   index;
+        int   lastTime;
+        int[] nameIds;
+
+        public Struct(String[] names, int[] nameIds) {
+            this.names = names;
+            this.nameIds = nameIds;
+        }
+    }
 }

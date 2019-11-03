@@ -1,7 +1,7 @@
 package com.github.sisyphsu.canoe.node;
 
 import com.github.sisyphsu.canoe.convertor.CodecFactory;
-import com.github.sisyphsu.canoe.node.std.*;
+import com.github.sisyphsu.canoe.node.standard.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -314,10 +314,6 @@ public class ArrayNodeCodecTest {
     @Test
     public void testErrorNode() {
         List<Node> nodes = Collections.singletonList(new Node() {
-            @Override
-            public NodeType type() {
-                return NodeType.ARRAY;
-            }
         });
         try {
             codec.toNode(nodes);

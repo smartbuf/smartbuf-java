@@ -1,6 +1,6 @@
 package com.github.sisyphsu.canoe.transport;
 
-import com.github.sisyphsu.canoe.node.std.ObjectNode;
+import com.github.sisyphsu.canoe.node.standard.ObjectNode;
 
 import static com.github.sisyphsu.canoe.transport.Const.*;
 

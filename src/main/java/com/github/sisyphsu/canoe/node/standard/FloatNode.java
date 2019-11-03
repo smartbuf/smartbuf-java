@@ -1,7 +1,6 @@
-package com.github.sisyphsu.canoe.node.std;
+package com.github.sisyphsu.canoe.node.standard;
 
 import com.github.sisyphsu.canoe.node.Node;
-import com.github.sisyphsu.canoe.node.NodeType;
 
 /**
  * FloatNode represents float and Float.
@@ -31,13 +30,13 @@ public final class FloatNode extends Node {
     }
 
     @Override
-    public float floatValue() {
+    public Object value() {
         return value;
     }
 
     @Override
-    public NodeType type() {
-        return NodeType.FLOAT;
+    public float floatValue() {
+        return value;
     }
 
 }

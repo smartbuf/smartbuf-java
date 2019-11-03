@@ -1,8 +1,7 @@
-package com.github.sisyphsu.canoe.node.std;
+package com.github.sisyphsu.canoe.node.standard;
 
-import com.github.sisyphsu.canoe.node.NodeType;
-import com.github.sisyphsu.canoe.node.SliceType;
 import com.github.sisyphsu.canoe.node.Node;
+import com.github.sisyphsu.canoe.node.SliceType;
 
 import java.util.List;
 
@@ -13,6 +12,7 @@ import java.util.List;
  * @since 2019-06-05 11:39:47
  */
 @SuppressWarnings("unchecked")
+@Deprecated
 public final class ArrayNode extends Node {
 
     public static final ArrayNode EMPTY = new ArrayNode();
@@ -107,17 +107,17 @@ public final class ArrayNode extends Node {
         return this;
     }
 
-    @Override
-    public NodeType type() {
-        return NodeType.ARRAY;
-    }
-
     public int size() {
         return size;
     }
 
     public Slice[] slices() {
         return slices;
+    }
+
+    @Override
+    public Object value() {
+        return null;
     }
 
     public static class Slice {

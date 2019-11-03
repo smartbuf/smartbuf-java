@@ -11,10 +11,6 @@ public class NodeTest {
     @Test
     public void testError() {
         Node node = new Node() {
-            @Override
-            public NodeType type() {
-                return null;
-            }
         };
 
         try {

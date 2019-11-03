@@ -1,10 +1,8 @@
 package com.github.sisyphsu.canoe.transport;
 
-import com.github.sisyphsu.canoe.utils.ArrayUtils;
 import com.github.sisyphsu.canoe.utils.TimeUtils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static com.github.sisyphsu.canoe.transport.Const.*;
 
@@ -18,252 +16,168 @@ import static com.github.sisyphsu.canoe.transport.Const.*;
  */
 public final class OutputDataPool {
 
-    private final Array<Float>  tmpFloats;
-    private final Array<Double> tmpDoubles;
-    private final Array<Long>   tmpVarints;
-    private final Array<String> tmpStrings;
+    private final int         symbolLimit;
+    private final IDAllocator symbolID = new IDAllocator();
 
-    private final Map<Object, Integer> dataIndex = new HashMap<>();
+    final Array<Float>         tmpFloats    = new Array<>();
+    final Map<Float, Integer>  tmpFloatMap  = new HashMap<>();
+    final Array<Double>        tmpDoubles   = new Array<>();
+    final Map<Double, Integer> tmpDoubleMap = new HashMap<>();
+    final Array<Long>          tmpVarints   = new Array<>();
+    final Map<Long, Integer>   tmpVarintMap = new HashMap<>();
+    final Array<String>        tmpStrings   = new Array<>();
+    final Map<String, Integer> tmpStringMap = new HashMap<>();
 
-    private final Array<String>  cxtSymbolAdded;
-    private final Array<Integer> cxtSymbolExpired;
-
-    private final int            symbolLimit;
-    private final IDAllocator    symbolID    = new IDAllocator();
-    private final Array<String>  symbols     = new Array<>();
-    private final Array<Integer> symbolTimes = new Array<>();
-
-    private final Map<String, Integer> symbolIndex = new HashMap<>();
+    final Array<Symbol>       symbols          = new Array<>();
+    final Array<Symbol>       cxtSymbolAdded   = new Array<>();
+    final Array<Symbol>       cxtSymbolExpired = new Array<>();
+    final Map<String, Symbol> symbolIndex      = new HashMap<>();
 
     /**
      * Initialize DataPool, outter need specify the max number of symbol-area
      *
-     * @param schema      Schema
      * @param symbolLimit Max number of symbols, only for context
      */
-    OutputDataPool(Schema schema, int symbolLimit) {
+    OutputDataPool(int symbolLimit) {
         this.symbolLimit = symbolLimit;
-        this.tmpFloats = schema.tmpFloats;
-        this.tmpDoubles = schema.tmpDoubles;
-        this.tmpVarints = schema.tmpVarints;
-        this.tmpStrings = schema.tmpStrings;
-        this.cxtSymbolAdded = schema.cxtSymbolAdded;
-        this.cxtSymbolExpired = schema.cxtSymbolExpired;
     }
 
     /**
      * Register the specified float data into float-area
      *
      * @param f Float data
+     * @return FloatID
      */
-    public void registerFloat(float f) {
+    public int registerFloat(float f) {
         if (f == 0) {
-            return;
+            return ID_ZERO_FLOAT;
         }
-        if (!dataIndex.containsKey(f)) {
-            dataIndex.put(f, tmpFloats.add(f));
+        Integer id = tmpFloatMap.get(f);
+        if (id == null) {
+            id = tmpFloats.add(f);
+            tmpFloatMap.put(f, id);
         }
+        return id;
     }
 
     /**
      * Register the specified double data into double-area
      *
      * @param d Double data
+     * @return Double ID
      */
-    public void registerDouble(double d) {
+    public int registerDouble(double d) {
         if (d == 0) {
-            return;
+            return ID_ZERO_DOUBLE;
         }
-        if (!dataIndex.containsKey(d)) {
-            dataIndex.put(d, tmpDoubles.add(d));
+        Integer id = tmpDoubleMap.get(d);
+        if (id == null) {
+            id = tmpDoubles.add(d);
+            tmpDoubleMap.put(d, id);
         }
+        return id;
     }
 
     /**
      * Register the specified varint data into varint-area, which means long
      *
      * @param l Varint data
+     * @return Varint ID
      */
-    public void registerVarint(long l) {
+    public int registerVarint(long l) {
         if (l == 0) {
-            return;
+            return ID_ZERO_VARINT;
         }
-        if (!dataIndex.containsKey(l)) {
-            dataIndex.put(l, tmpVarints.add(l));
+        Integer id = tmpVarintMap.get(l);
+        if (id == null) {
+            id = tmpVarints.add(l);
+            tmpVarintMap.put(l, id);
         }
+        return id;
     }
 
     /**
      * Register the specified string data into string-area
      *
      * @param str String data
+     * @return String ID
      */
-    public void registerString(String str) {
+    public int registerString(String str) {
         if (str == null) {
             throw new NullPointerException();
         }
         if (str.isEmpty()) {
-            return;
+            return ID_ZERO_STRING;
         }
-        if (!dataIndex.containsKey(str)) {
-            dataIndex.put(str, tmpStrings.add(str));
+        Integer id = tmpStringMap.get(str);
+        if (id == null) {
+            id = tmpStrings.add(str);
+            tmpStringMap.put(str, id);
         }
+        return id;
     }
 
     /**
      * Register the specified symbol into symbol-area, symbol is a sort of special strings.
      *
-     * @param symbol Symbol data
+     * @param str Symbol data
+     * @return Symbol ID
      */
-    public void registerSymbol(String symbol) {
-        if (symbol == null) {
+    public int registerSymbol(String str) {
+        if (str == null) {
             throw new NullPointerException();
         }
-        Integer offset = symbolIndex.get(symbol);
-        if (offset == null) {
-            offset = symbolID.acquire();
-            this.symbols.put(offset, symbol);
+        Symbol symbol = symbolIndex.get(str);
+        if (symbol == null) {
+            int index = symbolID.acquire();
+            symbol = new Symbol(str, index);
+            this.symbols.put(index, symbol);
             this.cxtSymbolAdded.add(symbol);
-            this.symbolIndex.put(symbol, offset);
+            this.symbolIndex.put(str, symbol);
         }
-        this.symbolTimes.put(offset, (int) TimeUtils.fastUpTime());
-    }
-
-    /**
-     * Find unique id of the specified float data
-     *
-     * @param f The specified float data
-     * @return Its unique ID
-     */
-    public int findFloatID(float f) {
-        if (f == 0) {
-            return ID_ZERO_FLOAT;
-        }
-        Integer offset = dataIndex.get(f);
-        if (offset == null) {
-            throw new IllegalArgumentException("float not exists: " + f);
-        }
-        return ID_PREFIX + offset;
-    }
-
-    /**
-     * Find unique id of the specified double data
-     *
-     * @param d The specified double data
-     * @return Its unique ID
-     */
-    public int findDoubleID(double d) {
-        if (d == 0) {
-            return ID_ZERO_DOUBLE;
-        }
-        Integer offset = dataIndex.get(d);
-        if (offset == null) {
-            throw new IllegalArgumentException("double not exists: " + d);
-        }
-        return ID_PREFIX + tmpFloats.size() + offset;
-    }
-
-    /**
-     * Find unique id of the specified long data
-     *
-     * @param l The specified long data
-     * @return Its unique ID
-     */
-    public int findVarintID(long l) {
-        if (l == 0) {
-            return ID_ZERO_VARINT;
-        }
-        Integer offset = dataIndex.get(l);
-        if (offset == null) {
-            throw new IllegalArgumentException("varint not exists: " + l);
-        }
-        return ID_PREFIX + tmpFloats.size() + tmpDoubles.size() + offset;
-    }
-
-    /**
-     * Find unique id of the specified string
-     *
-     * @param str The specified string
-     * @return Its unique ID
-     */
-    public int findStringID(String str) {
-        if (str.isEmpty()) {
-            return ID_ZERO_STRING;
-        }
-        Integer offset = dataIndex.get(str);
-        if (offset == null) {
-            throw new IllegalArgumentException("string not exists: " + str);
-        }
-        return ID_PREFIX + tmpFloats.size() + tmpDoubles.size() + tmpVarints.size() + offset;
-    }
-
-    /**
-     * Find unique id of the specified symbol
-     *
-     * @param symbol The specified symbol
-     * @return Its unique ID
-     */
-    public int findSymbolID(String symbol) {
-        Integer offset = symbolIndex.get(symbol);
-        if (offset == null) {
-            throw new IllegalArgumentException("symbol not exists: " + symbol);
-        }
-        return ID_PREFIX + dataIndex.size() + offset;
-    }
-
-    /**
-     * Fetch total number of struct in temporary and context area.
-     *
-     * @return Total number
-     */
-    public int size() {
-        return dataIndex.size() + symbolIndex.size();
+        symbol.lastTime = (int) TimeUtils.fastUpTime();
+        return symbol.index;
     }
 
     /**
      * Reset this data pool, execute context data's expiring automatically
      */
     public void reset() {
-        dataIndex.clear();
+        this.tmpFloats.clear();
+        this.tmpFloatMap.clear();
+        this.tmpDoubles.clear();
+        this.tmpDoubleMap.clear();
+        this.tmpVarints.clear();
+        this.tmpVarintMap.clear();
+        this.tmpStrings.clear();
+        this.tmpStringMap.clear();
+        this.cxtSymbolAdded.clear();
+        this.cxtSymbolExpired.clear();
 
+        // check and expire symbols if thay are too many
         int expireNum = symbolIndex.size() - symbolLimit;
         if (expireNum <= 0) {
             return;
         }
-        int heapStatus = 0; // 0 means init, 1 means stable, -1 means not-stable.
-        int heapOffset = 0;
-        long[] heap = new long[expireNum];
-        for (int i = 0, size = symbols.cap(); i < size; i++) {
-            if (symbols.get(i) == null) {
-                continue;
-            }
-            int itemTime = symbolTimes.get(i);
-            if (heapOffset < expireNum) {
-                heap[heapOffset++] = ((long) itemTime) << 32 | (long) i;
-                continue;
-            }
-            if (heapStatus == 0) {
-                ArrayUtils.descFastSort(heap, 0, expireNum - 1); // sort by activeTime, heap[0] has biggest activeTime
-                heapStatus = 1;
-            } else if (heapStatus == -1) {
-                ArrayUtils.maxHeapAdjust(heap, 0, expireNum); // make sure heap[0] has biggest activeTime
-                heapStatus = 1;
-            }
-            if (itemTime > (int) (heap[0] >>> 32)) {
-                continue; // item is newer than all items in heap
-            }
-            heap[0] = ((long) itemTime) << 32 | (long) i;
-            heapStatus = -1;
+        List<Symbol> symbols = new ArrayList<>(symbolIndex.values());
+        symbols.sort(Comparator.comparingInt(s -> s.lastTime));
+        for (int i = 0, len = Math.min(expireNum, symbols.size()); i < len; i++) {
+            Symbol expiredSymbol = symbols.get(i);
+            this.symbolIndex.remove(expiredSymbol.value);
+            this.symbolID.release(expiredSymbol.index);
+            this.symbols.put(expiredSymbol.index, null);
+            this.cxtSymbolExpired.add(expiredSymbol);
         }
+    }
 
-        for (long l : heap) {
-            int offset = (int) (l);
-            String expiredSymbol = symbols.get(offset);
-            this.symbolIndex.remove(expiredSymbol);
-            this.symbolID.release(offset);
-            this.symbols.put(offset, null);
+    static class Symbol {
+        String value;
+        int    index;
+        int    lastTime;
 
-            this.cxtSymbolExpired.add(offset);
+        public Symbol(String value, int index) {
+            this.value = value;
+            this.index = index;
         }
     }
 

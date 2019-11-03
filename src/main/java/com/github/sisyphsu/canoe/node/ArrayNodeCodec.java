@@ -2,7 +2,7 @@ package com.github.sisyphsu.canoe.node;
 
 import com.github.sisyphsu.canoe.convertor.Codec;
 import com.github.sisyphsu.canoe.convertor.Converter;
-import com.github.sisyphsu.canoe.node.std.*;
+import com.github.sisyphsu.canoe.node.standard.*;
 
 import java.util.Collection;
 import java.util.List;

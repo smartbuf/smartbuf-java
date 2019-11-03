@@ -1,7 +1,6 @@
-package com.github.sisyphsu.canoe.node.std;
+package com.github.sisyphsu.canoe.node.standard;
 
 import com.github.sisyphsu.canoe.node.Node;
-import com.github.sisyphsu.canoe.node.NodeType;
 
 /**
  * DoubleNode represents double and Double.
@@ -31,13 +30,13 @@ public final class DoubleNode extends Node {
     }
 
     @Override
-    public double doubleValue() {
+    public Object value() {
         return value;
     }
 
     @Override
-    public NodeType type() {
-        return NodeType.DOUBLE;
+    public double doubleValue() {
+        return value;
     }
 
 }

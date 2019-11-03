@@ -1,7 +1,6 @@
-package com.github.sisyphsu.canoe.node.std;
+package com.github.sisyphsu.canoe.node.standard;
 
 import com.github.sisyphsu.canoe.node.Node;
-import com.github.sisyphsu.canoe.node.NodeType;
 
 /**
  * StringNode represents String.
@@ -27,8 +26,8 @@ public final class StringNode extends Node {
     }
 
     @Override
-    public NodeType type() {
-        return NodeType.STRING;
+    public Object value() {
+        return value;
     }
 
     @Override
