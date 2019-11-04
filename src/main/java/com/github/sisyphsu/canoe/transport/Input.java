@@ -24,7 +24,7 @@ public final class Input {
 
     private long sequence;
 
-    private final boolean     stream;
+    private final boolean     enableStreamMode;
     private final InputBuffer buffer = new InputBuffer();
 
     private final InputDataPool dataPool = new InputDataPool();
@@ -36,7 +36,7 @@ public final class Input {
      * @param enableStreamMode If enable stream-mode, if not, enable packet-mode
      */
     public Input(boolean enableStreamMode) {
-        this.stream = enableStreamMode;
+        this.enableStreamMode = enableStreamMode;
     }
 
     /**
@@ -45,7 +45,9 @@ public final class Input {
      * @return The next object
      * @throws IOException If any io-error happens
      */
-    public Object read() throws IOException {
+    public Object read(byte[] data) throws IOException {
+        buffer.reset(data);
+
         byte head = buffer.readByte();
         boolean stream = (head & VER_STREAM) != 0;
         boolean hasMeta = (head & VER_HAS_DATA) != 0;
@@ -55,7 +57,7 @@ public final class Input {
         if ((head & 0b1111_0000) != VER) {
             throw new InvalidVersionException(head & 0b1111_0000);
         }
-        if (stream != this.stream) {
+        if (stream != this.enableStreamMode) {
             throw new MismatchModeException(stream);
         }
         // only stream-mode needs sequence
@@ -85,39 +87,38 @@ public final class Input {
     Object readObject() throws IOException {
         long head = buffer.readVarUint();
         switch ((int) head) {
-            case ID_NULL:
+            case DATA_ID_NULL:
                 return null;
-            case ID_TRUE:
+            case DATA_ID_TRUE:
                 return true;
-            case ID_FALSE:
+            case DATA_ID_FALSE:
                 return false;
-            case ID_ZERO_ARRAY:
+            case DATA_ID_ZERO_ARRAY:
                 return new Object[0];
         }
         byte flag = (byte) (head & 0b0000_0011);
-        int dataId = (int) (head >>> 3);
         switch (flag) {
-            case DATA_FLAG_VARINT:
-                return dataPool.getVarint(dataId);
-            case DATA_FLAG_FLOAT:
-                return dataPool.getFloat(dataId);
-            case DATA_FLAG_DOUBLE:
-                return dataPool.getDouble(dataId);
-            case DATA_FLAG_STRING:
-                return dataPool.getString(dataId);
-            case DATA_FLAG_SYMBOL:
-                return dataPool.getSymbol(dataId);
-            case DATA_FLAG_OBJECT:
-                String[] fields = metaPool.findStructByID(dataId);
+            case TYPE_VARINT:
+                return dataPool.getVarint((int) (head >>> 3));
+            case TYPE_FLOAT:
+                return dataPool.getFloat((int) (head >>> 3));
+            case TYPE_DOUBLE:
+                return dataPool.getDouble((int) (head >>> 3));
+            case TYPE_STRING:
+                return dataPool.getString((int) (head >>> 3));
+            case TYPE_SYMBOL:
+                return dataPool.getSymbol((int) (head >>> 3));
+            case TYPE_NARRAY:
+                return readNArray(head);
+            case TYPE_ARRAY:
+                return this.readArray(head >>> 3);
+            case TYPE_OBJECT:
+                String[] fields = metaPool.findStructByID((int) (head >>> 3));
                 Map<String, Object> map = new HashMap<>();
                 for (String field : fields) {
                     map.put(field, readObject());
                 }
                 return map;
-            case DATA_FLAG_NARRAY:
-                return readNArray(head);
-            case DATA_FLAG_ARRAY:
-                return this.readArray(head);
             default:
                 throw new InvalidReadException("run into invalid data flag: " + flag);
         }
@@ -130,19 +131,19 @@ public final class Input {
         byte type = (byte) (head & 0b0011_1111);
         int size = (int) (head >>> 6);
         switch (type) {
-            case NARRAY_BOOL:
+            case TYPE_NARRAY_BOOL:
                 return buffer.readBooleanArray(size);
-            case NARRAY_BYTE:
+            case TYPE_NARRAY_BYTE:
                 return buffer.readByteArray(size);
-            case NARRAY_SHORT:
+            case TYPE_NARRAY_SHORT:
                 return buffer.readShortArray(size);
-            case NARRAY_INT:
+            case TYPE_NARRAY_INT:
                 return buffer.readIntArray(size);
-            case NARRAY_LONG:
+            case TYPE_NARRAY_LONG:
                 return buffer.readLongArray(size);
-            case NARRAY_FLOAT:
+            case TYPE_NARRAY_FLOAT:
                 return buffer.readFloatArray(size);
-            case NARRAY_DOUBLE:
+            case TYPE_NARRAY_DOUBLE:
                 return buffer.readDoubleArray(size);
             default:
                 throw new IllegalArgumentException("unknown narray type");
@@ -153,7 +154,7 @@ public final class Input {
      * Read an array by the specified head info
      */
     Object readArray(long head) throws IOException {
-        List<Object[]> slices = new ArrayList<>();
+        List<Object[]> slices = new ArrayList<>(2);
         int totalSize = 0;
         while (true) {
             byte type = (byte) ((head >>> 1) & 0x0F);
@@ -161,61 +162,61 @@ public final class Input {
             totalSize += size;
             Object[] slice;
             switch (type) {
-                case SLICE_BOOL:
-                    slice = buffer.readBooleanSlice(size);
-                    break;
-                case SLICE_BYTE:
-                    slice = buffer.readByteSlice(size);
-                    break;
-                case SLICE_SHORT:
-                    slice = buffer.readShortSlice(size);
-                    break;
-                case SLICE_INT:
-                    slice = buffer.readIntSlice(size);
-                    break;
-                case SLICE_LONG:
-                    slice = buffer.readLongSlice(size);
-                    break;
-                case SLICE_FLOAT:
-                    slice = buffer.readFloatSlice(size);
-                    break;
-                case SLICE_DOUBLE:
-                    slice = buffer.readDoubleSlice(size);
-                    break;
-                case SLICE_NULL:
+                case TYPE_SLICE_NULL:
                     slice = new Object[size];
                     break;
-                case SLICE_SYMBOL:
+                case TYPE_SLICE_BOOL:
+                    slice = buffer.readBooleanSlice(size);
+                    break;
+                case TYPE_SLICE_BYTE:
+                    slice = buffer.readByteSlice(size);
+                    break;
+                case TYPE_SLICE_SHORT:
+                    slice = buffer.readShortSlice(size);
+                    break;
+                case TYPE_SLICE_INT:
+                    slice = buffer.readIntSlice(size);
+                    break;
+                case TYPE_SLICE_LONG:
+                    slice = buffer.readLongSlice(size);
+                    break;
+                case TYPE_SLICE_FLOAT:
+                    slice = buffer.readFloatSlice(size);
+                    break;
+                case TYPE_SLICE_DOUBLE:
+                    slice = buffer.readDoubleSlice(size);
+                    break;
+                case TYPE_SLICE_SYMBOL:
                     slice = new String[size];
                     for (int i = 0; i < size; i++) {
                         int dataId = (int) buffer.readVarUint();
-                        slice[i] = stream ? dataPool.getSymbol(dataId) : dataPool.getString(dataId);
+                        slice[i] = enableStreamMode ? dataPool.getSymbol(dataId) : dataPool.getString(dataId);
                     }
                     break;
-                case SLICE_STRING:
-                    slice = new String[size];
+                case TYPE_SLICE_STRING:
+                    slice = new Object[size];
                     for (int i = 0; i < size; i++) {
                         slice[i] = dataPool.getString((int) buffer.readVarUint());
                     }
                     break;
-//                case SLICE_ARRAY:
-//                    slice = new Object[size];
-//                    for (int i = 0; i < size; i++) {
-//                        slice[i] = readArray(buffer.readVarUint());
-//                    }
-//                    break;
-//                case SLICE_OBJECT:
-//                    slice = new Object[size];
-//                    int structId = (int) buffer.readVarUint();
-//                    String[] fieldNames = context.findStructByID(structId);
-//                    for (int i = 0; i < size; i++) {
-//                        Map<String, Object> obj = new HashMap<>();
-//                        for (String field : fieldNames) {
-//                            obj.put(field, readNode());
-//                        }
-//                        slice[i] = obj;
-//                    }
-//                    break;
+                case TYPE_SLICE_OBJECT:
+                    slice = new Object[size];
+                    int structId = (int) buffer.readVarUint();
+                    String[] fieldNames = metaPool.findStructByID(structId);
+                    for (int i = 0; i < size; i++) {
+                        Map<String, Object> obj = new HashMap<>();
+                        for (String field : fieldNames) {
+                            obj.put(field, readObject());
+                        }
+                        slice[i] = obj;
+                    }
+                    break;
+                case TYPE_SLICE_UNKNOWN:
+                    slice = new Object[size];
+                    for (int i = 0; i < size; i++) {
+                        slice[i] = readObject();
+                    }
+                    break;
                 default:
                     throw new InvalidReadException("run into invalid slice type: " + type);
             }
@@ -224,6 +225,9 @@ public final class Input {
                 break;
             }
             head = buffer.readVarUint();
+        }
+        if (slices.size() == 1) {
+            return slices.get(0);
         }
         Object[] result = new Object[totalSize];
         int off = 0;

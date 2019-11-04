@@ -90,55 +90,55 @@ public final class Output {
 
     void writeObject(Object obj) {
         if (obj == null) {
-            bodyBuf.writeVarUint(ID_NULL);
+            bodyBuf.writeVarUint(DATA_ID_NULL);
         } else if (obj instanceof Boolean) {
             boolean var = (Boolean) obj;
-            bodyBuf.writeVarUint(var ? ID_TRUE : ID_FALSE);
+            bodyBuf.writeVarUint(var ? DATA_ID_TRUE : DATA_ID_FALSE);
         } else if (obj instanceof Float) {
-            bodyBuf.writeVarUint((dataPool.registerFloat((Float) obj) << 3) | DATA_FLAG_FLOAT);
+            bodyBuf.writeVarUint((dataPool.registerFloat((Float) obj) << 3) | TYPE_FLOAT);
         } else if (obj instanceof Double) {
-            bodyBuf.writeVarUint((dataPool.registerDouble((Double) obj) << 3) | DATA_FLAG_DOUBLE);
+            bodyBuf.writeVarUint((dataPool.registerDouble((Double) obj) << 3) | TYPE_DOUBLE);
         } else if (obj instanceof Long || obj instanceof Integer || obj instanceof Short || obj instanceof Byte) {
-            bodyBuf.writeVarUint((dataPool.registerVarint(((Number) obj).longValue()) << 3) | DATA_FLAG_VARINT);
+            bodyBuf.writeVarUint((dataPool.registerVarint(((Number) obj).longValue()) << 3) | TYPE_VARINT);
         } else if (obj instanceof Character) {
-            bodyBuf.writeVarUint((dataPool.registerString(obj.toString()) << 3) | DATA_FLAG_STRING);
+            bodyBuf.writeVarUint((dataPool.registerString(obj.toString()) << 3) | TYPE_STRING);
         } else if (obj instanceof CharSequence) {
-            bodyBuf.writeVarUint((dataPool.registerString(obj.toString()) << 3) | DATA_FLAG_STRING);
+            bodyBuf.writeVarUint((dataPool.registerString(obj.toString()) << 3) | TYPE_STRING);
         } else if (obj instanceof Enum) {
             if (enableStreamMode) {
-                bodyBuf.writeVarUint((dataPool.registerSymbol(((Enum) obj).name()) << 3) | DATA_FLAG_SYMBOL);
+                bodyBuf.writeVarUint((dataPool.registerSymbol(((Enum) obj).name()) << 3) | TYPE_SYMBOL);
             } else {
-                bodyBuf.writeVarUint((dataPool.registerString(((Enum) obj).name()) << 3) | DATA_FLAG_STRING);
+                bodyBuf.writeVarUint((dataPool.registerString(((Enum) obj).name()) << 3) | TYPE_STRING);
             }
         } else if (obj instanceof char[]) {
-            bodyBuf.writeVarUint((dataPool.registerString(new String((char[]) obj)) << 3) | DATA_FLAG_STRING);
+            bodyBuf.writeVarUint((dataPool.registerString(new String((char[]) obj)) << 3) | TYPE_STRING);
         } else if (obj instanceof boolean[]) {
             boolean[] arr = (boolean[]) obj;
-            bodyBuf.writeVarUint(arr.length << 6 | NARRAY_BOOL);
+            bodyBuf.writeVarUint(arr.length << 6 | TYPE_NARRAY_BOOL);
             bodyBuf.writeBooleanArray(arr);
         } else if (obj instanceof byte[]) {
             byte[] arr = (byte[]) obj;
-            bodyBuf.writeVarUint(arr.length << 6 | NARRAY_BYTE);
+            bodyBuf.writeVarUint(arr.length << 6 | TYPE_NARRAY_BYTE);
             bodyBuf.writeByteArray(arr);
         } else if (obj instanceof short[]) {
             short[] arr = (short[]) obj;
-            bodyBuf.writeVarUint(arr.length << 6 | NARRAY_SHORT);
+            bodyBuf.writeVarUint(arr.length << 6 | TYPE_NARRAY_SHORT);
             bodyBuf.writeShortArray(arr);
         } else if (obj instanceof int[]) {
             int[] arr = (int[]) obj;
-            bodyBuf.writeVarUint(arr.length << 6 | NARRAY_INT);
+            bodyBuf.writeVarUint(arr.length << 6 | TYPE_NARRAY_INT);
             bodyBuf.writeIntArray(arr);
         } else if (obj instanceof long[]) {
             long[] arr = (long[]) obj;
-            bodyBuf.writeVarUint(arr.length << 6 | NARRAY_LONG);
+            bodyBuf.writeVarUint(arr.length << 6 | TYPE_NARRAY_LONG);
             bodyBuf.writeLongArray(arr);
         } else if (obj instanceof float[]) {
             float[] arr = (float[]) obj;
-            bodyBuf.writeVarUint(arr.length << 6 | NARRAY_FLOAT);
+            bodyBuf.writeVarUint(arr.length << 6 | TYPE_NARRAY_FLOAT);
             bodyBuf.writeFloatArray(arr);
         } else if (obj instanceof double[]) {
             double[] arr = (double[]) obj;
-            bodyBuf.writeVarUint(arr.length << 6 | NARRAY_DOUBLE);
+            bodyBuf.writeVarUint(arr.length << 6 | TYPE_NARRAY_DOUBLE);
             bodyBuf.writeDoubleArray(arr);
         } else if (obj instanceof Object[]) {
             this.writeArray(Arrays.asList((Object[]) obj));
@@ -149,9 +149,9 @@ public final class Output {
         } else if (obj instanceof ObjectNode) {
             ObjectNode node = (ObjectNode) obj;
             if (enableStreamMode && node.isStable()) {
-                bodyBuf.writeVarUint(metaPool.registerCxtStruct(node.keys()) << 3 | DATA_FLAG_OBJECT);
+                bodyBuf.writeVarUint(metaPool.registerCxtStruct(node.keys()) << 3 | TYPE_OBJECT);
             } else {
-                bodyBuf.writeVarUint(metaPool.registerTmpStruct(node.keys()) << 3 | DATA_FLAG_OBJECT);
+                bodyBuf.writeVarUint(metaPool.registerTmpStruct(node.keys()) << 3 | TYPE_OBJECT);
             }
             for (Object value : node.values()) {
                 this.writeObject(value);
@@ -167,6 +167,10 @@ public final class Output {
     }
 
     void writeArray(Collection<?> arr) {
+        if (arr.isEmpty()) {
+            bodyBuf.writeVarUint(DATA_ID_ZERO_ARRAY);
+            return;
+        }
         Object[] objects = new Object[arr.size()];
         ConverterPipeline pipeline = null;
         Class<?> prevCls = null;
@@ -227,47 +231,47 @@ public final class Output {
         boolean first = from == 0;
         long len = to - from;
         if (type == null) {
-            writeSliceHead(len, SLICE_NULL, first, hasMore);
+            writeSliceHead(len, TYPE_SLICE_NULL, first, hasMore);
         } else if (type == Boolean.class) {
-            writeSliceHead(len, SLICE_BOOL, first, hasMore);
+            writeSliceHead(len, TYPE_SLICE_BOOL, first, hasMore);
             bodyBuf.writeBooleanSlice(arr, from, to);
         } else if (type == Byte.class) {
-            writeSliceHead(len, SLICE_BYTE, first, hasMore);
+            writeSliceHead(len, TYPE_SLICE_BYTE, first, hasMore);
             bodyBuf.writeByteSlice(arr, from, to);
         } else if (type == Short.class) {
-            writeSliceHead(len, SLICE_SHORT, first, hasMore);
+            writeSliceHead(len, TYPE_SLICE_SHORT, first, hasMore);
             bodyBuf.writeShortSlice(arr, from, to);
         } else if (type == Integer.class) {
-            writeSliceHead(len, SLICE_INT, first, hasMore);
+            writeSliceHead(len, TYPE_SLICE_INT, first, hasMore);
             bodyBuf.writeIntSlice(arr, from, to);
         } else if (type == Long.class) {
-            writeSliceHead(len, SLICE_LONG, first, hasMore);
+            writeSliceHead(len, TYPE_SLICE_LONG, first, hasMore);
             bodyBuf.writeLongSlice(arr, from, to);
         } else if (type == Float.class) {
-            writeSliceHead(len, SLICE_FLOAT, first, hasMore);
+            writeSliceHead(len, TYPE_SLICE_FLOAT, first, hasMore);
             bodyBuf.writeFloatSlice(arr, from, to);
         } else if (type == Double.class) {
-            writeSliceHead(len, SLICE_DOUBLE, first, hasMore);
+            writeSliceHead(len, TYPE_SLICE_DOUBLE, first, hasMore);
             bodyBuf.writeDoubleSlice(arr, from, to);
         } else if (type == Character.class || CharSequence.class.isAssignableFrom(type)) {
-            writeSliceHead(len, SLICE_STRING, first, hasMore);
+            writeSliceHead(len, TYPE_SLICE_STRING, first, hasMore);
             for (int i = from; i < to; i++) {
                 bodyBuf.writeVarUint(dataPool.registerString(arr[i].toString()));
             }
         } else if (Enum.class.isAssignableFrom(type)) {
             if (enableStreamMode) {
-                writeSliceHead(len, SLICE_SYMBOL, first, hasMore);
+                writeSliceHead(len, TYPE_SLICE_SYMBOL, first, hasMore);
                 for (int i = from; i < to; i++) {
                     bodyBuf.writeVarUint(dataPool.registerSymbol(((Enum) arr[i]).name()));
                 }
             } else {
-                writeSliceHead(len, SLICE_STRING, first, hasMore);
+                writeSliceHead(len, TYPE_SLICE_STRING, first, hasMore);
                 for (int i = from; i < to; i++) {
                     bodyBuf.writeVarUint(dataPool.registerString(((Enum) arr[i]).name()));
                 }
             }
         } else if (type == ObjectNode.class) {
-            writeSliceHead(len, SLICE_OBJECT, first, hasMore);
+            writeSliceHead(len, TYPE_SLICE_OBJECT, first, hasMore);
             ObjectNode node = ((ObjectNode) arr[0]);
             if (enableStreamMode && node.isStable()) {
                 bodyBuf.writeVarUint(metaPool.registerCxtStruct(node.keys()));
@@ -281,7 +285,7 @@ public final class Output {
                 }
             }
         } else {
-            writeSliceHead(len, SLICE_UNKNOWN, first, hasMore);
+            writeSliceHead(len, TYPE_SLICE_UNKNOWN, first, hasMore);
             for (int i = from; i < to; i++) {
                 this.writeObject(arr[i]);
             }
@@ -290,7 +294,7 @@ public final class Output {
 
     void writeSliceHead(long len, byte type, boolean first, boolean hasMore) {
         if (first) {
-            bodyBuf.writeVarUint((len << 8) | (type << 4) | (hasMore ? 0b0000_1000 : 0) | DATA_FLAG_ARRAY);
+            bodyBuf.writeVarUint((len << 8) | (type << 4) | (hasMore ? 0b0000_1000 : 0) | TYPE_ARRAY);
         } else {
             bodyBuf.writeVarUint((len << 5) | (type << 1) | (hasMore ? 0b0000_0001 : 0));
         }
