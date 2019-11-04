@@ -17,20 +17,6 @@ import java.util.concurrent.atomic.*;
 public class CanoePacketTest {
 
     @Test
-    public void testWriter() throws IOException {
-        final int size = 1 << 24;
-        ByteArrayWriter writer = new ByteArrayWriter(Canoe.PACKET_LIMIT);
-        for (int i = 0; i < size; i++) {
-            writer.write((byte) i);
-        }
-        byte[] bs = writer.toByteArray();
-        for (int i = 0; i < size; i++) {
-            assert bs[i] == (byte) i;
-        }
-        assert bs.length == size;
-    }
-
-    @Test
     public void testSimple() throws IOException {
         byte[] data;
         data = CanoePacket.serialize(null);
@@ -153,12 +139,12 @@ public class CanoePacketTest {
             assert e instanceof EOFException;
         }
 
-        try {
-            CanoePacket.serialize(new byte[Canoe.PACKET_LIMIT + 1]);
-            assert false;
-        } catch (Exception e) {
-            assert e instanceof OutOfSpaceException;
-        }
+//        try {
+//            CanoePacket.serialize(new byte[Canoe.PACKET_LIMIT + 1]);
+//            assert false;
+//        } catch (Exception e) {
+//            assert e instanceof OutOfSpaceException;
+//        }
     }
 
     @Test

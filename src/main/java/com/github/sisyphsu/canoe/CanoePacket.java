@@ -4,8 +4,6 @@ import com.github.sisyphsu.canoe.reflect.TypeRef;
 
 import java.io.IOException;
 
-import static com.github.sisyphsu.canoe.Canoe.PACKET_LIMIT;
-
 /**
  * CanoePacket provides an easy way to use `canoe` in packet-mode.
  * <p>
@@ -39,11 +37,7 @@ public final class CanoePacket {
      */
     public static byte[] serialize(Object obj) throws IOException {
         Canoe canoe = getLocalCanoe();
-        ByteArrayWriter writer = (ByteArrayWriter) canoe.writer;
-        writer.reset();
-        canoe.write(obj);
-
-        return writer.toByteArray();
+        return canoe.write(obj);
     }
 
     /**
@@ -57,8 +51,7 @@ public final class CanoePacket {
      */
     public static <T> T deserialize(byte[] data, Class<T> clz) throws IOException {
         Canoe canoe = getLocalCanoe();
-        ((ByteArrayReader) canoe.reader).reset(data);
-        return canoe.read(clz);
+        return canoe.read(data, clz);
     }
 
     /**
@@ -73,15 +66,14 @@ public final class CanoePacket {
      */
     public static <T> T deserialize(byte[] data, TypeRef<T> ref) throws IOException {
         Canoe canoe = getLocalCanoe();
-        ((ByteArrayReader) canoe.reader).reset(data);
-        return canoe.read(ref);
+        return canoe.read(data, ref);
     }
 
     // fetch the shared canoe in the current thread
     private static Canoe getLocalCanoe() {
         Canoe canoe = CANOE_LOCAL.get();
         if (canoe == null) {
-            canoe = new Canoe(false, new ByteArrayReader(), new ByteArrayWriter(PACKET_LIMIT));
+            canoe = new Canoe(false);
             CANOE_LOCAL.set(canoe);
         }
         return canoe;

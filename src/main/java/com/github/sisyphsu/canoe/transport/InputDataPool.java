@@ -124,4 +124,11 @@ public final class InputDataPool {
         return symbol;
     }
 
+    public void reset() {
+        this.floats.clear();
+        this.doubles.clear();
+        this.varints.clear();
+        this.strings.clear();
+    }
+
 }

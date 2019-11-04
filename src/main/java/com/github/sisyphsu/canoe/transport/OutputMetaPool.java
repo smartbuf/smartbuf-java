@@ -156,7 +156,7 @@ public final class OutputMetaPool {
             }
         }
         if (count > 0 && (len = tmpStructs.size()) > 0) {
-            buf.writeVarUint((len << 4) | (META_STRUCT_TMP << 1));
+            buf.writeVarUint((len << 4) | (META_STRUCT_TMP << 1) | ((--count == 0) ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 OutputMetaPool.Struct struct = tmpStructs.get(i);
                 buf.writeVarUint(struct.nameIds.length);
@@ -176,7 +176,7 @@ public final class OutputMetaPool {
             }
         }
         if (count > 0 && (len = cxtStructExpired.size()) > 0) {
-            buf.writeVarUint((len << 4) | (META_STRUCT_EXPIRED << 1) | ((--count == 0) ? 0 : 1));
+            buf.writeVarUint((len << 4) | (META_STRUCT_EXPIRED << 1));
             for (int i = 0; i < len; i++) {
                 buf.writeVarUint(cxtStructExpired.get(i).index);
             }

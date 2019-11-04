@@ -47,6 +47,8 @@ public final class Input {
      */
     public Object read(byte[] data) throws IOException {
         buffer.reset(data);
+        dataPool.reset();
+        metaPool.reset();
 
         byte head = buffer.readByte();
         boolean stream = (head & VER_STREAM) != 0;

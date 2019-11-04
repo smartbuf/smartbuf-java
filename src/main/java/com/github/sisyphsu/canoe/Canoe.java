@@ -14,9 +14,6 @@ import java.io.IOException;
  * Canoe wraps the "canoe" protocol, includes packet-mode and stream-mode.
  * <p>
  * In most cases, you can use {@link CanoePacket} and {@link CanoeStream} directly.
- * <p>
- * Or, you could customized {@link IOReader} and {@link IOWriter}, which could be used to initialize Canoe.
- * In this way, you might reduce memory copy and improve performance.
  *
  * @author sulin
  * @since 2019-10-28 15:13:24
@@ -31,8 +28,6 @@ public final class Canoe {
         CODEC.installCodec(NodeCodec.class);
     }
 
-    final IOReader reader;
-    final IOWriter writer;
     Input  input;
     Output output;
 
@@ -42,19 +37,14 @@ public final class Canoe {
      * Initialize Canoe instance, supports packet-mode and stream-mode
      *
      * @param enableStreamMode Enable stream-mode or not
-     * @param reader           The underlying reader
-     * @param writer           The underlying writer
      */
-    public Canoe(boolean enableStreamMode, IOReader reader, IOWriter writer) {
-        this.reader = reader;
-        this.writer = writer;
-//        this.input = new Input(enableStreamMode);
-//        this.output = new Output( enableStreamMode);
+    public Canoe(boolean enableStreamMode) {
+        this.input = new Input(enableStreamMode);
+        this.output = new Output(CODEC, enableStreamMode);
     }
 
     /**
      * Read the next object and convert it into the specified type.
-     * It will try read data from {@link IOReader}
      *
      * @param tRef The specified type, support generic type
      * @param <T>  Generic Type
@@ -62,55 +52,50 @@ public final class Canoe {
      * @throws IOException if an I/O error occurs.
      */
     @SuppressWarnings("unchecked")
-    public <T> T read(TypeRef<T> tRef) throws IOException {
+    public <T> T read(byte[] data, TypeRef<T> tRef) throws IOException {
         if (closed) {
             throw new CanoeClosedException("Canoe is closed");
         }
-        Object obj = input.read(null);
+        Object obj = input.read(data);
         return (T) CODEC.convert(obj, tRef.getType());
     }
 
     /**
      * Read the next object and convert it into the specified class.
-     * It will try read data from {@link IOReader}
      *
      * @param tCls The specified class
      * @return Read result
      * @throws IOException if an I/O error occurs.
      */
-    public <T> T read(Class<T> tCls) throws IOException {
+    public <T> T read(byte[] data, Class<T> tCls) throws IOException {
         if (closed) {
             throw new CanoeClosedException("Canoe is closed");
         }
-        Object obj = input.read(null);
+        Object obj = input.read(data);
         return CODEC.convert(obj, tCls);
     }
 
     /**
-     * Write the specified object into {@link IOWriter}
+     * Write the specified object into
      *
      * @param obj The specified object
      * @throws IOException if an I/O error occurs.
      */
-    public void write(Object obj) throws IOException {
+    public byte[] write(Object obj) throws IOException {
         if (closed) {
             throw new CanoeClosedException("Canoe is closed");
         }
         Node node = CODEC.convert(obj, Node.class);
-        output.write(node);
+        return output.write(node);
     }
 
     /**
      * Close this canoe instance, and release all resources
-     *
-     * @throws IOException if an I/O error occurs.
      */
-    public void close() throws IOException {
+    public void close() {
         if (this.closed) {
             return;
         }
-        reader.close();
-        writer.close();
         this.input = null;
         this.output = null;
         this.closed = true;

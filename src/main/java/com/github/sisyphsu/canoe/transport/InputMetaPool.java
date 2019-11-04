@@ -115,4 +115,9 @@ public final class InputMetaPool {
         return struct;
     }
 
+    public void reset() {
+        this.tmpNames.clear();
+        this.tmpStructs.clear();
+    }
+
 }

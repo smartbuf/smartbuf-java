@@ -4,8 +4,6 @@ import com.github.sisyphsu.canoe.reflect.TypeRef;
 
 import java.io.IOException;
 
-import static com.github.sisyphsu.canoe.Canoe.PACKET_LIMIT;
-
 /**
  * CanoeStream provides an easy way to use "canoe" protocol in stream-mode,
  * It's similar to {@link CanoePacket}, but support the context concept.
@@ -18,17 +16,13 @@ import static com.github.sisyphsu.canoe.Canoe.PACKET_LIMIT;
  */
 public final class CanoeStream {
 
-    private Canoe           canoe;
-    private ByteArrayReader reader;
-    private ByteArrayWriter writer;
+    private Canoe canoe;
 
     /**
      * Initialize CanoeStream
      */
     public CanoeStream() {
-        this.reader = new ByteArrayReader();
-        this.writer = new ByteArrayWriter(PACKET_LIMIT);
-        this.canoe = new Canoe(true, reader, writer);
+        this.canoe = new Canoe(true);
     }
 
     /**
@@ -39,9 +33,7 @@ public final class CanoeStream {
      * @throws IOException if an I/O error occurs.
      */
     public byte[] serialize(Object obj) throws IOException {
-        writer.reset();
-        canoe.write(obj);
-        return writer.toByteArray();
+        return canoe.write(obj);
     }
 
     /**
@@ -54,8 +46,7 @@ public final class CanoeStream {
      * @throws IOException if an I/O error occurs.
      */
     public <T> T deserialize(byte[] data, Class<T> tClz) throws IOException {
-        reader.reset(data);
-        return canoe.read(tClz);
+        return canoe.read(data, tClz);
     }
 
     /**
@@ -69,16 +60,13 @@ public final class CanoeStream {
      * @throws IOException if an I/O error occurs.
      */
     public <T> T deserialize(byte[] data, TypeRef<T> tRef) throws IOException {
-        reader.reset(data);
-        return canoe.read(tRef);
+        return canoe.read(data, tRef);
     }
 
     /**
      * Close this instance, would close the underlying canoe instance.
-     *
-     * @throws IOException if an I/O error occurs.
      */
-    public void close() throws IOException {
+    public void close() {
         canoe.close();
     }
 
