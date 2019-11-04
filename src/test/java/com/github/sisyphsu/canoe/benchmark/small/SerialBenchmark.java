@@ -23,6 +23,12 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * 190ns for Output#scan
  * 500ns for Output#doWrite and others
+ * <p>
+ * Benchmark                 Mode  Cnt     Score    Error  Units
+ * SerialBenchmark.json      avgt    6   865.418 ± 42.638  ns/op
+ * SerialBenchmark.packet    avgt    6  1220.496 ± 42.971  ns/op
+ * SerialBenchmark.protobuf  avgt    6   243.895 ± 10.057  ns/op
+ * SerialBenchmark.stream    avgt    6   603.656 ± 11.698  ns/op
  *
  * @author sulin
  * @since 2019-10-28 17:32:33
@@ -36,9 +42,9 @@ public class SerialBenchmark {
 
     static final Date date = new Date();
 
-    private static final ObjectMapper  OBJECT_MAPPER = new ObjectMapper();
-    private static final UserModel     USER          = UserModel.random();
-    private static final CanoeStream   STREAM        = new CanoeStream();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final UserModel    USER          = UserModel.random();
+    private static final CanoeStream  STREAM        = new CanoeStream();
 
     @Benchmark
     public void json() throws JsonProcessingException {
@@ -60,7 +66,7 @@ public class SerialBenchmark {
         USER.toPB().toByteArray();
     }
 
-//    @Benchmark
+    //    @Benchmark
     public void toNode() {
 //        USER.toModel(); // 27ns
 

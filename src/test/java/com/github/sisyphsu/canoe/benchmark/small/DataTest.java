@@ -6,9 +6,16 @@ import com.github.sisyphsu.canoe.CanoeStream;
 import org.junit.jupiter.api.Test;
 
 /**
- * json: 170
- * packet: 161
- * stream: 94
+ * First time:
+ * json: 171
+ * packet: 138
+ * stream: 139
+ * protobuf: 67
+ * <p>
+ * Following:
+ * json: 171
+ * packet: 138
+ * stream: 71
  * protobuf: 67
  *
  * @author sulin

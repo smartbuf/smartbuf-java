@@ -15,6 +15,13 @@ import java.util.concurrent.TimeUnit;
  * SerialBenchmark.stream    avgt    6   9264.121 ± 392.667  ns/op
  * <p>
  * Array problem !!!
+ * <p>
+ * After Refactoring:
+ * Benchmark                 Mode  Cnt     Score     Error  Units
+ * SerialBenchmark.json      avgt    6  4755.625 ± 196.083  ns/op
+ * SerialBenchmark.packet    avgt    6  8295.304 ± 253.860  ns/op
+ * SerialBenchmark.protobuf  avgt    6   746.017 ±   6.991  ns/op
+ * SerialBenchmark.stream    avgt    6  6373.838 ± 196.511  ns/op
  *
  * @author sulin
  * @since 2019-10-31 20:40:55
