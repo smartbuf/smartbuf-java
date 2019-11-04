@@ -18,9 +18,4 @@ public final class ByteArrayNode extends Node {
     public Object value() {
         return data;
     }
-
-    @Override
-    public byte[] byteArrayValue() {
-        return data;
-    }
 }

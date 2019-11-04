@@ -18,9 +18,4 @@ public final class FloatArrayNode extends Node {
     public Object value() {
         return data;
     }
-
-    @Override
-    public float[] floatArrayValue() {
-        return data;
-    }
 }

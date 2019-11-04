@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sisyphsu.canoe.Canoe;
 import com.github.sisyphsu.canoe.CanoePacket;
 import com.github.sisyphsu.canoe.CanoeStream;
-import com.github.sisyphsu.canoe.node.BeanNodeCodec;
 import com.github.sisyphsu.canoe.node.Node;
 import org.openjdk.jmh.annotations.*;
 
@@ -37,15 +36,9 @@ public class SerialBenchmark {
 
     static final Date date = new Date();
 
-    private static final BeanNodeCodec beanNodeCodec = new BeanNodeCodec();
     private static final ObjectMapper  OBJECT_MAPPER = new ObjectMapper();
     private static final UserModel     USER          = UserModel.random();
     private static final CanoeStream   STREAM        = new CanoeStream();
-
-    static {
-        Canoe.CODEC.installCodec(beanNodeCodec);
-        beanNodeCodec.setFactory(Canoe.CODEC);
-    }
 
     @Benchmark
     public void json() throws JsonProcessingException {

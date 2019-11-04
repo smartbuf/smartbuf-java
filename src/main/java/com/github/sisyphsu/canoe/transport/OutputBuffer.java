@@ -5,6 +5,8 @@ import com.github.sisyphsu.canoe.utils.NumberUtils;
 import static com.github.sisyphsu.canoe.transport.Const.DATA_ARRAY;
 
 /**
+ * Encapsulate all deserialization operations of output side.
+ *
  * @author sulin
  * @since 2019-11-03 16:44:02
  */

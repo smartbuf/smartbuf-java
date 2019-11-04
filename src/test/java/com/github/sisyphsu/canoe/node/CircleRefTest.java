@@ -4,7 +4,6 @@ import com.github.sisyphsu.canoe.convertor.CodecFactory;
 import com.github.sisyphsu.canoe.exception.CircleReferenceException;
 import lombok.Data;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 /**
  * @author sulin
@@ -12,18 +11,13 @@ import org.junit.jupiter.api.Test;
  */
 public class CircleRefTest {
 
-    private BeanNodeCodec codec = new BeanNodeCodec();
 
     @BeforeEach
     void setUp() {
-        CodecFactory.Instance.installCodec(BasicNodeCodec.class);
-        CodecFactory.Instance.installCodec(ArrayNodeCodec.class);
-        CodecFactory.Instance.installCodec(BeanNodeCodec.class);
-
-        codec.setFactory(CodecFactory.Instance);
+        CodecFactory.Instance.installCodec(NodeCodec.class);
     }
 
-//    @Test
+    //    @Test
     public void test() {
         Post post = new Post();
         Comment comment = new Comment();

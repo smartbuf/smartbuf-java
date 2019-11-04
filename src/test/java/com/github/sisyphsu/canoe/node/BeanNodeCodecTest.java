@@ -1,8 +1,7 @@
 package com.github.sisyphsu.canoe.node;
 
 import com.github.sisyphsu.canoe.convertor.CodecFactory;
-import com.github.sisyphsu.canoe.node.standard.ArrayNode;
-import com.github.sisyphsu.canoe.node.standard.ObjectNode;
+import com.github.sisyphsu.canoe.node.basic.ObjectNode;
 import lombok.Data;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -17,13 +16,11 @@ import java.util.*;
  */
 public class BeanNodeCodecTest {
 
-    private BeanNodeCodec codec = new BeanNodeCodec();
+    private NodeCodec codec = new NodeCodec();
 
     @BeforeEach
     void setUp() {
-        CodecFactory.Instance.installCodec(BasicNodeCodec.class);
-        CodecFactory.Instance.installCodec(ArrayNodeCodec.class);
-        CodecFactory.Instance.installCodec(BeanNodeCodec.class);
+        CodecFactory.Instance.installCodec(NodeCodec.class);
 
         codec.setFactory(CodecFactory.Instance);
     }
@@ -78,16 +75,6 @@ public class BeanNodeCodecTest {
 
         Group group1 = CodecFactory.Instance.convert(node, Group.class);
         assert group.equals(group1);
-    }
-
-    @Test
-    public void testObjectNodeArray() {
-        List<Object> list = new ArrayList<>();
-        list.add(new Group());
-        list.add(new Person());
-        Node node = CodecFactory.Instance.convert(list, Node.class);
-        assert node instanceof ArrayNode;
-        assert ((ArrayNode) node).size() == 2;
     }
 
     @Data

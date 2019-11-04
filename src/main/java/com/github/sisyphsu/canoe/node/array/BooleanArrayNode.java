@@ -18,9 +18,4 @@ public final class BooleanArrayNode extends Node {
     public Object value() {
         return data;
     }
-
-    @Override
-    public boolean[] booleanArrayValue() {
-        return data;
-    }
 }

@@ -18,9 +18,4 @@ public final class ShortArrayNode extends Node {
     public Object value() {
         return data;
     }
-
-    @Override
-    public short[] shortArrayValue() {
-        return data;
-    }
 }

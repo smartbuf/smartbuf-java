@@ -3,9 +3,7 @@ package com.github.sisyphsu.canoe.transport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sisyphsu.canoe.convertor.CodecFactory;
 import com.github.sisyphsu.canoe.model.MessageOuterClass;
-import com.github.sisyphsu.canoe.node.ArrayNodeCodec;
-import com.github.sisyphsu.canoe.node.BasicNodeCodec;
-import com.github.sisyphsu.canoe.node.BeanNodeCodec;
+import com.github.sisyphsu.canoe.node.NodeCodec;
 import com.github.sisyphsu.canoe.node.Node;
 import lombok.Data;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -17,7 +15,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.sisyphsu.canoe.transport.IOTest.*;
+import static com.github.sisyphsu.canoe.transport.IOTest.bytes;
+import static com.github.sisyphsu.canoe.transport.IOTest.transIO;
 
 /**
  * @author sulin
@@ -27,14 +26,9 @@ public class IOFullTest {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private ArrayNodeCodec codec = new ArrayNodeCodec();
-
     @BeforeEach
     void setUp() {
-        CodecFactory.Instance.installCodec(BasicNodeCodec.class);
-        CodecFactory.Instance.installCodec(ArrayNodeCodec.class);
-        CodecFactory.Instance.installCodec(BeanNodeCodec.class);
-        codec.setFactory(CodecFactory.Instance);
+        CodecFactory.Instance.installCodec(NodeCodec.class);
     }
 
     @Test

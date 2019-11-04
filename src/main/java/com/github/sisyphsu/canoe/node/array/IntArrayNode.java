@@ -18,9 +18,4 @@ public final class IntArrayNode extends Node {
     public Object value() {
         return data;
     }
-
-    @Override
-    public int[] intArrayValue() {
-        return data;
-    }
 }

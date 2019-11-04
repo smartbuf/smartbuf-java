@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sisyphsu.canoe.Canoe;
 import com.github.sisyphsu.canoe.CanoePacket;
-import com.github.sisyphsu.canoe.node.ArrayNodeCodec;
-import com.github.sisyphsu.canoe.node.BeanNodeCodec;
 import com.github.sisyphsu.canoe.node.Node;
 import com.github.sisyphsu.canoe.transport.Output;
 import lombok.AllArgsConstructor;
@@ -35,12 +33,10 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 public class NormalTest {
 
-    private static BeanNodeCodec  beanNodeCodec  = new BeanNodeCodec();
-    private static ArrayNodeCodec arrayNodeCodec = new ArrayNodeCodec();
-    private static ObjectMapper   MAPPER         = new ObjectMapper();
-    private static List<Tag>      tags           = new ArrayList<>();
+    private static ObjectMapper  MAPPER        = new ObjectMapper();
+    private static List<Tag>     tags          = new ArrayList<>();
 
-    static Output output = new Output(null, false);
+    static Output output = new Output(false);
 
     static Node node;
 
@@ -49,8 +45,6 @@ public class NormalTest {
             tags.add(new Tag(i, "Tag" + i));
         }
         node = Canoe.CODEC.convert(tags, Node.class);
-        arrayNodeCodec.setFactory(Canoe.CODEC);
-        beanNodeCodec.setFactory(Canoe.CODEC);
     }
 
     @Benchmark

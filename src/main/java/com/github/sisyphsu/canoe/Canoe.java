@@ -2,9 +2,7 @@ package com.github.sisyphsu.canoe;
 
 import com.github.sisyphsu.canoe.convertor.CodecFactory;
 import com.github.sisyphsu.canoe.exception.CanoeClosedException;
-import com.github.sisyphsu.canoe.node.ArrayNodeCodec;
-import com.github.sisyphsu.canoe.node.BasicNodeCodec;
-import com.github.sisyphsu.canoe.node.BeanNodeCodec;
+import com.github.sisyphsu.canoe.node.NodeCodec;
 import com.github.sisyphsu.canoe.node.Node;
 import com.github.sisyphsu.canoe.reflect.TypeRef;
 import com.github.sisyphsu.canoe.transport.Input;
@@ -30,9 +28,7 @@ public final class Canoe {
     public static final CodecFactory CODEC = new CodecFactory();
 
     static {
-        CODEC.installCodec(BeanNodeCodec.class);
-        CODEC.installCodec(BasicNodeCodec.class);
-        CODEC.installCodec(ArrayNodeCodec.class);
+        CODEC.installCodec(NodeCodec.class);
     }
 
     final IOReader reader;
@@ -53,7 +49,7 @@ public final class Canoe {
         this.reader = reader;
         this.writer = writer;
         this.input = new Input(reader, enableStreamMode);
-        this.output = new Output(writer, enableStreamMode);
+//        this.output = new Output( enableStreamMode);
     }
 
     /**

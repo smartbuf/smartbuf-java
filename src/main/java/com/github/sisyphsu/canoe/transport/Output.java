@@ -3,10 +3,9 @@ package com.github.sisyphsu.canoe.transport;
 import com.github.sisyphsu.canoe.convertor.CodecFactory;
 import com.github.sisyphsu.canoe.convertor.ConverterPipeline;
 import com.github.sisyphsu.canoe.node.Node;
-import com.github.sisyphsu.canoe.node.standard.ObjectNode;
+import com.github.sisyphsu.canoe.node.basic.ObjectNode;
 import com.github.sisyphsu.canoe.reflect.XType;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -25,14 +24,11 @@ public final class Output {
     private final CodecFactory factory   = null;
     private final XType<?>     nodeXType = factory.toXType(Node.class);
 
-    private final Schema schema;
-
-    private final OutputDataPool   dataPool;
-    private final OutputStructPool structPool;
-
-    private long         sequence;
-    private OutputBuffer bodyBuf = new OutputBuffer(1 << 20);
-    private OutputBuffer metaBuf = new OutputBuffer(1 << 24);
+    private long             sequence;
+    private OutputBuffer     bodyBuf;
+    private OutputBuffer     metaBuf;
+    private OutputDataPool   dataPool;
+    private OutputStructPool structPool;
 
     /**
      * Initialize Output, it is reusable
@@ -41,13 +37,16 @@ public final class Output {
      */
     public Output(boolean enableStreamMode) {
         this.enableStreamMode = enableStreamMode;
-        this.schema = new Schema(enableStreamMode);
+        this.bodyBuf = new OutputBuffer(1 << 20);
+        this.metaBuf = new OutputBuffer(1 << 24);
         this.dataPool = new OutputDataPool(1 << 16);
         this.structPool = new OutputStructPool(1 << 12);
     }
 
-    public void write(Object o) throws IOException {
-        this.schema.reset();
+    /**
+     * Output this schema into the specified writer with the specified sequence
+     */
+    public void write(Object o) {
         this.dataPool.reset();
         this.structPool.reset();
 
@@ -55,11 +54,7 @@ public final class Output {
         this.writeMeta();
     }
 
-    void writeMeta() {
-
-    }
-
-    void writeObject(Object obj) throws IOException {
+    void writeObject(Object obj) {
         if (obj == null) {
             bodyBuf.writeVarUint(ID_NULL);
         } else if (obj instanceof Boolean) {
@@ -137,7 +132,7 @@ public final class Output {
         }
     }
 
-    void writeArray(Collection<?> arr) throws IOException {
+    void writeArray(Collection<?> arr) {
         Object[] objects = new Object[arr.size()];
         ConverterPipeline pipeline = null;
         Class<?> prevCls = null;
@@ -194,7 +189,7 @@ public final class Output {
         }
     }
 
-    void writeSlice(Class<?> type, Object[] arr, int from, int to, boolean hasMore) throws IOException {
+    void writeSlice(Class<?> type, Object[] arr, int from, int to, boolean hasMore) {
         boolean first = from == 0;
         long len = to - from;
         if (type == null) {
@@ -259,44 +254,6 @@ public final class Output {
         }
     }
 
-
-    /**
-     * Output this schema into the specified writer with the specified sequence
-     */
-    public void output() {
-        int cxtCount = 0, tmpCount = 0;
-        if (dataPool.tmpFloats.size() > 0) tmpCount++;
-        if (dataPool.tmpDoubles.size() > 0) tmpCount++;
-        if (dataPool.tmpVarints.size() > 0) tmpCount++;
-        if (dataPool.tmpStrings.size() > 0) tmpCount++;
-        if (dataPool.cxtSymbolAdded.size() > 0) cxtCount++;
-        if (dataPool.cxtSymbolExpired.size() > 0) cxtCount++;
-        if (structPool.tmpNames.size() > 0) tmpCount++;
-        if (structPool.tmpStructs.size() > 0) tmpCount++;
-        if (structPool.cxtNameAdded.size() > 0) cxtCount++;
-        if (structPool.cxtNameExpired.size() > 0) cxtCount++;
-        if (structPool.cxtStructAdded.size() > 0) cxtCount++;
-        if (structPool.cxtStructExpired.size() > 0) cxtCount++;
-
-        boolean hasTmpMeta = tmpCount > 0;
-        boolean hasCxtMeta = cxtCount > 0;
-
-        // 1-byte for summary
-        metaBuf.writeByte((byte) (VER | (enableStreamMode ? VER_STREAM : 0) | (hasTmpMeta ? VER_TMP_META : 0) | (hasCxtMeta ? VER_CXT_META : 0)));
-        // 1-byte for context sequence, optional
-        if (hasCxtMeta) {
-            metaBuf.writeByte((byte) ((++this.sequence) & 0xFF));
-        }
-        // output temporary metadata
-        if (tmpCount > 0) {
-            this.writeTmpMeta(tmpCount);
-        }
-        // output context metadata
-        if (cxtCount > 0) {
-            this.writeCxtMeta(cxtCount);
-        }
-    }
-
     /**
      * Write temporary metadata to the specified writer
      */
@@ -332,8 +289,7 @@ public final class Output {
                 metaBuf.writeString(structPool.tmpNames.get(i));
             }
         }
-        if (count > 0) {
-            len = structPool.tmpStructs.size();
+        if (count > 0 && (len = structPool.tmpStructs.size()) > 0) {
             metaBuf.writeVarUint((len << 4) | (TMP_STRUCTS << 1));
             for (int i = 0; i < len; i++) {
                 OutputStructPool.Struct struct = structPool.tmpStructs.get(i);
@@ -342,6 +298,40 @@ public final class Output {
                     metaBuf.writeVarUint(nameId);
                 }
             }
+        }
+    }
+
+    void writeMeta() {
+        int cxtCount = 0, tmpCount = 0;
+        if (dataPool.tmpFloats.size() > 0) tmpCount++;
+        if (dataPool.tmpDoubles.size() > 0) tmpCount++;
+        if (dataPool.tmpVarints.size() > 0) tmpCount++;
+        if (dataPool.tmpStrings.size() > 0) tmpCount++;
+        if (dataPool.cxtSymbolAdded.size() > 0) cxtCount++;
+        if (dataPool.cxtSymbolExpired.size() > 0) cxtCount++;
+        if (structPool.tmpNames.size() > 0) tmpCount++;
+        if (structPool.tmpStructs.size() > 0) tmpCount++;
+        if (structPool.cxtNameAdded.size() > 0) cxtCount++;
+        if (structPool.cxtNameExpired.size() > 0) cxtCount++;
+        if (structPool.cxtStructAdded.size() > 0) cxtCount++;
+        if (structPool.cxtStructExpired.size() > 0) cxtCount++;
+
+        boolean hasTmpMeta = tmpCount > 0;
+        boolean hasCxtMeta = cxtCount > 0;
+
+        // 1-byte for summary
+        metaBuf.writeByte((byte) (VER | (enableStreamMode ? VER_STREAM : 0) | (hasTmpMeta ? VER_TMP_META : 0) | (hasCxtMeta ? VER_CXT_META : 0)));
+        // 1-byte for context sequence, optional
+        if (hasCxtMeta) {
+            metaBuf.writeByte((byte) ((++this.sequence) & 0xFF));
+        }
+        // output temporary metadata
+        if (tmpCount > 0) {
+            this.writeTmpMeta(tmpCount);
+        }
+        // output context metadata
+        if (cxtCount > 0) {
+            this.writeCxtMeta(cxtCount);
         }
     }
 

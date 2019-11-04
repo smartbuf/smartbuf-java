@@ -18,9 +18,4 @@ public final class DoubleArrayNode extends Node {
     public Object value() {
         return data;
     }
-
-    @Override
-    public double[] doubleArrayValue() {
-        return data;
-    }
 }

@@ -1,4 +1,4 @@
-package com.github.sisyphsu.canoe.node.standard;
+package com.github.sisyphsu.canoe.node.basic;
 
 import com.github.sisyphsu.canoe.node.Node;
 import com.github.sisyphsu.canoe.utils.NumberUtils;

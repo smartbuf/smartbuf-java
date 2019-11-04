@@ -2,7 +2,7 @@ package com.github.sisyphsu.canoe.node.array;
 
 import com.github.sisyphsu.canoe.node.Node;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * @author sulin
@@ -10,9 +10,9 @@ import java.util.List;
  */
 public final class ArrayNode extends Node {
 
-    private final List<?> data;
+    private final Collection<?> data;
 
-    public ArrayNode(List<?> data) {
+    public ArrayNode(Collection<?> data) {
         this.data = data;
     }
 
@@ -21,8 +21,4 @@ public final class ArrayNode extends Node {
         return data;
     }
 
-    @Override
-    public List<?> arrayValue() {
-        return data;
-    }
 }

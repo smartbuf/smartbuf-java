@@ -150,24 +150,24 @@ public final class Input {
                         slice[i] = context.findStringByID((int) reader.readVarUint());
                     }
                     break;
-                case SLICE_ARRAY:
-                    slice = new Object[size];
-                    for (int i = 0; i < size; i++) {
-                        slice[i] = readArray(reader.readVarUint());
-                    }
-                    break;
-                case SLICE_OBJECT:
-                    slice = new Object[size];
-                    int structId = (int) reader.readVarUint();
-                    String[] fieldNames = context.findStructByID(structId);
-                    for (int i = 0; i < size; i++) {
-                        Map<String, Object> obj = new HashMap<>();
-                        for (String field : fieldNames) {
-                            obj.put(field, readNode());
-                        }
-                        slice[i] = obj;
-                    }
-                    break;
+//                case SLICE_ARRAY:
+//                    slice = new Object[size];
+//                    for (int i = 0; i < size; i++) {
+//                        slice[i] = readArray(reader.readVarUint());
+//                    }
+//                    break;
+//                case SLICE_OBJECT:
+//                    slice = new Object[size];
+//                    int structId = (int) reader.readVarUint();
+//                    String[] fieldNames = context.findStructByID(structId);
+//                    for (int i = 0; i < size; i++) {
+//                        Map<String, Object> obj = new HashMap<>();
+//                        for (String field : fieldNames) {
+//                            obj.put(field, readNode());
+//                        }
+//                        slice[i] = obj;
+//                    }
+//                    break;
                 default:
                     throw new InvalidReadException("run into invalid slice type: " + type);
             }
@@ -223,24 +223,24 @@ public final class Input {
                     symbols[i] = stream ? context.findSymbolByID(dataId) : context.findStringByID(dataId);
                 }
                 return symbols;
-            case SLICE_ARRAY:
-                Object[] array = new Object[size];
-                for (int i = 0; i < size; i++) {
-                    array[i] = readArray(reader.readVarUint());
-                }
-                return array;
-            case SLICE_OBJECT:
-                Object[] objects = new Object[size];
-                int structId = (int) reader.readVarUint();
-                String[] fieldNames = context.findStructByID(structId);
-                for (int i = 0; i < size; i++) {
-                    Map<String, Object> obj = new HashMap<>();
-                    for (String field : fieldNames) {
-                        obj.put(field, readNode());
-                    }
-                    objects[i] = obj;
-                }
-                return objects;
+//            case SLICE_ARRAY:
+//                Object[] array = new Object[size];
+//                for (int i = 0; i < size; i++) {
+//                    array[i] = readArray(reader.readVarUint());
+//                }
+//                return array;
+//            case SLICE_OBJECT:
+//                Object[] objects = new Object[size];
+//                int structId = (int) reader.readVarUint();
+//                String[] fieldNames = context.findStructByID(structId);
+//                for (int i = 0; i < size; i++) {
+//                    Map<String, Object> obj = new HashMap<>();
+//                    for (String field : fieldNames) {
+//                        obj.put(field, readNode());
+//                    }
+//                    objects[i] = obj;
+//                }
+//                return objects;
             default:
                 throw new InvalidReadException("run into invalid slice type: " + type);
         }
