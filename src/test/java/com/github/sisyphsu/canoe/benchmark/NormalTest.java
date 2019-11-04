@@ -33,10 +33,10 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 public class NormalTest {
 
-    private static ObjectMapper  MAPPER        = new ObjectMapper();
-    private static List<Tag>     tags          = new ArrayList<>();
+    private static ObjectMapper MAPPER = new ObjectMapper();
+    private static List<Tag>    tags   = new ArrayList<>();
 
-    static Output output = new Output(false);
+    static Output output = new Output(Canoe.CODEC, false);
 
     static Node node;
 

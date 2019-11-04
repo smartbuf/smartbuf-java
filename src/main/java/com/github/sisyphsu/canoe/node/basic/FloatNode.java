@@ -34,9 +34,4 @@ public final class FloatNode extends Node {
         return value;
     }
 
-    @Override
-    public float floatValue() {
-        return value;
-    }
-
 }

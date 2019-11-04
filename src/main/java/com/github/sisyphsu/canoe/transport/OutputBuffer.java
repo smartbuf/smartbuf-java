@@ -2,15 +2,13 @@ package com.github.sisyphsu.canoe.transport;
 
 import com.github.sisyphsu.canoe.utils.NumberUtils;
 
-import static com.github.sisyphsu.canoe.transport.Const.DATA_ARRAY;
-
 /**
  * Encapsulate all deserialization operations of output side.
  *
  * @author sulin
  * @since 2019-11-03 16:44:02
  */
-public class OutputBuffer {
+public final class OutputBuffer {
 
     private final int limit;
 
@@ -19,6 +17,13 @@ public class OutputBuffer {
 
     public OutputBuffer(int limit) {
         this.limit = limit;
+    }
+
+    /**
+     * Reset this buffer, simply reset the offset.
+     */
+    public void reset() {
+        this.offset = 0;
     }
 
     public void writeByte(byte b) {
@@ -204,18 +209,6 @@ public class OutputBuffer {
         for (int i = from; i < to; i++) {
             writeDouble((Double) arr[i]);
         }
-    }
-
-    public void writeSliceHead(long len, byte type, boolean first, boolean hasMore) {
-        if (first) {
-            this.writeVarUint((len << 8) | (type << 4) | (hasMore ? 0b0000_1000 : 0) | DATA_ARRAY);
-        } else {
-            this.writeVarUint((len << 5) | (type << 1) | (hasMore ? 0b0000_0001 : 0));
-        }
-    }
-
-    public void reset() {
-        this.offset = 0;
     }
 
     private void ensureCapacity(int size) {

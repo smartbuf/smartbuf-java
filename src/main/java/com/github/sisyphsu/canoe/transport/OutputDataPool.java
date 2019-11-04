@@ -16,22 +16,23 @@ import static com.github.sisyphsu.canoe.transport.Const.*;
  */
 public final class OutputDataPool {
 
-    private final int         symbolLimit;
-    private final IDAllocator symbolID = new IDAllocator();
+    private final Array<Float>         floats    = new Array<>();
+    private final Map<Float, Integer>  floatMap  = new HashMap<>();
+    private final Array<Double>        doubles   = new Array<>();
+    private final Map<Double, Integer> doubleMap = new HashMap<>();
+    private final Array<Long>          varints   = new Array<>();
+    private final Map<Long, Integer>   varintMap = new HashMap<>();
+    private final Array<String>        strings   = new Array<>();
+    private final Map<String, Integer> stringMap = new HashMap<>();
 
-    final Array<Float>         tmpFloats    = new Array<>();
-    final Map<Float, Integer>  tmpFloatMap  = new HashMap<>();
-    final Array<Double>        tmpDoubles   = new Array<>();
-    final Map<Double, Integer> tmpDoubleMap = new HashMap<>();
-    final Array<Long>          tmpVarints   = new Array<>();
-    final Map<Long, Integer>   tmpVarintMap = new HashMap<>();
-    final Array<String>        tmpStrings   = new Array<>();
-    final Map<String, Integer> tmpStringMap = new HashMap<>();
+    private final int                 symbolLimit;
+    private final IDAllocator         symbolID      = new IDAllocator();
+    private final Array<Symbol>       symbols       = new Array<>();
+    private final Array<Symbol>       symbolAdded   = new Array<>();
+    private final Array<Symbol>       symbolExpired = new Array<>();
+    private final Map<String, Symbol> symbolIndex   = new HashMap<>();
 
-    final Array<Symbol>       symbols          = new Array<>();
-    final Array<Symbol>       cxtSymbolAdded   = new Array<>();
-    final Array<Symbol>       cxtSymbolExpired = new Array<>();
-    final Map<String, Symbol> symbolIndex      = new HashMap<>();
+    private int count;
 
     /**
      * Initialize DataPool, outter need specify the max number of symbol-area
@@ -50,14 +51,14 @@ public final class OutputDataPool {
      */
     public int registerFloat(float f) {
         if (f == 0) {
-            return ID_ZERO_FLOAT;
+            return 1;
         }
-        Integer id = tmpFloatMap.get(f);
+        Integer id = floatMap.get(f);
         if (id == null) {
-            id = tmpFloats.add(f);
-            tmpFloatMap.put(f, id);
+            id = floats.add(f);
+            floatMap.put(f, id);
         }
-        return id;
+        return id + 2;
     }
 
     /**
@@ -68,14 +69,14 @@ public final class OutputDataPool {
      */
     public int registerDouble(double d) {
         if (d == 0) {
-            return ID_ZERO_DOUBLE;
+            return 1;
         }
-        Integer id = tmpDoubleMap.get(d);
+        Integer id = doubleMap.get(d);
         if (id == null) {
-            id = tmpDoubles.add(d);
-            tmpDoubleMap.put(d, id);
+            id = doubles.add(d);
+            doubleMap.put(d, id);
         }
-        return id;
+        return id + 2;
     }
 
     /**
@@ -86,14 +87,14 @@ public final class OutputDataPool {
      */
     public int registerVarint(long l) {
         if (l == 0) {
-            return ID_ZERO_VARINT;
+            return 1;
         }
-        Integer id = tmpVarintMap.get(l);
+        Integer id = varintMap.get(l);
         if (id == null) {
-            id = tmpVarints.add(l);
-            tmpVarintMap.put(l, id);
+            id = varints.add(l);
+            varintMap.put(l, id);
         }
-        return id;
+        return id + 2;
     }
 
     /**
@@ -103,18 +104,15 @@ public final class OutputDataPool {
      * @return String ID
      */
     public int registerString(String str) {
-        if (str == null) {
-            throw new NullPointerException();
-        }
         if (str.isEmpty()) {
-            return ID_ZERO_STRING;
+            return 1;
         }
-        Integer id = tmpStringMap.get(str);
+        Integer id = stringMap.get(str);
         if (id == null) {
-            id = tmpStrings.add(str);
-            tmpStringMap.put(str, id);
+            id = strings.add(str);
+            stringMap.put(str, id);
         }
-        return id;
+        return id + 2;
     }
 
     /**
@@ -124,35 +122,91 @@ public final class OutputDataPool {
      * @return Symbol ID
      */
     public int registerSymbol(String str) {
-        if (str == null) {
-            throw new NullPointerException();
+        if (str == null || str.isEmpty()) {
+            throw new IllegalArgumentException("invalid symbol: " + str);
         }
         Symbol symbol = symbolIndex.get(str);
         if (symbol == null) {
             int index = symbolID.acquire();
             symbol = new Symbol(str, index);
             this.symbols.put(index, symbol);
-            this.cxtSymbolAdded.add(symbol);
+            this.symbolAdded.add(symbol);
             this.symbolIndex.put(str, symbol);
         }
         symbol.lastTime = (int) TimeUtils.fastUpTime();
-        return symbol.index;
+        return symbol.index + 1;
+    }
+
+    public boolean preOutput() {
+        int count = 0;
+        if (floats.size() > 0) count++;
+        if (doubles.size() > 0) count++;
+        if (varints.size() > 0) count++;
+        if (strings.size() > 0) count++;
+        if (symbolAdded.size() > 0) count++;
+        if (symbolExpired.size() > 0) count++;
+        this.count = count;
+        return count > 0;
+    }
+
+    public boolean needSequence() {
+        return symbolAdded.size() > 0 || symbolExpired.size() > 0;
+    }
+
+    public void write(OutputBuffer buf) {
+        int len;
+        if ((len = floats.size()) > 0) {
+            buf.writeVarUint((len << 4) | (DATA_FLOAT << 1) | ((--count == 0) ? 0 : 1));
+            for (int i = 0; i < len; i++) {
+                buf.writeFloat(floats.get(i));
+            }
+        }
+        if (count > 0 && (len = doubles.size()) > 0) {
+            buf.writeVarUint((len << 4) | (DATA_DOUBLE << 1) | ((--count == 0) ? 0 : 1));
+            for (int i = 0; i < len; i++) {
+                buf.writeDouble(doubles.get(i));
+            }
+        }
+        if (count > 0 && (len = varints.size()) > 0) {
+            buf.writeVarUint((len << 4) | (DATA_VARINT << 1) | ((--count == 0) ? 0 : 1));
+            for (int i = 0; i < len; i++) {
+                buf.writeVarInt(varints.get(i));
+            }
+        }
+        if (count > 0 && (len = strings.size()) > 0) {
+            buf.writeVarUint((len << 4) | (DATA_STRING << 1) | ((--count == 0) ? 0 : 1));
+            for (int i = 0; i < len; i++) {
+                buf.writeString(strings.get(i));
+            }
+        }
+        if (count > 0 && (len = symbolAdded.size()) > 0) {
+            buf.writeVarUint((len << 4) | (DATA_SYMBOL_ADDED << 1) | ((--count == 0) ? 0 : 1));
+            for (int i = 0; i < len; i++) {
+                buf.writeString(symbolAdded.get(i).value);
+            }
+        }
+        if (count > 0 && (len = symbolExpired.size()) > 0) {
+            buf.writeVarUint((len << 4) | (DATA_SYMBOL_EXPIRED << 1));
+            for (int i = 0; i < len; i++) {
+                buf.writeVarUint(symbolExpired.get(i).index);
+            }
+        }
     }
 
     /**
      * Reset this data pool, execute context data's expiring automatically
      */
     public void reset() {
-        this.tmpFloats.clear();
-        this.tmpFloatMap.clear();
-        this.tmpDoubles.clear();
-        this.tmpDoubleMap.clear();
-        this.tmpVarints.clear();
-        this.tmpVarintMap.clear();
-        this.tmpStrings.clear();
-        this.tmpStringMap.clear();
-        this.cxtSymbolAdded.clear();
-        this.cxtSymbolExpired.clear();
+        this.floats.clear();
+        this.floatMap.clear();
+        this.doubles.clear();
+        this.doubleMap.clear();
+        this.varints.clear();
+        this.varintMap.clear();
+        this.strings.clear();
+        this.stringMap.clear();
+        this.symbolAdded.clear();
+        this.symbolExpired.clear();
 
         // check and expire symbols if thay are too many
         int expireNum = symbolIndex.size() - symbolLimit;
@@ -166,7 +220,7 @@ public final class OutputDataPool {
             this.symbolIndex.remove(expiredSymbol.value);
             this.symbolID.release(expiredSymbol.index);
             this.symbols.put(expiredSymbol.index, null);
-            this.cxtSymbolExpired.add(expiredSymbol);
+            this.symbolExpired.add(expiredSymbol);
         }
     }
 
@@ -180,5 +234,4 @@ public final class OutputDataPool {
             this.index = index;
         }
     }
-
 }

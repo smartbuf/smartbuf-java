@@ -29,9 +29,4 @@ public final class BooleanNode extends Node {
         return this == TRUE;
     }
 
-    @Override
-    public boolean booleanValue() {
-        return this == TRUE;
-    }
-
 }

@@ -34,9 +34,4 @@ public final class DoubleNode extends Node {
         return value;
     }
 
-    @Override
-    public double doubleValue() {
-        return value;
-    }
-
 }

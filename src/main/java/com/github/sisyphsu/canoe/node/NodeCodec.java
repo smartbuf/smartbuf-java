@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * codec between standard-data and node, except array/object/collection/etc.
+ * codec for array-node and basic-node
  *
  * @author sulin
  * @since 2019-06-10 21:02:55

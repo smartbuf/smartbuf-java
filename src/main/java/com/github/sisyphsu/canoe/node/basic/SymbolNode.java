@@ -29,9 +29,4 @@ public final class SymbolNode extends Node {
         return data;
     }
 
-    @Override
-    public String stringValue() {
-        return data;
-    }
-
 }

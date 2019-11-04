@@ -11,7 +11,7 @@ import java.io.IOException;
  */
 public class UnexpectedSequenceException extends IOException {
 
-    public UnexpectedSequenceException(int local, int seq) {
+    public UnexpectedSequenceException(long local, long seq) {
         super("The sequence of schema-area is unexpected, expect " + local + ", but received " + seq);
     }
 

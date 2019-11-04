@@ -4,6 +4,8 @@ import com.github.sisyphsu.canoe.utils.TimeUtils;
 
 import java.util.*;
 
+import static com.github.sisyphsu.canoe.transport.Const.*;
+
 /**
  * StructPool represents an area holds struct for sharing, which support temporary and context using.
  * <p>
@@ -12,7 +14,7 @@ import java.util.*;
  * @author sulin
  * @since 2019-10-07 21:29:36
  */
-public final class OutputStructPool {
+public final class OutputMetaPool {
 
     private final int   cxtStructLimit;
     private final Names key = new Names();
@@ -35,12 +37,14 @@ public final class OutputStructPool {
     final Array<Struct>      cxtStructExpired = new Array<>();
     final Map<Names, Struct> cxtStructIndex   = new HashMap<>();
 
+    private int count;
+
     /**
      * Initialize StructPool with the specified limit of context-struct
      *
      * @param limit Max number of context-struct
      */
-    public OutputStructPool(int limit) {
+    public OutputMetaPool(int limit) {
         this.cxtStructLimit = limit;
     }
 
@@ -50,7 +54,13 @@ public final class OutputStructPool {
      * @param names Names which represents an temporary struct
      * @return Struct's ID
      */
-    public int getTmpStructID(String[] names) {
+    public int registerTmpStruct(String... names) {
+        if (names == null) {
+            throw new NullPointerException("names is null");
+        }
+        if (names.length == 0) {
+            return 0;
+        }
         this.key.names = names;
         Struct struct = tmpStructIndex.get(key);
         if (struct == null) {
@@ -66,9 +76,9 @@ public final class OutputStructPool {
             }
             struct = new Struct(names, nameIds);
             struct.index = tmpStructs.add(struct);
-            tmpStructIndex.put(key, struct);
+            tmpStructIndex.put(struct, struct);
         }
-        return struct.index;
+        return (struct.index + 1) << 1; // identify temporary struct by suffixed 0
     }
 
     /**
@@ -77,7 +87,13 @@ public final class OutputStructPool {
      * @param names FieldNames which represents an struct
      * @return Struct ID
      */
-    public int getCxtStructID(String[] names) {
+    public int registerCxtStruct(String... names) {
+        if (names == null) {
+            throw new NullPointerException("names is null");
+        }
+        if (names.length == 0) {
+            return 0;
+        }
         this.key.names = names;
         Struct struct = cxtStructIndex.get(key);
         if (struct == null) {
@@ -97,10 +113,74 @@ public final class OutputStructPool {
             struct.index = cxtStructIdAlloc.acquire();
             this.cxtStructs.put(struct.index, struct);
             this.cxtStructAdded.add(struct);
-            this.cxtStructIndex.put(key, struct);
+            this.cxtStructIndex.put(struct, struct);
         }
         struct.lastTime = (int) TimeUtils.fastUpTime();
-        return struct.index;
+        return ((struct.index + 1) << 1) | 1; // identify context struct by suffixed 1
+    }
+
+    public boolean preOutput() {
+        int count = 0;
+        if (tmpNames.size() > 0) count++;
+        if (cxtNameAdded.size() > 0) count++;
+        if (cxtNameExpired.size() > 0) count++;
+        if (tmpStructs.size() > 0) count++;
+        if (cxtStructAdded.size() > 0) count++;
+        if (cxtStructExpired.size() > 0) count++;
+        this.count = count;
+        return count > 0;
+    }
+
+    public boolean needSequence() {
+        return cxtNameAdded.size() > 0 || cxtNameExpired.size() > 0 || cxtStructAdded.size() > 0 || cxtStructExpired.size() > 0;
+    }
+
+    public void write(OutputBuffer buf) {
+        int len;
+        if (count > 0 && (len = tmpNames.size()) > 0) {
+            buf.writeVarUint((len << 4) | (META_NAME_TMP << 1) | ((--count == 0) ? 0 : 1));
+            for (int i = 0; i < len; i++) {
+                buf.writeString(tmpNames.get(i));
+            }
+        }
+        if ((len = cxtNameAdded.size()) > 0) {
+            buf.writeVarUint((len << 4) | (META_NAME_ADDED << 1) | ((--count == 0) ? 0 : 1));
+            for (int i = 0; i < len; i++) {
+                buf.writeString(cxtNameAdded.get(i).name);
+            }
+        }
+        if ((len = cxtNameExpired.size()) > 0) {
+            buf.writeVarUint((len << 4) | (META_NAME_EXPIRED << 1) | ((--count == 0) ? 0 : 1));
+            for (int i = 0; i < len; i++) {
+                buf.writeVarUint(cxtNameExpired.get(i));
+            }
+        }
+        if (count > 0 && (len = tmpStructs.size()) > 0) {
+            buf.writeVarUint((len << 4) | (META_STRUCT_TMP << 1));
+            for (int i = 0; i < len; i++) {
+                OutputMetaPool.Struct struct = tmpStructs.get(i);
+                buf.writeVarUint(struct.nameIds.length);
+                for (int nameId : struct.nameIds) {
+                    buf.writeVarUint(nameId);
+                }
+            }
+        }
+        if (count > 0 && (len = cxtStructAdded.size()) > 0) {
+            buf.writeVarUint((len << 4) | (META_STRUCT_ADDED << 1) | ((--count == 0) ? 0 : 1));
+            for (int i = 0; i < len; i++) {
+                int[] nameIds = cxtStructAdded.get(i).nameIds;
+                buf.writeVarUint(nameIds.length);
+                for (int nameId : nameIds) {
+                    buf.writeVarUint(nameId);
+                }
+            }
+        }
+        if (count > 0 && (len = cxtStructExpired.size()) > 0) {
+            buf.writeVarUint((len << 4) | (META_STRUCT_EXPIRED << 1) | ((--count == 0) ? 0 : 1));
+            for (int i = 0; i < len; i++) {
+                buf.writeVarUint(cxtStructExpired.get(i).index);
+            }
+        }
     }
 
     /**

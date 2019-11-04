@@ -11,67 +11,53 @@ public class OutputStructPoolTest {
 
     @Test
     public void test() {
-        OutputStructPool pool = new OutputStructPool(16);
-//
-//        try {
-//            pool.register(false, null);
-//            assert false;
-//        } catch (Exception e) {
-//            assert e instanceof NullPointerException;
-//        }
-//
-//        pool.register(true, new String[]{"id1", "name"});
-//        pool.register(true, new String[]{"id.2", "name"});
-//        pool.register(true, new String[]{"id.3", "name"});
-//        pool.register(true, new String[]{"id.4", "name"});
-//        pool.register(true, new String[]{"id.5", "name"});
-//        pool.register(true, new String[]{"id1", "name"});
-//
-//        assert pool.size() == 5;
-//        assert pool.findStructID(new String[]{"id1", "name"}) == 1;
-//        assert pool.findStructID(new String[]{"id.5", "name"}) == 5;
-//
-//        pool.register(false, new String[]{"id1", "name", "desc"});
-//        pool.register(false, new String[]{"id2", "name", "desc"});
-//        pool.register(false, new String[]{"id3", "name", "desc"});
-//        pool.register(false, new String[]{"id4", "name", "desc"});
-//        pool.register(false, new String[]{"id5", "name", "desc"});
-//        pool.register(false, new String[]{"id6", "name", "desc"});
-//        pool.register(false, new String[]{"id1", "name", "desc"});
-//
-//        assert pool.size() == 11;
-//        assert pool.findStructID(new String[]{"id2", "name", "desc"}) == 7;
-//        assert pool.findStructID(new String[]{"id6", "name", "desc"}) == 11;
-//
-//        try {
-//            pool.findStructID(new String[]{"ssd"});
-//            assert false;
-//        } catch (Exception e) {
-//            assert e instanceof IllegalArgumentException;
-//        }
-//
-//        pool.register(true, new String[]{"id7", "name"});
-//        assert pool.findStructID(new String[]{"id7", "name"}) == 6;
-//        assert pool.size() == 12;
-//
-//        pool.register(false, new String[]{"id7", "name"});
-//        assert pool.findStructID(new String[]{"id7", "name"}) == 12;
-//        assert pool.size() == 12;
-//
-//        pool.register(false, new String[]{"id1", "name"});
-//        assert pool.findStructID(new String[]{"id1", "name"}) == 12;
-//        assert pool.findStructID(new String[]{"id.5", "name"}) == 1;
-//        assert pool.size() == 12;
-//
-//        pool.reset();
-//        assert pool.size() == 8;
-//        assert pool.findStructID(new String[]{"id1", "name", "desc"}) == 1;
+        OutputMetaPool pool = new OutputMetaPool(16);
+        try {
+            pool.registerTmpStruct(null);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof NullPointerException;
+        }
+        try {
+            pool.registerCxtStruct(null);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof NullPointerException;
+        }
+        assert pool.registerCxtStruct() == 0;
+        assert pool.registerTmpStruct() == 0;
+
+        assert pool.registerCxtStruct("id1", "name") == 2 + 1;
+        assert pool.registerCxtStruct("id.2", "name") == 2 * 2 + 1;
+        assert pool.registerCxtStruct("id.3", "name") == 3 * 2 + 1;
+        assert pool.registerCxtStruct("id.4", "name") == 4 * 2 + 1;
+        assert pool.registerCxtStruct("id.5", "name") == 5 * 2 + 1;
+        assert pool.registerCxtStruct("id1", "name") == 3;
+
+        assert pool.cxtStructIndex.size() == 5;
+        assert pool.registerCxtStruct("id1", "name") == 3;
+        assert pool.registerCxtStruct("id.5", "name") == 5 * 2 + 1;
+
+        // temporary struct
+        assert pool.registerTmpStruct("id1", "name", "desc") == 2;
+        assert pool.registerTmpStruct("id2", "name", "desc") == 2 * 2;
+        assert pool.registerTmpStruct("id3", "name", "desc") == 3 * 2;
+        assert pool.registerTmpStruct("id4", "name", "desc") == 4 * 2;
+        assert pool.registerTmpStruct("id5", "name", "desc") == 5 * 2;
+        assert pool.registerTmpStruct("id6", "name", "desc") == 6 * 2;
+        assert pool.registerTmpStruct("id1", "name", "desc") == 2;
+
+        assert pool.tmpStructIndex.size() == 6;
+
+        pool.reset();
+        assert pool.registerCxtStruct("id.5", "name") == 5 * 2 + 1;
+        assert pool.registerTmpStruct("id6", "name", "desc") == 2;
     }
 
     @Test
     public void testStruct() {
-        OutputStructPool.Struct struct1 = new OutputStructPool.Struct(new String[]{"id", "name"}, null);
-        OutputStructPool.Struct struct2 = new OutputStructPool.Struct(new String[]{"id", "name"}, null);
+        OutputMetaPool.Struct struct1 = new OutputMetaPool.Struct(new String[]{"id", "name"}, null);
+        OutputMetaPool.Struct struct2 = new OutputMetaPool.Struct(new String[]{"id", "name"}, null);
 
         assert struct1.equals(struct2);
         assert struct1.hashCode() == struct2.hashCode();
@@ -84,73 +70,48 @@ public class OutputStructPoolTest {
         TimeUtils.INTERVAL = 8;
         Thread.sleep(1000);
 
-        OutputStructPool pool = new OutputStructPool(8);
-//
-//        Thread.sleep(10);
-//        pool.register(false, new String[]{"id1", "name"});
-//        Thread.sleep(10);
-//        pool.register(false, new String[]{"id2", "name"});
-//        Thread.sleep(10);
-//        pool.register(false, new String[]{"id3", "name"});
-//        Thread.sleep(10);
-//        pool.register(false, new String[]{"id4", "name"});
-//        Thread.sleep(10);
-//        pool.register(false, new String[]{"id5", "name"});
-//        Thread.sleep(10);
-//        pool.register(false, new String[]{"id1", "name"});
-//        Thread.sleep(10);
-//
-//        pool.register(false, new String[]{"id6", "name"});
-//        Thread.sleep(10);
-//        pool.register(false, new String[]{"id7", "name"});
-//        Thread.sleep(10);
-//        pool.register(false, new String[]{"id8", "name"});
-//        Thread.sleep(10);
-//        pool.register(false, new String[]{"id9", "name"});
-//        Thread.sleep(10);
-//        pool.register(false, new String[]{"id0", "name"});
-//        Thread.sleep(10);
-//
-//        pool.reset();
-//        assert pool.size() == 8;
-//        assert pool.findStructID(new String[]{"id1", "name"}) == 1;
-//
-//        // id2 & id3 released
-//        try {
-//            pool.findStructID(new String[]{"id2", "name"});
-//        } catch (Exception e) {
-//            assert e instanceof IllegalArgumentException;
-//        }
-//        try {
-//            pool.findStructID(new String[]{"id3", "name"});
-//        } catch (Exception e) {
-//            assert e instanceof IllegalArgumentException;
-//        }
-//
-//        pool.register(false, new String[]{"id5", "name"});
-//        Thread.sleep(10);
-//        pool.register(false, new String[]{"id10", "name"});
-//        Thread.sleep(10);
-//        pool.register(false, new String[]{"id11", "name"});
-//        Thread.sleep(10);
-//
-//        pool.reset();
-//        assert pool.size() == 8;
-//        assert pool.findStructID(new String[]{"id5", "name"}) == 5;
-//
-//        // id4 & id1 released
-//        try {
-//            pool.findStructID(new String[]{"id4", "name"});
-//            assert false;
-//        } catch (Exception e) {
-//            assert e instanceof IllegalArgumentException;
-//        }
-//        try {
-//            pool.findStructID(new String[]{"id1", "name"});
-//            assert false;
-//        } catch (Exception e) {
-//            assert e instanceof IllegalArgumentException;
-//        }
+        OutputMetaPool pool = new OutputMetaPool(8);
+
+        Thread.sleep(10);
+        assert pool.registerCxtStruct("id1", "name") == 2 + 1;
+        Thread.sleep(10);
+        assert pool.registerCxtStruct("id2", "name") == 2 * 2 + 1;
+        Thread.sleep(10);
+        assert pool.registerCxtStruct("id3", "name") == 3 * 2 + 1;
+        Thread.sleep(10);
+        assert pool.registerCxtStruct("id4", "name") == 4 * 2 + 1;
+        Thread.sleep(10);
+        assert pool.registerCxtStruct("id5", "name") == 5 * 2 + 1;
+        Thread.sleep(10);
+        assert pool.registerCxtStruct("id1", "name") == 2 + 1;
+        Thread.sleep(10);
+
+        assert pool.registerCxtStruct("id6", "name") == 6 * 2 + 1;
+        Thread.sleep(10);
+        assert pool.registerCxtStruct("id7", "name") == 7 * 2 + 1;
+        Thread.sleep(10);
+        assert pool.registerCxtStruct("id8", "name") == 8 * 2 + 1;
+        Thread.sleep(10);
+        assert pool.registerCxtStruct("id9", "name") == 9 * 2 + 1;
+        Thread.sleep(10);
+        assert pool.registerCxtStruct("id0", "name") == 10 * 2 + 1;
+        Thread.sleep(10);
+
+        pool.reset(); // 2, 3 released
+        assert pool.cxtStructIndex.size() == 8;
+        assert pool.registerCxtStruct("id3", "name") == 2 * 2 + 1;
+        assert pool.registerCxtStruct("id2", "name") == 3 * 2 + 1;
+
+        assert pool.registerCxtStruct("id5", "name") == 5 * 2 + 1;
+        Thread.sleep(10);
+        assert pool.registerCxtStruct("id10", "name") == 11 * 2 + 1;
+        Thread.sleep(10);
+        assert pool.registerCxtStruct("id11", "name") == 12 * 2 + 1;
+        Thread.sleep(10);
+
+        pool.reset(); // 1, 4 released
+        assert pool.registerCxtStruct("id4", "name") == 2 + 1;
+        assert pool.registerCxtStruct("id1", "name") == 4 * 2 + 1;
     }
 
 }

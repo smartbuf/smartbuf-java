@@ -1,31 +1,32 @@
 package com.github.sisyphsu.canoe.transport;
 
-import com.github.sisyphsu.canoe.IOReader;
 import com.github.sisyphsu.canoe.utils.NumberUtils;
 
 import java.io.EOFException;
 import java.io.IOException;
 
 /**
- * Encapsulate all serialization operations of input side.
- *
  * @author sulin
- * @since 2019-10-10 21:44:32
+ * @since 2019-11-04 12:00:24
  */
-public final class InputReader {
+public final class InputBuffer {
 
-    private final IOReader stream;
+    private byte[] data;
+    private int    offset;
 
-    public InputReader(IOReader stream) {
-        this.stream = stream;
+    /**
+     * Reset this buffer, fo reusing
+     */
+    public void reset(byte[] data) {
+        this.data = data;
+        this.offset = 0;
     }
 
     public byte readByte() throws IOException {
-        int i = stream.read();
-        if (i == -1) {
+        if (offset >= data.length) {
             throw new EOFException();
         }
-        return (byte) i;
+        return data[offset++];
     }
 
     public long readVarInt() throws IOException {

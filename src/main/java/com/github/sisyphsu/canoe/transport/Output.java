@@ -21,37 +21,71 @@ import static com.github.sisyphsu.canoe.transport.Const.*;
 public final class Output {
 
     private final boolean      enableStreamMode;
-    private final CodecFactory factory   = null;
-    private final XType<?>     nodeXType = factory.toXType(Node.class);
+    private final CodecFactory codecFactory;
+    private final XType<?>     nodeXType;
 
-    private long             sequence;
-    private OutputBuffer     bodyBuf;
-    private OutputBuffer     metaBuf;
-    private OutputDataPool   dataPool;
-    private OutputStructPool structPool;
+    private final OutputBuffer bodyBuf;
+    private final OutputBuffer headBuf;
+
+    private final OutputDataPool dataPool;
+    private final OutputMetaPool metaPool;
+
+    private long sequence;
 
     /**
      * Initialize Output, it is reusable
      *
+     * @param codecFactory     Used for data converting
      * @param enableStreamMode Enable stream-model or not
      */
-    public Output(boolean enableStreamMode) {
+    public Output(CodecFactory codecFactory, boolean enableStreamMode) {
+        this.codecFactory = codecFactory;
         this.enableStreamMode = enableStreamMode;
-        this.bodyBuf = new OutputBuffer(1 << 20);
-        this.metaBuf = new OutputBuffer(1 << 24);
+        this.nodeXType = this.codecFactory.toXType(Node.class);
+        this.bodyBuf = new OutputBuffer(1 << 30);
+        this.headBuf = new OutputBuffer(1 << 24);
         this.dataPool = new OutputDataPool(1 << 16);
-        this.structPool = new OutputStructPool(1 << 12);
+        this.metaPool = new OutputMetaPool(1 << 12);
     }
 
     /**
      * Output this schema into the specified writer with the specified sequence
      */
-    public void write(Object o) {
+    public byte[] write(Object o) {
+        this.bodyBuf.reset();
+        this.headBuf.reset();
         this.dataPool.reset();
-        this.structPool.reset();
-
+        this.metaPool.reset();
         this.writeObject(o);
-        this.writeMeta();
+
+        boolean hasData = dataPool.preOutput();
+        boolean hasMeta = metaPool.preOutput();
+        boolean hasSeq = dataPool.needSequence() || metaPool.needSequence();
+
+        // 1-byte for summary
+        byte head = VER;
+        if (enableStreamMode) head |= VER_STREAM;
+        if (hasData) head |= VER_HAS_DATA;
+        if (hasMeta) head |= VER_HAS_META;
+        if (hasSeq) head |= VER_HAS_SEQ;
+        headBuf.writeByte(head);
+        // 1-byte for context sequence, if need
+        if (hasMeta) {
+            headBuf.writeByte((byte) ((++this.sequence) & 0xFF));
+        }
+        // output sharing meta
+        if (hasMeta) {
+            metaPool.write(headBuf);
+        }
+        // output sharing data
+        if (hasData) {
+            dataPool.write(headBuf);
+        }
+        // build result
+        byte[] result = new byte[bodyBuf.offset + headBuf.offset];
+        System.arraycopy(headBuf.data, 0, result, 0, headBuf.offset);
+        System.arraycopy(bodyBuf.data, 0, result, headBuf.offset, bodyBuf.offset);
+        return result;
     }
 
     void writeObject(Object obj) {
@@ -61,23 +95,23 @@ public final class Output {
             boolean var = (Boolean) obj;
             bodyBuf.writeVarUint(var ? ID_TRUE : ID_FALSE);
         } else if (obj instanceof Float) {
-            bodyBuf.writeVarUint((dataPool.registerFloat((Float) obj) << 3) | DATA_FLOAT);
+            bodyBuf.writeVarUint((dataPool.registerFloat((Float) obj) << 3) | DATA_FLAG_FLOAT);
         } else if (obj instanceof Double) {
-            bodyBuf.writeVarUint((dataPool.registerDouble((Double) obj) << 3) | DATA_DOUBLE);
+            bodyBuf.writeVarUint((dataPool.registerDouble((Double) obj) << 3) | DATA_FLAG_DOUBLE);
         } else if (obj instanceof Long || obj instanceof Integer || obj instanceof Short || obj instanceof Byte) {
-            bodyBuf.writeVarUint((dataPool.registerVarint(((Number) obj).longValue()) << 3) | DATA_VARINT);
+            bodyBuf.writeVarUint((dataPool.registerVarint(((Number) obj).longValue()) << 3) | DATA_FLAG_VARINT);
         } else if (obj instanceof Character) {
-            bodyBuf.writeVarUint((dataPool.registerString(obj.toString()) << 3) | DATA_STRING);
+            bodyBuf.writeVarUint((dataPool.registerString(obj.toString()) << 3) | DATA_FLAG_STRING);
         } else if (obj instanceof CharSequence) {
-            bodyBuf.writeVarUint((dataPool.registerString(obj.toString()) << 3) | DATA_STRING);
+            bodyBuf.writeVarUint((dataPool.registerString(obj.toString()) << 3) | DATA_FLAG_STRING);
         } else if (obj instanceof Enum) {
             if (enableStreamMode) {
-                bodyBuf.writeVarUint((dataPool.registerSymbol(((Enum) obj).name()) << 3) | DATA_SYMBOL);
+                bodyBuf.writeVarUint((dataPool.registerSymbol(((Enum) obj).name()) << 3) | DATA_FLAG_SYMBOL);
             } else {
-                bodyBuf.writeVarUint((dataPool.registerString(((Enum) obj).name()) << 3) | DATA_STRING);
+                bodyBuf.writeVarUint((dataPool.registerString(((Enum) obj).name()) << 3) | DATA_FLAG_STRING);
             }
         } else if (obj instanceof char[]) {
-            bodyBuf.writeVarUint((dataPool.registerString(new String((char[]) obj)) << 3) | DATA_STRING);
+            bodyBuf.writeVarUint((dataPool.registerString(new String((char[]) obj)) << 3) | DATA_FLAG_STRING);
         } else if (obj instanceof boolean[]) {
             boolean[] arr = (boolean[]) obj;
             bodyBuf.writeVarUint(arr.length << 6 | NARRAY_BOOL);
@@ -115,15 +149,15 @@ public final class Output {
         } else if (obj instanceof ObjectNode) {
             ObjectNode node = (ObjectNode) obj;
             if (enableStreamMode && node.isStable()) {
-                bodyBuf.writeVarUint(structPool.getCxtStructID(node.keys()) << 3 | DATA_OBJECT);
+                bodyBuf.writeVarUint(metaPool.registerCxtStruct(node.keys()) << 3 | DATA_FLAG_OBJECT);
             } else {
-                bodyBuf.writeVarUint(structPool.getTmpStructID(node.keys()) << 3 | DATA_OBJECT);
+                bodyBuf.writeVarUint(metaPool.registerTmpStruct(node.keys()) << 3 | DATA_FLAG_OBJECT);
             }
             for (Object value : node.values()) {
                 this.writeObject(value);
             }
         } else {
-            Node node = factory.convert(obj, Node.class);
+            Node node = codecFactory.convert(obj, Node.class);
             if (node == null || node instanceof ObjectNode) {
                 this.writeObject(node);
             } else {
@@ -148,7 +182,7 @@ public final class Output {
                 currCls = o.getClass();
                 if (currCls != prevCls || pipeline == null) {
                     prevCls = currCls;
-                    pipeline = factory.getPipeline(currCls, Node.class);
+                    pipeline = codecFactory.getPipeline(currCls, Node.class);
                 }
                 Node node = (Node) pipeline.convert(o, nodeXType);
                 if (node == null || node instanceof ObjectNode) {
@@ -193,52 +227,52 @@ public final class Output {
         boolean first = from == 0;
         long len = to - from;
         if (type == null) {
-            bodyBuf.writeSliceHead(len, SLICE_NULL, first, hasMore);
+            writeSliceHead(len, SLICE_NULL, first, hasMore);
         } else if (type == Boolean.class) {
-            bodyBuf.writeSliceHead(len, SLICE_BOOL, first, hasMore);
+            writeSliceHead(len, SLICE_BOOL, first, hasMore);
             bodyBuf.writeBooleanSlice(arr, from, to);
         } else if (type == Byte.class) {
-            bodyBuf.writeSliceHead(len, SLICE_BYTE, first, hasMore);
+            writeSliceHead(len, SLICE_BYTE, first, hasMore);
             bodyBuf.writeByteSlice(arr, from, to);
         } else if (type == Short.class) {
-            bodyBuf.writeSliceHead(len, SLICE_SHORT, first, hasMore);
+            writeSliceHead(len, SLICE_SHORT, first, hasMore);
             bodyBuf.writeShortSlice(arr, from, to);
         } else if (type == Integer.class) {
-            bodyBuf.writeSliceHead(len, SLICE_INT, first, hasMore);
+            writeSliceHead(len, SLICE_INT, first, hasMore);
             bodyBuf.writeIntSlice(arr, from, to);
         } else if (type == Long.class) {
-            bodyBuf.writeSliceHead(len, SLICE_LONG, first, hasMore);
+            writeSliceHead(len, SLICE_LONG, first, hasMore);
             bodyBuf.writeLongSlice(arr, from, to);
         } else if (type == Float.class) {
-            bodyBuf.writeSliceHead(len, SLICE_FLOAT, first, hasMore);
+            writeSliceHead(len, SLICE_FLOAT, first, hasMore);
             bodyBuf.writeFloatSlice(arr, from, to);
         } else if (type == Double.class) {
-            bodyBuf.writeSliceHead(len, SLICE_DOUBLE, first, hasMore);
+            writeSliceHead(len, SLICE_DOUBLE, first, hasMore);
             bodyBuf.writeDoubleSlice(arr, from, to);
         } else if (type == Character.class || CharSequence.class.isAssignableFrom(type)) {
-            bodyBuf.writeSliceHead(len, SLICE_STRING, first, hasMore);
+            writeSliceHead(len, SLICE_STRING, first, hasMore);
             for (int i = from; i < to; i++) {
                 bodyBuf.writeVarUint(dataPool.registerString(arr[i].toString()));
             }
         } else if (Enum.class.isAssignableFrom(type)) {
             if (enableStreamMode) {
-                bodyBuf.writeSliceHead(len, SLICE_SYMBOL, first, hasMore);
+                writeSliceHead(len, SLICE_SYMBOL, first, hasMore);
                 for (int i = from; i < to; i++) {
                     bodyBuf.writeVarUint(dataPool.registerSymbol(((Enum) arr[i]).name()));
                 }
             } else {
-                bodyBuf.writeSliceHead(len, SLICE_STRING, first, hasMore);
+                writeSliceHead(len, SLICE_STRING, first, hasMore);
                 for (int i = from; i < to; i++) {
                     bodyBuf.writeVarUint(dataPool.registerString(((Enum) arr[i]).name()));
                 }
             }
         } else if (type == ObjectNode.class) {
-            bodyBuf.writeSliceHead(len, SLICE_OBJECT, first, hasMore);
+            writeSliceHead(len, SLICE_OBJECT, first, hasMore);
             ObjectNode node = ((ObjectNode) arr[0]);
             if (enableStreamMode && node.isStable()) {
-                bodyBuf.writeVarUint(structPool.getCxtStructID(node.keys()));
+                bodyBuf.writeVarUint(metaPool.registerCxtStruct(node.keys()));
             } else {
-                bodyBuf.writeVarUint(structPool.getTmpStructID(node.keys()));
+                bodyBuf.writeVarUint(metaPool.registerTmpStruct(node.keys()));
             }
             for (int i = from; i < to; i++) {
                 node = (ObjectNode) arr[i];
@@ -247,139 +281,18 @@ public final class Output {
                 }
             }
         } else {
-            bodyBuf.writeSliceHead(len, SLICE_UNKNOWN, first, hasMore);
+            writeSliceHead(len, SLICE_UNKNOWN, first, hasMore);
             for (int i = from; i < to; i++) {
                 this.writeObject(arr[i]);
             }
         }
     }
 
-    /**
-     * Write temporary metadata to the specified writer
-     */
-    private void writeTmpMeta(int count) {
-        int len;
-        if ((len = dataPool.tmpFloats.size()) > 0) {
-            metaBuf.writeVarUint((len << 4) | (TMP_FLOAT << 1) | ((--count == 0) ? 0 : 1));
-            for (int i = 0; i < len; i++) {
-                metaBuf.writeFloat(dataPool.tmpFloats.get(i));
-            }
-        }
-        if (count > 0 && (len = dataPool.tmpDoubles.size()) > 0) {
-            metaBuf.writeVarUint((len << 4) | (TMP_DOUBLE << 1) | ((--count == 0) ? 0 : 1));
-            for (int i = 0; i < len; i++) {
-                metaBuf.writeDouble(dataPool.tmpDoubles.get(i));
-            }
-        }
-        if (count > 0 && (len = dataPool.tmpVarints.size()) > 0) {
-            metaBuf.writeVarUint((len << 4) | (TMP_VARINT << 1) | ((--count == 0) ? 0 : 1));
-            for (int i = 0; i < len; i++) {
-                metaBuf.writeVarInt(dataPool.tmpVarints.get(i));
-            }
-        }
-        if (count > 0 && (len = dataPool.tmpStrings.size()) > 0) {
-            metaBuf.writeVarUint((len << 4) | (TMP_STRING << 1) | ((--count == 0) ? 0 : 1));
-            for (int i = 0; i < len; i++) {
-                metaBuf.writeString(dataPool.tmpStrings.get(i));
-            }
-        }
-        if (count > 0 && (len = structPool.tmpNames.size()) > 0) {
-            metaBuf.writeVarUint((len << 4) | (TMP_NAMES << 1) | ((--count == 0) ? 0 : 1));
-            for (int i = 0; i < len; i++) {
-                metaBuf.writeString(structPool.tmpNames.get(i));
-            }
-        }
-        if (count > 0 && (len = structPool.tmpStructs.size()) > 0) {
-            metaBuf.writeVarUint((len << 4) | (TMP_STRUCTS << 1));
-            for (int i = 0; i < len; i++) {
-                OutputStructPool.Struct struct = structPool.tmpStructs.get(i);
-                metaBuf.writeVarUint(struct.nameIds.length);
-                for (int nameId : struct.nameIds) {
-                    metaBuf.writeVarUint(nameId);
-                }
-            }
-        }
-    }
-
-    void writeMeta() {
-        int cxtCount = 0, tmpCount = 0;
-        if (dataPool.tmpFloats.size() > 0) tmpCount++;
-        if (dataPool.tmpDoubles.size() > 0) tmpCount++;
-        if (dataPool.tmpVarints.size() > 0) tmpCount++;
-        if (dataPool.tmpStrings.size() > 0) tmpCount++;
-        if (dataPool.cxtSymbolAdded.size() > 0) cxtCount++;
-        if (dataPool.cxtSymbolExpired.size() > 0) cxtCount++;
-        if (structPool.tmpNames.size() > 0) tmpCount++;
-        if (structPool.tmpStructs.size() > 0) tmpCount++;
-        if (structPool.cxtNameAdded.size() > 0) cxtCount++;
-        if (structPool.cxtNameExpired.size() > 0) cxtCount++;
-        if (structPool.cxtStructAdded.size() > 0) cxtCount++;
-        if (structPool.cxtStructExpired.size() > 0) cxtCount++;
-
-        boolean hasTmpMeta = tmpCount > 0;
-        boolean hasCxtMeta = cxtCount > 0;
-
-        // 1-byte for summary
-        metaBuf.writeByte((byte) (VER | (enableStreamMode ? VER_STREAM : 0) | (hasTmpMeta ? VER_TMP_META : 0) | (hasCxtMeta ? VER_CXT_META : 0)));
-        // 1-byte for context sequence, optional
-        if (hasCxtMeta) {
-            metaBuf.writeByte((byte) ((++this.sequence) & 0xFF));
-        }
-        // output temporary metadata
-        if (tmpCount > 0) {
-            this.writeTmpMeta(tmpCount);
-        }
-        // output context metadata
-        if (cxtCount > 0) {
-            this.writeCxtMeta(cxtCount);
-        }
-    }
-
-    /**
-     * Write context metadata to the specified writer
-     */
-    private void writeCxtMeta(int count) {
-        int len;
-        if ((len = structPool.cxtNameAdded.size()) > 0) {
-            metaBuf.writeVarUint((len << 4) | (CXT_NAME_ADDED << 1) | ((--count == 0) ? 0 : 1));
-            for (int i = 0; i < len; i++) {
-                metaBuf.writeString(structPool.cxtNameAdded.get(i).name);
-            }
-        }
-        if ((len = structPool.cxtNameExpired.size()) > 0) {
-            metaBuf.writeVarUint((len << 4) | (CXT_NAME_EXPIRED << 1) | ((--count == 0) ? 0 : 1));
-            for (int i = 0; i < len; i++) {
-                metaBuf.writeVarUint(structPool.cxtNameExpired.get(i));
-            }
-        }
-        if (count > 0 && (len = structPool.cxtStructAdded.size()) > 0) {
-            metaBuf.writeVarUint((len << 4) | (CXT_STRUCT_ADDED << 1) | ((--count == 0) ? 0 : 1));
-            for (int i = 0; i < len; i++) {
-                int[] nameIds = structPool.cxtStructAdded.get(i).nameIds;
-                metaBuf.writeVarUint(nameIds.length);
-                for (int nameId : nameIds) {
-                    metaBuf.writeVarUint(nameId);
-                }
-            }
-        }
-        if (count > 0 && (len = structPool.cxtStructExpired.size()) > 0) {
-            metaBuf.writeVarUint((len << 4) | (CXT_STRUCT_EXPIRED << 1) | ((--count == 0) ? 0 : 1));
-            for (int i = 0; i < len; i++) {
-                metaBuf.writeVarUint(structPool.cxtStructExpired.get(i).index);
-            }
-        }
-        if (count > 0 && (len = dataPool.cxtSymbolAdded.size()) > 0) {
-            metaBuf.writeVarUint((len << 4) | (CXT_SYMBOL_ADDED << 1) | ((--count == 0) ? 0 : 1));
-            for (int i = 0; i < len; i++) {
-                metaBuf.writeString(dataPool.cxtSymbolAdded.get(i).value);
-            }
-        }
-        if (count > 0) {
-            len = dataPool.cxtSymbolExpired.size();
-            metaBuf.writeVarUint((len << 4) | (CXT_SYMBOL_EXPIRED << 1));
-            for (int i = 0; i < len; i++) {
-                metaBuf.writeVarUint(dataPool.cxtSymbolExpired.get(i).index);
-            }
+    void writeSliceHead(long len, byte type, boolean first, boolean hasMore) {
+        if (first) {
+            bodyBuf.writeVarUint((len << 8) | (type << 4) | (hasMore ? 0b0000_1000 : 0) | DATA_FLAG_ARRAY);
+        } else {
+            bodyBuf.writeVarUint((len << 5) | (type << 1) | (hasMore ? 0b0000_0001 : 0));
         }
     }
 

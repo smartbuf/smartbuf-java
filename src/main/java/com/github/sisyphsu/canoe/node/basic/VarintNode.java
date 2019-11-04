@@ -66,9 +66,4 @@ public final class VarintNode extends Node {
         return value;
     }
 
-    @Override
-    public long longValue() {
-        return value;
-    }
-
 }

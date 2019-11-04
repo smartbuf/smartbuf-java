@@ -1,6 +1,5 @@
 package com.github.sisyphsu.canoe.transport;
 
-import com.github.sisyphsu.canoe.IOReader;
 import com.github.sisyphsu.canoe.exception.InvalidReadException;
 import com.github.sisyphsu.canoe.exception.InvalidVersionException;
 import com.github.sisyphsu.canoe.exception.MismatchModeException;
@@ -25,73 +24,128 @@ public final class Input {
 
     private long sequence;
 
-    private final boolean      stream;
-    private final Schema       schema;
-    private final InputReader  reader;
-    private final InputContext context;
+    private final boolean     stream;
+    private final InputBuffer buffer = new InputBuffer();
+
+    private final InputDataPool dataPool = new InputDataPool();
+    private final InputMetaPool metaPool = new InputMetaPool();
 
     /**
      * Initialize input
      *
-     * @param reader           The specified reader, it wraps io-read operation
      * @param enableStreamMode If enable stream-mode, if not, enable packet-mode
      */
-    public Input(IOReader reader, boolean enableStreamMode) {
+    public Input(boolean enableStreamMode) {
         this.stream = enableStreamMode;
-        this.schema = new Schema(enableStreamMode);
-        this.reader = new InputReader(reader);
-        this.context = new InputContext(schema);
     }
 
     /**
-     * Read the next Object from the underlying reader.
+     * Read the next Object from the underlying buffer.
      *
      * @return The next object
      * @throws IOException If any io-error happens
      */
     public Object read() throws IOException {
-        schema.reset();
-        schema.read(reader);
+        byte head = buffer.readByte();
+        boolean stream = (head & VER_STREAM) != 0;
+        boolean hasMeta = (head & VER_HAS_DATA) != 0;
+        boolean hasData = (head & VER_HAS_META) != 0;
+        boolean hasSeq = (head & VER_HAS_SEQ) != 0;
         // valid schema
-        if ((schema.head & 0b1111_0000) != VER) {
-            throw new InvalidVersionException(schema.head & 0b1111_0000);
+        if ((head & 0b1111_0000) != VER) {
+            throw new InvalidVersionException(head & 0b1111_0000);
         }
-        if (schema.stream != stream) {
+        if (stream != this.stream) {
             throw new MismatchModeException(stream);
         }
-        if (schema.hasCxtMeta) {
-            if ((schema.sequence & 0xFF) != ((sequence + 1) & 0xFF)) {
-                throw new UnexpectedSequenceException(schema.sequence & 0xFF, (int) ((sequence + 1) & 0xFF));
+        // only stream-mode needs sequence
+        if (hasSeq) {
+            long nextSeq = this.sequence + 1;
+            long seq = buffer.readByte();
+            if ((seq & 0xFF) != (nextSeq & 0xFF)) {
+                throw new UnexpectedSequenceException(seq & 0xFF, (int) (nextSeq & 0xFF));
             }
-            this.sequence++;
+            this.sequence = nextSeq;
         }
-        // sync context
-        this.context.sync();
-
+        // read temporary metadata
+        if (hasMeta) {
+            metaPool.read(buffer);
+        }
+        // read context metadata
+        if (hasData) {
+            dataPool.read(buffer);
+        }
         // load data
-        return readNode();
+        return readObject();
     }
 
     /**
      * Read the next node, it could be normal data, array, or struct.
      */
-    Object readNode() throws IOException {
-        long nodeID = reader.readVarUint();
-        byte flag = (byte) (nodeID & 0b0000_0011);
+    Object readObject() throws IOException {
+        long head = buffer.readVarUint();
+        switch ((int) head) {
+            case ID_NULL:
+                return null;
+            case ID_TRUE:
+                return true;
+            case ID_FALSE:
+                return false;
+            case ID_ZERO_ARRAY:
+                return new Object[0];
+        }
+        byte flag = (byte) (head & 0b0000_0011);
+        int dataId = (int) (head >>> 3);
         switch (flag) {
-            case FLAG_DATA:
-                return context.findDataByID((int) (nodeID >>> 2));
-            case FLAG_ARRAY:
-                return this.readArray(nodeID >>> 2);
-            case FLAG_STRUCT:
-                String[] fields = context.findStructByID((int) (nodeID >>> 2));
-                Map<String, Object> tmp = new HashMap<>();
+            case DATA_FLAG_VARINT:
+                return dataPool.getVarint(dataId);
+            case DATA_FLAG_FLOAT:
+                return dataPool.getFloat(dataId);
+            case DATA_FLAG_DOUBLE:
+                return dataPool.getDouble(dataId);
+            case DATA_FLAG_STRING:
+                return dataPool.getString(dataId);
+            case DATA_FLAG_SYMBOL:
+                return dataPool.getSymbol(dataId);
+            case DATA_FLAG_OBJECT:
+                String[] fields = metaPool.findStructByID(dataId);
+                Map<String, Object> map = new HashMap<>();
                 for (String field : fields) {
-                    tmp.put(field, readNode());
+                    map.put(field, readObject());
                 }
-                return tmp;
+                return map;
+            case DATA_FLAG_NARRAY:
+                return readNArray(head);
+            case DATA_FLAG_ARRAY:
+                return this.readArray(head);
             default:
                 throw new InvalidReadException("run into invalid data flag: " + flag);
+        }
+    }
+
+    /**
+     * Read an native array, like byte[] int[]
+     */
+    Object readNArray(long head) throws IOException {
+        byte type = (byte) (head & 0b0011_1111);
+        int size = (int) (head >>> 6);
+        switch (type) {
+            case NARRAY_BOOL:
+                return buffer.readBooleanArray(size);
+            case NARRAY_BYTE:
+                return buffer.readByteArray(size);
+            case NARRAY_SHORT:
+                return buffer.readShortArray(size);
+            case NARRAY_INT:
+                return buffer.readIntArray(size);
+            case NARRAY_LONG:
+                return buffer.readLongArray(size);
+            case NARRAY_FLOAT:
+                return buffer.readFloatArray(size);
+            case NARRAY_DOUBLE:
+                return buffer.readDoubleArray(size);
+            default:
+                throw new IllegalArgumentException("unknown narray type");
         }
     }
 
@@ -99,12 +153,6 @@ public final class Input {
      * Read an array by the specified head info
      */
     Object readArray(long head) throws IOException {
-        if (head == ID_ZERO_ARRAY) {
-            return new Object[0];
-        }
-        if ((head & 1) == 0) {
-            return readPureArray(head);
-        }
         List<Object[]> slices = new ArrayList<>();
         int totalSize = 0;
         while (true) {
@@ -114,25 +162,25 @@ public final class Input {
             Object[] slice;
             switch (type) {
                 case SLICE_BOOL:
-                    slice = reader.readBooleanSlice(size);
+                    slice = buffer.readBooleanSlice(size);
                     break;
                 case SLICE_BYTE:
-                    slice = reader.readByteSlice(size);
+                    slice = buffer.readByteSlice(size);
                     break;
                 case SLICE_SHORT:
-                    slice = reader.readShortSlice(size);
+                    slice = buffer.readShortSlice(size);
                     break;
                 case SLICE_INT:
-                    slice = reader.readIntSlice(size);
+                    slice = buffer.readIntSlice(size);
                     break;
                 case SLICE_LONG:
-                    slice = reader.readLongSlice(size);
+                    slice = buffer.readLongSlice(size);
                     break;
                 case SLICE_FLOAT:
-                    slice = reader.readFloatSlice(size);
+                    slice = buffer.readFloatSlice(size);
                     break;
                 case SLICE_DOUBLE:
-                    slice = reader.readDoubleSlice(size);
+                    slice = buffer.readDoubleSlice(size);
                     break;
                 case SLICE_NULL:
                     slice = new Object[size];
@@ -140,25 +188,25 @@ public final class Input {
                 case SLICE_SYMBOL:
                     slice = new String[size];
                     for (int i = 0; i < size; i++) {
-                        int dataId = (int) reader.readVarUint();
-                        slice[i] = stream ? context.findSymbolByID(dataId) : context.findStringByID(dataId);
+                        int dataId = (int) buffer.readVarUint();
+                        slice[i] = stream ? dataPool.getSymbol(dataId) : dataPool.getString(dataId);
                     }
                     break;
                 case SLICE_STRING:
                     slice = new String[size];
                     for (int i = 0; i < size; i++) {
-                        slice[i] = context.findStringByID((int) reader.readVarUint());
+                        slice[i] = dataPool.getString((int) buffer.readVarUint());
                     }
                     break;
 //                case SLICE_ARRAY:
 //                    slice = new Object[size];
 //                    for (int i = 0; i < size; i++) {
-//                        slice[i] = readArray(reader.readVarUint());
+//                        slice[i] = readArray(buffer.readVarUint());
 //                    }
 //                    break;
 //                case SLICE_OBJECT:
 //                    slice = new Object[size];
-//                    int structId = (int) reader.readVarUint();
+//                    int structId = (int) buffer.readVarUint();
 //                    String[] fieldNames = context.findStructByID(structId);
 //                    for (int i = 0; i < size; i++) {
 //                        Map<String, Object> obj = new HashMap<>();
@@ -175,7 +223,7 @@ public final class Input {
             if ((head & 1) == 0) {
                 break;
             }
-            head = reader.readVarUint();
+            head = buffer.readVarUint();
         }
         Object[] result = new Object[totalSize];
         int off = 0;
@@ -185,65 +233,6 @@ public final class Input {
             }
         }
         return result;
-    }
-
-    /**
-     * Read a pure array, which means all items has same type
-     */
-    Object readPureArray(long head) throws IOException {
-        byte type = (byte) ((head >>> 1) & 0x0F);
-        int size = (int) (head >>> 5);
-        switch (type) {
-            case SLICE_NULL:
-                return new Object[size];
-            case SLICE_BOOL:
-                return reader.readBooleanArray(size);
-            case SLICE_BYTE:
-                return reader.readByteArray(size);
-            case SLICE_SHORT:
-                return reader.readShortArray(size);
-            case SLICE_INT:
-                return reader.readIntArray(size);
-            case SLICE_LONG:
-                return reader.readLongArray(size);
-            case SLICE_FLOAT:
-                return reader.readFloatArray(size);
-            case SLICE_DOUBLE:
-                return reader.readDoubleArray(size);
-            case SLICE_STRING:
-                String[] strings = new String[size];
-                for (int i = 0; i < size; i++) {
-                    strings[i] = context.findStringByID((int) reader.readVarUint());
-                }
-                return strings;
-            case SLICE_SYMBOL:
-                String[] symbols = new String[size];
-                for (int i = 0; i < size; i++) {
-                    int dataId = (int) reader.readVarUint();
-                    symbols[i] = stream ? context.findSymbolByID(dataId) : context.findStringByID(dataId);
-                }
-                return symbols;
-//            case SLICE_ARRAY:
-//                Object[] array = new Object[size];
-//                for (int i = 0; i < size; i++) {
-//                    array[i] = readArray(reader.readVarUint());
-//                }
-//                return array;
-//            case SLICE_OBJECT:
-//                Object[] objects = new Object[size];
-//                int structId = (int) reader.readVarUint();
-//                String[] fieldNames = context.findStructByID(structId);
-//                for (int i = 0; i < size; i++) {
-//                    Map<String, Object> obj = new HashMap<>();
-//                    for (String field : fieldNames) {
-//                        obj.put(field, readNode());
-//                    }
-//                    objects[i] = obj;
-//                }
-//                return objects;
-            default:
-                throw new InvalidReadException("run into invalid slice type: " + type);
-        }
     }
 
 }

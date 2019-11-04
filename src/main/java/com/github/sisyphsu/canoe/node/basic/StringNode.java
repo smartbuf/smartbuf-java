@@ -30,8 +30,4 @@ public final class StringNode extends Node {
         return value;
     }
 
-    @Override
-    public String stringValue() {
-        return value;
-    }
 }

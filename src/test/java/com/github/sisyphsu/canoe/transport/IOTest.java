@@ -1,5 +1,6 @@
 package com.github.sisyphsu.canoe.transport;
 
+import com.github.sisyphsu.canoe.Canoe;
 import com.github.sisyphsu.canoe.exception.InvalidReadException;
 import com.github.sisyphsu.canoe.exception.InvalidVersionException;
 import com.github.sisyphsu.canoe.exception.MismatchModeException;
@@ -179,7 +180,7 @@ public class IOTest {
         }
 
         try {
-            input.readNode();
+            input.readObject();
         } catch (Exception e) {
             assert e instanceof InvalidReadException;
         }
@@ -225,7 +226,7 @@ public class IOTest {
     // exec node -> output -> input -> object
     static Object transIO(Node node) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1 << 20);
-        Output output = new Output(enableCxt);
+        Output output = new Output(Canoe.CODEC, enableCxt);
         output.write(node);
 
         bytes = outputStream.toByteArray();

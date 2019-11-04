@@ -3,7 +3,6 @@ package com.github.sisyphsu.canoe.benchmark;
 import com.github.sisyphsu.canoe.Canoe;
 import com.github.sisyphsu.canoe.convertor.ConverterPipeline;
 import com.github.sisyphsu.canoe.node.Node;
-import com.github.sisyphsu.canoe.transport.Schema;
 import org.apache.commons.lang3.RandomUtils;
 import org.openjdk.jmh.annotations.*;
 
@@ -23,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 public class TestBenchmark {
 
-    static Schema            schema   = new Schema(true);
     static ConverterPipeline pipeline = Canoe.CODEC.getPipeline(Date.class, Node.class);
     static Date              date     = new Date();
 
