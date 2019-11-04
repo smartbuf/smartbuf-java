@@ -212,7 +212,7 @@ public final class OutputBuffer {
     }
 
     private void ensureCapacity(int size) {
-        int newSize = Math.min(data.length * 2, limit);
+        int newSize = Math.min(Math.max(data.length * 2, size), limit);
         if (newSize < size) {
             throw new IllegalArgumentException("no space");
         }

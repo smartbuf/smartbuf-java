@@ -50,8 +50,8 @@ public final class Input {
 
         byte head = buffer.readByte();
         boolean stream = (head & VER_STREAM) != 0;
-        boolean hasMeta = (head & VER_HAS_DATA) != 0;
-        boolean hasData = (head & VER_HAS_META) != 0;
+        boolean hasMeta = (head & VER_HAS_META) != 0;
+        boolean hasData = (head & VER_HAS_DATA) != 0;
         boolean hasSeq = (head & VER_HAS_SEQ) != 0;
         // valid schema
         if ((head & 0b1111_0000) != VER) {
@@ -63,9 +63,9 @@ public final class Input {
         // only stream-mode needs sequence
         if (hasSeq) {
             long nextSeq = this.sequence + 1;
-            long seq = buffer.readByte();
-            if ((seq & 0xFF) != (nextSeq & 0xFF)) {
-                throw new UnexpectedSequenceException(seq & 0xFF, (int) (nextSeq & 0xFF));
+            long recvSeq = buffer.readByte() & 0xFF;
+            if (recvSeq != (nextSeq & 0xFF)) {
+                throw new UnexpectedSequenceException(nextSeq & 0xFF, recvSeq);
             }
             this.sequence = nextSeq;
         }
@@ -96,7 +96,7 @@ public final class Input {
             case DATA_ID_ZERO_ARRAY:
                 return new Object[0];
         }
-        byte flag = (byte) (head & 0b0000_0011);
+        byte flag = (byte) (head & 0b0000_0111);
         switch (flag) {
             case TYPE_VARINT:
                 return dataPool.getVarint((int) (head >>> 3));

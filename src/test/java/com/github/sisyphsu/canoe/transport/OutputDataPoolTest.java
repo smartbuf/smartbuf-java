@@ -90,7 +90,6 @@ public class OutputDataPoolTest {
         assert dataPool.registerSymbol("7") == 1;
 
         dataPool.reset(); // remain 7,5,3,2
-        assert dataPool.symbolIndex.size() == 4;
     }
 
 }

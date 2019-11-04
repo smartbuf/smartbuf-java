@@ -8,7 +8,7 @@ import static com.github.sisyphsu.canoe.transport.Const.*;
  * @author sulin
  * @since 2019-11-04 17:29:53
  */
-public class InputMetaPool {
+public final class InputMetaPool {
 
     private static final String[] EMPTY_STRUCT = new String[0];
 
@@ -108,7 +108,7 @@ public class InputMetaPool {
         if (index >= cxtStructs.cap()) {
             throw new IllegalArgumentException("invalid context struct id: " + id);
         }
-        String[] struct = cxtStructs.get(id);
+        String[] struct = cxtStructs.get(index);
         if (struct == null) {
             throw new IllegalArgumentException("invalid context struct id: " + id);
         }

@@ -1,14 +1,12 @@
 package com.github.sisyphsu.canoe.transport;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.sisyphsu.canoe.convertor.CodecFactory;
+import com.github.sisyphsu.canoe.Canoe;
 import com.github.sisyphsu.canoe.model.MessageOuterClass;
-import com.github.sisyphsu.canoe.node.NodeCodec;
 import com.github.sisyphsu.canoe.node.Node;
 import lombok.Data;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -26,20 +24,15 @@ public class IOFullTest {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    @BeforeEach
-    void setUp() {
-        CodecFactory.Instance.installCodec(NodeCodec.class);
-    }
-
     @Test
     public void test() throws IOException {
         MMessage msg = new MMessage();
         for (int i = 0; i < 10; i++) {
             msg.receivers.add(new MReceiver());
         }
-        Node node = CodecFactory.Instance.convert(msg, Node.class);
+        Node node = Canoe.CODEC.convert(msg, Node.class);
         Object obj = transIO(node);
-        MMessage recvMsg = CodecFactory.Instance.convert(obj, MMessage.class);
+        MMessage recvMsg = Canoe.CODEC.convert(obj, MMessage.class);
         assert msg.equals(recvMsg);
 
         MessageOuterClass.Message msg2 = convert(msg);
@@ -47,13 +40,13 @@ public class IOFullTest {
 
         String json = MAPPER.writeValueAsString(msg);
         System.out.println("json: " + json.getBytes().length);
-        System.out.println("datube: " + bytes.length);
+        System.out.println("canoe: " + bytes.length);
         System.out.println("protobuf: " + protoBytes.length);
 
         /*
-        json: 2348
-        datube: 1308
-        protobuf: 1261
+        json: 2351
+        canoe: 1308
+        protobuf: 1271
          */
         // Object's metadata has 96 chars, if it's reused, datube will be around 1210, save 4%
     }

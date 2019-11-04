@@ -70,7 +70,7 @@ public final class Output {
         if (hasSeq) head |= VER_HAS_SEQ;
         headBuf.writeByte(head);
         // 1-byte for context sequence, if need
-        if (hasMeta) {
+        if (hasSeq) {
             headBuf.writeByte((byte) ((++this.sequence) & 0xFF));
         }
         // output sharing meta
@@ -215,7 +215,7 @@ public final class Output {
                 prevCls = currCls;
                 prevKey = currKey;
             }
-            if (prevCls != currCls || Arrays.deepEquals(prevKey, currKey)) {
+            if (prevCls != currCls || !Arrays.deepEquals(prevKey, currKey)) {
                 this.writeSlice(prevCls, objects, off, i, true); // write the previous slice
                 prevCls = currCls;
                 off = i;

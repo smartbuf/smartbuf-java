@@ -156,7 +156,7 @@ public final class CodecFactory {
             // find the shortest path
             Path shortestPath = this.findShortestPath(srcClass, tgtClass);
             if (shortestPath != null) {
-                pipeline = new ConverterPipeline(shortestPath.methods);
+                pipeline = new ConverterPipeline(srcClass, tgtClass, shortestPath.methods);
                 pipelineMap.put(key, pipeline);
             }
         }

@@ -48,7 +48,7 @@ public final class Canoe {
     public Canoe(boolean enableStreamMode, IOReader reader, IOWriter writer) {
         this.reader = reader;
         this.writer = writer;
-        this.input = new Input(reader, enableStreamMode);
+//        this.input = new Input(enableStreamMode);
 //        this.output = new Output( enableStreamMode);
     }
 
@@ -66,7 +66,7 @@ public final class Canoe {
         if (closed) {
             throw new CanoeClosedException("Canoe is closed");
         }
-        Object obj = input.read();
+        Object obj = input.read(null);
         return (T) CODEC.convert(obj, tRef.getType());
     }
 
@@ -82,7 +82,7 @@ public final class Canoe {
         if (closed) {
             throw new CanoeClosedException("Canoe is closed");
         }
-        Object obj = input.read();
+        Object obj = input.read(null);
         return CODEC.convert(obj, tCls);
     }
 

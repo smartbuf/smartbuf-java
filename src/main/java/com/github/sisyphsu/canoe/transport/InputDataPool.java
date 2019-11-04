@@ -113,7 +113,7 @@ public final class InputDataPool {
      * @return Symbol's value
      */
     public String getSymbol(int id) {
-        int dataId = id - 2;
+        int dataId = id - 1;
         if (dataId >= symbols.cap()) {
             throw new IllegalArgumentException("invalid symbol Id: " + id);
         }

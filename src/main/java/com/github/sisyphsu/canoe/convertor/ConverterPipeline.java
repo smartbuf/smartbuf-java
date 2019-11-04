@@ -29,7 +29,7 @@ public final class ConverterPipeline {
     private final Class<?>              sourceType;
     private final Class<?>              targetType;
 
-    public ConverterPipeline(List<ConverterMethod> methods) {
+    public ConverterPipeline(Class<?> srcType, Class<?> tgtType, List<ConverterMethod> methods) {
         List<RealConverterMethod> realConverterMethods = new ArrayList<>();
         for (ConverterMethod method : methods) {
             if (method instanceof RealConverterMethod) {
@@ -44,8 +44,8 @@ public final class ConverterPipeline {
         }
         this.pipeline = pipeline;
         this.methods = methods;
-        this.sourceType = methods.get(0).getSrcClass();
-        this.targetType = methods.get(methods.size() - 1).getTgtClass();
+        this.sourceType = srcType;
+        this.targetType = tgtType;
     }
 
     /**
