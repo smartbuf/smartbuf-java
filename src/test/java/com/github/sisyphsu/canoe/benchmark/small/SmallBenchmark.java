@@ -13,11 +13,11 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Benchmark                 Mode  Cnt    Score    Error  Units
- * SerialBenchmark.json      avgt    6  819.909 ± 29.310  ns/op
- * SerialBenchmark.packet    avgt    6  770.033 ± 17.766  ns/op
- * SerialBenchmark.protobuf  avgt    6  227.747 ± 11.092  ns/op
- * SerialBenchmark.stream    avgt    6  453.703 ± 10.799  ns/op
+ * Benchmark                Mode  Cnt    Score    Error  Units
+ * SmallBenchmark.json      avgt    6  832.629 ± 79.923  ns/op
+ * SmallBenchmark.packet    avgt    6  744.320 ± 19.203  ns/op
+ * SmallBenchmark.protobuf  avgt    6  223.907 ± 15.276  ns/op
+ * SmallBenchmark.stream    avgt    6  419.298 ± 19.932  ns/op
  * <p>
  * stream(485ns) = (unknwon)90ns + writeObject(166ns) + writeHeadBuf(162ns) + copyResult(20ns) + (reset+others)20ns
  * writeObject(166ns) = registerData(90ns) + objectNode(40ns) + 36ns(ifelse+bodyBuf)
@@ -104,11 +104,10 @@ public class SmallBenchmark {
         // CodecContext/ThreadLocal may cost 20~30ns
     }
 
-
     static OutputBuffer   buffer   = new OutputBuffer(1 << 20);
     static OutputDataPool dataPool = new OutputDataPool(1 << 10);
 
-    //    @Benchmark
+//    @Benchmark
     public void dataPool() {
         // 110ns
         dataPool.reset();
@@ -146,7 +145,7 @@ public class SmallBenchmark {
 
         buffer.reset();
 
-        STREAM.canoe.output.dataPool.write(buffer); // 162ns
+        STREAM.canoe.output.dataPool.write(buffer); // 82ns
 
 //        STREAM.canoe.output.metaPool.write(buffer); // first=365ns, following=3ns
 

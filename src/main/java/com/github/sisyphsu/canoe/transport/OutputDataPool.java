@@ -25,14 +25,14 @@ public final class OutputDataPool {
 
     private static final byte NEED_SEQ = HAS_SYMBOL_ADDED | HAS_SYMBOL_EXPIRED;
 
-    private final Array<Float>         floats    = new Array<>();
-    private final Map<Float, Integer>  floatMap  = new HashMap<>();
-    private final Array<Double>        doubles   = new Array<>();
-    private final Map<Double, Integer> doubleMap = new HashMap<>();
-    private final Array<Long>          varints   = new Array<>();
-    private final Map<Long, Integer>   varintMap = new HashMap<>();
-    private final Array<String>        strings   = new Array<>();
-    private final Map<String, Integer> stringMap = new HashMap<>();
+    private final Array<Float>         floats      = new Array<>();
+    private final Map<Float, Integer>  floatIndex  = new HashMap<>();
+    private final Array<Double>        doubles     = new Array<>();
+    private final Map<Double, Integer> doubleIndex = new HashMap<>();
+    private final Array<Long>          varints     = new Array<>();
+    private final Map<Long, Integer>   varintIndex = new HashMap<>();
+    private final Array<String>        strings     = new Array<>();
+    private final Map<String, Integer> stringIndex = new HashMap<>();
 
     private final int                 symbolLimit;
     private final IDAllocator         symbolID      = new IDAllocator();
@@ -62,12 +62,7 @@ public final class OutputDataPool {
         if (f == 0) {
             return 1;
         }
-        Integer id = floatMap.get(f);
-        if (id == null) {
-            id = floats.add(f);
-            floatMap.put(f, id);
-        }
-        return id + 2;
+        return floatIndex.computeIfAbsent(f, floats::add) + 2;
     }
 
     /**
@@ -80,12 +75,7 @@ public final class OutputDataPool {
         if (d == 0) {
             return 1;
         }
-        Integer id = doubleMap.get(d);
-        if (id == null) {
-            id = doubles.add(d);
-            doubleMap.put(d, id);
-        }
-        return id + 2;
+        return doubleIndex.computeIfAbsent(d, doubles::add) + 2;
     }
 
     /**
@@ -98,12 +88,7 @@ public final class OutputDataPool {
         if (l == 0) {
             return 1;
         }
-        Integer id = varintMap.get(l);
-        if (id == null) {
-            id = varints.add(l);
-            varintMap.put(l, id);
-        }
-        return id + 2;
+        return varintIndex.computeIfAbsent(l, varints::add) + 2;
     }
 
     /**
@@ -116,12 +101,7 @@ public final class OutputDataPool {
         if (str.isEmpty()) {
             return 1;
         }
-        Integer id = stringMap.get(str);
-        if (id == null) {
-            id = strings.add(str);
-            stringMap.put(str, id);
-        }
-        return id + 2;
+        return stringIndex.computeIfAbsent(str, strings::add) + 2;
     }
 
     /**
@@ -134,14 +114,13 @@ public final class OutputDataPool {
         if (str == null || str.isEmpty()) {
             throw new IllegalArgumentException("invalid symbol: " + str);
         }
-        Symbol symbol = symbolIndex.get(str);
-        if (symbol == null) {
+        Symbol symbol = symbolIndex.computeIfAbsent(str, s -> {
             int index = symbolID.acquire();
-            symbol = new Symbol(str, index);
-            this.symbols.put(index, symbol);
-            this.symbolAdded.add(symbol);
-            this.symbolIndex.put(str, symbol);
-        }
+            Symbol result = new Symbol(str, index);
+            this.symbols.put(index, result);
+            this.symbolAdded.add(result);
+            return result;
+        });
         symbol.lastTime = (int) TimeUtils.fastUpTime();
         return symbol.index + 1;
     }
@@ -219,13 +198,13 @@ public final class OutputDataPool {
      */
     public void reset() {
         this.floats.clear();
-        this.floatMap.clear();
+        this.floatIndex.clear();
         this.doubles.clear();
-        this.doubleMap.clear();
+        this.doubleIndex.clear();
         this.varints.clear();
-        this.varintMap.clear();
+        this.varintIndex.clear();
         this.strings.clear();
-        this.stringMap.clear();
+        this.stringIndex.clear();
         this.symbolAdded.clear();
         this.symbolExpired.clear();
 

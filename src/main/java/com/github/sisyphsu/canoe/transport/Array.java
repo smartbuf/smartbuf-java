@@ -20,9 +20,9 @@ public final class Array<T> {
      * @param val New object of T
      */
     public int add(T val) {
-        int offset = this.size;
-        this.put(offset, val);
-        return offset;
+        int pos = this.size;
+        this.put(pos, val);
+        return pos;
     }
 
     /**
