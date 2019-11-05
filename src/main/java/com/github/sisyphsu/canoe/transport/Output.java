@@ -92,60 +92,6 @@ public final class Output {
             bodyBuf.writeVarUint(DATA_ID_NULL);
             return;
         }
-        Class<?> cls = obj.getClass();
-        if (cls.isEnum()) {
-            if (enableStreamMode) {
-                bodyBuf.writeVarUint((dataPool.registerSymbol(((Enum) obj).name()) << 3) | TYPE_SYMBOL);
-            } else {
-                bodyBuf.writeVarUint((dataPool.registerString(((Enum) obj).name()) << 3) | TYPE_STRING);
-            }
-            return;
-        }
-        if (cls.isArray()) {
-            switch (cls.getName().charAt(1)) {
-                case 'C':
-                    bodyBuf.writeVarUint((dataPool.registerString(new String((char[]) obj)) << 3) | TYPE_STRING);
-                    break;
-                case 'Z':
-                    boolean[] booleans = (boolean[]) obj;
-                    bodyBuf.writeVarUint(booleans.length << 6 | TYPE_NARRAY_BOOL);
-                    bodyBuf.writeBooleanArray(booleans);
-                    break;
-                case 'B':
-                    byte[] bytes = (byte[]) obj;
-                    bodyBuf.writeVarUint(bytes.length << 6 | TYPE_NARRAY_BYTE);
-                    bodyBuf.writeByteArray(bytes);
-                    break;
-                case 'S':
-                    short[] shorts = (short[]) obj;
-                    bodyBuf.writeVarUint(shorts.length << 6 | TYPE_NARRAY_SHORT);
-                    bodyBuf.writeShortArray(shorts);
-                    break;
-                case 'I':
-                    int[] ints = (int[]) obj;
-                    bodyBuf.writeVarUint(ints.length << 6 | TYPE_NARRAY_INT);
-                    bodyBuf.writeIntArray(ints);
-                    break;
-                case 'J':
-                    long[] longs = (long[]) obj;
-                    bodyBuf.writeVarUint(longs.length << 6 | TYPE_NARRAY_LONG);
-                    bodyBuf.writeLongArray(longs);
-                    break;
-                case 'F':
-                    float[] floats = (float[]) obj;
-                    bodyBuf.writeVarUint(floats.length << 6 | TYPE_NARRAY_FLOAT);
-                    bodyBuf.writeFloatArray(floats);
-                    break;
-                case 'D':
-                    double[] doubles = (double[]) obj;
-                    bodyBuf.writeVarUint(doubles.length << 6 | TYPE_NARRAY_DOUBLE);
-                    bodyBuf.writeDoubleArray(doubles);
-                    break;
-                default:
-                    this.writeArray(Arrays.asList((Object[]) obj));
-            }
-            return;
-        }
         if (obj instanceof ObjectNode) {
             ObjectNode node = (ObjectNode) obj;
             if (enableStreamMode && node.isStable()) {
@@ -174,12 +120,55 @@ public final class Output {
             bodyBuf.writeVarUint((dataPool.registerString(obj.toString()) << 3) | TYPE_STRING);
         } else if (obj instanceof Collection) {
             this.writeArray((Collection<?>) obj);
-        } else {
-            Node node = codecFactory.convert(obj, Node.class);
-            if (node == null || node instanceof ObjectNode) {
-                this.writeObject(node);
+        } else if (obj instanceof Enum) {
+            if (enableStreamMode) {
+                bodyBuf.writeVarUint((dataPool.registerSymbol(((Enum) obj).name()) << 3) | TYPE_SYMBOL);
             } else {
-                this.writeObject(node.value());
+                bodyBuf.writeVarUint((dataPool.registerString(((Enum) obj).name()) << 3) | TYPE_STRING);
+            }
+        } else {
+            Class<?> cls = obj.getClass();
+            if (cls.isArray()) {
+                if (obj instanceof char[]) {
+                    bodyBuf.writeVarUint((dataPool.registerString(new String((char[]) obj)) << 3) | TYPE_STRING);
+                } else if (obj instanceof boolean[]) {
+                    boolean[] booleans = (boolean[]) obj;
+                    bodyBuf.writeVarUint(booleans.length << 6 | TYPE_NARRAY_BOOL);
+                    bodyBuf.writeBooleanArray(booleans);
+                } else if (obj instanceof byte[]) {
+                    byte[] bytes = (byte[]) obj;
+                    bodyBuf.writeVarUint(bytes.length << 6 | TYPE_NARRAY_BYTE);
+                    bodyBuf.writeByteArray(bytes);
+                } else if (obj instanceof short[]) {
+                    short[] shorts = (short[]) obj;
+                    bodyBuf.writeVarUint(shorts.length << 6 | TYPE_NARRAY_SHORT);
+                    bodyBuf.writeShortArray(shorts);
+                } else if (obj instanceof int[]) {
+                    int[] ints = (int[]) obj;
+                    bodyBuf.writeVarUint(ints.length << 6 | TYPE_NARRAY_INT);
+                    bodyBuf.writeIntArray(ints);
+                } else if (obj instanceof long[]) {
+                    long[] longs = (long[]) obj;
+                    bodyBuf.writeVarUint(longs.length << 6 | TYPE_NARRAY_LONG);
+                    bodyBuf.writeLongArray(longs);
+                } else if (obj instanceof float[]) {
+                    float[] floats = (float[]) obj;
+                    bodyBuf.writeVarUint(floats.length << 6 | TYPE_NARRAY_FLOAT);
+                    bodyBuf.writeFloatArray(floats);
+                } else if (obj instanceof double[]) {
+                    double[] doubles = (double[]) obj;
+                    bodyBuf.writeVarUint(doubles.length << 6 | TYPE_NARRAY_DOUBLE);
+                    bodyBuf.writeDoubleArray(doubles);
+                } else {
+                    this.writeArray(Arrays.asList((Object[]) obj));
+                }
+            } else {
+                Node node = codecFactory.convert(obj, Node.class);
+                if (node == null || node instanceof ObjectNode) {
+                    this.writeObject(node);
+                } else {
+                    this.writeObject(node.value());
+                }
             }
         }
     }

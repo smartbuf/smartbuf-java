@@ -30,11 +30,11 @@ import java.util.concurrent.TimeUnit;
  * SerialBenchmark.protobuf  avgt    6  204.565 ±  5.205  ns/op
  * SerialBenchmark.stream    avgt    6  459.287 ±  7.873  ns/op
  * <p>
- * Benchmark                 Mode  Cnt     Score    Error  Units
- * SerialBenchmark.json      avgt    6   735.111 ± 71.427  ns/op
- * SerialBenchmark.packet    avgt    6  1004.536 ± 16.042  ns/op
- * SerialBenchmark.protobuf  avgt    6   201.449 ±  3.240  ns/op
- * SerialBenchmark.stream    avgt    6   461.718 ± 16.687  ns/op
+ * Benchmark                 Mode  Cnt    Score    Error  Units
+ * SerialBenchmark.json      avgt    6  699.630 ± 10.382  ns/op
+ * SerialBenchmark.packet    avgt    6  982.929 ± 35.113  ns/op
+ * SerialBenchmark.protobuf  avgt    6  202.034 ±  4.333  ns/op
+ * SerialBenchmark.stream    avgt    6  451.119 ±  6.291  ns/op
  *
  * @author sulin
  * @since 2019-10-28 17:32:33
