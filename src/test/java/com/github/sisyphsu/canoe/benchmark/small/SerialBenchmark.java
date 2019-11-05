@@ -14,10 +14,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Benchmark                 Mode  Cnt     Score    Error  Units
- * SerialBenchmark.json      avgt    6   762.649 ± 18.287  ns/op
- * SerialBenchmark.packet    avgt    6  1035.886 ± 61.685  ns/op
- * SerialBenchmark.protobuf  avgt    6   197.307 ±  6.513  ns/op
- * SerialBenchmark.stream    avgt    6   485.459 ±  9.271  ns/op
+ * SerialBenchmark.json      avgt    6   837.815 ± 26.234  ns/op
+ * SerialBenchmark.packet    avgt    6  1162.554 ± 30.202  ns/op
+ * SerialBenchmark.protobuf  avgt    6   228.847 ± 10.191  ns/op
+ * SerialBenchmark.stream    avgt    6   525.344 ±  5.497  ns/op
  * <p>
  * stream(485ns) = (unknwon)90ns + writeObject(166ns) + writeHeadBuf(162ns) + copyResult(20ns) + (reset+others)20ns
  * writeObject(166ns) = registerData(90ns) + objectNode(40ns) + 36ns(ifelse+bodyBuf)
@@ -108,9 +108,9 @@ public class SerialBenchmark {
     static OutputBuffer   buffer   = new OutputBuffer(1 << 20);
     static OutputDataPool dataPool = new OutputDataPool(1 << 10);
 
-    //    @Benchmark
+    @Benchmark
     public void dataPool() {
-        // 92ns
+        // 110ns
         dataPool.reset();
         dataPool.registerVarint(user.getId());
         dataPool.registerString(user.getNickname());
@@ -122,17 +122,17 @@ public class SerialBenchmark {
 
     @Benchmark
     public void writeBody() {
-        // 122ns
+        // 138ns
         buffer.reset();
-        buffer.writeVarInt(user.getId()); // 12ns for randomInt
+//        buffer.writeVarInt(user.getId()); // 12ns for randomInt
         buffer.writeString(user.getNickname()); // 48ns for char[12]
         buffer.writeString(user.getPortrait()); // 52ns for char[24]
-        buffer.writeFloat(user.getScore()); // 1.6ns
-        buffer.writeVarInt(user.getLoginTimes()); // 3ns for [10,10000]
-        buffer.writeVarInt(user.getCreateTime()); // 7.5ns for timestamp
+//        buffer.writeFloat(user.getScore()); // 1.6ns
+//        buffer.writeVarInt(user.getLoginTimes()); // 3ns for [10,10000]
+//        buffer.writeVarInt(user.getCreateTime()); // 7.5ns for timestamp
     }
 
-    @Benchmark
+    //    @Benchmark
     public void benchmark() {
 //        STREAM.canoe.output.write(USER); // 374ns
 

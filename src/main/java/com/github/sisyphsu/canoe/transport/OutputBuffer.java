@@ -1,9 +1,7 @@
 package com.github.sisyphsu.canoe.transport;
 
 import com.github.sisyphsu.canoe.utils.NumberUtils;
-import com.github.sisyphsu.canoe.utils.UTF8Encoder;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -41,11 +39,10 @@ public final class OutputBuffer {
         this.writeVarUint(NumberUtils.intToUint(n));
     }
 
-    public int writeVarUint(long n) {
+    public void writeVarUint(long n) {
         if (data.length < offset + 10) {
             this.ensureCapacity(offset + 10);
         }
-        int oldOffset = offset;
         do {
             if ((n & 0xFFFFFFFFFFFFFF80L) == 0) {
                 data[offset++] = (byte) n;
@@ -54,7 +51,6 @@ public final class OutputBuffer {
             }
             n >>>= 7;
         } while (n != 0);
-        return offset - oldOffset;
     }
 
     public void writeFloat(float f) {
@@ -80,17 +76,14 @@ public final class OutputBuffer {
     }
 
     public void writeString(String str) {
-        final int offset = this.offset; // save the old offset
-        final int byteLen = str.length() * 3;
-        if (data.length < offset + byteLen + 5) {
-            this.ensureCapacity(offset + byteLen + 5);
+        byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
+        int len = bytes.length;
+        if (data.length < offset + len + 5) {
+            this.ensureCapacity(offset + len + 5);
         }
-        int position = UTF8Encoder.encode(str, data, offset + 5);
-        int realByteLen = position - offset - 5;
-        if (writeVarUint(realByteLen) < 5) {
-            System.arraycopy(data, offset + 5, data, this.offset, realByteLen); // move forward
-        }
-        this.offset += realByteLen;
+        this.writeVarUint(len);
+        System.arraycopy(bytes, 0, data, offset, len);
+        this.offset += len;
     }
 
     public void writeBooleanArray(boolean[] arr) {
