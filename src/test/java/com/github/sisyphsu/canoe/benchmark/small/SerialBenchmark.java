@@ -16,25 +16,13 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Benchmark                 Mode  Cnt     Score    Error  Units
- * SerialBenchmark.json      avgt    6   764.649 ±  4.576  ns/op
- * SerialBenchmark.packet    avgt    6  1074.742 ± 26.246  ns/op
- * SerialBenchmark.protobuf  avgt    6   203.787 ±  6.665  ns/op
- * SerialBenchmark.stream    avgt    6   519.900 ±  7.455  ns/op
+ * SerialBenchmark.json      avgt    6   762.649 ± 18.287  ns/op
+ * SerialBenchmark.packet    avgt    6  1035.886 ± 61.685  ns/op
+ * SerialBenchmark.protobuf  avgt    6   197.307 ±  6.513  ns/op
+ * SerialBenchmark.stream    avgt    6   485.459 ±  9.271  ns/op
  * <p>
- * stream(523ns) = dataPool.output(162ns) + convertObjectNode(40ns) + body.output(90ns) + others(230ns)
- * <p>
- * Move `instanceof ObjectNode` to first case, improved a little(10%):
- * Benchmark                 Mode  Cnt    Score    Error  Units
- * SerialBenchmark.json      avgt    6  747.340 ± 17.980  ns/op
- * SerialBenchmark.packet    avgt    6  997.599 ± 36.124  ns/op
- * SerialBenchmark.protobuf  avgt    6  204.565 ±  5.205  ns/op
- * SerialBenchmark.stream    avgt    6  459.287 ±  7.873  ns/op
- * <p>
- * Benchmark                 Mode  Cnt    Score    Error  Units
- * SerialBenchmark.json      avgt    6  699.630 ± 10.382  ns/op
- * SerialBenchmark.packet    avgt    6  982.929 ± 35.113  ns/op
- * SerialBenchmark.protobuf  avgt    6  202.034 ±  4.333  ns/op
- * SerialBenchmark.stream    avgt    6  451.119 ±  6.291  ns/op
+ * stream(485ns) = (unknwon)90ns + writeObject(166ns) + writeHeadBuf(162ns) + copyResult(20ns) + (reset+others)20ns
+ * writeObject(166ns) = registerData(90ns) + objectNode(40ns) + 36ns(ifelse+bodyBuf)
  *
  * @author sulin
  * @since 2019-10-28 17:32:33
@@ -136,6 +124,7 @@ public class SerialBenchmark {
 
     //    @Benchmark
     public void writeBody() {
+        // 7ns
         buffer.reset();
         buffer.writeVarUint(200);
         buffer.writeVarUint(20);
@@ -151,8 +140,8 @@ public class SerialBenchmark {
     public void benchmark() {
 //        STREAM.canoe.output.write(USER); // 374ns
 
-//        STREAM.canoe.output.bodyBuf.reset();
-//        STREAM.canoe.output.writeObject(USER); // 263ns
+        STREAM.canoe.output.bodyBuf.reset();
+        STREAM.canoe.output.writeObject(USER); // 166ns
 
 //        STREAM.canoe.output.metaPool.reset(); // 6ns
 //        STREAM.canoe.output.metaPool.needOutput(); // 3ns

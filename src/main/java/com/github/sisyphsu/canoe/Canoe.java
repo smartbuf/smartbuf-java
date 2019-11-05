@@ -3,7 +3,6 @@ package com.github.sisyphsu.canoe;
 import com.github.sisyphsu.canoe.convertor.CodecFactory;
 import com.github.sisyphsu.canoe.exception.CanoeClosedException;
 import com.github.sisyphsu.canoe.node.NodeCodec;
-import com.github.sisyphsu.canoe.node.Node;
 import com.github.sisyphsu.canoe.reflect.TypeRef;
 import com.github.sisyphsu.canoe.transport.Input;
 import com.github.sisyphsu.canoe.transport.Output;
@@ -19,8 +18,6 @@ import java.io.IOException;
  * @since 2019-10-28 15:13:24
  */
 public final class Canoe {
-
-    public static int PACKET_LIMIT = 1024 * 1024 * 64;
 
     public static final CodecFactory CODEC = new CodecFactory();
 
@@ -85,8 +82,7 @@ public final class Canoe {
         if (closed) {
             throw new CanoeClosedException("Canoe is closed");
         }
-        Node node = CODEC.convert(obj, Node.class);
-        return output.write(node);
+        return output.write(obj);
     }
 
     /**
