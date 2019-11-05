@@ -150,7 +150,7 @@ public final class OutputMetaPool {
         if ((status & HAS_NAME_TMP) > 0) {
             status ^= HAS_NAME_TMP;
             len = tmpNames.size();
-            buf.writeVarUint((len << 4) | (META_NAME_TMP << 1) | (status == 0 ? 0 : 1));
+            buf.writeVarUint((len << 4) | META_NAME_TMP | (status == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 buf.writeString(tmpNames.get(i));
             }
@@ -158,7 +158,7 @@ public final class OutputMetaPool {
         if ((status & HAS_NAME_ADDED) > 0) {
             status ^= HAS_NAME_ADDED;
             len = cxtNameAdded.size();
-            buf.writeVarUint((len << 4) | (META_NAME_ADDED << 1) | (status == 0 ? 0 : 1));
+            buf.writeVarUint((len << 4) | META_NAME_ADDED | (status == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 buf.writeString(cxtNameAdded.get(i).name);
             }
@@ -166,7 +166,7 @@ public final class OutputMetaPool {
         if ((status & HAS_NAME_EXPIRED) > 0) {
             status ^= HAS_NAME_EXPIRED;
             len = cxtNameExpired.size();
-            buf.writeVarUint((len << 4) | (META_NAME_EXPIRED << 1) | (status == 0 ? 0 : 1));
+            buf.writeVarUint((len << 4) | META_NAME_EXPIRED | (status == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 buf.writeVarUint(cxtNameExpired.get(i));
             }
@@ -174,7 +174,7 @@ public final class OutputMetaPool {
         if ((status & HAS_STRUCT_TMP) > 0) {
             status ^= HAS_STRUCT_TMP;
             len = tmpStructs.size();
-            buf.writeVarUint((len << 4) | (META_STRUCT_TMP << 1) | (status == 0 ? 0 : 1));
+            buf.writeVarUint((len << 4) | META_STRUCT_TMP | (status == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 OutputMetaPool.Struct struct = tmpStructs.get(i);
                 buf.writeVarUint(struct.nameIds.length);
@@ -186,7 +186,7 @@ public final class OutputMetaPool {
         if ((status & HAS_STRUCT_ADDED) > 0) {
             status ^= HAS_STRUCT_ADDED;
             len = cxtStructAdded.size();
-            buf.writeVarUint((len << 4) | (META_STRUCT_ADDED << 1) | (status == 0 ? 0 : 1));
+            buf.writeVarUint((len << 4) | META_STRUCT_ADDED | (status == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 int[] nameIds = cxtStructAdded.get(i).nameIds;
                 buf.writeVarUint(nameIds.length);
@@ -197,7 +197,7 @@ public final class OutputMetaPool {
         }
         if ((status & HAS_STRUCT_EXPIRED) > 0) {
             len = cxtStructAdded.size();
-            buf.writeVarUint((len << 4) | (META_STRUCT_EXPIRED << 1));
+            buf.writeVarUint((len << 4) | META_STRUCT_EXPIRED);
             for (int i = 0; i < len; i++) {
                 buf.writeVarUint(cxtStructExpired.get(i));
             }

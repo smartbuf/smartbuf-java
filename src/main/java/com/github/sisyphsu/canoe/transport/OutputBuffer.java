@@ -1,6 +1,10 @@
 package com.github.sisyphsu.canoe.transport;
 
 import com.github.sisyphsu.canoe.utils.NumberUtils;
+import com.github.sisyphsu.canoe.utils.UTF8Encoder;
+
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Encapsulate all deserialization operations of output side.
@@ -37,10 +41,11 @@ public final class OutputBuffer {
         this.writeVarUint(NumberUtils.intToUint(n));
     }
 
-    public void writeVarUint(long n) {
+    public int writeVarUint(long n) {
         if (data.length < offset + 10) {
             this.ensureCapacity(offset + 10);
         }
+        int oldOffset = offset;
         do {
             if ((n & 0xFFFFFFFFFFFFFF80L) == 0) {
                 data[offset++] = (byte) n;
@@ -49,6 +54,7 @@ public final class OutputBuffer {
             }
             n >>>= 7;
         } while (n != 0);
+        return offset - oldOffset;
     }
 
     public void writeFloat(float f) {
@@ -74,14 +80,17 @@ public final class OutputBuffer {
     }
 
     public void writeString(String str) {
-        byte[] bytes = str.getBytes();
-        if (data.length < offset + bytes.length + 4) {
-            this.ensureCapacity(offset + bytes.length + 4);
+        final int offset = this.offset; // save the old offset
+        final int byteLen = str.length() * 3;
+        if (data.length < offset + byteLen + 5) {
+            this.ensureCapacity(offset + byteLen + 5);
         }
-        this.writeVarUint(bytes.length);
-        for (byte b : bytes) {
-            data[offset++] = b;
+        int position = UTF8Encoder.encode(str, data, offset + 5);
+        int realByteLen = position - offset - 5;
+        if (writeVarUint(realByteLen) < 5) {
+            System.arraycopy(data, offset + 5, data, this.offset, realByteLen); // move forward
         }
+        this.offset += realByteLen;
     }
 
     public void writeBooleanArray(boolean[] arr) {
@@ -125,12 +134,12 @@ public final class OutputBuffer {
     }
 
     public void writeByteArray(byte[] arr) {
-        if (data.length < offset + arr.length) {
-            this.ensureCapacity(offset + arr.length);
+        int len = arr.length;
+        if (data.length < offset + len) {
+            this.ensureCapacity(offset + len);
         }
-        for (byte b : arr) {
-            data[offset++] = b;
-        }
+        System.arraycopy(arr, 0, data, offset, len);
+        this.offset += len;
     }
 
     public void writeByteSlice(Object[] arr, int from, int to) {

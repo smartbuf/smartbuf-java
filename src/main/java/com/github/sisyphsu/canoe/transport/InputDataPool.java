@@ -30,7 +30,7 @@ public final class InputDataPool {
             long head = buf.readVarUint();
             int size = (int) (head >> 4);
             hasMore = (head & 0b0000_0001) == 1;
-            flag = (byte) ((head >>> 1) & 0b0000_0111);
+            flag = (byte) (head & 0b0000_1110);
             switch (flag) {
                 case DATA_FLOAT:
                     for (int i = 0; i < size; i++) {

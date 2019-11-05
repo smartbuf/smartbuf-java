@@ -1,11 +1,10 @@
 package com.github.sisyphsu.canoe.transport;
 
 import com.github.sisyphsu.canoe.Canoe;
-import com.github.sisyphsu.canoe.node.basic.*;
+import com.github.sisyphsu.canoe.node.basic.BooleanNode;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
-import sun.net.ProgressSource;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -126,7 +125,7 @@ public class IOTest {
 
     @Test
     public void testSymbol() throws IOException {
-        Enum e = ProgressSource.State.DELETE;
+        Enum e = Thread.State.RUNNABLE;
 
         enableCxt = true;
         Object obj = transIO(e);

@@ -14,19 +14,19 @@ public interface Const {
     byte VER_HAS_META = 0b0000_0010;
     byte VER_HAS_SEQ  = 0b0000_0001;
 
-    byte META_NAME_TMP       = 1;
-    byte META_NAME_ADDED     = 2;
-    byte META_NAME_EXPIRED   = 3;
-    byte META_STRUCT_TMP     = 4;
-    byte META_STRUCT_ADDED   = 5;
-    byte META_STRUCT_EXPIRED = 6;
+    byte META_NAME_TMP       = 1 << 1;
+    byte META_NAME_ADDED     = 2 << 1;
+    byte META_NAME_EXPIRED   = 3 << 1;
+    byte META_STRUCT_TMP     = 4 << 1;
+    byte META_STRUCT_ADDED   = 5 << 1;
+    byte META_STRUCT_EXPIRED = 6 << 1;
 
-    byte DATA_FLOAT          = 1;
-    byte DATA_DOUBLE         = 2;
-    byte DATA_VARINT         = 3;
-    byte DATA_STRING         = 4;
-    byte DATA_SYMBOL_ADDED   = 5;
-    byte DATA_SYMBOL_EXPIRED = 6;
+    byte DATA_FLOAT          = 1 << 1;
+    byte DATA_DOUBLE         = 2 << 1;
+    byte DATA_VARINT         = 3 << 1;
+    byte DATA_STRING         = 4 << 1;
+    byte DATA_SYMBOL_ADDED   = 5 << 1;
+    byte DATA_SYMBOL_EXPIRED = 6 << 1;
 
     byte DATA_ID_NULL       = 0x00;
     byte DATA_ID_FALSE      = 0x01;

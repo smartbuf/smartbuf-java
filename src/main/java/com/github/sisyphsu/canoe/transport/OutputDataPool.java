@@ -168,7 +168,7 @@ public final class OutputDataPool {
         if ((flags & HAS_FLOAT) != 0) {
             len = floats.size();
             flags ^= HAS_FLOAT;
-            buf.writeVarUint((len << 4) | (DATA_FLOAT << 1) | (flags == 0 ? 0 : 1));
+            buf.writeVarUint((len << 4) | DATA_FLOAT | (flags == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 buf.writeFloat(floats.get(i));
             }
@@ -176,7 +176,7 @@ public final class OutputDataPool {
         if ((flags & HAS_DOUBLE) != 0) {
             len = doubles.size();
             flags ^= HAS_DOUBLE;
-            buf.writeVarUint((len << 4) | (DATA_DOUBLE << 1) | (flags == 0 ? 0 : 1));
+            buf.writeVarUint((len << 4) | DATA_DOUBLE | (flags == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 buf.writeDouble(doubles.get(i));
             }
@@ -184,7 +184,7 @@ public final class OutputDataPool {
         if ((flags & HAS_VARINT) != 0) {
             len = varints.size();
             flags ^= HAS_VARINT;
-            buf.writeVarUint((len << 4) | (DATA_VARINT << 1) | (flags == 0 ? 0 : 1));
+            buf.writeVarUint((len << 4) | DATA_VARINT | (flags == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 buf.writeVarInt(varints.get(i));
             }
@@ -192,7 +192,7 @@ public final class OutputDataPool {
         if ((flags & HAS_STRING) != 0) {
             len = strings.size();
             flags ^= HAS_STRING;
-            buf.writeVarUint((len << 4) | (DATA_STRING << 1) | (flags == 0 ? 0 : 1));
+            buf.writeVarUint((len << 4) | DATA_STRING | (flags == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 buf.writeString(strings.get(i));
             }
@@ -200,14 +200,14 @@ public final class OutputDataPool {
         if ((flags & HAS_SYMBOL_ADDED) != 0) {
             len = symbolAdded.size();
             flags ^= HAS_SYMBOL_ADDED;
-            buf.writeVarUint((len << 4) | (DATA_SYMBOL_ADDED << 1) | (flags == 0 ? 0 : 1));
+            buf.writeVarUint((len << 4) | DATA_SYMBOL_ADDED | (flags == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 buf.writeString(symbolAdded.get(i).value);
             }
         }
         if ((flags & HAS_SYMBOL_EXPIRED) != 0) {
             len = symbolExpired.size();
-            buf.writeVarUint((len << 4) | (DATA_SYMBOL_EXPIRED << 1));
+            buf.writeVarUint((len << 4) | DATA_SYMBOL_EXPIRED);
             for (int i = 0; i < len; i++) {
                 buf.writeVarUint(symbolExpired.get(i));
             }

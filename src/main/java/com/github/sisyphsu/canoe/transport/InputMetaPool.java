@@ -31,7 +31,7 @@ public final class InputMetaPool {
             long head = buf.readVarUint();
             int size = (int) (head >>> 4);
             hasMore = (head & 0b0000_0001) == 1;
-            byte flag = (byte) ((head >>> 1) & 0b0000_0111);
+            byte flag = (byte) (head & 0b0000_1110);
             switch (flag) {
                 case META_NAME_TMP:
                     for (int i = 0; i < size; i++) {

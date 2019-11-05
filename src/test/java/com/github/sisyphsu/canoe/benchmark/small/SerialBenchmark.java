@@ -2,10 +2,8 @@ package com.github.sisyphsu.canoe.benchmark.small;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.sisyphsu.canoe.Canoe;
 import com.github.sisyphsu.canoe.CanoePacket;
 import com.github.sisyphsu.canoe.CanoeStream;
-import com.github.sisyphsu.canoe.node.Node;
 import com.github.sisyphsu.canoe.transport.OutputBuffer;
 import com.github.sisyphsu.canoe.transport.OutputDataPool;
 import org.openjdk.jmh.annotations.*;
@@ -37,13 +35,13 @@ public class SerialBenchmark {
     static final Date date = new Date();
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private static final UserModel    USER          = UserModel.random();
+    private static final UserModel    user          = UserModel.random();
     private static final CanoeStream  STREAM        = new CanoeStream();
 
     static {
         try {
-            STREAM.serialize(USER);
-            STREAM.serialize(USER);
+            STREAM.serialize(user);
+            STREAM.serialize(user);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -51,22 +49,22 @@ public class SerialBenchmark {
 
     @Benchmark
     public void json() throws JsonProcessingException {
-        OBJECT_MAPPER.writeValueAsString(USER);
+        OBJECT_MAPPER.writeValueAsString(user);
     }
 
     @Benchmark
     public void packet() throws IOException {
-        CanoePacket.serialize(USER);
+        CanoePacket.serialize(user);
     }
 
     @Benchmark
     public void stream() throws IOException {
-        STREAM.serialize(USER);
+        STREAM.serialize(user);
     }
 
     @Benchmark
     public void protobuf() {
-        USER.toPB().toByteArray();
+        user.toPB().toByteArray();
     }
 
     //    @Benchmark
@@ -114,43 +112,41 @@ public class SerialBenchmark {
     public void dataPool() {
         // 92ns
         dataPool.reset();
-        dataPool.registerVarint(USER.getId());
-        dataPool.registerString(USER.getNickname());
-        dataPool.registerString(USER.getPortrait());
-        dataPool.registerFloat(USER.getScore());
-        dataPool.registerVarint(USER.getLoginTimes());
-        dataPool.registerVarint(USER.getCreateTime());
+        dataPool.registerVarint(user.getId());
+        dataPool.registerString(user.getNickname());
+        dataPool.registerString(user.getPortrait());
+        dataPool.registerFloat(user.getScore());
+        dataPool.registerVarint(user.getLoginTimes());
+        dataPool.registerVarint(user.getCreateTime());
     }
 
-    //    @Benchmark
+    @Benchmark
     public void writeBody() {
-        // 7ns
+        // 122ns
         buffer.reset();
-        buffer.writeVarUint(200);
-        buffer.writeVarUint(20);
-        buffer.writeVarUint(30);
-        buffer.writeVarUint(30);
-        buffer.writeVarUint(30);
-        buffer.writeVarUint(30);
-        buffer.writeVarUint(30);
-        buffer.writeVarUint(30);
+        buffer.writeVarInt(user.getId()); // 12ns for randomInt
+        buffer.writeString(user.getNickname()); // 48ns for char[12]
+        buffer.writeString(user.getPortrait()); // 52ns for char[24]
+        buffer.writeFloat(user.getScore()); // 1.6ns
+        buffer.writeVarInt(user.getLoginTimes()); // 3ns for [10,10000]
+        buffer.writeVarInt(user.getCreateTime()); // 7.5ns for timestamp
     }
 
-    //    @Benchmark
+    @Benchmark
     public void benchmark() {
 //        STREAM.canoe.output.write(USER); // 374ns
 
-        STREAM.canoe.output.bodyBuf.reset();
-        STREAM.canoe.output.writeObject(USER); // 166ns
+//        STREAM.canoe.output.bodyBuf.reset();
+//        STREAM.canoe.output.writeObject(USER); // 166ns
 
 //        STREAM.canoe.output.metaPool.reset(); // 6ns
 //        STREAM.canoe.output.metaPool.needOutput(); // 3ns
 //        STREAM.canoe.output.dataPool.reset(); // 8ns
 //        STREAM.canoe.output.dataPool.needOutput(); // 3ns
 
-//        buffer.reset();
+        buffer.reset();
 
-//        STREAM.canoe.output.dataPool.write(buffer); // 162ns
+        STREAM.canoe.output.dataPool.write(buffer); // 162ns
 
 //        STREAM.canoe.output.metaPool.write(buffer); // first=365ns, following=3ns
 
