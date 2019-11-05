@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
  * @author sulin
  * @since 2019-10-28 18:27:56
  */
-public class DataTest {
+public class SmallTest {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 

@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 @Measurement(iterations = 3, time = 3)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
-public class SerialBenchmark {
+public class SmallBenchmark {
 
     static final Date date = new Date();
 
