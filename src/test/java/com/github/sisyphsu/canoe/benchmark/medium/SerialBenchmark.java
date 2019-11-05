@@ -8,20 +8,11 @@ import org.openjdk.jmh.annotations.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Benchmark                 Mode  Cnt      Score     Error  Units
- * SerialBenchmark.json      avgt    6   4329.166 ± 138.656  ns/op
- * SerialBenchmark.packet    avgt    6  11154.203 ± 456.539  ns/op
- * SerialBenchmark.protobuf  avgt    6    797.809 ±   7.958  ns/op
- * SerialBenchmark.stream    avgt    6   9264.121 ± 392.667  ns/op
- * <p>
- * Array problem !!!
- * <p>
- * After Refactoring:
  * Benchmark                 Mode  Cnt     Score     Error  Units
- * SerialBenchmark.json      avgt    6  4325.114 ± 115.712  ns/op
- * SerialBenchmark.packet    avgt    6  7466.104 ±  86.649  ns/op
- * SerialBenchmark.protobuf  avgt    6   660.721 ±  10.060  ns/op
- * SerialBenchmark.stream    avgt    6  5775.313 ± 133.779  ns/op
+ * SerialBenchmark.json      avgt    6  4772.714 ± 299.349  ns/op
+ * SerialBenchmark.packet    avgt    6  6194.824 ±  86.710  ns/op
+ * SerialBenchmark.protobuf  avgt    6   742.491 ±  27.446  ns/op
+ * SerialBenchmark.stream    avgt    6  5301.861 ± 164.491  ns/op
  *
  * @author sulin
  * @since 2019-10-31 20:40:55
