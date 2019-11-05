@@ -55,4 +55,12 @@ public class TestBenchmark {
         }
     }
 
+    @Benchmark
+    public void test2() {
+        Class<?> cls = Object.class;
+        cls.isEnum();
+        cls.isArray();
+        cls.getName();
+    }
+
 }

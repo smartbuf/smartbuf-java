@@ -16,23 +16,25 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Benchmark                 Mode  Cnt     Score    Error  Units
- * SerialBenchmark.json      avgt    6   722.865 ± 59.575  ns/op
- * SerialBenchmark.packet    avgt    6  1275.657 ± 43.733  ns/op
- * SerialBenchmark.protobuf  avgt    6   198.970 ±  2.297  ns/op
- * SerialBenchmark.stream    avgt    6   621.402 ± 19.251  ns/op
+ * SerialBenchmark.json      avgt    6   764.649 ±  4.576  ns/op
+ * SerialBenchmark.packet    avgt    6  1074.742 ± 26.246  ns/op
+ * SerialBenchmark.protobuf  avgt    6   203.787 ±  6.665  ns/op
+ * SerialBenchmark.stream    avgt    6   519.900 ±  7.455  ns/op
  * <p>
- * Need more works to do to improve performace~
+ * stream(523ns) = dataPool.output(162ns) + convertObjectNode(40ns) + body.output(90ns) + others(230ns)
  * <p>
- * 190ns for Output#scan
- * 500ns for Output#doWrite and others
+ * Move `instanceof ObjectNode` to first case, improved a little(10%):
+ * Benchmark                 Mode  Cnt    Score    Error  Units
+ * SerialBenchmark.json      avgt    6  747.340 ± 17.980  ns/op
+ * SerialBenchmark.packet    avgt    6  997.599 ± 36.124  ns/op
+ * SerialBenchmark.protobuf  avgt    6  204.565 ±  5.205  ns/op
+ * SerialBenchmark.stream    avgt    6  459.287 ±  7.873  ns/op
  * <p>
  * Benchmark                 Mode  Cnt     Score    Error  Units
- * SerialBenchmark.json      avgt    6   677.343 ± 30.833  ns/op
- * SerialBenchmark.packet    avgt    6  1077.892 ± 14.631  ns/op
- * SerialBenchmark.protobuf  avgt    6   200.738 ±  5.638  ns/op
- * SerialBenchmark.stream    avgt    6   523.828 ± 10.290  ns/op
- * <p>
- * stream(523ns) = dataPool.output(162ns) + metaPool.output(0ns) + others(374ns)
+ * SerialBenchmark.json      avgt    6   735.111 ± 71.427  ns/op
+ * SerialBenchmark.packet    avgt    6  1004.536 ± 16.042  ns/op
+ * SerialBenchmark.protobuf  avgt    6   201.449 ±  3.240  ns/op
+ * SerialBenchmark.stream    avgt    6   461.718 ± 16.687  ns/op
  *
  * @author sulin
  * @since 2019-10-28 17:32:33
@@ -120,7 +122,7 @@ public class SerialBenchmark {
     static OutputBuffer   buffer   = new OutputBuffer(1 << 20);
     static OutputDataPool dataPool = new OutputDataPool(1 << 10);
 
-    @Benchmark
+    //    @Benchmark
     public void dataPool() {
         // 92ns
         dataPool.reset();
@@ -132,7 +134,7 @@ public class SerialBenchmark {
         dataPool.registerVarint(USER.getCreateTime());
     }
 
-    @Benchmark
+    //    @Benchmark
     public void writeBody() {
         buffer.reset();
         buffer.writeVarUint(200);
@@ -145,7 +147,7 @@ public class SerialBenchmark {
         buffer.writeVarUint(30);
     }
 
-    @Benchmark
+    //    @Benchmark
     public void benchmark() {
 //        STREAM.canoe.output.write(USER); // 374ns
 
