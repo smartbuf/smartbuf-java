@@ -73,20 +73,19 @@ public final class Output {
         if (hasSeq) {
             headBuf.writeByte((byte) ((++this.sequence) & 0xFF));
         }
-//        // output sharing meta
-//        if (hasMeta) {
-//            metaPool.write(headBuf);
-//        }
-//        // output sharing data
-//        if (hasData) {
-//            dataPool.write(headBuf);
-//        }
-//        // build result
-//        byte[] result = new byte[bodyBuf.offset + headBuf.offset];
-//        System.arraycopy(headBuf.data, 0, result, 0, headBuf.offset);
-//        System.arraycopy(bodyBuf.data, 0, result, headBuf.offset, bodyBuf.offset);
-//        return result;
-        return null;
+        // output sharing meta
+        if (hasMeta) {
+            metaPool.write(headBuf);
+        }
+        // output sharing data
+        if (hasData) {
+            dataPool.write(headBuf);
+        }
+        // build result
+        byte[] result = new byte[bodyBuf.offset + headBuf.offset];
+        System.arraycopy(headBuf.data, 0, result, 0, headBuf.offset);
+        System.arraycopy(bodyBuf.data, 0, result, headBuf.offset, bodyBuf.offset);
+        return result;
     }
 
     public void writeObject(Object obj) {
