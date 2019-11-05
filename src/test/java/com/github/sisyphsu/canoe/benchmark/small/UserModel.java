@@ -33,18 +33,6 @@ public class UserModel {
         return user;
     }
 
-    public UserModel toModel() {
-        UserModel user = new UserModel();
-        user.id = id;
-        user.blocked = blocked;
-        user.nickname = nickname;
-        user.portrait = portrait;
-        user.score = score;
-        user.loginTimes = loginTimes;
-        user.createTime = createTime;
-        return user;
-    }
-
     public Small.User toPB() {
         Small.User.Builder builder = Small.User.newBuilder()
             .setId(id)

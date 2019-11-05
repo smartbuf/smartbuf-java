@@ -28,8 +28,8 @@ public final class Canoe {
         CODEC.installCodec(NodeCodec.class);
     }
 
-    Input  input;
-    Output output;
+    public Input  input;
+    public Output output;
 
     private volatile boolean closed;
 

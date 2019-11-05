@@ -227,7 +227,4 @@ public class IOTest {
         Input input = new Input(enableCxt);
         return input.read(bytes);
     }
-
-    public static class Bean {
-    }
 }

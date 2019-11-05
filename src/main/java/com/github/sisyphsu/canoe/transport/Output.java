@@ -24,11 +24,11 @@ public final class Output {
     private final CodecFactory codecFactory;
     private final XType<?>     nodeXType;
 
-    private final OutputBuffer bodyBuf;
-    private final OutputBuffer headBuf;
+    public final OutputBuffer bodyBuf;
+    public final OutputBuffer headBuf;
 
-    private final OutputDataPool dataPool;
-    private final OutputMetaPool metaPool;
+    public final OutputDataPool dataPool;
+    public final OutputMetaPool metaPool;
 
     private long sequence;
 
@@ -58,8 +58,8 @@ public final class Output {
         this.metaPool.reset();
         this.writeObject(o);
 
-        boolean hasData = dataPool.preOutput();
-        boolean hasMeta = metaPool.preOutput();
+        boolean hasData = dataPool.needOutput();
+        boolean hasMeta = metaPool.needOutput();
         boolean hasSeq = dataPool.needSequence() || metaPool.needSequence();
 
         // 1-byte for summary
@@ -73,22 +73,23 @@ public final class Output {
         if (hasSeq) {
             headBuf.writeByte((byte) ((++this.sequence) & 0xFF));
         }
-        // output sharing meta
-        if (hasMeta) {
-            metaPool.write(headBuf);
-        }
-        // output sharing data
-        if (hasData) {
-            dataPool.write(headBuf);
-        }
-        // build result
-        byte[] result = new byte[bodyBuf.offset + headBuf.offset];
-        System.arraycopy(headBuf.data, 0, result, 0, headBuf.offset);
-        System.arraycopy(bodyBuf.data, 0, result, headBuf.offset, bodyBuf.offset);
-        return result;
+//        // output sharing meta
+//        if (hasMeta) {
+//            metaPool.write(headBuf);
+//        }
+//        // output sharing data
+//        if (hasData) {
+//            dataPool.write(headBuf);
+//        }
+//        // build result
+//        byte[] result = new byte[bodyBuf.offset + headBuf.offset];
+//        System.arraycopy(headBuf.data, 0, result, 0, headBuf.offset);
+//        System.arraycopy(bodyBuf.data, 0, result, headBuf.offset, bodyBuf.offset);
+//        return result;
+        return null;
     }
 
-    void writeObject(Object obj) {
+    public void writeObject(Object obj) {
         if (obj == null) {
             bodyBuf.writeVarUint(DATA_ID_NULL);
         } else if (obj instanceof Boolean) {

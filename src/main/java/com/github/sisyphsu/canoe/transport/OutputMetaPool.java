@@ -16,6 +16,15 @@ import static com.github.sisyphsu.canoe.transport.Const.*;
  */
 public final class OutputMetaPool {
 
+    private static final byte HAS_NAME_TMP       = 1;
+    private static final byte HAS_NAME_ADDED     = 1 << 1;
+    private static final byte HAS_NAME_EXPIRED   = 1 << 2;
+    private static final byte HAS_STRUCT_TMP     = 1 << 3;
+    private static final byte HAS_STRUCT_ADDED   = 1 << 4;
+    private static final byte HAS_STRUCT_EXPIRED = 1 << 5;
+
+    private static final byte NEED_SEQ = HAS_NAME_ADDED | HAS_NAME_EXPIRED | HAS_STRUCT_ADDED | HAS_STRUCT_EXPIRED;
+
     private final int   cxtStructLimit;
     private final Names key = new Names();
 
@@ -34,10 +43,10 @@ public final class OutputMetaPool {
     final IDAllocator        cxtStructIdAlloc = new IDAllocator();
     final Array<Struct>      cxtStructs       = new Array<>();
     final Array<Struct>      cxtStructAdded   = new Array<>();
-    final Array<Struct>      cxtStructExpired = new Array<>();
+    final Array<Integer>     cxtStructExpired = new Array<>();
     final Map<Names, Struct> cxtStructIndex   = new HashMap<>();
 
-    private int count;
+    private byte status;
 
     /**
      * Initialize StructPool with the specified limit of context-struct
@@ -119,44 +128,53 @@ public final class OutputMetaPool {
         return ((struct.index + 1) << 1) | 1; // identify context struct by suffixed 1
     }
 
-    public boolean preOutput() {
-        int count = 0;
-        if (tmpNames.size() > 0) count++;
-        if (cxtNameAdded.size() > 0) count++;
-        if (cxtNameExpired.size() > 0) count++;
-        if (tmpStructs.size() > 0) count++;
-        if (cxtStructAdded.size() > 0) count++;
-        if (cxtStructExpired.size() > 0) count++;
-        this.count = count;
-        return count > 0;
+    public boolean needOutput() {
+        byte status = 0;
+        if (tmpNames.size() > 0) status |= HAS_NAME_TMP;
+        if (cxtNameAdded.size() > 0) status |= HAS_NAME_ADDED;
+        if (cxtNameExpired.size() > 0) status |= HAS_NAME_EXPIRED;
+        if (tmpStructs.size() > 0) status |= HAS_STRUCT_TMP;
+        if (cxtStructAdded.size() > 0) status |= HAS_STRUCT_ADDED;
+        if (cxtStructExpired.size() > 0) status |= HAS_STRUCT_EXPIRED;
+        this.status = status;
+        return status > 0;
     }
 
     public boolean needSequence() {
-        return cxtNameAdded.size() > 0 || cxtNameExpired.size() > 0 || cxtStructAdded.size() > 0 || cxtStructExpired.size() > 0;
+        return (status & NEED_SEQ) > 0;
     }
 
     public void write(OutputBuffer buf) {
         int len;
-        if (count > 0 && (len = tmpNames.size()) > 0) {
-            buf.writeVarUint((len << 4) | (META_NAME_TMP << 1) | ((--count == 0) ? 0 : 1));
+        byte status = this.status;
+        if ((status & HAS_NAME_TMP) > 0) {
+            status ^= HAS_NAME_TMP;
+            len = tmpNames.size();
+            buf.writeVarUint((len << 4) | (META_NAME_TMP << 1) | (status == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 buf.writeString(tmpNames.get(i));
             }
         }
-        if ((len = cxtNameAdded.size()) > 0) {
-            buf.writeVarUint((len << 4) | (META_NAME_ADDED << 1) | ((--count == 0) ? 0 : 1));
+        if ((status & HAS_NAME_ADDED) > 0) {
+            status ^= HAS_NAME_ADDED;
+            len = cxtNameAdded.size();
+            buf.writeVarUint((len << 4) | (META_NAME_ADDED << 1) | (status == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 buf.writeString(cxtNameAdded.get(i).name);
             }
         }
-        if ((len = cxtNameExpired.size()) > 0) {
-            buf.writeVarUint((len << 4) | (META_NAME_EXPIRED << 1) | ((--count == 0) ? 0 : 1));
+        if ((status & HAS_NAME_EXPIRED) > 0) {
+            status ^= HAS_NAME_EXPIRED;
+            len = cxtNameExpired.size();
+            buf.writeVarUint((len << 4) | (META_NAME_EXPIRED << 1) | (status == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 buf.writeVarUint(cxtNameExpired.get(i));
             }
         }
-        if (count > 0 && (len = tmpStructs.size()) > 0) {
-            buf.writeVarUint((len << 4) | (META_STRUCT_TMP << 1) | ((--count == 0) ? 0 : 1));
+        if ((status & HAS_STRUCT_TMP) > 0) {
+            status ^= HAS_STRUCT_TMP;
+            len = tmpStructs.size();
+            buf.writeVarUint((len << 4) | (META_STRUCT_TMP << 1) | (status == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 OutputMetaPool.Struct struct = tmpStructs.get(i);
                 buf.writeVarUint(struct.nameIds.length);
@@ -165,8 +183,10 @@ public final class OutputMetaPool {
                 }
             }
         }
-        if (count > 0 && (len = cxtStructAdded.size()) > 0) {
-            buf.writeVarUint((len << 4) | (META_STRUCT_ADDED << 1) | ((--count == 0) ? 0 : 1));
+        if ((status & HAS_STRUCT_ADDED) > 0) {
+            status ^= HAS_STRUCT_ADDED;
+            len = cxtStructAdded.size();
+            buf.writeVarUint((len << 4) | (META_STRUCT_ADDED << 1) | (status == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 int[] nameIds = cxtStructAdded.get(i).nameIds;
                 buf.writeVarUint(nameIds.length);
@@ -175,10 +195,11 @@ public final class OutputMetaPool {
                 }
             }
         }
-        if (count > 0 && (len = cxtStructExpired.size()) > 0) {
+        if ((status & HAS_STRUCT_EXPIRED) > 0) {
+            len = cxtStructAdded.size();
             buf.writeVarUint((len << 4) | (META_STRUCT_EXPIRED << 1));
             for (int i = 0; i < len; i++) {
-                buf.writeVarUint(cxtStructExpired.get(i).index);
+                buf.writeVarUint(cxtStructExpired.get(i));
             }
         }
     }
@@ -206,9 +227,9 @@ public final class OutputMetaPool {
         structs.sort(Comparator.comparingInt(s -> s.lastTime));
         for (int i = 0, len = Math.min(expireCount, structs.size()); i < len; i++) {
             Struct expiredStruct = structs.get(i);
-            cxtStructExpired.add(expiredStruct);
             cxtStructIndex.remove(expiredStruct);
             cxtStructIdAlloc.release(expiredStruct.index);
+            cxtStructExpired.add(expiredStruct.index);
             cxtStructs.put(expiredStruct.index, null);
             // synchronize cxtNames
             for (int nameId : expiredStruct.nameIds) {

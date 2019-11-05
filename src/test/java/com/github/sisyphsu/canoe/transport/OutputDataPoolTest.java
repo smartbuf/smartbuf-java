@@ -2,6 +2,9 @@ package com.github.sisyphsu.canoe.transport;
 
 import com.github.sisyphsu.canoe.utils.TimeUtils;
 import org.junit.jupiter.api.Test;
+import org.openjdk.jmh.annotations.*;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author sulin
@@ -90,6 +93,18 @@ public class OutputDataPoolTest {
         assert dataPool.registerSymbol("7") == 1;
 
         dataPool.reset(); // remain 7,5,3,2
+    }
+
+    @Warmup(iterations = 2, time = 2)
+    @Fork(2)
+    @Measurement(iterations = 3, time = 3)
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    public static class PBenchmark {
+
+        @Benchmark
+        public void test() {
+        }
     }
 
 }

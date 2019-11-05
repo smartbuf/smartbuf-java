@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 public final class CanoeStream {
 
-    private Canoe canoe;
+    public Canoe canoe;
 
     /**
      * Initialize CanoeStream

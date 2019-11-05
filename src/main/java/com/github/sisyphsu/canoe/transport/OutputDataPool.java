@@ -16,6 +16,15 @@ import static com.github.sisyphsu.canoe.transport.Const.*;
  */
 public final class OutputDataPool {
 
+    private static final byte HAS_FLOAT          = 1;
+    private static final byte HAS_DOUBLE         = 1 << 1;
+    private static final byte HAS_VARINT         = 1 << 2;
+    private static final byte HAS_STRING         = 1 << 3;
+    private static final byte HAS_SYMBOL_ADDED   = 1 << 4;
+    private static final byte HAS_SYMBOL_EXPIRED = 1 << 5;
+
+    private static final byte NEED_SEQ = HAS_SYMBOL_ADDED | HAS_SYMBOL_EXPIRED;
+
     private final Array<Float>         floats    = new Array<>();
     private final Map<Float, Integer>  floatMap  = new HashMap<>();
     private final Array<Double>        doubles   = new Array<>();
@@ -29,17 +38,17 @@ public final class OutputDataPool {
     private final IDAllocator         symbolID      = new IDAllocator();
     private final Array<Symbol>       symbols       = new Array<>();
     private final Array<Symbol>       symbolAdded   = new Array<>();
-    private final Array<Symbol>       symbolExpired = new Array<>();
+    private final Array<Integer>      symbolExpired = new Array<>();
     private final Map<String, Symbol> symbolIndex   = new HashMap<>();
 
-    private int count;
+    private byte flags;
 
     /**
      * Initialize DataPool, outter need specify the max number of symbol-area
      *
      * @param symbolLimit Max number of symbols, only for context
      */
-    OutputDataPool(int symbolLimit) {
+    public OutputDataPool(int symbolLimit) {
         this.symbolLimit = symbolLimit;
     }
 
@@ -137,58 +146,70 @@ public final class OutputDataPool {
         return symbol.index + 1;
     }
 
-    public boolean preOutput() {
-        int count = 0;
-        if (floats.size() > 0) count++;
-        if (doubles.size() > 0) count++;
-        if (varints.size() > 0) count++;
-        if (strings.size() > 0) count++;
-        if (symbolAdded.size() > 0) count++;
-        if (symbolExpired.size() > 0) count++;
-        this.count = count;
-        return count > 0;
+    public boolean needOutput() {
+        byte flags = 0;
+        if (floats.size() > 0) flags |= HAS_FLOAT;
+        if (doubles.size() > 0) flags |= HAS_DOUBLE;
+        if (varints.size() > 0) flags |= HAS_VARINT;
+        if (strings.size() > 0) flags |= HAS_STRING;
+        if (symbolAdded.size() > 0) flags |= HAS_SYMBOL_ADDED;
+        if (symbolExpired.size() > 0) flags |= HAS_SYMBOL_EXPIRED;
+        this.flags = flags;
+        return flags != 0;
     }
 
     public boolean needSequence() {
-        return symbolAdded.size() > 0 || symbolExpired.size() > 0;
+        return (flags & NEED_SEQ) != 0;
     }
 
     public void write(OutputBuffer buf) {
+        byte flags = this.flags;
         int len;
-        if ((len = floats.size()) > 0) {
-            buf.writeVarUint((len << 4) | (DATA_FLOAT << 1) | ((--count == 0) ? 0 : 1));
+        if ((flags & HAS_FLOAT) != 0) {
+            len = floats.size();
+            flags ^= HAS_FLOAT;
+            buf.writeVarUint((len << 4) | (DATA_FLOAT << 1) | (flags == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 buf.writeFloat(floats.get(i));
             }
         }
-        if (count > 0 && (len = doubles.size()) > 0) {
-            buf.writeVarUint((len << 4) | (DATA_DOUBLE << 1) | ((--count == 0) ? 0 : 1));
+        if ((flags & HAS_DOUBLE) != 0) {
+            len = doubles.size();
+            flags ^= HAS_DOUBLE;
+            buf.writeVarUint((len << 4) | (DATA_DOUBLE << 1) | (flags == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 buf.writeDouble(doubles.get(i));
             }
         }
-        if (count > 0 && (len = varints.size()) > 0) {
-            buf.writeVarUint((len << 4) | (DATA_VARINT << 1) | ((--count == 0) ? 0 : 1));
+        if ((flags & HAS_VARINT) != 0) {
+            len = varints.size();
+            flags ^= HAS_VARINT;
+            buf.writeVarUint((len << 4) | (DATA_VARINT << 1) | (flags == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 buf.writeVarInt(varints.get(i));
             }
         }
-        if (count > 0 && (len = strings.size()) > 0) {
-            buf.writeVarUint((len << 4) | (DATA_STRING << 1) | ((--count == 0) ? 0 : 1));
+        if ((flags & HAS_STRING) != 0) {
+            len = strings.size();
+            flags ^= HAS_STRING;
+            buf.writeVarUint((len << 4) | (DATA_STRING << 1) | (flags == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 buf.writeString(strings.get(i));
             }
         }
-        if (count > 0 && (len = symbolAdded.size()) > 0) {
-            buf.writeVarUint((len << 4) | (DATA_SYMBOL_ADDED << 1) | ((--count == 0) ? 0 : 1));
+        if ((flags & HAS_SYMBOL_ADDED) != 0) {
+            len = symbolAdded.size();
+            flags ^= HAS_SYMBOL_ADDED;
+            buf.writeVarUint((len << 4) | (DATA_SYMBOL_ADDED << 1) | (flags == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 buf.writeString(symbolAdded.get(i).value);
             }
         }
-        if (count > 0 && (len = symbolExpired.size()) > 0) {
+        if ((flags & HAS_SYMBOL_EXPIRED) != 0) {
+            len = symbolExpired.size();
             buf.writeVarUint((len << 4) | (DATA_SYMBOL_EXPIRED << 1));
             for (int i = 0; i < len; i++) {
-                buf.writeVarUint(symbolExpired.get(i).index);
+                buf.writeVarUint(symbolExpired.get(i));
             }
         }
     }
@@ -220,7 +241,7 @@ public final class OutputDataPool {
             this.symbolIndex.remove(expiredSymbol.value);
             this.symbolID.release(expiredSymbol.index);
             this.symbols.put(expiredSymbol.index, null);
-            this.symbolExpired.add(expiredSymbol);
+            this.symbolExpired.add(expiredSymbol.index);
         }
     }
 
