@@ -9,10 +9,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Benchmark                 Mode  Cnt     Score     Error  Units
- * MediumBenchmark.json      avgt    6  4291.518 ± 193.809  ns/op
- * MediumBenchmark.packet    avgt    6  4936.730 ± 128.600  ns/op
- * MediumBenchmark.protobuf  avgt    6   800.201 ±  13.805  ns/op
- * MediumBenchmark.stream    avgt    6  4085.957 ± 178.871  ns/op
+ * MediumBenchmark.json      avgt    6  4139.153 ± 269.692  ns/op
+ * MediumBenchmark.packet    avgt    6  4921.997 ±  65.037  ns/op
+ * MediumBenchmark.protobuf  avgt    6   801.130 ±  11.859  ns/op
+ * MediumBenchmark.stream    avgt    6  4104.508 ± 130.964  ns/op
  *
  * @author sulin
  * @since 2019-10-31 20:40:55
