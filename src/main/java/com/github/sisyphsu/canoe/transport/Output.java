@@ -188,17 +188,25 @@ public final class Output {
         int sliceHeadOffset = 0;
         String[] sliceKey = null;
         boolean isFirstSlice = true;
-        ConverterPipeline pipeline = null;
 
         // loop write all items
+        ConverterPipeline pipeline = null;
+        Class<?> prevCls = null;
         for (Iterator it = arr.iterator(); ; ) {
             Object item = it.next();
             Class<?> itemCls = item == null ? null : item.getClass();
             String[] itemKey = null;
-            byte itemType;
+            byte itemType = -1;
             // determine the current item's metadata
+            Node node = null;
             if (item == null) {
                 itemType = TYPE_SLICE_NULL;
+            } else if (pipeline != null && pipeline.getSourceType() == itemCls) {
+                // reusing the previous's pipeline
+                node = (Node) pipeline.convert(item, nodeXType);
+            } else if (prevCls == itemCls) {
+                // reusing the previous's type
+                itemType = sliceType;
             } else if (item instanceof Boolean) {
                 itemType = TYPE_SLICE_BOOL;
             } else if (item instanceof Byte) {
@@ -214,62 +222,58 @@ public final class Output {
             } else if (item instanceof Double) {
                 itemType = TYPE_SLICE_DOUBLE;
             } else if (item instanceof Character || item instanceof CharSequence) {
-                item = item.toString();
                 itemType = TYPE_SLICE_STRING;
             } else if (item instanceof Enum) {
-                item = ((Enum) item).name();
                 itemType = TYPE_SLICE_SYMBOL;
             } else if (item instanceof Collection) {
                 itemType = TYPE_SLICE_UNKNOWN;
             } else if (itemCls.isArray()) {
                 if (item instanceof char[]) {
-                    item = new String((char[]) item);
                     itemType = TYPE_SLICE_STRING;
                 } else {
                     itemType = TYPE_SLICE_UNKNOWN;
                 }
             } else {
-                if (pipeline != null && pipeline.getSourceType() != itemCls) {
-                    pipeline = null; // item's class changed, cannot reuse pipeline anymore
-                }
-                if (pipeline == null) {
-                    pipeline = codecFactory.getPipeline(itemCls, Node.class);
-                }
-                Node node = (Node) pipeline.convert(item, nodeXType);
-                if (node == null) {
-                    itemType = TYPE_SLICE_NULL;
-                } else {
-                    switch (node.type()) {
-                        case BOOLEAN:
-                            itemType = TYPE_SLICE_BOOL;
-                            break;
-                        case DOUBLE:
-                            itemType = TYPE_SLICE_DOUBLE;
-                            break;
-                        case FLOAT:
-                            itemType = TYPE_SLICE_FLOAT;
-                            break;
-                        case VARINT:
-                            itemType = TYPE_SLICE_LONG;
-                            break;
-                        case STRING:
-                            itemType = TYPE_SLICE_STRING;
-                            break;
-                        case SYMBOL:
-                            itemType = TYPE_SLICE_SYMBOL;
-                            break;
-                        case OBJECT:
-                            item = node;
-                            itemKey = ((ObjectNode) node).keys();
-                            itemType = TYPE_SLICE_OBJECT;
-                            break;
-                        default:
-                            itemType = TYPE_SLICE_UNKNOWN;
-                    }
-                    if (item == null) {
+                pipeline = codecFactory.getPipeline(itemCls, Node.class);
+                node = (Node) pipeline.convert(item, nodeXType);
+            }
+            if (node != null) {
+                switch (node.type()) {
+                    case BOOLEAN:
                         item = node.value();
-                    }
+                        itemType = TYPE_SLICE_BOOL;
+                        break;
+                    case DOUBLE:
+                        item = node.value();
+                        itemType = TYPE_SLICE_DOUBLE;
+                        break;
+                    case FLOAT:
+                        item = node.value();
+                        itemType = TYPE_SLICE_FLOAT;
+                        break;
+                    case VARINT:
+                        item = node.value();
+                        itemType = TYPE_SLICE_LONG;
+                        break;
+                    case STRING:
+                        item = node.value();
+                        itemType = TYPE_SLICE_STRING;
+                        break;
+                    case SYMBOL:
+                        item = node.value();
+                        itemType = TYPE_SLICE_SYMBOL;
+                        break;
+                    case OBJECT:
+                        item = node;
+                        itemKey = ((ObjectNode) node).keys();
+                        itemType = TYPE_SLICE_OBJECT;
+                        break;
+                    default:
+                        item = node.value();
+                        itemType = TYPE_SLICE_UNKNOWN;
                 }
+            } else if (itemType == -1) {
+                itemType = TYPE_SLICE_NULL;
             }
 
             // terminate the previous slice if it's broken
@@ -315,21 +319,27 @@ public final class Output {
                     bodyBuf.writeVarInt((Long) item);
                     break;
                 case TYPE_SLICE_STRING:
-                    bodyBuf.writeVarUint(dataPool.registerString((String) item));
+                    String str;
+                    if (item instanceof char[]) {
+                        str = new String((char[]) item);
+                    } else {
+                        str = item.toString();
+                    }
+                    bodyBuf.writeVarUint(dataPool.registerString(str));
                     break;
                 case TYPE_SLICE_SYMBOL:
                     bodyBuf.writeVarUint(dataPool.registerSymbol((String) item));
                     break;
                 case TYPE_SLICE_OBJECT:
-                    ObjectNode node = (ObjectNode) item;
+                    ObjectNode objectNode = (ObjectNode) item;
                     if (sliceLen == 0) {
-                        if (enableStreamMode && node.isStable()) {
-                            bodyBuf.writeVarUint(metaPool.registerCxtStruct(node.keys()));
+                        if (enableStreamMode && objectNode.isStable()) {
+                            bodyBuf.writeVarUint(metaPool.registerCxtStruct(objectNode.keys()));
                         } else {
-                            bodyBuf.writeVarUint(metaPool.registerTmpStruct(node.keys()));
+                            bodyBuf.writeVarUint(metaPool.registerTmpStruct(objectNode.keys()));
                         }
                     }
-                    for (Object value : node.values()) {
+                    for (Object value : objectNode.values()) {
                         this.writeObject(value);
                     }
                     break;
