@@ -151,17 +151,17 @@ public final class NodeCodec extends Codec {
 
     @Converter
     public Byte toByte(VarintNode node) {
-        return (Byte) node.value();
+        return ((Long) node.value()).byteValue();
     }
 
     @Converter
     public Short toShort(VarintNode node) {
-        return (Short) node.value();
+        return ((Long) node.value()).shortValue();
     }
 
     @Converter
     public Integer toInt(VarintNode node) {
-        return (Integer) node.value();
+        return ((Long) node.value()).intValue();
     }
 
     @Converter

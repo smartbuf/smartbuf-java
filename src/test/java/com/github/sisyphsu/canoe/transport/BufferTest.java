@@ -32,8 +32,6 @@ public class BufferTest {
 
         for (String str : strs) {
             String strInput = inputBuffer.readString();
-            System.out.println("# " + str);
-            System.out.println("> " + strInput);
             assert Objects.equals(str, strInput);
         }
     }

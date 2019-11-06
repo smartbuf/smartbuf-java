@@ -1,6 +1,5 @@
 package com.github.sisyphsu.canoe;
 
-import com.github.sisyphsu.canoe.exception.OutOfSpaceException;
 import com.github.sisyphsu.canoe.reflect.TypeRef;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;

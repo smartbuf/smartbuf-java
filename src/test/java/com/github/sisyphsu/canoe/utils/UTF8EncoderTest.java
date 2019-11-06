@@ -25,8 +25,6 @@ public class UTF8EncoderTest {
         for (String str : strs) {
             byte[] bytes = UTF8Encoder.encode(str);
             String newStr = new String(bytes, StandardCharsets.UTF_8);
-            System.out.println("# " + str);
-            System.out.println("> " + newStr);
             assert Objects.equals(str, newStr);
         }
     }

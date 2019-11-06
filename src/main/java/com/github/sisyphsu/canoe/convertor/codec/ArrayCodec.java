@@ -20,7 +20,7 @@ public final class ArrayCodec extends Codec {
      * Convert Object[] to T[] based on specified T Type.
      * For beter performance, some array shouldn't use this way, like byte[]...
      */
-    @Converter
+    @Converter(extensible = true)
     public Object[] toArray(Object[] arr, XType<?> type) {
         if (type.isPure()) {
             Class<?> srcArrClass = arr.getClass();
