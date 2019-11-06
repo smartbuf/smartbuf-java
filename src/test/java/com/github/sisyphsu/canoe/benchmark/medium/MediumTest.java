@@ -5,18 +5,20 @@ import com.github.sisyphsu.canoe.CanoePacket;
 import com.github.sisyphsu.canoe.CanoeStream;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 /**
  * First time:
- * json: 1876
- * protobuf: 974
- * packet: 1013
- * stream: 1017
+ * json: 1874
+ * protobuf: 975
+ * packet: 1018
+ * stream: 1022
  * <p>
  * Following:
- * json: 1876
- * protobuf: 974
- * packet: 1013
- * stream: 845
+ * json: 1874
+ * protobuf: 975
+ * packet: 1018
+ * stream: 850
  *
  * @author sulin
  * @since 2019-10-31 20:32:32
@@ -24,12 +26,12 @@ import org.junit.jupiter.api.Test;
 public class MediumTest {
 
     static ObjectMapper MAPPER = new ObjectMapper();
+    static CanoeStream  stream = new CanoeStream();
+    static UserModel    model  = UserModel.random();
 
     @Test
     public void test() throws Exception {
-        UserModel model = UserModel.random();
 
-        CanoeStream stream = new CanoeStream();
 
         byte[] jsonBytes = MAPPER.writeValueAsBytes(model);
         byte[] pbBytes = model.toUser().toByteArray();
@@ -52,6 +54,11 @@ public class MediumTest {
         System.out.println("protobuf: " + pbBytes.length);
         System.out.println("packet: " + packetBytes.length);
         System.out.println("stream: " + streamBytes.length);
+    }
+
+    @Test
+    public void test2() throws IOException {
+        stream.serialize(model);
     }
 
 }

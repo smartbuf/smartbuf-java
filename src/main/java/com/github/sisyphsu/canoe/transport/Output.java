@@ -287,7 +287,7 @@ public final class Output {
             // prepare for next slice
             if (sliceType == -1 || typeBroken || hitLimit) {
                 sliceType = itemType;
-                sliceKey = null;
+                sliceKey = itemKey;
                 sliceLen = 0;
                 sliceHeadOffset = bodyBuf.offset;
                 bodyBuf.offset += 2; // skip 2-byte for storing slice metadata
@@ -328,7 +328,12 @@ public final class Output {
                     bodyBuf.writeVarUint(dataPool.registerString(str));
                     break;
                 case TYPE_SLICE_SYMBOL:
-                    bodyBuf.writeVarUint(dataPool.registerSymbol((String) item));
+                    if (item instanceof Enum) {
+                        str = ((Enum) item).name();
+                    } else {
+                        str = item.toString();
+                    }
+                    bodyBuf.writeVarUint(enableStreamMode ? dataPool.registerSymbol(str) : dataPool.registerString(str));
                     break;
                 case TYPE_SLICE_OBJECT:
                     ObjectNode objectNode = (ObjectNode) item;

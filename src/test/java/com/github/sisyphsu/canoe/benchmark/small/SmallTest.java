@@ -8,15 +8,15 @@ import org.junit.jupiter.api.Test;
 /**
  * First time:
  * json: 171
+ * protobuf: 67
  * packet: 138
  * stream: 139
- * protobuf: 67
  * <p>
  * Following:
  * json: 171
+ * protobuf: 67
  * packet: 138
  * stream: 71
- * protobuf: 67
  *
  * @author sulin
  * @since 2019-10-28 18:27:56
@@ -49,9 +49,9 @@ public class SmallTest {
         pb = USER.toPB().toByteArray();
 
         System.out.println("json: " + json.length);
+        System.out.println("protobuf: " + pb.length);
         System.out.println("packet: " + packet.length);
         System.out.println("stream: " + stream.length);
-        System.out.println("protobuf: " + pb.length);
 
         System.out.println();
 
@@ -61,9 +61,9 @@ public class SmallTest {
         pb = USER.toPB().toByteArray();
 
         System.out.println("json: " + json.length);
+        System.out.println("protobuf: " + pb.length);
         System.out.println("packet: " + packet.length);
         System.out.println("stream: " + stream.length);
-        System.out.println("protobuf: " + pb.length);
     }
 
 }
