@@ -156,37 +156,60 @@ public final class Input {
      * Read an array by the specified head info
      */
     Object readArray(long head) throws IOException {
-        List<Object[]> slices = new ArrayList<>(2);
+        List<Object[]> slices = new ArrayList<>(1);
         int totalSize = 0;
         while (true) {
             byte type = (byte) ((head >>> 1) & 0x0F);
             int size = (int) (head >>> 5);
             totalSize += size;
-            Object[] slice;
+            Object[] slice = new Object[size];
             switch (type) {
                 case TYPE_SLICE_NULL:
-                    slice = new Object[size];
                     break;
                 case TYPE_SLICE_BOOL:
-                    slice = buffer.readBooleanSlice(size);
+                    for (int i = 0; i < size; i++) {
+                        byte b = buffer.readByte();
+                        switch (b) {
+                            case DATA_ID_TRUE:
+                                slice[i] = true;
+                                break;
+                            case DATA_ID_FALSE:
+                                slice[i] = false;
+                                break;
+                            default:
+                                throw new IllegalArgumentException("invalid bool[" + b + "] at offset " + i);
+                        }
+                    }
                     break;
                 case TYPE_SLICE_BYTE:
-                    slice = buffer.readByteSlice(size);
+                    for (int i = 0; i < size; i++) {
+                        slice[i] = buffer.readByte();
+                    }
                     break;
                 case TYPE_SLICE_SHORT:
-                    slice = buffer.readShortSlice(size);
+                    for (int i = 0; i < size; i++) {
+                        slice[i] = (short) buffer.readVarInt();
+                    }
                     break;
                 case TYPE_SLICE_INT:
-                    slice = buffer.readIntSlice(size);
+                    for (int i = 0; i < size; i++) {
+                        slice[i] = (int) buffer.readVarInt();
+                    }
                     break;
                 case TYPE_SLICE_LONG:
-                    slice = buffer.readLongSlice(size);
+                    for (int i = 0; i < size; i++) {
+                        slice[i] = buffer.readVarInt();
+                    }
                     break;
                 case TYPE_SLICE_FLOAT:
-                    slice = buffer.readFloatSlice(size);
+                    for (int i = 0; i < size; i++) {
+                        slice[i] = buffer.readFloat();
+                    }
                     break;
                 case TYPE_SLICE_DOUBLE:
-                    slice = buffer.readDoubleSlice(size);
+                    for (int i = 0; i < size; i++) {
+                        slice[i] = buffer.readDouble();
+                    }
                     break;
                 case TYPE_SLICE_SYMBOL:
                     slice = new String[size];
@@ -226,7 +249,7 @@ public final class Input {
             if ((head & 1) == 0) {
                 break;
             }
-            head = buffer.readVarUint();
+            head = buffer.readShort() & 0xFFFF;
         }
         if (slices.size() == 1) {
             return slices.get(0);

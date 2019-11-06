@@ -3,8 +3,6 @@ package com.github.sisyphsu.canoe.transport;
 import com.github.sisyphsu.canoe.utils.NumberUtils;
 import com.github.sisyphsu.canoe.utils.UTF8Encoder;
 
-import java.nio.charset.StandardCharsets;
-
 /**
  * Encapsulate all deserialization operations of output side.
  *
@@ -34,6 +32,14 @@ public final class OutputBuffer {
             this.ensureCapacity(offset + 1);
         }
         data[offset++] = b;
+    }
+
+    public void writeShort(short s) {
+        if (data.length < offset + 2) {
+            this.ensureCapacity(offset + 2);
+        }
+        data[offset++] = (byte) (s >> 8);
+        data[offset++] = (byte) (s & 0xFF);
     }
 
     public void writeVarInt(long n) {
@@ -111,26 +117,6 @@ public final class OutputBuffer {
         }
     }
 
-    public void writeBooleanSlice(Object[] arr, int from, int to) {
-        int len = to - from;
-        if (data.length < offset + (len + 1) / 8) {
-            this.ensureCapacity(offset + (len + 1) / 8);
-        }
-        int off;
-        for (int i = from; i < to; i += 8) {
-            byte b = 0;
-            for (int j = 0; j < 8; j++) {
-                if ((off = i + j) >= len) {
-                    break;
-                }
-                if ((Boolean) arr[off]) {
-                    b |= 1 << j;
-                }
-            }
-            data[offset++] = b;
-        }
-    }
-
     public void writeByteArray(byte[] arr) {
         int len = arr.length;
         if (data.length < offset + len) {
@@ -138,15 +124,6 @@ public final class OutputBuffer {
         }
         System.arraycopy(arr, 0, data, offset, len);
         this.offset += len;
-    }
-
-    public void writeByteSlice(Object[] arr, int from, int to) {
-        if (data.length < offset + to - from) {
-            this.ensureCapacity(offset + to - from);
-        }
-        for (int i = from; i < to; i++) {
-            data[offset++] = (Byte) arr[i];
-        }
     }
 
     public void writeShortArray(short[] arr) {
@@ -159,26 +136,9 @@ public final class OutputBuffer {
         }
     }
 
-    public void writeShortSlice(Object[] arr, int from, int to) {
-        if (data.length < offset + (to - from) * 2) {
-            this.ensureCapacity(offset + (to - from) * 2);
-        }
-        for (int i = from; i < to; i++) {
-            short s = (Short) arr[i];
-            data[offset++] = (byte) (s >> 8);
-            data[offset++] = (byte) (s & 0xFF);
-        }
-    }
-
     public void writeIntArray(int[] arr) {
         for (int i : arr) {
             writeVarInt(i);
-        }
-    }
-
-    public void writeIntSlice(Object[] arr, int from, int to) {
-        for (int i = from; i < to; i++) {
-            writeVarInt((Integer) arr[i]);
         }
     }
 
@@ -188,33 +148,15 @@ public final class OutputBuffer {
         }
     }
 
-    public void writeLongSlice(Object[] arr, int from, int to) {
-        for (int i = from; i < to; i++) {
-            writeVarInt((Long) arr[i]);
-        }
-    }
-
     public void writeFloatArray(float[] arr) {
         for (float f : arr) {
             writeFloat(f);
         }
     }
 
-    public void writeFloatSlice(Object[] arr, int from, int to) {
-        for (int i = from; i < to; i++) {
-            writeFloat((Float) arr[i]);
-        }
-    }
-
     public void writeDoubleArray(double[] arr) {
         for (double d : arr) {
             writeDouble(d);
-        }
-    }
-
-    public void writeDoubleSlice(Object[] arr, int from, int to) {
-        for (int i = from; i < to; i++) {
-            writeDouble((Double) arr[i]);
         }
     }
 

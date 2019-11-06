@@ -21,4 +21,9 @@ public final class ArrayNode extends Node {
         return data;
     }
 
+    @Override
+    public Type type() {
+        return Type.ARRAY;
+    }
+
 }

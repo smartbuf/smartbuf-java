@@ -38,4 +38,9 @@ public final class ObjectNode extends Node {
     public Object value() {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public Type type() {
+        return Type.OBJECT;
+    }
 }

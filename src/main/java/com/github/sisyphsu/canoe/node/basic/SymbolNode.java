@@ -29,4 +29,9 @@ public final class SymbolNode extends Node {
         return data;
     }
 
+    @Override
+    public Type type() {
+        return Type.SYMBOL;
+    }
+
 }

@@ -34,4 +34,9 @@ public final class DoubleNode extends Node {
         return value;
     }
 
+    @Override
+    public Type type() {
+        return Type.DOUBLE;
+    }
+
 }

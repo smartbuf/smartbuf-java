@@ -18,4 +18,9 @@ public final class ShortArrayNode extends Node {
     public Object value() {
         return data;
     }
+
+    @Override
+    public Type type() {
+        return Type.ARRAY_SHORT;
+    }
 }

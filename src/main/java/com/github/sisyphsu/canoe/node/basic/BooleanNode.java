@@ -29,4 +29,9 @@ public final class BooleanNode extends Node {
         return this == TRUE;
     }
 
+    @Override
+    public Type type() {
+        return Type.BOOLEAN;
+    }
+
 }

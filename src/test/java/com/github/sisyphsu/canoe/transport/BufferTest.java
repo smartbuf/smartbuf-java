@@ -13,7 +13,7 @@ import java.util.Objects;
 public class BufferTest {
 
     @Test
-    public void test() throws IOException {
+    public void testString() throws IOException {
         String[] strs = new String[]{
             "hello world",
             "你好，中国",
@@ -38,4 +38,18 @@ public class BufferTest {
         }
     }
 
+    @Test
+    public void testShort() throws IOException {
+        OutputBuffer buffer = new OutputBuffer(1 << 20);
+        buffer.writeShort(Short.MIN_VALUE);
+        buffer.writeVarUint(Long.MAX_VALUE);
+        buffer.writeShort(Short.MAX_VALUE);
+
+        InputBuffer inputBuffer = new InputBuffer();
+        inputBuffer.reset(buffer.data);
+
+        assert Short.MIN_VALUE == inputBuffer.readShort();
+        assert Long.MAX_VALUE == inputBuffer.readVarUint();
+        assert Short.MAX_VALUE == inputBuffer.readShort();
+    }
 }

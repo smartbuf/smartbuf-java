@@ -30,4 +30,9 @@ public final class StringNode extends Node {
         return value;
     }
 
+    @Override
+    public Type type() {
+        return Type.STRING;
+    }
+
 }

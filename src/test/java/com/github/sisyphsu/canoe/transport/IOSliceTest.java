@@ -62,7 +62,7 @@ public class IOSliceTest {
     List<Object> create() {
         List<Object> result = new ArrayList<>();
         // boolean
-        int len = RandomUtils.nextInt(100, 200);
+        int len = RandomUtils.nextInt(100, 10000);
         List<Boolean> booleans = new ArrayList<>();
         for (int i = 0; i < len; i++) {
             boolean b = RandomUtils.nextBoolean();
@@ -71,7 +71,7 @@ public class IOSliceTest {
         result.addAll(booleans);
 
         // byte
-        len = RandomUtils.nextInt(100, 200);
+        len = RandomUtils.nextInt(100, 10000);
         List<Byte> bytes = new ArrayList<>();
         for (int i = 0; i < len; i++) {
             byte tmp = (byte) RandomUtils.nextInt();
@@ -80,7 +80,7 @@ public class IOSliceTest {
         result.addAll(bytes);
 
         // short
-        len = RandomUtils.nextInt(100, 200);
+        len = RandomUtils.nextInt(100, 10000);
         List<Short> shorts = new ArrayList<>();
         for (int i = 0; i < len; i++) {
             short tmp = (short) RandomUtils.nextInt();
@@ -89,7 +89,7 @@ public class IOSliceTest {
         result.addAll(shorts);
 
         // int
-        len = RandomUtils.nextInt(100, 200);
+        len = RandomUtils.nextInt(100, 10000);
         List<Integer> ints = new ArrayList<>();
         for (int i = 0; i < len; i++) {
             int tmp = RandomUtils.nextInt();
@@ -98,7 +98,7 @@ public class IOSliceTest {
         result.addAll(ints);
 
         // long
-        len = RandomUtils.nextInt(100, 200);
+        len = RandomUtils.nextInt(100, 10000);
         List<Long> longs = new ArrayList<>();
         for (int i = 0; i < len; i++) {
             long tmp = RandomUtils.nextLong();
@@ -107,7 +107,7 @@ public class IOSliceTest {
         result.addAll(longs);
 
         // null
-        len = RandomUtils.nextInt(100, 200);
+        len = RandomUtils.nextInt(100, 10000);
         List<?> nulls = new ArrayList<>();
         for (int i = 0; i < len; i++) {
             nulls.add(null);
@@ -115,7 +115,7 @@ public class IOSliceTest {
         result.addAll(nulls);
 
         // float
-        len = RandomUtils.nextInt(100, 200);
+        len = RandomUtils.nextInt(100, 10000);
         List<Float> floats = new ArrayList<>();
         for (int i = 0; i < len; i++) {
             float tmp = RandomUtils.nextFloat();
@@ -124,7 +124,7 @@ public class IOSliceTest {
         result.addAll(floats);
 
         // double
-        len = RandomUtils.nextInt(100, 200);
+        len = RandomUtils.nextInt(100, 10000);
         List<Double> doubles = new ArrayList<>();
         for (int i = 0; i < len; i++) {
             double tmp = RandomUtils.nextDouble();
@@ -133,7 +133,7 @@ public class IOSliceTest {
         result.addAll(doubles);
 
         // String
-        len = RandomUtils.nextInt(100, 200);
+        len = RandomUtils.nextInt(100, 10000);
         List<String> strings = new ArrayList<>();
         for (int i = 0; i < len; i++) {
             String tmp = RandomStringUtils.random(16);
@@ -142,7 +142,7 @@ public class IOSliceTest {
         result.addAll(strings);
 
         // symbol
-        len = RandomUtils.nextInt(100, 200);
+        len = RandomUtils.nextInt(100, 10000);
         List<String> symbols = new ArrayList<>();
         for (int i = 0; i < len; i++) {
             String tmp = RandomStringUtils.randomAlphabetic(16);

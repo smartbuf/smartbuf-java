@@ -8,6 +8,7 @@ import com.github.sisyphsu.canoe.reflect.XType;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 
 import static com.github.sisyphsu.canoe.transport.Const.*;
 
@@ -173,138 +174,190 @@ public final class Output {
         }
     }
 
+    /**
+     * Write an array into body, it will scan all items and write those group by different slices
+     */
     void writeArray(Collection<?> arr) {
         if (arr.isEmpty()) {
             bodyBuf.writeVarUint(DATA_ID_ZERO_ARRAY);
             return;
         }
-        Object[] objects = new Object[arr.size()];
+
+        byte sliceType = -1;
+        int sliceLen = 0;
+        int sliceHeadOffset = 0;
+        String[] sliceKey = null;
+        boolean isFirstSlice = true;
         ConverterPipeline pipeline = null;
-        Class<?> prevCls = null;
-        Class<?> currCls;
-        int off = 0;
-        for (Object o : arr) {
-            if (o == null || o instanceof Boolean || o instanceof Float || o instanceof Double
-                || o instanceof Byte || o instanceof Short || o instanceof Integer || o instanceof Long
-                || o instanceof Character || o instanceof CharSequence || o instanceof Enum
-                || o instanceof Node) {
-                objects[off++] = o;
-            } else {
-                currCls = o.getClass();
-                if (currCls != prevCls || pipeline == null) {
-                    prevCls = currCls;
-                    pipeline = codecFactory.getPipeline(currCls, Node.class);
-                }
-                Node node = (Node) pipeline.convert(o, nodeXType);
-                if (node == null || node instanceof ObjectNode) {
-                    objects[off++] = node;
+
+        // loop write all items
+        for (Iterator it = arr.iterator(); ; ) {
+            Object item = it.next();
+            Class<?> itemCls = item == null ? null : item.getClass();
+            String[] itemKey = null;
+            byte itemType;
+            // determine the current item's metadata
+            if (item == null) {
+                itemType = TYPE_SLICE_NULL;
+            } else if (item instanceof Boolean) {
+                itemType = TYPE_SLICE_BOOL;
+            } else if (item instanceof Byte) {
+                itemType = TYPE_SLICE_BYTE;
+            } else if (item instanceof Short) {
+                itemType = TYPE_SLICE_SHORT;
+            } else if (item instanceof Integer) {
+                itemType = TYPE_SLICE_INT;
+            } else if (item instanceof Long) {
+                itemType = TYPE_SLICE_LONG;
+            } else if (item instanceof Float) {
+                itemType = TYPE_SLICE_FLOAT;
+            } else if (item instanceof Double) {
+                itemType = TYPE_SLICE_DOUBLE;
+            } else if (item instanceof Character || item instanceof CharSequence) {
+                item = item.toString();
+                itemType = TYPE_SLICE_STRING;
+            } else if (item instanceof Enum) {
+                item = ((Enum) item).name();
+                itemType = TYPE_SLICE_SYMBOL;
+            } else if (item instanceof Collection) {
+                itemType = TYPE_SLICE_UNKNOWN;
+            } else if (itemCls.isArray()) {
+                if (item instanceof char[]) {
+                    item = new String((char[]) item);
+                    itemType = TYPE_SLICE_STRING;
                 } else {
-                    objects[off++] = node.value();
+                    itemType = TYPE_SLICE_UNKNOWN;
                 }
-            }
-        }
-        off = 0;
-        prevCls = null;
-        String[] prevKey = null;
-        String[] currKey = null;
-        for (int i = 0, len = objects.length; i < len; ) {
-            Object o = objects[i];
-            if (o == null) {
-                currCls = null;
-                currKey = null;
             } else {
-                currCls = o.getClass();
-                if (o instanceof ObjectNode) {
-                    currKey = ((ObjectNode) o).keys();
+                if (pipeline != null && pipeline.getSourceType() != itemCls) {
+                    pipeline = null; // item's class changed, cannot reuse pipeline anymore
+                }
+                if (pipeline == null) {
+                    pipeline = codecFactory.getPipeline(itemCls, Node.class);
+                }
+                Node node = (Node) pipeline.convert(item, nodeXType);
+                if (node == null) {
+                    itemType = TYPE_SLICE_NULL;
+                } else {
+                    switch (node.type()) {
+                        case BOOLEAN:
+                            itemType = TYPE_SLICE_BOOL;
+                            break;
+                        case DOUBLE:
+                            itemType = TYPE_SLICE_DOUBLE;
+                            break;
+                        case FLOAT:
+                            itemType = TYPE_SLICE_FLOAT;
+                            break;
+                        case VARINT:
+                            itemType = TYPE_SLICE_LONG;
+                            break;
+                        case STRING:
+                            itemType = TYPE_SLICE_STRING;
+                            break;
+                        case SYMBOL:
+                            itemType = TYPE_SLICE_SYMBOL;
+                            break;
+                        case OBJECT:
+                            item = node;
+                            itemKey = ((ObjectNode) node).keys();
+                            itemType = TYPE_SLICE_OBJECT;
+                            break;
+                        default:
+                            itemType = TYPE_SLICE_UNKNOWN;
+                    }
+                    if (item == null) {
+                        item = node.value();
+                    }
                 }
             }
-            if (i == 0) {
-                prevCls = currCls;
-                prevKey = currKey;
+
+            // terminate the previous slice if it's broken
+            boolean typeBroken = sliceType >= 0 && (sliceType != itemType || !Arrays.equals(sliceKey, itemKey));
+            boolean hitLimit = (sliceLen + 1) >= (isFirstSlice ? (1 << 6) : (1 << 11));
+            if (typeBroken || hitLimit) {
+                this.writeSliceMetadata(sliceHeadOffset, isFirstSlice, sliceLen, sliceType, true);
+                isFirstSlice = false;
             }
-            if (prevCls != currCls || !Arrays.deepEquals(prevKey, currKey)) {
-                this.writeSlice(prevCls, objects, off, i, true); // write the previous slice
-                prevCls = currCls;
-                off = i;
+
+            // prepare for next slice
+            if (sliceType == -1 || typeBroken || hitLimit) {
+                sliceType = itemType;
+                sliceKey = null;
+                sliceLen = 0;
+                sliceHeadOffset = bodyBuf.offset;
+                bodyBuf.offset += 2; // skip 2-byte for storing slice metadata
             }
-            i++;
-            if (i == len) {
-                this.writeSlice(currCls, objects, off, i, false); // write the last slice
+
+            // output current item
+            switch (itemType) {
+                case TYPE_SLICE_NULL:
+                    break;
+                case TYPE_SLICE_BOOL:
+                    bodyBuf.writeByte(((Boolean) item) ? DATA_ID_TRUE : DATA_ID_FALSE);
+                    break;
+                case TYPE_SLICE_FLOAT:
+                    bodyBuf.writeFloat((Float) item);
+                    break;
+                case TYPE_SLICE_DOUBLE:
+                    bodyBuf.writeDouble((Double) item);
+                    break;
+                case TYPE_SLICE_BYTE:
+                    bodyBuf.writeByte((Byte) item);
+                    break;
+                case TYPE_SLICE_SHORT:
+                    bodyBuf.writeVarInt((Short) item);
+                    break;
+                case TYPE_SLICE_INT:
+                    bodyBuf.writeVarInt((Integer) item);
+                    break;
+                case TYPE_SLICE_LONG:
+                    bodyBuf.writeVarInt((Long) item);
+                    break;
+                case TYPE_SLICE_STRING:
+                    bodyBuf.writeVarUint(dataPool.registerString((String) item));
+                    break;
+                case TYPE_SLICE_SYMBOL:
+                    bodyBuf.writeVarUint(dataPool.registerSymbol((String) item));
+                    break;
+                case TYPE_SLICE_OBJECT:
+                    ObjectNode node = (ObjectNode) item;
+                    if (sliceLen == 0) {
+                        if (enableStreamMode && node.isStable()) {
+                            bodyBuf.writeVarUint(metaPool.registerCxtStruct(node.keys()));
+                        } else {
+                            bodyBuf.writeVarUint(metaPool.registerTmpStruct(node.keys()));
+                        }
+                    }
+                    for (Object value : node.values()) {
+                        this.writeObject(value);
+                    }
+                    break;
+                default:
+                    this.writeObject(item);
+            }
+            sliceLen++;
+            // output the last slice's metadata if need
+            if (!it.hasNext()) {
+                this.writeSliceMetadata(sliceHeadOffset, isFirstSlice, sliceLen, sliceType, false);
+                break;
             }
         }
     }
 
-    void writeSlice(Class<?> type, Object[] arr, int from, int to, boolean hasMore) {
-        boolean first = from == 0;
-        long len = to - from;
-        if (type == null) {
-            writeSliceHead(len, TYPE_SLICE_NULL, first, hasMore);
-        } else if (type == Boolean.class) {
-            writeSliceHead(len, TYPE_SLICE_BOOL, first, hasMore);
-            bodyBuf.writeBooleanSlice(arr, from, to);
-        } else if (type == Byte.class) {
-            writeSliceHead(len, TYPE_SLICE_BYTE, first, hasMore);
-            bodyBuf.writeByteSlice(arr, from, to);
-        } else if (type == Short.class) {
-            writeSliceHead(len, TYPE_SLICE_SHORT, first, hasMore);
-            bodyBuf.writeShortSlice(arr, from, to);
-        } else if (type == Integer.class) {
-            writeSliceHead(len, TYPE_SLICE_INT, first, hasMore);
-            bodyBuf.writeIntSlice(arr, from, to);
-        } else if (type == Long.class) {
-            writeSliceHead(len, TYPE_SLICE_LONG, first, hasMore);
-            bodyBuf.writeLongSlice(arr, from, to);
-        } else if (type == Float.class) {
-            writeSliceHead(len, TYPE_SLICE_FLOAT, first, hasMore);
-            bodyBuf.writeFloatSlice(arr, from, to);
-        } else if (type == Double.class) {
-            writeSliceHead(len, TYPE_SLICE_DOUBLE, first, hasMore);
-            bodyBuf.writeDoubleSlice(arr, from, to);
-        } else if (type == Character.class || CharSequence.class.isAssignableFrom(type)) {
-            writeSliceHead(len, TYPE_SLICE_STRING, first, hasMore);
-            for (int i = from; i < to; i++) {
-                bodyBuf.writeVarUint(dataPool.registerString(arr[i].toString()));
-            }
-        } else if (Enum.class.isAssignableFrom(type)) {
-            if (enableStreamMode) {
-                writeSliceHead(len, TYPE_SLICE_SYMBOL, first, hasMore);
-                for (int i = from; i < to; i++) {
-                    bodyBuf.writeVarUint(dataPool.registerSymbol(((Enum) arr[i]).name()));
-                }
-            } else {
-                writeSliceHead(len, TYPE_SLICE_STRING, first, hasMore);
-                for (int i = from; i < to; i++) {
-                    bodyBuf.writeVarUint(dataPool.registerString(((Enum) arr[i]).name()));
-                }
-            }
-        } else if (type == ObjectNode.class) {
-            writeSliceHead(len, TYPE_SLICE_OBJECT, first, hasMore);
-            ObjectNode node = ((ObjectNode) arr[0]);
-            if (enableStreamMode && node.isStable()) {
-                bodyBuf.writeVarUint(metaPool.registerCxtStruct(node.keys()));
-            } else {
-                bodyBuf.writeVarUint(metaPool.registerTmpStruct(node.keys()));
-            }
-            for (int i = from; i < to; i++) {
-                node = (ObjectNode) arr[i];
-                for (Object value : node.values()) {
-                    this.writeObject(value);
-                }
-            }
+    /**
+     * Write a 2-byte metadata of Fixed-Sliceinto the specified position
+     */
+    private void writeSliceMetadata(int headOffset, boolean isFirst, int len, byte type, boolean hasMore) {
+        int tmp = bodyBuf.offset;
+        bodyBuf.offset = headOffset;
+        if (isFirst) {
+            // need compatible with writeObject, must write 2-byte varint
+            bodyBuf.writeVarUint(len << 8 | type << 4 | (hasMore ? 0b0000_1000 : 0) | TYPE_ARRAY);
         } else {
-            writeSliceHead(len, TYPE_SLICE_UNKNOWN, first, hasMore);
-            for (int i = from; i < to; i++) {
-                this.writeObject(arr[i]);
-            }
+            bodyBuf.writeShort((short) (len << 5 | type << 1 | (hasMore ? 0b0000_0001 : 0)));
         }
-    }
-
-    void writeSliceHead(long len, byte type, boolean first, boolean hasMore) {
-        if (first) {
-            bodyBuf.writeVarUint((len << 8) | (type << 4) | (hasMore ? 0b0000_1000 : 0) | TYPE_ARRAY);
-        } else {
-            bodyBuf.writeVarUint((len << 5) | (type << 1) | (hasMore ? 0b0000_0001 : 0));
-        }
+        bodyBuf.offset = tmp;
     }
 
 }

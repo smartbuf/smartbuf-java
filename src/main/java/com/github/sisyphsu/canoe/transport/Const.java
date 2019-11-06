@@ -62,4 +62,5 @@ public interface Const {
     byte TYPE_SLICE_SYMBOL  = 0x09;
     byte TYPE_SLICE_OBJECT  = 0x0A;
     byte TYPE_SLICE_UNKNOWN = 0x0B;
+
 }
