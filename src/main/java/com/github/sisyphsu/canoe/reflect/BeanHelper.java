@@ -44,13 +44,15 @@ public final class BeanHelper<T> {
         for (int i = 0, len = fields.length; i < len; i++) {
             names[i] = fields[i].name;
         }
-        try {
-            this.accessor = AccessorBuilder.buildAccessor(cls, fields);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("build bean accessor failed: " + cls, e);
-        }
+        this.accessor = AccessorBuilder.buildAccessor(cls, fields);
     }
 
+    /**
+     * Get an reusable {@link BeanHelper} instance of the specified class
+     *
+     * @param cls The specified class
+     * @return cls's BeanHelper
+     */
     public static <T> BeanHelper<T> valueOf(Class<T> cls) {
         BeanHelper mapper = MAPPERS.get(cls);
         if (mapper == null) {
@@ -60,16 +62,33 @@ public final class BeanHelper<T> {
         return mapper;
     }
 
+    /**
+     * Get all fieldNames which has getter or setter.
+     *
+     * @return Field names
+     */
     public String[] getNames() {
         return names;
     }
 
+    /**
+     * Get all values of the specified object's properties.
+     *
+     * @param t The specified object to get values
+     * @return t's all values
+     */
     public Object[] getValues(T t) {
         Object[] result = new Object[fieldCount];
         accessor.getAll(t, result);
         return result;
     }
 
+    /**
+     * Set all values of the specified object' properties
+     *
+     * @param t    The specified object to set values
+     * @param vals all values to setup
+     */
     public void setValues(T t, Object[] vals) {
         if (vals == null || vals.length != fieldCount) {
             throw new IllegalArgumentException("invalid values");
@@ -98,7 +117,7 @@ public final class BeanHelper<T> {
         for (Method method : cls.getMethods()) {
             String name = method.getName();
             int mod = method.getModifiers();
-            if (Modifier.isAbstract(mod) || Modifier.isStatic(mod) || Modifier.isNative(mod)) {
+            if (Modifier.isStatic(mod) || Modifier.isNative(mod)) {
                 continue;
             }
             boolean getter = true;
@@ -127,7 +146,7 @@ public final class BeanHelper<T> {
             Field field = prop.field;
             if (prop.field == null) {
                 try {
-                    field = cls.getDeclaredField(name);
+                    field = findField(cls, name);
                 } catch (NoSuchFieldException ignored) {
                 }
             }
@@ -137,6 +156,18 @@ public final class BeanHelper<T> {
             properties.add(prop);
         }
         return properties.toArray(new BeanField[0]);
+    }
+
+    // find the specified field from cls, includes superclass
+    private static Field findField(Class cls, String name) throws NoSuchFieldException {
+        if (cls == Object.class) {
+            throw new NoSuchFieldException(name);
+        }
+        try {
+            return cls.getDeclaredField(name);
+        } catch (NoSuchFieldException e) {
+            return findField(cls.getSuperclass(), name);
+        }
     }
 
 }

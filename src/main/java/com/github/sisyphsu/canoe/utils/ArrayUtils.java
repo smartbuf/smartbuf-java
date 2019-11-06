@@ -96,35 +96,6 @@ public final class ArrayUtils {
     }
 
     /**
-     * Adjust the specified heap from root, make sure that heap[root] is the largest item at [root, last).
-     *
-     * @param heap Array that represents heap
-     * @param root Root offset of heap
-     * @param last Last offset
-     */
-    public static void maxHeapAdjust(final long[] heap, final int root, final int last) {
-        final long rootVal = heap[root];
-        int parent = root;
-        int child1, child2;
-        while (true) {
-            child1 = 2 * parent + 1;
-            child2 = child1 + 1;
-            if (child1 >= last) {
-                break; // no children
-            }
-            if (child2 < last && heap[child2] > heap[child1]) {
-                child1 = child2; // choice the bigger child
-            }
-            if (heap[child1] <= rootVal) {
-                break; // this branch is smaller
-            }
-            heap[parent] = heap[child1]; // switch root to smaller position
-            parent = child1;
-        }
-        heap[parent] = rootVal;
-    }
-
-    /**
      * put value into array's specified position, execute expansion automatically.
      *
      * @param arr Source array

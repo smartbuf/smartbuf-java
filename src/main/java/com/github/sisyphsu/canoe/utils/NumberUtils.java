@@ -1,6 +1,8 @@
 package com.github.sisyphsu.canoe.utils;
 
 /**
+ * NumberUtils provides some useful features for number convert operation.
+ *
  * @author sulin
  * @since 2019-04-27 16:03:53
  */

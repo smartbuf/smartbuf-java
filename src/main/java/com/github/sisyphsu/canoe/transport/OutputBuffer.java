@@ -1,7 +1,7 @@
 package com.github.sisyphsu.canoe.transport;
 
 import com.github.sisyphsu.canoe.utils.NumberUtils;
-import com.github.sisyphsu.canoe.utils.UTF8Encoder;
+import com.github.sisyphsu.canoe.utils.UTF8Utils;
 
 /**
  * Encapsulate all deserialization operations of output side.
@@ -89,7 +89,7 @@ public final class OutputBuffer {
         if (data.length < writeFrom + str.length() * 3) {
             this.ensureCapacity(writeFrom + str.length() * 3);
         }
-        int writeTo = UTF8Encoder.encode(str, data, writeFrom);
+        int writeTo = UTF8Utils.encode(str, data, writeFrom);
         int len = writeTo - writeFrom;
         if (writeVarUint(len) < 5) {
             System.arraycopy(data, writeFrom, data, offset, len);

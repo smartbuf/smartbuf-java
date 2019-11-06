@@ -10,14 +10,26 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * Build {@link Accessor} by class and its properties.
+ *
  * @author sulin
  * @since 2019-10-29 15:42:49
  */
 @SuppressWarnings("unchecked")
 final class AccessorBuilder {
 
-    private static final Map<Class, Class<? extends Accessor>> ACCESSOR_CLS_MAP = new ConcurrentHashMap<>();
+    static final Map<Class, Class<? extends Accessor>> ACCESSOR_CLS_MAP = new ConcurrentHashMap<>();
 
+    private AccessorBuilder() {
+    }
+
+    /**
+     * Build Accessor for the specified class and its properties
+     *
+     * @param cls        Bean class
+     * @param properties Bean properties
+     * @return Bean's accessor, it's reusable
+     */
     public static Accessor buildAccessor(Class<?> cls, BeanField... properties) {
         Class<? extends Accessor> accessorCls = ACCESSOR_CLS_MAP.get(cls);
         if (accessorCls == null) {
@@ -31,6 +43,13 @@ final class AccessorBuilder {
         }
     }
 
+    /**
+     * Build Accessor proxy for the specified class, it use asm to generate implementation.
+     *
+     * @param cls        Bean class
+     * @param properties Bean properties
+     * @return Bean's accessor proxy implementation
+     */
     public static Class<? extends Accessor> buildAccessorClass(Class<?> cls, BeanField... properties) {
         String clsName = cls.getName().replace('.', '/');
         String accessorClassName = cls.getName() + "$$$Accessor";
@@ -57,7 +76,7 @@ final class AccessorBuilder {
         for (int i = 0, len = properties.length; i < len; i++) {
             BeanField prop = properties[i];
             mv.visitVarInsn(Opcodes.ALOAD, 2); // values
-            mv.visitIntInsn(Opcodes.BIPUSH, i);
+            ASMUtils.addIntInstruction(mv, i);
             mv.visitVarInsn(Opcodes.ALOAD, 3); // t.
             if (prop.getter == null) {
                 String fieldName = prop.field.getName();
@@ -91,7 +110,7 @@ final class AccessorBuilder {
             BeanField prop = properties[i];
             mv.visitVarInsn(Opcodes.ALOAD, 3); // t
             mv.visitVarInsn(Opcodes.ALOAD, 2); // values
-            mv.visitIntInsn(Opcodes.BIPUSH, i);
+            ASMUtils.addIntInstruction(mv, i);
             mv.visitInsn(Opcodes.AALOAD);
             if (prop.setter == null) {
                 Class<?> fieldType = prop.field.getType();
@@ -141,7 +160,7 @@ final class AccessorBuilder {
                 type = Float.class;
             } else if (type == double.class) {
                 type = Double.class;
-            } else if (type == char.class) {
+            } else {
                 type = Character.class;
             }
         }

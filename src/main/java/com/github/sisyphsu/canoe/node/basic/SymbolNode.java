@@ -20,10 +20,6 @@ public final class SymbolNode extends Node {
         return new SymbolNode(en.name()); // don't need cache
     }
 
-    public static SymbolNode valueOf(String data) {
-        return new SymbolNode(data);
-    }
-
     @Override
     public Object value() {
         return data;

@@ -4,17 +4,55 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-
 /**
+ * ASMUtils wraps some useful function for bytecode operation
+ *
  * @author sulin
  * @since 2019-10-31 14:29:16
  */
 public final class ASMUtils {
 
     private static final ASMByteArrayClassLoader INSTANCE = new ASMByteArrayClassLoader();
+
+    private ASMUtils() {
+    }
+
+    /**
+     * Add push byte/short/int instruction into stack
+     *
+     * @param mv The MethodVisitor used to add instruction
+     * @param i  The number to add
+     */
+    public static void addIntInstruction(MethodVisitor mv, int i) {
+        switch (i) {
+            case 0:
+                mv.visitInsn(Opcodes.ICONST_0);
+                break;
+            case 1:
+                mv.visitInsn(Opcodes.ICONST_1);
+                break;
+            case 2:
+                mv.visitInsn(Opcodes.ICONST_2);
+                break;
+            case 3:
+                mv.visitInsn(Opcodes.ICONST_3);
+                break;
+            case 4:
+                mv.visitInsn(Opcodes.ICONST_4);
+                break;
+            case 5:
+                mv.visitInsn(Opcodes.ICONST_5);
+                break;
+            default:
+                if (i < 128) {
+                    mv.visitIntInsn(Opcodes.BIPUSH, i);
+                } else if (i < Short.MAX_VALUE) {
+                    mv.visitIntInsn(Opcodes.SIPUSH, i);
+                } else {
+                    mv.visitLdcInsn(i);
+                }
+        }
+    }
 
     /**
      * Add a box instruction into {@link MethodVisitor} by the specified primary class
@@ -80,15 +118,6 @@ public final class ASMUtils {
      * @return Class instance
      */
     public static Class<?> loadClass(ClassWriter writer, String clsName) {
-        try {
-            File file = new File("/Users/sulin/test.class");
-            FileOutputStream fos = new FileOutputStream(file);
-            fos.write(writer.toByteArray());
-            fos.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         return INSTANCE.loadClass(clsName, writer.toByteArray());
     }
 

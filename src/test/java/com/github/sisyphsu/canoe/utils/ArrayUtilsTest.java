@@ -3,15 +3,11 @@ package com.github.sisyphsu.canoe.utils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
-
 /**
  * @author sulin
  * @since 2019-10-02 15:18:19
  */
 public class ArrayUtilsTest {
-
-    private static final Random RANDOM = new Random(System.currentTimeMillis());
 
     @Test
     public void testDescFastSort() {
@@ -72,32 +68,6 @@ public class ArrayUtilsTest {
         ArrayUtils.descFastSort(arr, 0, arr.length - 1);
         for (int i = 0; i < 99; i++) {
             assert arr[i] >= arr[i + 1];
-        }
-    }
-
-    @Test
-    public void maxHeapAdjust() {
-        long[] arr = new long[100];
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] = RANDOM.nextInt(10000);
-        }
-
-        ArrayUtils.descFastSort(arr, 0, arr.length - 1);
-        for (int i = 0; i < arr.length - 1; i++) {
-            assert arr[i] >= arr[i + 1];
-        }
-
-        for (int i = 0; i < 100; i++) {
-            long tmp = RANDOM.nextInt(10000);
-            if (tmp > arr[0]) {
-                continue;
-            }
-            arr[0] = tmp;
-            ArrayUtils.maxHeapAdjust(arr, 0, arr.length - 1);
-
-            for (int j = 1; j < arr.length - 1; j++) {
-                assert arr[0] >= arr[j];
-            }
         }
     }
 
