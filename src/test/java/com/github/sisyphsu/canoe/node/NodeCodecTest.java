@@ -1,6 +1,6 @@
 package com.github.sisyphsu.canoe.node;
 
-import com.github.sisyphsu.canoe.convertor.CodecFactory;
+import com.github.sisyphsu.canoe.converter.CodecFactory;
 import com.github.sisyphsu.canoe.node.basic.*;
 import lombok.Data;
 import org.apache.commons.lang3.RandomStringUtils;

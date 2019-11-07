@@ -1,6 +1,6 @@
 package com.github.sisyphsu.canoe;
 
-import com.github.sisyphsu.canoe.convertor.CodecFactory;
+import com.github.sisyphsu.canoe.converter.CodecFactory;
 import com.github.sisyphsu.canoe.exception.CanoeClosedException;
 import com.github.sisyphsu.canoe.node.NodeCodec;
 import com.github.sisyphsu.canoe.reflect.TypeRef;

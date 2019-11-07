@@ -1,7 +1,7 @@
 package com.github.sisyphsu.canoe.benchmark;
 
 import com.github.sisyphsu.canoe.Canoe;
-import com.github.sisyphsu.canoe.convertor.ConverterPipeline;
+import com.github.sisyphsu.canoe.converter.ConverterPipeline;
 import com.github.sisyphsu.canoe.node.Node;
 import org.apache.commons.lang3.RandomUtils;
 import org.openjdk.jmh.annotations.*;

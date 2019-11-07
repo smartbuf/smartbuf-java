@@ -1,6 +1,6 @@
 package com.github.sisyphsu.canoe.transport;
 
-import com.github.sisyphsu.canoe.convertor.CodecFactory;
+import com.github.sisyphsu.canoe.converter.CodecFactory;
 import com.github.sisyphsu.canoe.node.NodeCodec;
 import lombok.AllArgsConstructor;
 import lombok.Data;

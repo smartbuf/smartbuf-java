@@ -1,7 +1,7 @@
 package com.github.sisyphsu.canoe.transport;
 
-import com.github.sisyphsu.canoe.convertor.CodecFactory;
-import com.github.sisyphsu.canoe.convertor.ConverterPipeline;
+import com.github.sisyphsu.canoe.converter.CodecFactory;
+import com.github.sisyphsu.canoe.converter.ConverterPipeline;
 import com.github.sisyphsu.canoe.node.Node;
 import com.github.sisyphsu.canoe.node.basic.ObjectNode;
 import com.github.sisyphsu.canoe.reflect.XType;

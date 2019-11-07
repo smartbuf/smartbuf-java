@@ -1,7 +1,7 @@
 package com.github.sisyphsu.canoe.node;
 
-import com.github.sisyphsu.canoe.convertor.Codec;
-import com.github.sisyphsu.canoe.convertor.Converter;
+import com.github.sisyphsu.canoe.converter.Codec;
+import com.github.sisyphsu.canoe.converter.Converter;
 import com.github.sisyphsu.canoe.node.array.*;
 import com.github.sisyphsu.canoe.node.basic.*;
 import com.github.sisyphsu.canoe.reflect.BeanHelper;
