@@ -22,14 +22,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public final class ConverterPipeline {
 
+    public static boolean ENABLE_ASM = true;
+
     private static final AtomicInteger IDER = new AtomicInteger(0);
 
     private final Pipeline              pipeline;
     private final List<ConverterMethod> methods;
-    private final Class<?>              sourceType;
-    private final Class<?>              targetType;
 
-    public ConverterPipeline(Class<?> srcType, Class<?> tgtType, List<ConverterMethod> methods) {
+    public ConverterPipeline(List<ConverterMethod> methods) {
         List<RealConverterMethod> realConverterMethods = new ArrayList<>();
         for (ConverterMethod method : methods) {
             if (method instanceof RealConverterMethod) {
@@ -38,14 +38,14 @@ public final class ConverterPipeline {
         }
         Pipeline pipeline = null;
         try {
-            pipeline = build(realConverterMethods);
+            if (ENABLE_ASM) {
+                pipeline = build(realConverterMethods);
+            }
         } catch (Exception e) {
             log.error("build codec's pipeline failed: ", e);
         }
         this.pipeline = pipeline;
         this.methods = methods;
-        this.sourceType = srcType;
-        this.targetType = tgtType;
     }
 
     /**
@@ -68,14 +68,6 @@ public final class ConverterPipeline {
 
     public List<ConverterMethod> getMethods() {
         return methods;
-    }
-
-    public Class<?> getSourceType() {
-        return sourceType;
-    }
-
-    public Class<?> getTargetType() {
-        return targetType;
     }
 
     /**

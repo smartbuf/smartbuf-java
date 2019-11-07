@@ -1,6 +1,5 @@
 package com.github.sisyphsu.canoe.convertor;
 
-import com.github.sisyphsu.canoe.exception.CircleReferenceException;
 import com.github.sisyphsu.canoe.reflect.XType;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,7 +19,7 @@ public final class RealConverterMethod extends ConverterMethod {
     protected Converter annotation;
     protected Method    method;
 
-    private RealConverterMethod(Class<?> srcClass, Class<?> tgtClass) {
+    RealConverterMethod(Class<?> srcClass, Class<?> tgtClass) {
         super(srcClass, tgtClass);
     }
 
@@ -78,10 +77,6 @@ public final class RealConverterMethod extends ConverterMethod {
                 return method.invoke(codec, data);
             }
         } catch (Exception e) {
-            Throwable throwable = e.getCause();
-            if (throwable instanceof CircleReferenceException) {
-                throw (CircleReferenceException) throwable;
-            }
             throw new IllegalStateException("invoke codec failed.", e);
         }
     }

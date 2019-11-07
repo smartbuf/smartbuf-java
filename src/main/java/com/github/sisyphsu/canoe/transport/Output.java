@@ -201,7 +201,7 @@ public final class Output {
             Node node = null;
             if (item == null) {
                 itemType = TYPE_SLICE_NULL;
-            } else if (pipeline != null && pipeline.getSourceType() == itemCls) {
+            } else if (pipeline != null && prevCls == itemCls) {
                 // reusing the previous's pipeline
                 node = (Node) pipeline.convert(item, nodeXType);
             } else if (prevCls == itemCls) {
@@ -275,6 +275,7 @@ public final class Output {
             } else if (itemType == -1) {
                 itemType = TYPE_SLICE_NULL;
             }
+            prevCls = itemCls;
 
             // terminate the previous slice if it's broken
             boolean typeBroken = sliceType >= 0 && (sliceType != itemType || !Arrays.equals(sliceKey, itemKey));

@@ -9,9 +9,6 @@ package com.github.sisyphsu.canoe.exception;
  */
 public class CircleReferenceException extends RuntimeException {
 
-    public CircleReferenceException() {
-    }
-
     public CircleReferenceException(String message) {
         super(message);
     }

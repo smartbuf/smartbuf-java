@@ -1,7 +1,6 @@
 package com.github.sisyphsu.canoe.convertor;
 
 import com.github.sisyphsu.canoe.convertor.codec.LangCodec;
-import com.github.sisyphsu.canoe.node.Node;
 import com.github.sisyphsu.canoe.reflect.TypeRef;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,14 +50,6 @@ public class CodecFactoryTest {
     }
 
     @Test
-    public void installCodec() {
-        Set<Class<? extends Codec>> codecs = CodecScanner.scanCodecs(Node.class.getPackage().getName());
-        for (Class<? extends Codec> codec : codecs) {
-            factory.installCodec(codec);
-        }
-    }
-
-    @Test
     public void getPipeline() {
         ConverterPipeline pipeline1 = factory.getPipeline(BitSet.class, Byte[].class);
         assert pipeline1.getMethods().size() == 2;
@@ -84,4 +75,20 @@ public class CodecFactoryTest {
         long l = factory.convert(i, long.class);
         assert l == 100L;
     }
+
+    @Test
+    public void testError() {
+        try {
+            factory.installCodec(IllegalCodec.class);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof IllegalArgumentException;
+        }
+    }
+
+    static class IllegalCodec extends Codec {
+        public IllegalCodec(int i) {
+        }
+    }
+
 }

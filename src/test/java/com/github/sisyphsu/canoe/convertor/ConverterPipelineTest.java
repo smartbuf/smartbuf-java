@@ -53,4 +53,36 @@ public class ConverterPipelineTest {
         System.out.println(result);
     }
 
+    @Test
+    public void testError() {
+        new ConverterPipeline(Collections.singletonList(new RealConverterMethod(Long.class, BitSet.class)));
+    }
+
+    @Test
+    public void disableAsm() {
+        ConverterPipeline.ENABLE_ASM = false;
+
+        Collection collection = CodecFactory.Instance.convert(new int[]{1, 2, 3}, Collection.class);
+        assert collection.size() == 3;
+
+        assert CodecFactory.Instance.convert(OptionalInt.empty(), BitSet.class) == null;
+
+        ConverterPipeline.ENABLE_ASM = true;
+    }
+
+    @Test
+    public void testPrimaryArg() {
+        CodecFactory.Instance.installCodec(PrimaryArgCodec.class);
+
+        OptionalInt opt = CodecFactory.Instance.convert(100, OptionalInt.class);
+        assert opt.getAsInt() == 101;
+    }
+
+    public static class PrimaryArgCodec extends Codec {
+        @Converter(distance = -100)
+        public OptionalInt toBitSet(int i) {
+            return OptionalInt.of(i + 1);
+        }
+    }
+
 }

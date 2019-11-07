@@ -1,5 +1,6 @@
 package com.github.sisyphsu.canoe.convertor;
 
+import com.github.sisyphsu.canoe.convertor.codec.*;
 import com.github.sisyphsu.canoe.reflect.XType;
 import com.github.sisyphsu.canoe.reflect.XTypeFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -31,9 +32,26 @@ public final class CodecFactory {
      * Initialize CodecFactory with the specified Codec type.
      */
     public CodecFactory() {
-        for (Class<? extends Codec> codecCls : CodecScanner.scanCodecs()) {
-            this.installCodec(codecCls);
-        }
+        this.installCodec(ArrayCodec.class);
+        this.installCodec(AtomicCodec.class);
+        this.installCodec(AwtCodec.class);
+        this.installCodec(BufferCodec.class);
+        this.installCodec(CollectionCodec.class);
+        this.installCodec(IOCodec.class);
+        this.installCodec(JavaxCodec.class);
+        this.installCodec(JodaCodec.class);
+        this.installCodec(LangCodec.class);
+        this.installCodec(MapCodec.class);
+        this.installCodec(MathCodec.class);
+        this.installCodec(NetCodec.class);
+        this.installCodec(NumberCodec.class);
+        this.installCodec(PrimaryCodec.class);
+        this.installCodec(ReferenceCodec.class);
+        this.installCodec(SqlCodec.class);
+        this.installCodec(StringCodec.class);
+        this.installCodec(ThrowableCodec.class);
+        this.installCodec(TimeCodec.class);
+        this.installCodec(UtilCodec.class);
     }
 
     /**
@@ -43,10 +61,9 @@ public final class CodecFactory {
      */
     public void installCodec(Class<? extends Codec> codecClass) {
         try {
-            Codec codec = codecClass.newInstance();
-            this.installCodec(codec);
+            this.installCodec(codecClass.newInstance());
         } catch (Exception e) {
-            log.warn("Ignore invalid codec, newInstance failed: " + codecClass);
+            throw new IllegalArgumentException("Ignore invalid codec, newInstance failed: " + codecClass, e);
         }
     }
 
@@ -156,7 +173,7 @@ public final class CodecFactory {
             // find the shortest path
             Path shortestPath = this.findShortestPath(srcClass, tgtClass);
             if (shortestPath != null) {
-                pipeline = new ConverterPipeline(srcClass, tgtClass, shortestPath.methods);
+                pipeline = new ConverterPipeline(shortestPath.methods);
                 pipelineMap.put(key, pipeline);
             }
         }
