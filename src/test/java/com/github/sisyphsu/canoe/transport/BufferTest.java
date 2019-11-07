@@ -63,4 +63,28 @@ public class BufferTest {
         }
     }
 
+    @Test
+    public void testString2() throws IOException {
+        OutputBuffer output = new OutputBuffer(1 << 30);
+        InputBuffer input = new InputBuffer();
+
+        output.writeString(RandomStringUtils.randomNumeric(40));
+        output.writeString(RandomStringUtils.randomNumeric(5460));
+        output.writeString(RandomStringUtils.randomNumeric(699050));
+
+        int size = 1 << 24;
+        StringBuilder sb = new StringBuilder(size);
+        for (int i = 0; i < size; i++) {
+            sb.append(1 % 10);
+        }
+        output.writeString(sb.toString());
+
+        input.reset(output.data);
+
+        assert input.readString().length() == 40;
+        assert input.readString().length() == 5460;
+        assert input.readString().length() == 699050;
+        assert input.readString().length() == size;
+    }
+
 }

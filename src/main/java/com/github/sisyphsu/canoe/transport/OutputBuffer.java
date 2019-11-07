@@ -88,13 +88,25 @@ public final class OutputBuffer {
     }
 
     public void writeString(String str) throws IOException {
-        int writeFrom = offset + 5;
-        if (data.length < writeFrom + str.length() * 3) {
-            this.ensureCapacity(writeFrom + str.length() * 3);
+        int strLen = str.length();
+        // predict the byte number for varuint of utf8-bytes length
+        int expectedLen = strLen * 3;
+        if (expectedLen < 1 << 7) {
+            expectedLen = 1;
+        } else if (expectedLen < 1 << 14) {
+            expectedLen = 2;
+        } else if (expectedLen < 1 << 21) {
+            expectedLen = 3;
+        } else {
+            expectedLen = 5;
+        }
+        int writeFrom = offset + expectedLen;
+        if (data.length < writeFrom + strLen * 3) {
+            this.ensureCapacity(writeFrom + strLen * 3);
         }
         int writeTo = UTF8Utils.encode(str, data, writeFrom);
         int len = writeTo - writeFrom;
-        if (writeVarUint(len) < 5) {
+        if (writeVarUint(len) < expectedLen) {
             System.arraycopy(data, writeFrom, data, offset, len);
         }
         this.offset += len;

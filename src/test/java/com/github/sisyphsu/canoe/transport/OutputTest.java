@@ -38,6 +38,15 @@ public class OutputTest {
         assert output.write(new Bean()).length > 2;
     }
 
+    @Test
+    public void testBuffer() throws IOException {
+        OutputBuffer buffer = new OutputBuffer(1 << 20);
+        for (int i = 0; i < 1000; i++) {
+            buffer.writeShort((short) i);
+        }
+        buffer.writeBooleanArray(new boolean[100000]);
+    }
+
     @Data
     public static class Bean {
         private int             id    = RandomUtils.nextInt();

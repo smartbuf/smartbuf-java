@@ -57,13 +57,6 @@ public final class Array<T> {
     }
 
     /**
-     * Remove and return the last item of this array
-     */
-    public T popLast() {
-        return data[--size];
-    }
-
-    /**
      * Return real size of this array
      */
     public int size() {

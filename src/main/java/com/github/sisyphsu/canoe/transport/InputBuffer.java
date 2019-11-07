@@ -1,5 +1,6 @@
 package com.github.sisyphsu.canoe.transport;
 
+import com.github.sisyphsu.canoe.exception.InvalidReadException;
 import com.github.sisyphsu.canoe.utils.NumberUtils;
 
 import java.io.EOFException;
@@ -50,7 +51,7 @@ public final class InputBuffer {
                 break;
             }
             if (i == 10) {
-                throw new IOException("invlaid varuint");
+                throw new InvalidReadException("hit invalid varint at " + offset);
             }
         }
         return l;
