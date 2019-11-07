@@ -14,13 +14,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Benchmark                Mode  Cnt    Score    Error  Units
- * SmallBenchmark.json      avgt    6  725.919 ± 38.590  ns/op
- * SmallBenchmark.packet    avgt    6  666.963 ± 14.179  ns/op
- * SmallBenchmark.protobuf  avgt    6  203.205 ±  5.842  ns/op
- * SmallBenchmark.stream    avgt    6  374.617 ±  7.547  ns/op
- * <p>
- * stream(485ns) = (unknwon)90ns + writeObject(166ns) + writeHeadBuf(162ns) + copyResult(20ns) + (reset+others)20ns
- * writeObject(166ns) = registerData(90ns) + objectNode(40ns) + 36ns(ifelse+bodyBuf)
+ * SmallBenchmark.json      avgt    6  721.521 ± 51.067  ns/op
+ * SmallBenchmark.packet    avgt    6  599.017 ±  3.766  ns/op
+ * SmallBenchmark.protobuf  avgt    6  202.389 ±  3.532  ns/op
+ * SmallBenchmark.stream    avgt    6  354.649 ± 16.291  ns/op
  *
  * @author sulin
  * @since 2019-10-28 17:32:33
