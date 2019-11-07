@@ -20,6 +20,12 @@ public class OutputDataPoolTest {
             assert e instanceof IllegalArgumentException;
         }
         try {
+            dataPool.registerSymbol("");
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof IllegalArgumentException;
+        }
+        try {
             dataPool.registerString(null);
             assert false;
         } catch (Exception e) {

@@ -16,6 +16,10 @@ public final class SymbolNode extends Node {
         this.data = data;
     }
 
+    public static SymbolNode valueOf(String str) {
+        return new SymbolNode(str);
+    }
+
     public static SymbolNode valueOf(Enum en) {
         return new SymbolNode(en.name()); // don't need cache
     }

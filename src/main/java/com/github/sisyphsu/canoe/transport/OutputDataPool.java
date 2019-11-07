@@ -177,19 +177,19 @@ public final class OutputDataPool {
                 buf.writeString(strings.get(i));
             }
         }
-        if ((flags & HAS_SYMBOL_ADDED) != 0) {
-            len = symbolAdded.size();
-            flags ^= HAS_SYMBOL_ADDED;
-            buf.writeVarUint((len << 4) | DATA_SYMBOL_ADDED | (flags == 0 ? 0 : 1));
-            for (int i = 0; i < len; i++) {
-                buf.writeString(symbolAdded.get(i).value);
-            }
-        }
         if ((flags & HAS_SYMBOL_EXPIRED) != 0) {
             len = symbolExpired.size();
-            buf.writeVarUint((len << 4) | DATA_SYMBOL_EXPIRED);
+            flags ^= HAS_SYMBOL_EXPIRED;
+            buf.writeVarUint((len << 4) | DATA_SYMBOL_EXPIRED | (flags == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 buf.writeVarUint(symbolExpired.get(i));
+            }
+        }
+        if ((flags & HAS_SYMBOL_ADDED) != 0) {
+            len = symbolAdded.size();
+            buf.writeVarUint((len << 4) | DATA_SYMBOL_ADDED);
+            for (int i = 0; i < len; i++) {
+                buf.writeString(symbolAdded.get(i).value);
             }
         }
     }

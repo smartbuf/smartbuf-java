@@ -59,6 +59,7 @@ public class IOObjectTest {
         map.put("score1", RandomUtils.nextFloat());
         map.put("score2", RandomUtils.nextDouble());
         map.put("arr", RandomUtils.nextBytes(1024));
+        map.put("state", Thread.State.RUNNABLE);
 
         String[] fieldNames = map.keySet().toArray(new String[0]);
         ObjectNode objectNode = buildObjectNode(true, fieldNames, map);
@@ -72,7 +73,11 @@ public class IOObjectTest {
         tgtMap = (Map) result;
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             Object tgtItem = tgtMap.get(entry.getKey());
-            assert Objects.deepEquals(entry.getValue(), tgtItem);
+            if (entry.getValue() instanceof Enum) {
+                assert ((Enum) entry.getValue()).name().equals(tgtItem);
+            } else {
+                assert Objects.deepEquals(entry.getValue(), tgtItem);
+            }
         }
 
         enableCxt = true;
@@ -81,7 +86,11 @@ public class IOObjectTest {
         tgtMap = (Map) result;
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             Object tgtItem = tgtMap.get(entry.getKey());
-            assert Objects.deepEquals(entry.getValue(), tgtItem);
+            if (entry.getValue() instanceof Enum) {
+                assert ((Enum) entry.getValue()).name().equals(tgtItem);
+            } else {
+                assert Objects.deepEquals(entry.getValue(), tgtItem);
+            }
         }
 
         // test for array
@@ -94,7 +103,11 @@ public class IOObjectTest {
         tgtMap = (Map) ((Object[]) result)[0];
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             Object tgtItem = tgtMap.get(entry.getKey());
-            assert Objects.deepEquals(entry.getValue(), tgtItem);
+            if (entry.getValue() instanceof Enum) {
+                assert ((Enum) entry.getValue()).name().equals(tgtItem);
+            } else {
+                assert Objects.deepEquals(entry.getValue(), tgtItem);
+            }
         }
 
         // for context
@@ -104,7 +117,11 @@ public class IOObjectTest {
         tgtMap = (Map) ((Object[]) result)[0];
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             Object tgtItem = tgtMap.get(entry.getKey());
-            assert Objects.deepEquals(entry.getValue(), tgtItem);
+            if (entry.getValue() instanceof Enum) {
+                assert ((Enum) entry.getValue()).name().equals(tgtItem);
+            } else {
+                assert Objects.deepEquals(entry.getValue(), tgtItem);
+            }
         }
     }
 

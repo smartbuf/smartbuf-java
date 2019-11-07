@@ -4,6 +4,7 @@ import com.github.sisyphsu.canoe.converter.CodecFactory;
 import com.github.sisyphsu.canoe.converter.ConverterPipeline;
 import com.github.sisyphsu.canoe.node.Node;
 import com.github.sisyphsu.canoe.node.basic.ObjectNode;
+import com.github.sisyphsu.canoe.node.basic.SymbolNode;
 import com.github.sisyphsu.canoe.reflect.XType;
 
 import java.io.IOException;
@@ -20,6 +21,10 @@ import static com.github.sisyphsu.canoe.transport.Const.*;
  * @since 2019-05-01 14:50:15
  */
 public final class Output {
+
+    public static int PACKET_LIMIT = 64 * 1024 * 1024;
+    public static int SYMBOL_LIMIT = 1 << 16;
+    public static int STRUCT_LIMIT = 1 << 16;
 
     private final boolean      enableStreamMode;
     private final CodecFactory codecFactory;
@@ -43,10 +48,10 @@ public final class Output {
         this.codecFactory = codecFactory;
         this.enableStreamMode = enableStreamMode;
         this.nodeXType = this.codecFactory.toXType(Node.class);
-        this.bodyBuf = new OutputBuffer(1 << 30);
-        this.headBuf = new OutputBuffer(1 << 24);
-        this.dataPool = new OutputDataPool(1 << 16);
-        this.metaPool = new OutputMetaPool(1 << 12);
+        this.bodyBuf = new OutputBuffer(PACKET_LIMIT);
+        this.headBuf = new OutputBuffer(PACKET_LIMIT);
+        this.dataPool = new OutputDataPool(SYMBOL_LIMIT);
+        this.metaPool = new OutputMetaPool(STRUCT_LIMIT);
     }
 
     /**
@@ -103,6 +108,13 @@ public final class Output {
             }
             for (Object value : node.values()) {
                 this.writeObject(value);
+            }
+        } else if (obj instanceof SymbolNode) {
+            String name = ((SymbolNode) obj).value().toString();
+            if (enableStreamMode) {
+                bodyBuf.writeVarUint((dataPool.registerSymbol(name) << 3) | TYPE_SYMBOL);
+            } else {
+                bodyBuf.writeVarUint((dataPool.registerString(name) << 3) | TYPE_STRING);
             }
         } else if (obj instanceof Boolean) {
             bodyBuf.writeVarUint(((Boolean) obj) ? DATA_ID_TRUE : DATA_ID_FALSE);
@@ -166,7 +178,7 @@ public final class Output {
                 }
             } else {
                 Node node = codecFactory.convert(obj, Node.class);
-                if (node == null || node instanceof ObjectNode) {
+                if (node == null || node instanceof ObjectNode || node instanceof SymbolNode) {
                     this.writeObject(node);
                 } else {
                     this.writeObject(node.value());

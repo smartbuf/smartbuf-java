@@ -156,20 +156,20 @@ public final class OutputMetaPool {
                 buf.writeString(tmpNames.get(i));
             }
         }
-        if ((status & HAS_NAME_ADDED) > 0) {
-            status ^= HAS_NAME_ADDED;
-            len = cxtNameAdded.size();
-            buf.writeVarUint((len << 4) | META_NAME_ADDED | (status == 0 ? 0 : 1));
-            for (int i = 0; i < len; i++) {
-                buf.writeString(cxtNameAdded.get(i).name);
-            }
-        }
         if ((status & HAS_NAME_EXPIRED) > 0) {
             status ^= HAS_NAME_EXPIRED;
             len = cxtNameExpired.size();
             buf.writeVarUint((len << 4) | META_NAME_EXPIRED | (status == 0 ? 0 : 1));
             for (int i = 0; i < len; i++) {
                 buf.writeVarUint(cxtNameExpired.get(i));
+            }
+        }
+        if ((status & HAS_NAME_ADDED) > 0) {
+            status ^= HAS_NAME_ADDED;
+            len = cxtNameAdded.size();
+            buf.writeVarUint((len << 4) | META_NAME_ADDED | (status == 0 ? 0 : 1));
+            for (int i = 0; i < len; i++) {
+                buf.writeString(cxtNameAdded.get(i).name);
             }
         }
         if ((status & HAS_STRUCT_TMP) > 0) {
@@ -184,23 +184,23 @@ public final class OutputMetaPool {
                 }
             }
         }
-        if ((status & HAS_STRUCT_ADDED) > 0) {
-            status ^= HAS_STRUCT_ADDED;
+        if ((status & HAS_STRUCT_EXPIRED) > 0) {
             len = cxtStructAdded.size();
-            buf.writeVarUint((len << 4) | META_STRUCT_ADDED | (status == 0 ? 0 : 1));
+            status ^= HAS_STRUCT_EXPIRED;
+            buf.writeVarUint((len << 4) | META_STRUCT_EXPIRED | (status == 0 ? 0 : 1));
+            for (int i = 0; i < len; i++) {
+                buf.writeVarUint(cxtStructExpired.get(i));
+            }
+        }
+        if ((status & HAS_STRUCT_ADDED) > 0) {
+            len = cxtStructAdded.size();
+            buf.writeVarUint((len << 4) | META_STRUCT_ADDED);
             for (int i = 0; i < len; i++) {
                 int[] nameIds = cxtStructAdded.get(i).nameIds;
                 buf.writeVarUint(nameIds.length);
                 for (int nameId : nameIds) {
                     buf.writeVarUint(nameId);
                 }
-            }
-        }
-        if ((status & HAS_STRUCT_EXPIRED) > 0) {
-            len = cxtStructAdded.size();
-            buf.writeVarUint((len << 4) | META_STRUCT_EXPIRED);
-            for (int i = 0; i < len; i++) {
-                buf.writeVarUint(cxtStructExpired.get(i));
             }
         }
     }
