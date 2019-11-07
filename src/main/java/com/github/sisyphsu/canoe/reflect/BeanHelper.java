@@ -145,10 +145,7 @@ public final class BeanHelper<T> {
             BeanField prop = propMap.get(name);
             Field field = prop.field;
             if (prop.field == null) {
-                try {
-                    field = findField(cls, name);
-                } catch (NoSuchFieldException ignored) {
-                }
+                field = findField(cls, name);
             }
             if (field != null && Modifier.isTransient(field.getModifiers())) {
                 continue; // don't need transient field
@@ -159,9 +156,9 @@ public final class BeanHelper<T> {
     }
 
     // find the specified field from cls, includes superclass
-    private static Field findField(Class cls, String name) throws NoSuchFieldException {
+    private static Field findField(Class cls, String name) {
         if (cls == Object.class) {
-            throw new NoSuchFieldException(name);
+            return null;
         }
         try {
             return cls.getDeclaredField(name);

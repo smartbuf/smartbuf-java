@@ -58,14 +58,15 @@ public class BeanHelperTest {
         BeanHelper<Struct> helper = BeanHelper.valueOf(Struct.class);
 
         String[] props = helper.getNames();
-        assert props.length == 7;
+        assert props.length == 8;
         assert Objects.equals(props[0], "code");
         assert Objects.equals(props[1], "date");
         assert Objects.equals(props[2], "flags");
         assert Objects.equals(props[3], "id");
         assert Objects.equals(props[4], "name");
         assert Objects.equals(props[5], "time");
-        assert Objects.equals(props[6], "zzz");
+        assert Objects.equals(props[6], "uuu");
+        assert Objects.equals(props[7], "visible");
 
         Struct struct = new Struct();
         struct.id = 10;
@@ -74,7 +75,8 @@ public class BeanHelperTest {
         struct.setTime(System.currentTimeMillis());
         struct.setDate(new Date());
         struct.flags = BitSet.valueOf(new byte[]{1});
-        struct.zzz = 1.0;
+        struct.uuu = 1.0;
+        struct.setVisible(true);
 
         Object[] objects = helper.getValues(struct);
         assert Objects.equals(objects[0], struct.getCode());
@@ -83,7 +85,7 @@ public class BeanHelperTest {
         assert Objects.equals(objects[3], struct.getId());
         assert Objects.equals(objects[4], struct.getName());
         assert Objects.equals(objects[5], struct.getTime());
-        assert Objects.equals(objects[6], struct.zzz);
+        assert Objects.equals(objects[6], struct.uuu);
 
         objects[0] = 100000;
         objects[1] = new Date();
@@ -92,6 +94,7 @@ public class BeanHelperTest {
         objects[4] = "hello world";
         objects[5] = System.currentTimeMillis() + 1;
         objects[6] = 1000.0;
+        objects[7] = false;
 
         helper.setValues(struct, objects);
         assert Objects.equals(objects[0], struct.getCode());
@@ -100,7 +103,7 @@ public class BeanHelperTest {
         assert Objects.equals(objects[3], struct.getId());
         assert Objects.equals(objects[4], struct.getName());
         assert Objects.equals(objects[5], struct.getTime());
-        assert Objects.equals(objects[6], struct.zzz);
+        assert Objects.equals(objects[6], struct.uuu);
     }
 
     @Test
@@ -111,6 +114,20 @@ public class BeanHelperTest {
         Object[] values = helper.getValues(huge);
         values[100] = System.currentTimeMillis();
         helper.setValues(huge, values);
+
+        try {
+            helper.setValues(huge, null);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof IllegalArgumentException;
+        }
+
+        try {
+            helper.setValues(huge, new Object[1]);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof IllegalArgumentException;
+        }
     }
 
     @Data
@@ -133,16 +150,22 @@ public class BeanHelperTest {
         public static long timestamp = 0;
 
         public BitSet flags;
-        public double zzz;
+        public double uuu;
 
         private Boolean flag;
 
-        public static void stZZZ() {
+        public static void stuuu() {
         }
 
         public void isNull() {
         }
 
+        public void setVisible(boolean visible) {
+        }
+
+        public boolean isVisible() {
+            return true;
+        }
     }
 
     @Data
