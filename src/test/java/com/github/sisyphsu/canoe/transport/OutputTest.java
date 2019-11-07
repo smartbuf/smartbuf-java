@@ -9,6 +9,7 @@ import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -29,7 +30,7 @@ public class OutputTest {
     }
 
     @Test
-    public void test() {
+    public void test() throws IOException {
         Output output = new Output(factory, true);
 
         assert output.write(null).length == 2;

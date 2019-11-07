@@ -1,5 +1,6 @@
 package com.github.sisyphsu.canoe.transport;
 
+import com.github.sisyphsu.canoe.exception.OutOfSpaceException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 
@@ -50,4 +51,16 @@ public class BufferTest {
         assert Long.MAX_VALUE == inputBuffer.readVarUint();
         assert Short.MAX_VALUE == inputBuffer.readShort();
     }
+
+    @Test
+    public void testOutSpace() {
+        OutputBuffer buffer = new OutputBuffer(1 << 10);
+        try {
+            buffer.writeByteArray(new byte[1025]);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof OutOfSpaceException;
+        }
+    }
+
 }

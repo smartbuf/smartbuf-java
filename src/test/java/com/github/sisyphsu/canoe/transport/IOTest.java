@@ -1,6 +1,10 @@
 package com.github.sisyphsu.canoe.transport;
 
 import com.github.sisyphsu.canoe.Canoe;
+import com.github.sisyphsu.canoe.exception.InvalidReadException;
+import com.github.sisyphsu.canoe.exception.InvalidVersionException;
+import com.github.sisyphsu.canoe.exception.MismatchModeException;
+import com.github.sisyphsu.canoe.exception.UnexpectedSequenceException;
 import com.github.sisyphsu.canoe.node.basic.BooleanNode;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -150,72 +154,62 @@ public class IOTest {
 
     @Test
     public void testError() {
-//        Input input = new Input(new ByteArrayInputStream(new byte[]{Const.VER})::read, true);
-//        try {
-//            input.read();
-//            assert false;
-//        } catch (Exception e) {
-//            assert e instanceof MismatchModeException;
-//        }
-//
-//        input = new Input(new ByteArrayInputStream(new byte[]{Const.VER | Const.VER_STREAM})::read, false);
-//        try {
-//            input.read();
-//            assert false;
-//        } catch (Exception e) {
-//            assert e instanceof MismatchModeException;
-//        }
-//
-//        input = new Input(new ByteArrayInputStream(new byte[1024])::read, true);
-//        try {
-//            input.read();
-//            assert false;
-//        } catch (Exception e) {
-//            assert e instanceof InvalidVersionException;
-//        }
-//
-//        try {
-//            input.readObject();
-//        } catch (Exception e) {
-//            assert e instanceof InvalidReadException;
-//        }
-//
-//        try {
-//            input.readArray(0b1111_1111L);
-//            assert false;
-//        } catch (Exception e) {
-//            assert e instanceof InvalidReadException;
-//        }
-//        try {
-//            input.readArray(0b1111_1111L);
-//            assert false;
-//        } catch (Exception e) {
-//            assert e instanceof InvalidReadException;
-//        }
-//        try {
-//            input.readPureArray(0xFFL);
-//            assert false;
-//        } catch (Exception e) {
-//            assert e instanceof InvalidReadException;
-//        }
+        Input input = new Input(true);
+        try {
+            input.read(new byte[]{Const.VER});
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof MismatchModeException;
+        }
 
-//        Output output = new Output(null, true);
-//        try {
-//            output.doWrite(new Node() {
-//            }, null);
-//            assert false;
-//        } catch (Exception e) {
-//            assert e instanceof UnsupportedOperationException;
-//        }
-//
-//        try {
-//            ArrayNode arrayNode = new ArrayNode();
-//            arrayNode.appendSlice(new Object(), 0, SliceType.UNKNOWN);
-//            output.doWriteArray(arrayNode, null, false);
-//            assert false;
-//        } catch (Exception e) {
-//            assert e instanceof UnsupportedOperationException;
-//        }
+        input = new Input(false);
+        try {
+            input.read(new byte[]{Const.VER | Const.VER_STREAM});
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof MismatchModeException;
+        }
+
+        input = new Input(true);
+
+        try {
+            input.read(new byte[]{Const.VER | Const.VER_STREAM | Const.VER_HAS_SEQ, 0x02});
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof UnexpectedSequenceException;
+        }
+
+        try {
+            input.read(new byte[1024]);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof InvalidVersionException;
+        }
+
+        try {
+            input.readObject();
+        } catch (Exception e) {
+            assert e instanceof InvalidReadException;
+        }
+
+        try {
+            input.readArray(0b1111_1111L);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof InvalidReadException;
+        }
+        try {
+            input.readArray(0b1111_1111L);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof InvalidReadException;
+        }
+        try {
+            input.readNativeArray(0xFFL);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof InvalidReadException;
+        }
     }
 
     // exec node -> output -> input -> object

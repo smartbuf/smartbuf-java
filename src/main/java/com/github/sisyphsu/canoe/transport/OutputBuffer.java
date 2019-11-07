@@ -1,7 +1,10 @@
 package com.github.sisyphsu.canoe.transport;
 
+import com.github.sisyphsu.canoe.exception.OutOfSpaceException;
 import com.github.sisyphsu.canoe.utils.NumberUtils;
 import com.github.sisyphsu.canoe.utils.UTF8Utils;
+
+import java.io.IOException;
 
 /**
  * Encapsulate all deserialization operations of output side.
@@ -27,14 +30,14 @@ public final class OutputBuffer {
         this.offset = 0;
     }
 
-    public void writeByte(byte b) {
+    public void writeByte(byte b) throws IOException {
         if (data.length == offset) {
             this.ensureCapacity(offset + 1);
         }
         data[offset++] = b;
     }
 
-    public void writeShort(short s) {
+    public void writeShort(short s) throws IOException {
         if (data.length < offset + 2) {
             this.ensureCapacity(offset + 2);
         }
@@ -42,11 +45,11 @@ public final class OutputBuffer {
         data[offset++] = (byte) (s & 0xFF);
     }
 
-    public void writeVarInt(long n) {
+    public void writeVarInt(long n) throws IOException {
         this.writeVarUint(NumberUtils.intToUint(n));
     }
 
-    public int writeVarUint(long n) {
+    public int writeVarUint(long n) throws IOException {
         if (data.length < offset + 10) {
             this.ensureCapacity(offset + 10);
         }
@@ -62,7 +65,7 @@ public final class OutputBuffer {
         return offset - oldOffset;
     }
 
-    public void writeFloat(float f) {
+    public void writeFloat(float f) throws IOException {
         if (data.length < offset + 4) {
             this.ensureCapacity(offset + 4);
         }
@@ -73,7 +76,7 @@ public final class OutputBuffer {
         }
     }
 
-    public void writeDouble(double d) {
+    public void writeDouble(double d) throws IOException {
         if (data.length < offset + 8) {
             this.ensureCapacity(offset + 8);
         }
@@ -84,7 +87,7 @@ public final class OutputBuffer {
         }
     }
 
-    public void writeString(String str) {
+    public void writeString(String str) throws IOException {
         int writeFrom = offset + 5;
         if (data.length < writeFrom + str.length() * 3) {
             this.ensureCapacity(writeFrom + str.length() * 3);
@@ -97,7 +100,7 @@ public final class OutputBuffer {
         this.offset += len;
     }
 
-    public void writeBooleanArray(boolean[] arr) {
+    public void writeBooleanArray(boolean[] arr) throws IOException {
         int len = arr.length;
         if (data.length < offset + (len + 1) / 8) {
             this.ensureCapacity(offset + (len + 1) / 8);
@@ -117,7 +120,7 @@ public final class OutputBuffer {
         }
     }
 
-    public void writeByteArray(byte[] arr) {
+    public void writeByteArray(byte[] arr) throws IOException {
         int len = arr.length;
         if (data.length < offset + len) {
             this.ensureCapacity(offset + len);
@@ -126,7 +129,7 @@ public final class OutputBuffer {
         this.offset += len;
     }
 
-    public void writeShortArray(short[] arr) {
+    public void writeShortArray(short[] arr) throws IOException {
         if (data.length < offset + arr.length * 2) {
             this.ensureCapacity(offset + arr.length * 2);
         }
@@ -136,34 +139,34 @@ public final class OutputBuffer {
         }
     }
 
-    public void writeIntArray(int[] arr) {
+    public void writeIntArray(int[] arr) throws IOException {
         for (int i : arr) {
             writeVarInt(i);
         }
     }
 
-    public void writeLongArray(long[] arr) {
+    public void writeLongArray(long[] arr) throws IOException {
         for (long l : arr) {
             writeVarInt(l);
         }
     }
 
-    public void writeFloatArray(float[] arr) {
+    public void writeFloatArray(float[] arr) throws IOException {
         for (float f : arr) {
             writeFloat(f);
         }
     }
 
-    public void writeDoubleArray(double[] arr) {
+    public void writeDoubleArray(double[] arr) throws IOException {
         for (double d : arr) {
             writeDouble(d);
         }
     }
 
-    private void ensureCapacity(int size) {
+    private void ensureCapacity(int size) throws IOException {
         int newSize = Math.min(Math.max(data.length * 2, size), limit);
         if (newSize < size) {
-            throw new IllegalArgumentException("no space");
+            throw new OutOfSpaceException("no space");
         }
         byte[] newData = new byte[newSize];
         System.arraycopy(data, 0, newData, 0, data.length);

@@ -111,7 +111,7 @@ public final class Input {
             case TYPE_SYMBOL:
                 return dataPool.getSymbol((int) (head >>> 3));
             case TYPE_NARRAY:
-                return readNArray(head);
+                return readNativeArray(head);
             case TYPE_ARRAY:
                 return this.readArray(head >>> 3);
             case TYPE_OBJECT:
@@ -129,7 +129,7 @@ public final class Input {
     /**
      * Read an native array, like byte[] int[]
      */
-    Object readNArray(long head) throws IOException {
+    Object readNativeArray(long head) throws IOException {
         byte type = (byte) (head & 0b0011_1111);
         int size = (int) (head >>> 6);
         switch (type) {
@@ -148,7 +148,7 @@ public final class Input {
             case TYPE_NARRAY_DOUBLE:
                 return buffer.readDoubleArray(size);
             default:
-                throw new IllegalArgumentException("unknown narray type");
+                throw new InvalidReadException("unknown narray type");
         }
     }
 

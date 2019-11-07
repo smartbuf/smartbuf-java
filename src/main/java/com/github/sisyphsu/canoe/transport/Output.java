@@ -6,6 +6,7 @@ import com.github.sisyphsu.canoe.node.Node;
 import com.github.sisyphsu.canoe.node.basic.ObjectNode;
 import com.github.sisyphsu.canoe.reflect.XType;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -51,7 +52,7 @@ public final class Output {
     /**
      * Output this schema into the specified writer with the specified sequence
      */
-    public byte[] write(Object o) {
+    public byte[] write(Object o) throws IOException {
         this.bodyBuf.reset();
         this.headBuf.reset();
         this.dataPool.reset();
@@ -88,7 +89,7 @@ public final class Output {
         return result;
     }
 
-    public void writeObject(Object obj) {
+    public void writeObject(Object obj) throws IOException {
         if (obj == null) {
             bodyBuf.writeVarUint(DATA_ID_NULL);
             return;
@@ -177,7 +178,7 @@ public final class Output {
     /**
      * Write an array into body, it will scan all items and write those group by different slices
      */
-    void writeArray(Collection<?> arr) {
+    void writeArray(Collection<?> arr) throws IOException {
         if (arr.isEmpty()) {
             bodyBuf.writeVarUint(DATA_ID_ZERO_ARRAY);
             return;
@@ -364,7 +365,7 @@ public final class Output {
     /**
      * Write a 2-byte metadata of Fixed-Sliceinto the specified position
      */
-    private void writeSliceMetadata(int headOffset, boolean isFirst, int len, byte type, boolean hasMore) {
+    private void writeSliceMetadata(int headOffset, boolean isFirst, int len, byte type, boolean hasMore) throws IOException {
         int tmp = bodyBuf.offset;
         bodyBuf.offset = headOffset;
         if (isFirst) {

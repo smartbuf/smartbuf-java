@@ -107,7 +107,7 @@ public class SmallBenchmark {
     static OutputBuffer   buffer   = new OutputBuffer(1 << 20);
     static OutputDataPool dataPool = new OutputDataPool(1 << 10);
 
-//    @Benchmark
+    //    @Benchmark
     public void dataPool() {
         // 110ns
         dataPool.reset();
@@ -120,7 +120,7 @@ public class SmallBenchmark {
     }
 
     //    @Benchmark
-    public void writeBody() {
+    public void writeBody() throws Exception {
         // 138ns
         buffer.reset();
         buffer.writeVarInt(user.getId()); // 12ns for randomInt
@@ -132,7 +132,7 @@ public class SmallBenchmark {
     }
 
     //    @Benchmark
-    public void benchmark() {
+    public void benchmark() throws Exception {
 //        STREAM.canoe.output.write(USER); // 374ns
 
 //        STREAM.canoe.output.bodyBuf.reset();

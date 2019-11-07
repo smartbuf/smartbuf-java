@@ -2,6 +2,7 @@ package com.github.sisyphsu.canoe.transport;
 
 import com.github.sisyphsu.canoe.utils.TimeUtils;
 
+import java.io.IOException;
 import java.util.*;
 
 import static com.github.sisyphsu.canoe.transport.Const.*;
@@ -144,7 +145,7 @@ public final class OutputMetaPool {
         return (status & NEED_SEQ) > 0;
     }
 
-    public void write(OutputBuffer buf) {
+    public void write(OutputBuffer buf) throws IOException {
         int len;
         byte status = this.status;
         if ((status & HAS_NAME_TMP) > 0) {

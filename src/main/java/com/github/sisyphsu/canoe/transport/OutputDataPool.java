@@ -2,6 +2,7 @@ package com.github.sisyphsu.canoe.transport;
 
 import com.github.sisyphsu.canoe.utils.TimeUtils;
 
+import java.io.IOException;
 import java.util.*;
 
 import static com.github.sisyphsu.canoe.transport.Const.*;
@@ -141,7 +142,7 @@ public final class OutputDataPool {
         return (flags & NEED_SEQ) != 0;
     }
 
-    public void write(OutputBuffer buf) {
+    public void write(OutputBuffer buf) throws IOException {
         byte flags = this.flags;
         int len;
         if ((flags & HAS_FLOAT) != 0) {
