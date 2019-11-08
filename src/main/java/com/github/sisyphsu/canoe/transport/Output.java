@@ -154,9 +154,9 @@ public final class Output {
         switch (type) {
             case -1:
                 if (data == null) {
-                    bodyBuf.writeVarUint(DATA_ID_NULL);
+                    bodyBuf.writeVarUint(CONST_NULL);
                 } else {
-                    bodyBuf.writeVarUint(((Boolean) data) ? DATA_ID_TRUE : DATA_ID_FALSE);
+                    bodyBuf.writeVarUint(((Boolean) data) ? CONST_TRUE : CONST_FALSE);
                 }
                 break;
             case TYPE_VARINT:
@@ -237,7 +237,7 @@ public final class Output {
      */
     void writeArray(Collection<?> arr) throws IOException {
         if (arr.isEmpty()) {
-            bodyBuf.writeVarUint(DATA_ID_ZERO_ARRAY);
+            bodyBuf.writeVarUint(CONST_ZERO_ARRAY);
             return;
         }
 
@@ -357,7 +357,7 @@ public final class Output {
                 case TYPE_SLICE_NULL:
                     break;
                 case TYPE_SLICE_BOOL:
-                    bodyBuf.writeByte(((Boolean) item) ? DATA_ID_TRUE : DATA_ID_FALSE);
+                    bodyBuf.writeByte(((Boolean) item) ? CONST_TRUE : CONST_FALSE);
                     break;
                 case TYPE_SLICE_FLOAT:
                     bodyBuf.writeFloat((Float) item);

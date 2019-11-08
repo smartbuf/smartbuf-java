@@ -36,25 +36,25 @@ public final class InputMetaPool {
             hasMore = (head & 0b0000_0001) == 1;
             byte flag = (byte) (head & 0b0000_1110);
             switch (flag) {
-                case META_NAME_TMP:
+                case FLAG_META_NAME_TMP:
                     for (int i = 0; i < size; i++) {
                         tmpNames.add(buf.readString());
                     }
                     break;
-                case META_NAME_ADDED:
+                case FLAG_META_NAME_ADDED:
                     for (int i = 0; i < size; i++) {
                         int offset = cxtNameId.acquire();
                         cxtNames.put(offset, buf.readString());
                     }
                     break;
-                case META_NAME_EXPIRED:
+                case FLAG_META_NAME_EXPIRED:
                     for (int i = 0; i < size; i++) {
                         int id = (int) buf.readVarUint();
                         cxtNameId.release(id);
                         cxtNames.put(id, null);
                     }
                     break;
-                case META_STRUCT_TMP:
+                case FLAG_META_STRUCT_TMP:
                     for (int i = 0; i < size; i++) {
                         int nameCount = (int) buf.readVarUint();
                         String[] names = new String[nameCount];
@@ -64,7 +64,7 @@ public final class InputMetaPool {
                         tmpStructs.add(names);
                     }
                     break;
-                case META_STRUCT_ADDED:
+                case FLAG_META_STRUCT_ADDED:
                     for (int i = 0; i < size; i++) {
                         int nameCount = (int) buf.readVarUint();
                         String[] names = new String[nameCount];
@@ -75,7 +75,7 @@ public final class InputMetaPool {
                         cxtStructs.put(structId, names);
                     }
                     break;
-                case META_STRUCT_EXPIRED:
+                case FLAG_META_STRUCT_EXPIRED:
                     for (int i = 0; i < size; i++) {
                         int structId = (int) buf.readVarUint();
                         cxtStructID.release(structId);

@@ -35,34 +35,34 @@ public final class InputDataPool {
             hasMore = (head & 0b0000_0001) == 1;
             flag = (byte) (head & 0b0000_1110);
             switch (flag) {
-                case DATA_FLOAT:
+                case FLAG_DATA_FLOAT:
                     for (int i = 0; i < size; i++) {
                         floats.add(buf.readFloat());
                     }
                     break;
-                case DATA_DOUBLE:
+                case FLAG_DATA_DOUBLE:
                     for (int i = 0; i < size; i++) {
                         doubles.add(buf.readDouble());
                     }
                     break;
-                case DATA_VARINT:
+                case FLAG_DATA_VARINT:
                     for (int i = 0; i < size; i++) {
                         varints.add(buf.readVarInt());
                     }
                     break;
-                case DATA_STRING:
+                case FLAG_DATA_STRING:
                     for (int i = 0; i < size; i++) {
                         strings.add(buf.readString());
                     }
                     break;
-                case DATA_SYMBOL_ADDED:
+                case FLAG_DATA_SYMBOL_ADDED:
                     for (int i = 0; i < size; i++) {
                         String symbol = buf.readString();
                         int id = symbolID.acquire();
                         symbols.put(id, symbol);
                     }
                     break;
-                case DATA_SYMBOL_EXPIRED:
+                case FLAG_DATA_SYMBOL_EXPIRED:
                     for (int i = 0; i < size; i++) {
                         int id = (int) buf.readVarUint();
                         symbolID.release(id);

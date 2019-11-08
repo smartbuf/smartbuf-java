@@ -89,13 +89,13 @@ public final class Input {
     Object readObject() throws IOException {
         long head = buffer.readVarUint();
         switch ((int) head) {
-            case DATA_ID_NULL:
+            case CONST_NULL:
                 return null;
-            case DATA_ID_TRUE:
+            case CONST_TRUE:
                 return true;
-            case DATA_ID_FALSE:
+            case CONST_FALSE:
                 return false;
-            case DATA_ID_ZERO_ARRAY:
+            case CONST_ZERO_ARRAY:
                 return new Object[0];
         }
         byte flag = (byte) (head & 0b0000_0111);
@@ -170,10 +170,10 @@ public final class Input {
                     for (int i = 0; i < size; i++) {
                         byte b = buffer.readByte();
                         switch (b) {
-                            case DATA_ID_TRUE:
+                            case CONST_TRUE:
                                 slice[i] = true;
                                 break;
-                            case DATA_ID_FALSE:
+                            case CONST_FALSE:
                                 slice[i] = false;
                                 break;
                             default:
