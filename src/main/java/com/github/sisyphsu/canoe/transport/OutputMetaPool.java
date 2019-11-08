@@ -275,7 +275,7 @@ public final class OutputMetaPool {
 
         @Override
         public boolean equals(Object obj) {
-            return obj instanceof Struct && Arrays.equals(names, ((Struct) obj).names);
+            return obj instanceof Names && Arrays.equals(names, ((Names) obj).names);
         }
     }
 

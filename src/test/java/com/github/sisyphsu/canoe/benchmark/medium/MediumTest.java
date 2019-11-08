@@ -9,16 +9,16 @@ import java.io.IOException;
 
 /**
  * First time:
- * json: 1874
- * protobuf: 975
- * packet: 1018
- * stream: 1022
+ * json: 1875
+ * protobuf: 974
+ * packet: 1013
+ * stream: 1014
  * <p>
  * Following:
- * json: 1874
- * protobuf: 975
- * packet: 1018
- * stream: 850
+ * json: 1875
+ * protobuf: 974
+ * packet: 1013
+ * stream: 845
  *
  * @author sulin
  * @since 2019-10-31 20:32:32

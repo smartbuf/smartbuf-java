@@ -3,11 +3,13 @@ package com.github.sisyphsu.canoe.transport;
 import com.github.sisyphsu.canoe.utils.TimeUtils;
 import org.junit.jupiter.api.Test;
 
+import java.util.Objects;
+
 /**
  * @author sulin
  * @since 2019-10-08 16:02:37
  */
-public class OutputStructPoolTest {
+public class MetaPoolTest {
 
     @Test
     public void test() {
@@ -112,6 +114,25 @@ public class OutputStructPoolTest {
         pool.reset(); // 1, 4 released
         assert pool.registerCxtStruct("id4", "name") == 2 + 1;
         assert pool.registerCxtStruct("id1", "name") == 4 * 2 + 1;
+    }
+
+    @Test
+    public void testNames() {
+        OutputMetaPool.Names names1 = new OutputMetaPool.Names();
+        names1.names = new String[]{"id"};
+
+        OutputMetaPool.Names names2 = new OutputMetaPool.Names();
+        names2.names = new String[]{"id", "name"};
+
+        OutputMetaPool.Names names3 = new OutputMetaPool.Names();
+        names3.names = new String[]{"id"};
+
+        System.out.println(Objects.deepEquals(names1.names, names3.names));
+        System.out.println(names3.equals(names1));
+
+        assert !names3.equals(names2);
+        assert names3.equals(names1);
+        assert !names3.equals(new Object());
     }
 
 }
