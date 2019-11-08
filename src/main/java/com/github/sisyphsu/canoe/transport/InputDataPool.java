@@ -1,7 +1,7 @@
 package com.github.sisyphsu.canoe.transport;
 
 import com.github.sisyphsu.canoe.exception.InvalidDataException;
-import com.github.sisyphsu.canoe.exception.UnexpectReadException;
+import com.github.sisyphsu.canoe.exception.UnexpectedReadException;
 
 import java.io.IOException;
 
@@ -70,7 +70,7 @@ public final class InputDataPool {
                     }
                     break;
                 default:
-                    throw new UnexpectReadException("invalid flag: " + flag);
+                    throw new UnexpectedReadException("invalid flag: " + flag);
             }
         }
     }

@@ -1,5 +1,8 @@
 package com.github.sisyphsu.canoe.transport;
 
+import com.github.sisyphsu.canoe.exception.InvalidStructException;
+import com.github.sisyphsu.canoe.exception.UnexpectedReadException;
+
 import java.io.IOException;
 
 import static com.github.sisyphsu.canoe.transport.Const.*;
@@ -80,7 +83,7 @@ public final class InputMetaPool {
                     }
                     break;
                 default:
-                    throw new RuntimeException("invalid flag: " + flag);
+                    throw new UnexpectedReadException("invalid meta flag: " + flag);
             }
         }
     }
@@ -91,26 +94,26 @@ public final class InputMetaPool {
      * @param id Struct's unique ID
      * @return Struct's fields
      */
-    public String[] findStructByID(int id) {
+    public String[] findStructByID(int id) throws InvalidStructException {
         if (id == 0) {
             return EMPTY_STRUCT;
         }
         int index = (id >>> 1) - 1;
         if (index < 0) {
-            throw new IllegalArgumentException("invalid temporary struct id: " + id);
+            throw new InvalidStructException("invalid struct id: " + id);
         }
         if ((id & 1) == 0) {
             if (index >= tmpStructs.size()) {
-                throw new IllegalArgumentException("invalid temporary struct id: " + id);
+                throw new InvalidStructException("invalid temporary struct id: " + id);
             }
             return tmpStructs.get(index);
         }
         if (index >= cxtStructs.cap()) {
-            throw new IllegalArgumentException("invalid context struct id: " + id);
+            throw new InvalidStructException("invalid context struct id: " + id);
         }
         String[] struct = cxtStructs.get(index);
         if (struct == null) {
-            throw new IllegalArgumentException("invalid context struct id: " + id);
+            throw new InvalidStructException("invalid context struct id: " + id);
         }
         return struct;
     }

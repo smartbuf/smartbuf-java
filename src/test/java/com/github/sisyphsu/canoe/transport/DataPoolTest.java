@@ -2,7 +2,7 @@ package com.github.sisyphsu.canoe.transport;
 
 import com.github.sisyphsu.canoe.Canoe;
 import com.github.sisyphsu.canoe.exception.InvalidDataException;
-import com.github.sisyphsu.canoe.exception.UnexpectReadException;
+import com.github.sisyphsu.canoe.exception.UnexpectedReadException;
 import com.github.sisyphsu.canoe.node.basic.SymbolNode;
 import com.github.sisyphsu.canoe.utils.TimeUtils;
 import org.junit.jupiter.api.Test;
@@ -115,7 +115,7 @@ public class DataPoolTest {
             pool.read(buf);
             assert false;
         } catch (Exception e) {
-            assert e instanceof UnexpectReadException;
+            assert e instanceof UnexpectedReadException;
         }
 
         try {

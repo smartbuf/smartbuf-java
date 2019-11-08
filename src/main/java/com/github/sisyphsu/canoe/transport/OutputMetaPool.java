@@ -147,13 +147,16 @@ public final class OutputMetaPool {
         return (status & NEED_SEQ) > 0;
     }
 
+    /**
+     * Write this MetaPool into the specified output buffer.
+     */
     public void write(OutputBuffer buf) throws IOException {
         int len;
         byte status = this.status;
         if ((status & HAS_NAME_TMP) > 0) {
             status ^= HAS_NAME_TMP;
             len = tmpNames.size();
-            buf.writeVarUint((len << 4) | META_NAME_TMP | (status == 0 ? 0 : 1));
+            buf.writeVarUint((len << 4) | META_NAME_TMP | 1); // must have structTmp
             for (int i = 0; i < len; i++) {
                 buf.writeString(tmpNames.get(i));
             }
@@ -161,7 +164,7 @@ public final class OutputMetaPool {
         if ((status & HAS_NAME_EXPIRED) > 0) {
             status ^= HAS_NAME_EXPIRED;
             len = cxtNameExpired.size();
-            buf.writeVarUint((len << 4) | META_NAME_EXPIRED | (status == 0 ? 0 : 1));
+            buf.writeVarUint((len << 4) | META_NAME_EXPIRED | 1); // must have structExpired
             for (int i = 0; i < len; i++) {
                 buf.writeVarUint(cxtNameExpired.get(i));
             }
@@ -169,7 +172,7 @@ public final class OutputMetaPool {
         if ((status & HAS_NAME_ADDED) > 0) {
             status ^= HAS_NAME_ADDED;
             len = cxtNameAdded.size();
-            buf.writeVarUint((len << 4) | META_NAME_ADDED | (status == 0 ? 0 : 1));
+            buf.writeVarUint((len << 4) | META_NAME_ADDED | 1); // must have structAdded
             for (int i = 0; i < len; i++) {
                 buf.writeString(cxtNameAdded.get(i).name);
             }

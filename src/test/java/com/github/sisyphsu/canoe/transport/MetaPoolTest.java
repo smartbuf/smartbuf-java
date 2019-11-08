@@ -1,8 +1,13 @@
 package com.github.sisyphsu.canoe.transport;
 
+import com.github.sisyphsu.canoe.Canoe;
+import com.github.sisyphsu.canoe.exception.InvalidStructException;
+import com.github.sisyphsu.canoe.exception.UnexpectedReadException;
+import com.github.sisyphsu.canoe.node.basic.ObjectNode;
 import com.github.sisyphsu.canoe.utils.TimeUtils;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -133,6 +138,56 @@ public class MetaPoolTest {
         assert !names3.equals(names2);
         assert names3.equals(names1);
         assert !names3.equals(new Object());
+    }
+
+    @Test
+    public void testError() throws IOException {
+        InputBuffer buffer = new InputBuffer();
+        InputMetaPool pool = new InputMetaPool();
+
+        try {
+            buffer.reset(new byte[]{0b01111111});
+            pool.read(buffer);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof UnexpectedReadException;
+        }
+
+        Output output = new Output(Canoe.CODEC, true);
+        byte[] bytes = output.write(new ObjectNode(true, new String[]{"id", "name"}, new Object[]{1, "hello"}));
+
+        buffer.reset(bytes);
+        buffer.readByte();
+        buffer.readByte();
+        pool.read(buffer);
+
+        try {
+            pool.findStructByID(1);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof InvalidStructException;
+        }
+
+        try {
+            pool.findStructByID(2);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof InvalidStructException;
+        }
+
+        try {
+            pool.findStructByID(11);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof InvalidStructException;
+        }
+
+        try {
+            pool.findStructByID(5);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof InvalidStructException;
+        }
     }
 
 }

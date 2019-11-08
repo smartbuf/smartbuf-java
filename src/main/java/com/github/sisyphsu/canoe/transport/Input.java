@@ -1,6 +1,6 @@
 package com.github.sisyphsu.canoe.transport;
 
-import com.github.sisyphsu.canoe.exception.UnexpectReadException;
+import com.github.sisyphsu.canoe.exception.UnexpectedReadException;
 import com.github.sisyphsu.canoe.exception.InvalidVersionException;
 import com.github.sisyphsu.canoe.exception.MismatchModeException;
 import com.github.sisyphsu.canoe.exception.UnexpectedSequenceException;
@@ -122,7 +122,7 @@ public final class Input {
                 }
                 return map;
             default:
-                throw new UnexpectReadException("run into invalid data flag: " + flag);
+                throw new UnexpectedReadException("run into invalid data flag: " + flag);
         }
     }
 
@@ -148,7 +148,7 @@ public final class Input {
             case TYPE_NARRAY_DOUBLE:
                 return buffer.readDoubleArray(size);
             default:
-                throw new UnexpectReadException("unknown narray type");
+                throw new UnexpectedReadException("unknown narray type");
         }
     }
 
@@ -243,7 +243,7 @@ public final class Input {
                     }
                     break;
                 default:
-                    throw new UnexpectReadException("run into invalid slice type: " + type);
+                    throw new UnexpectedReadException("run into invalid slice type: " + type);
             }
             slices.add(slice);
             if ((head & 1) == 0) {

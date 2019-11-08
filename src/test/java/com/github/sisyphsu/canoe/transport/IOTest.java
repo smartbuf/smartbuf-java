@@ -1,7 +1,7 @@
 package com.github.sisyphsu.canoe.transport;
 
 import com.github.sisyphsu.canoe.Canoe;
-import com.github.sisyphsu.canoe.exception.UnexpectReadException;
+import com.github.sisyphsu.canoe.exception.UnexpectedReadException;
 import com.github.sisyphsu.canoe.exception.InvalidVersionException;
 import com.github.sisyphsu.canoe.exception.MismatchModeException;
 import com.github.sisyphsu.canoe.exception.UnexpectedSequenceException;
@@ -189,26 +189,26 @@ public class IOTest {
         try {
             input.readObject();
         } catch (Exception e) {
-            assert e instanceof UnexpectReadException;
+            assert e instanceof UnexpectedReadException;
         }
 
         try {
             input.readArray(0b1111_1111L);
             assert false;
         } catch (Exception e) {
-            assert e instanceof UnexpectReadException;
+            assert e instanceof UnexpectedReadException;
         }
         try {
             input.readArray(0b1111_1111L);
             assert false;
         } catch (Exception e) {
-            assert e instanceof UnexpectReadException;
+            assert e instanceof UnexpectedReadException;
         }
         try {
             input.readNativeArray(0xFFL);
             assert false;
         } catch (Exception e) {
-            assert e instanceof UnexpectReadException;
+            assert e instanceof UnexpectedReadException;
         }
     }
 
