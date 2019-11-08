@@ -1,6 +1,7 @@
 package com.github.sisyphsu.canoe.transport;
 
 import com.github.sisyphsu.canoe.Canoe;
+import com.github.sisyphsu.canoe.node.basic.ObjectNode;
 import com.github.sisyphsu.canoe.node.basic.SymbolNode;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +16,6 @@ public class IOExpireTest {
 
     @Test
     public void testSymbolExpire() throws IOException {
-        int oldLimit = Output.SYMBOL_LIMIT;
         Output.SYMBOL_LIMIT = 4;
 
         Output output = new Output(Canoe.CODEC, true);
@@ -34,8 +34,30 @@ public class IOExpireTest {
         byte[] data = output.write("hello world");
         Object object = input.read(data);
         assert Objects.equals(object, "hello world");
+    }
 
-        Output.SYMBOL_LIMIT = oldLimit;
+    @Test
+    public void testStructExpire() throws IOException {
+        Output.STRUCT_LIMIT = 4;
+
+        Output output = new Output(Canoe.CODEC, true);
+        Input input = new Input(true);
+
+        for (int i = 0; i <= Output.STRUCT_LIMIT + 1; i++) {
+            ObjectNode node = new ObjectNode(true, new String[]{"id", "name" + i}, new Object[]{i, "name" + i});
+
+            byte[] data = output.write(node);
+            Object obj = input.read(data);
+
+            ObjectNode newNode = Canoe.CODEC.convert(obj, ObjectNode.class);
+            assert newNode.keys().length == 2;
+            assert newNode.values().length == 2;
+        }
+
+        // test only *_EXPIRED
+        byte[] data = output.write("hello world");
+        Object object = input.read(data);
+        assert Objects.equals(object, "hello world");
     }
 
 }

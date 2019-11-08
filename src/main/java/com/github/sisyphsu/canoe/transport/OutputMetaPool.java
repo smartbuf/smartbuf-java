@@ -114,10 +114,12 @@ public final class OutputMetaPool {
                 if (name == null) {
                     int index = cxtIdAlloc.acquire();
                     name = new Name(str, index);
-                    this.cxtNames.put(index, name);
-                    this.cxtNameAdded.add(name); // record for outter using
+                    cxtNames.put(index, name);
+                    cxtNameAdded.add(name); // record for outter using
+                    cxtNameIndex.put(str, name);
                 }
                 nameIds[off++] = name.index;
+                name.refCount++;
             }
             struct = new Struct(names, nameIds);
             struct.index = cxtStructIdAlloc.acquire();
@@ -235,10 +237,13 @@ public final class OutputMetaPool {
             // synchronize cxtNames
             for (int nameId : expiredStruct.nameIds) {
                 Name meta = cxtNames.get(nameId);
-                cxtNames.put(meta.index, null);
-                cxtIdAlloc.release(meta.index);
-                cxtNameExpired.add(meta.index);
-                cxtNameIndex.remove(meta.name);
+                meta.refCount--;
+                if (meta.refCount == 0) {
+                    cxtNames.put(meta.index, null);
+                    cxtIdAlloc.release(meta.index);
+                    cxtNameExpired.add(meta.index);
+                    cxtNameIndex.remove(meta.name);
+                }
             }
         }
     }
@@ -254,7 +259,6 @@ public final class OutputMetaPool {
         public Name(String name, int index) {
             this.name = name;
             this.index = index;
-            this.refCount = 1;
         }
     }
 

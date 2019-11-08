@@ -94,7 +94,10 @@ public final class Output {
         return result;
     }
 
-    public void writeObject(Object obj) throws IOException {
+    /**
+     * Write any object into the buffer, support null.
+     */
+    void writeObject(Object obj) throws IOException {
         if (obj == null) {
             bodyBuf.writeVarUint(DATA_ID_NULL);
             return;
