@@ -1,5 +1,8 @@
 package com.github.sisyphsu.canoe.transport;
 
+import com.github.sisyphsu.canoe.exception.InvalidDataException;
+import com.github.sisyphsu.canoe.exception.UnexpectReadException;
+
 import java.io.IOException;
 
 import static com.github.sisyphsu.canoe.transport.Const.*;
@@ -67,7 +70,7 @@ public final class InputDataPool {
                     }
                     break;
                 default:
-                    throw new RuntimeException("invalid flag: " + flag);
+                    throw new UnexpectReadException("invalid flag: " + flag);
             }
         }
     }
@@ -112,14 +115,14 @@ public final class InputDataPool {
      * @param id Symbol's unique ID
      * @return Symbol's value
      */
-    public String getSymbol(int id) {
+    public String getSymbol(int id) throws InvalidDataException {
         int dataId = id - 1;
         if (dataId >= symbols.cap()) {
-            throw new IllegalArgumentException("invalid symbol Id: " + id);
+            throw new InvalidDataException("invalid symbol Id: " + id);
         }
         String symbol = symbols.get(dataId);
         if (symbol == null) {
-            throw new IllegalArgumentException("invalid symbol id: " + id);
+            throw new InvalidDataException("invalid symbol id: " + id);
         }
         return symbol;
     }

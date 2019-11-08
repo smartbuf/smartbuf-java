@@ -8,9 +8,9 @@ import java.io.IOException;
  * @author sulin
  * @since 2019-10-22 17:10:07
  */
-public class InvalidReadException extends IOException {
+public class UnexpectReadException extends IOException {
 
-    public InvalidReadException(String message) {
+    public UnexpectReadException(String message) {
         super(message);
     }
 

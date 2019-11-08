@@ -1,16 +1,22 @@
 package com.github.sisyphsu.canoe.transport;
 
+import com.github.sisyphsu.canoe.Canoe;
+import com.github.sisyphsu.canoe.exception.InvalidDataException;
+import com.github.sisyphsu.canoe.exception.UnexpectReadException;
+import com.github.sisyphsu.canoe.node.basic.SymbolNode;
 import com.github.sisyphsu.canoe.utils.TimeUtils;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 /**
  * @author sulin
  * @since 2019-10-09 17:04:33
  */
-public class OutputDataPoolTest {
+public class DataPoolTest {
 
     @Test
-    public void test() {
+    public void testOutput() {
         OutputDataPool dataPool = new OutputDataPool(16);
 
         try {
@@ -96,6 +102,43 @@ public class OutputDataPoolTest {
         assert dataPool.registerSymbol("7") == 2;
 
         dataPool.reset(); // remain 7,5,3,2
+    }
+
+    @Test
+    public void testInputError() throws IOException {
+        InputDataPool pool = new InputDataPool();
+
+        InputBuffer buf = new InputBuffer();
+        buf.reset(new byte[]{(byte) 0b01111111, (byte) 0b01111111});
+
+        try {
+            pool.read(buf);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof UnexpectReadException;
+        }
+
+        try {
+            pool.getSymbol(10);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof InvalidDataException;
+        }
+
+        Output output = new Output(Canoe.CODEC, true);
+        byte[] data = output.write(SymbolNode.valueOf("TEST"));
+        buf.reset(data);
+        buf.readByte(); // ignore head
+        buf.readByte(); // ignore seq
+        pool.read(buf);
+
+        assert pool.getSymbol(1).equals("TEST");
+        try {
+            pool.getSymbol(2);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof InvalidDataException;
+        }
     }
 
 }

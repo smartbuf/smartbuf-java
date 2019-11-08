@@ -15,6 +15,7 @@ public class IOExpireTest {
 
     @Test
     public void testSymbolExpire() throws IOException {
+        int oldLimit = Output.SYMBOL_LIMIT;
         Output.SYMBOL_LIMIT = 4;
 
         Output output = new Output(Canoe.CODEC, true);
@@ -28,6 +29,13 @@ public class IOExpireTest {
             assert obj instanceof String;
             assert Objects.equals(obj, node.value());
         }
+
+        // test only DATA_SYMBOL_EXPIRED
+        byte[] data = output.write("hello world");
+        Object object = input.read(data);
+        assert Objects.equals(object, "hello world");
+
+        Output.SYMBOL_LIMIT = oldLimit;
     }
 
 }

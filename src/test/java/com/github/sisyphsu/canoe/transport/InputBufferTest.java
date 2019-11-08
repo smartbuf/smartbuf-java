@@ -1,6 +1,6 @@
 package com.github.sisyphsu.canoe.transport;
 
-import com.github.sisyphsu.canoe.exception.InvalidReadException;
+import com.github.sisyphsu.canoe.exception.UnexpectReadException;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -23,7 +23,7 @@ public class InputBufferTest {
             buffer.readVarInt();
             assert false;
         } catch (Exception e) {
-            assert e instanceof InvalidReadException;
+            assert e instanceof UnexpectReadException;
         }
     }
 
