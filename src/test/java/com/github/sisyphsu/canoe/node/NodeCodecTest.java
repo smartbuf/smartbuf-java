@@ -60,7 +60,8 @@ public class NodeCodecTest {
         assert str.equals(factory.convert(factory.convert(str, Node.class), String.class));
 
         Enum symbol = Thread.State.BLOCKED;
-        assert symbol.name().equals(codec.toValue(codec.toNode(symbol)));
+        assert symbol.name().equals(codec.toValue(codec.toSymbolNode(symbol)));
+        assert symbol.name().equals(codec.toValue(codec.toSymbolNode(symbol.name())));
         assert symbol.equals(factory.convert(factory.convert(symbol, Node.class), Thread.State.class));
     }
 

@@ -175,8 +175,13 @@ public final class NodeCodec extends Codec {
     }
 
     @Converter
-    public SymbolNode toNode(Enum e) {
+    public SymbolNode toSymbolNode(Enum e) {
         return SymbolNode.valueOf(e);
+    }
+
+    @Converter
+    public SymbolNode toSymbolNode(String str) {
+        return SymbolNode.valueOf(str);
     }
 
     /**

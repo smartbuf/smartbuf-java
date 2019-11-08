@@ -1,10 +1,12 @@
 package com.github.sisyphsu.canoe.transport;
 
 import com.github.sisyphsu.canoe.exception.OutOfSpaceException;
+import com.github.sisyphsu.canoe.exception.UnexpectedReadException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -85,6 +87,22 @@ public class BufferTest {
         assert input.readString().length() == 5460;
         assert input.readString().length() == 699050;
         assert input.readString().length() == size;
+    }
+
+    @Test
+    public void testBuffer() {
+        InputBuffer buffer = new InputBuffer();
+
+        byte[] bytes = new byte[1024];
+        Arrays.fill(bytes, (byte) 0xFF);
+        buffer.reset(bytes);
+
+        try {
+            buffer.readVarInt();
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof UnexpectedReadException;
+        }
     }
 
 }
