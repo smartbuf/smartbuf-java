@@ -1,5 +1,6 @@
 package com.github.sisyphsu.canoe.node.basic;
 
+import com.github.sisyphsu.canoe.Const;
 import com.github.sisyphsu.canoe.node.Node;
 import com.github.sisyphsu.canoe.utils.NumberUtils;
 
@@ -67,8 +68,7 @@ public final class VarintNode extends Node {
     }
 
     @Override
-    public Type type() {
-        return Type.VARINT;
+    public byte type() {
+        return Const.TYPE_VARINT;
     }
-
 }

@@ -4,7 +4,6 @@ import com.github.sisyphsu.canoe.converter.CodecFactory;
 import com.github.sisyphsu.canoe.converter.ConverterPipeline;
 import com.github.sisyphsu.canoe.node.Node;
 import com.github.sisyphsu.canoe.node.basic.ObjectNode;
-import com.github.sisyphsu.canoe.node.basic.SymbolNode;
 import com.github.sisyphsu.canoe.reflect.XType;
 
 import java.io.IOException;
@@ -12,7 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
-import static com.github.sisyphsu.canoe.transport.Const.*;
+import static com.github.sisyphsu.canoe.Const.*;
 
 /**
  * Output wraps the logic that scans the source data and serializes the output message into highly compressed data
@@ -97,96 +96,139 @@ public final class Output {
     /**
      * Write any object into the buffer, support null.
      */
-    void writeObject(Object obj) throws IOException {
-        if (obj == null) {
-            bodyBuf.writeVarUint(DATA_ID_NULL);
-            return;
-        }
-        if (obj instanceof ObjectNode) {
-            ObjectNode node = (ObjectNode) obj;
-            if (enableStreamMode && node.isStable()) {
-                bodyBuf.writeVarUint(metaPool.registerCxtStruct(node.keys()) << 3 | TYPE_OBJECT);
+    void writeObject(Object data) throws IOException {
+        byte type = TYPE_CONST;
+        if (data == null || data instanceof Boolean) {
+            type = TYPE_CONST;
+        } else if (data instanceof Byte || data instanceof Short || data instanceof Integer || data instanceof Long) {
+            type = TYPE_VARINT;
+        } else if (data instanceof Float) {
+            type = TYPE_FLOAT;
+        } else if (data instanceof Double) {
+            type = TYPE_DOUBLE;
+        } else if (data instanceof CharSequence || data instanceof Character) {
+            type = TYPE_STRING;
+        } else if (data instanceof Collection) {
+            type = TYPE_ARRAY;
+        } else if (data instanceof Enum) {
+            type = TYPE_SYMBOL;
+            data = ((Enum) data).name();
+        } else if (data.getClass().isArray()) {
+            if (data instanceof char[]) {
+                type = TYPE_STRING;
+                data = new String((char[]) data);
+            } else if (data instanceof boolean[]) {
+                type = TYPE_NARRAY_BOOL;
+            } else if (data instanceof byte[]) {
+                type = TYPE_NARRAY_BYTE;
+            } else if (data instanceof short[]) {
+                type = TYPE_NARRAY_SHORT;
+            } else if (data instanceof int[]) {
+                type = TYPE_NARRAY_INT;
+            } else if (data instanceof long[]) {
+                type = TYPE_NARRAY_LONG;
+            } else if (data instanceof float[]) {
+                type = TYPE_NARRAY_FLOAT;
+            } else if (data instanceof double[]) {
+                type = TYPE_NARRAY_DOUBLE;
             } else {
-                bodyBuf.writeVarUint(metaPool.registerTmpStruct(node.keys()) << 3 | TYPE_OBJECT);
-            }
-            for (Object value : node.values()) {
-                this.writeObject(value);
-            }
-        } else if (obj instanceof SymbolNode) {
-            String name = ((SymbolNode) obj).value().toString();
-            if (enableStreamMode) {
-                bodyBuf.writeVarUint((dataPool.registerSymbol(name) << 3) | TYPE_SYMBOL);
-            } else {
-                bodyBuf.writeVarUint((dataPool.registerString(name) << 3) | TYPE_STRING);
-            }
-        } else if (obj instanceof Boolean) {
-            bodyBuf.writeVarUint(((Boolean) obj) ? DATA_ID_TRUE : DATA_ID_FALSE);
-        } else if (obj instanceof Byte) {
-            bodyBuf.writeVarUint((dataPool.registerVarint((Byte) obj) << 3) | TYPE_VARINT);
-        } else if (obj instanceof Short) {
-            bodyBuf.writeVarUint((dataPool.registerVarint((Short) obj) << 3) | TYPE_VARINT);
-        } else if (obj instanceof Integer) {
-            bodyBuf.writeVarUint((dataPool.registerVarint((Integer) obj) << 3) | TYPE_VARINT);
-        } else if (obj instanceof Long) {
-            bodyBuf.writeVarUint((dataPool.registerVarint((Long) obj) << 3) | TYPE_VARINT);
-        } else if (obj instanceof Float) {
-            bodyBuf.writeVarUint((dataPool.registerFloat((Float) obj) << 3) | TYPE_FLOAT);
-        } else if (obj instanceof Double) {
-            bodyBuf.writeVarUint((dataPool.registerDouble((Double) obj) << 3) | TYPE_DOUBLE);
-        } else if (obj instanceof CharSequence || obj instanceof Character) {
-            bodyBuf.writeVarUint((dataPool.registerString(obj.toString()) << 3) | TYPE_STRING);
-        } else if (obj instanceof Collection) {
-            this.writeArray((Collection<?>) obj);
-        } else if (obj instanceof Enum) {
-            if (enableStreamMode) {
-                bodyBuf.writeVarUint((dataPool.registerSymbol(((Enum) obj).name()) << 3) | TYPE_SYMBOL);
-            } else {
-                bodyBuf.writeVarUint((dataPool.registerString(((Enum) obj).name()) << 3) | TYPE_STRING);
+                type = TYPE_ARRAY;
+                data = Arrays.asList((Object[]) data);
             }
         } else {
-            Class<?> cls = obj.getClass();
-            if (cls.isArray()) {
-                if (obj instanceof char[]) {
-                    bodyBuf.writeVarUint((dataPool.registerString(new String((char[]) obj)) << 3) | TYPE_STRING);
-                } else if (obj instanceof boolean[]) {
-                    boolean[] booleans = (boolean[]) obj;
-                    bodyBuf.writeVarUint(booleans.length << 6 | TYPE_NARRAY_BOOL);
-                    bodyBuf.writeBooleanArray(booleans);
-                } else if (obj instanceof byte[]) {
-                    byte[] bytes = (byte[]) obj;
-                    bodyBuf.writeVarUint(bytes.length << 6 | TYPE_NARRAY_BYTE);
-                    bodyBuf.writeByteArray(bytes);
-                } else if (obj instanceof short[]) {
-                    short[] shorts = (short[]) obj;
-                    bodyBuf.writeVarUint(shorts.length << 6 | TYPE_NARRAY_SHORT);
-                    bodyBuf.writeShortArray(shorts);
-                } else if (obj instanceof int[]) {
-                    int[] ints = (int[]) obj;
-                    bodyBuf.writeVarUint(ints.length << 6 | TYPE_NARRAY_INT);
-                    bodyBuf.writeIntArray(ints);
-                } else if (obj instanceof long[]) {
-                    long[] longs = (long[]) obj;
-                    bodyBuf.writeVarUint(longs.length << 6 | TYPE_NARRAY_LONG);
-                    bodyBuf.writeLongArray(longs);
-                } else if (obj instanceof float[]) {
-                    float[] floats = (float[]) obj;
-                    bodyBuf.writeVarUint(floats.length << 6 | TYPE_NARRAY_FLOAT);
-                    bodyBuf.writeFloatArray(floats);
-                } else if (obj instanceof double[]) {
-                    double[] doubles = (double[]) obj;
-                    bodyBuf.writeVarUint(doubles.length << 6 | TYPE_NARRAY_DOUBLE);
-                    bodyBuf.writeDoubleArray(doubles);
-                } else {
-                    this.writeArray(Arrays.asList((Object[]) obj));
-                }
+            Node node;
+            if (data instanceof Node) {
+                node = (Node) data;
             } else {
-                Node node = codecFactory.convert(obj, Node.class);
-                if (node == null || node instanceof ObjectNode || node instanceof SymbolNode) {
-                    this.writeObject(node);
-                } else {
-                    this.writeObject(node.value());
-                }
+                node = codecFactory.convert(data, Node.class);
             }
+            if (node != null) {
+                data = node.value();
+                type = node.type();
+            }
+        }
+        this.writeData(type, data);
+    }
+
+    void writeData(byte type, Object data) throws IOException {
+        switch (type) {
+            case -1:
+                if (data == null) {
+                    bodyBuf.writeVarUint(DATA_ID_NULL);
+                } else {
+                    bodyBuf.writeVarUint(((Boolean) data) ? DATA_ID_TRUE : DATA_ID_FALSE);
+                }
+                break;
+            case TYPE_VARINT:
+                bodyBuf.writeVarUint((dataPool.registerVarint(((Number) data).longValue()) << 3) | TYPE_VARINT);
+                break;
+            case TYPE_FLOAT:
+                bodyBuf.writeVarUint((dataPool.registerFloat((Float) data) << 3) | TYPE_FLOAT);
+                break;
+            case TYPE_DOUBLE:
+                bodyBuf.writeVarUint((dataPool.registerDouble((Double) data) << 3) | TYPE_DOUBLE);
+                break;
+            case TYPE_STRING:
+                bodyBuf.writeVarUint((dataPool.registerString(data.toString()) << 3) | TYPE_STRING);
+                break;
+            case TYPE_SYMBOL:
+                if (enableStreamMode) {
+                    bodyBuf.writeVarUint((dataPool.registerSymbol(data.toString()) << 3) | TYPE_SYMBOL);
+                } else {
+                    bodyBuf.writeVarUint((dataPool.registerString(data.toString()) << 3) | TYPE_STRING);
+                }
+                break;
+            case TYPE_OBJECT:
+                ObjectNode node = (ObjectNode) data;
+                if (enableStreamMode && node.isStable()) {
+                    bodyBuf.writeVarUint(metaPool.registerCxtStruct(node.keys()) << 3 | TYPE_OBJECT);
+                } else {
+                    bodyBuf.writeVarUint(metaPool.registerTmpStruct(node.keys()) << 3 | TYPE_OBJECT);
+                }
+                for (Object value : node.values()) {
+                    this.writeObject(value);
+                }
+                break;
+            case TYPE_ARRAY:
+                this.writeArray((Collection<?>) data);
+                break;
+            case TYPE_NARRAY_BOOL:
+                boolean[] booleans = (boolean[]) data;
+                bodyBuf.writeVarUint(booleans.length << 6 | TYPE_NARRAY_BOOL);
+                bodyBuf.writeBooleanArray(booleans);
+                break;
+            case TYPE_NARRAY_BYTE:
+                byte[] bytes = (byte[]) data;
+                bodyBuf.writeVarUint(bytes.length << 6 | TYPE_NARRAY_BYTE);
+                bodyBuf.writeByteArray(bytes);
+                break;
+            case TYPE_NARRAY_SHORT:
+                short[] shorts = (short[]) data;
+                bodyBuf.writeVarUint(shorts.length << 6 | TYPE_NARRAY_SHORT);
+                bodyBuf.writeShortArray(shorts);
+                break;
+            case TYPE_NARRAY_INT:
+                int[] ints = (int[]) data;
+                bodyBuf.writeVarUint(ints.length << 6 | TYPE_NARRAY_INT);
+                bodyBuf.writeIntArray(ints);
+                break;
+            case TYPE_NARRAY_LONG:
+                long[] longs = (long[]) data;
+                bodyBuf.writeVarUint(longs.length << 6 | TYPE_NARRAY_LONG);
+                bodyBuf.writeLongArray(longs);
+                break;
+            case TYPE_NARRAY_FLOAT:
+                float[] floats = (float[]) data;
+                bodyBuf.writeVarUint(floats.length << 6 | TYPE_NARRAY_FLOAT);
+                bodyBuf.writeFloatArray(floats);
+                break;
+            case TYPE_NARRAY_DOUBLE:
+                double[] doubles = (double[]) data;
+                bodyBuf.writeVarUint(doubles.length << 6 | TYPE_NARRAY_DOUBLE);
+                bodyBuf.writeDoubleArray(doubles);
+                break;
+            default:
+                throw new IllegalArgumentException("invalid type: " + type);
         }
     }
 
@@ -255,31 +297,31 @@ public final class Output {
             }
             if (node != null) {
                 switch (node.type()) {
-                    case BOOLEAN:
+                    case TYPE_CONST:
                         item = node.value();
                         itemType = TYPE_SLICE_BOOL;
                         break;
-                    case DOUBLE:
+                    case TYPE_DOUBLE:
                         item = node.value();
                         itemType = TYPE_SLICE_DOUBLE;
                         break;
-                    case FLOAT:
+                    case TYPE_FLOAT:
                         item = node.value();
                         itemType = TYPE_SLICE_FLOAT;
                         break;
-                    case VARINT:
+                    case TYPE_VARINT:
                         item = node.value();
                         itemType = TYPE_SLICE_LONG;
                         break;
-                    case STRING:
+                    case TYPE_STRING:
                         item = node.value();
                         itemType = TYPE_SLICE_STRING;
                         break;
-                    case SYMBOL:
+                    case TYPE_SYMBOL:
                         item = node.value();
                         itemType = TYPE_SLICE_SYMBOL;
                         break;
-                    case OBJECT:
+                    case TYPE_OBJECT:
                         item = node;
                         itemKey = ((ObjectNode) node).keys();
                         itemType = TYPE_SLICE_OBJECT;

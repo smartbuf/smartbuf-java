@@ -1,5 +1,6 @@
 package com.github.sisyphsu.canoe.node.basic;
 
+import com.github.sisyphsu.canoe.Const;
 import com.github.sisyphsu.canoe.node.Node;
 
 /**
@@ -30,8 +31,8 @@ public final class BooleanNode extends Node {
     }
 
     @Override
-    public Type type() {
-        return Type.BOOLEAN;
+    public byte type() {
+        return Const.TYPE_CONST;
     }
 
 }

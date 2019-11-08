@@ -1,5 +1,6 @@
 package com.github.sisyphsu.canoe.node.array;
 
+import com.github.sisyphsu.canoe.Const;
 import com.github.sisyphsu.canoe.node.Node;
 
 /**
@@ -20,7 +21,7 @@ public final class DoubleArrayNode extends Node {
     }
 
     @Override
-    public Type type() {
-        return Type.ARRAY_DOUBLE;
+    public byte type() {
+        return Const.TYPE_NARRAY_DOUBLE;
     }
 }

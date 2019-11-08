@@ -5,7 +5,7 @@ import com.github.sisyphsu.canoe.utils.TimeUtils;
 import java.io.IOException;
 import java.util.*;
 
-import static com.github.sisyphsu.canoe.transport.Const.*;
+import static com.github.sisyphsu.canoe.Const.*;
 
 /**
  * DataPool represents an area holds data properties like float/double/varint/string/symbol.

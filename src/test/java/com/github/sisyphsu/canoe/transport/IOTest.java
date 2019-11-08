@@ -1,6 +1,7 @@
 package com.github.sisyphsu.canoe.transport;
 
 import com.github.sisyphsu.canoe.Canoe;
+import com.github.sisyphsu.canoe.Const;
 import com.github.sisyphsu.canoe.exception.UnexpectedReadException;
 import com.github.sisyphsu.canoe.exception.InvalidVersionException;
 import com.github.sisyphsu.canoe.exception.MismatchModeException;

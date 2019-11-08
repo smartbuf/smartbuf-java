@@ -1,4 +1,4 @@
-package com.github.sisyphsu.canoe.transport;
+package com.github.sisyphsu.canoe;
 
 /**
  * Constants that shared between input and output
@@ -33,6 +33,7 @@ public interface Const {
     byte DATA_ID_TRUE       = 0x02;
     byte DATA_ID_ZERO_ARRAY = 0x03;
 
+    byte TYPE_CONST  = -1;
     byte TYPE_VARINT = 0;
     byte TYPE_FLOAT  = 1;
     byte TYPE_DOUBLE = 2;

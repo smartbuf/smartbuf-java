@@ -1,5 +1,6 @@
 package com.github.sisyphsu.canoe.node.basic;
 
+import com.github.sisyphsu.canoe.Const;
 import com.github.sisyphsu.canoe.node.Node;
 
 /**
@@ -36,11 +37,11 @@ public final class ObjectNode extends Node {
 
     @Override
     public Object value() {
-        throw new UnsupportedOperationException();
+        return this;
     }
 
     @Override
-    public Type type() {
-        return Type.OBJECT;
+    public byte type() {
+        return Const.TYPE_OBJECT;
     }
 }

@@ -5,7 +5,7 @@ import com.github.sisyphsu.canoe.exception.UnexpectedReadException;
 
 import java.io.IOException;
 
-import static com.github.sisyphsu.canoe.transport.Const.*;
+import static com.github.sisyphsu.canoe.Const.*;
 
 /**
  * @author sulin

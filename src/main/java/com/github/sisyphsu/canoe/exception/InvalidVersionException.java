@@ -2,7 +2,7 @@ package com.github.sisyphsu.canoe.exception;
 
 import java.io.IOException;
 
-import static com.github.sisyphsu.canoe.transport.Const.VER;
+import static com.github.sisyphsu.canoe.Const.VER;
 
 /**
  * Exception that indicate the specified data has an invalid version

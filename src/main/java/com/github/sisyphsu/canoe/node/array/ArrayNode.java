@@ -1,5 +1,6 @@
 package com.github.sisyphsu.canoe.node.array;
 
+import com.github.sisyphsu.canoe.Const;
 import com.github.sisyphsu.canoe.node.Node;
 
 import java.util.Collection;
@@ -22,8 +23,7 @@ public final class ArrayNode extends Node {
     }
 
     @Override
-    public Type type() {
-        return Type.ARRAY;
+    public byte type() {
+        return Const.TYPE_ARRAY;
     }
-
 }

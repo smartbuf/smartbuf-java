@@ -1,5 +1,6 @@
 package com.github.sisyphsu.canoe.node.basic;
 
+import com.github.sisyphsu.canoe.Const;
 import com.github.sisyphsu.canoe.node.Node;
 
 /**
@@ -35,8 +36,8 @@ public final class FloatNode extends Node {
     }
 
     @Override
-    public Type type() {
-        return Type.FLOAT;
+    public byte type() {
+        return Const.TYPE_FLOAT;
     }
 
 }
