@@ -4,7 +4,8 @@ import com.github.sisyphsu.canoe.converter.Codec;
 import com.github.sisyphsu.canoe.converter.Converter;
 import com.github.sisyphsu.canoe.node.array.*;
 import com.github.sisyphsu.canoe.node.basic.*;
-import com.github.sisyphsu.canoe.reflect.BeanHelper;
+import com.github.sisyphsu.canoe.reflect.BeanReader;
+import com.github.sisyphsu.canoe.reflect.BeanReaderUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -237,12 +238,12 @@ public final class NodeCodec extends Codec {
      * Convert POJO to ObjectNode, for better performance
      */
     @Converter(distance = 1 << 16)
-    @SuppressWarnings("unchecked")
     public ObjectNode toNode(Object pojo) {
-        BeanHelper helper = BeanHelper.valueOf(pojo.getClass());
-        String[] names = helper.getNames();
-        Object[] values = helper.getValues(pojo);
-        return new ObjectNode(true, names, values);
+        BeanReader reader = BeanReaderUtils.build(pojo.getClass());
+        String[] names = reader.getFieldNames();
+        Object[] values = reader.getValues(pojo);
+        byte[] types = reader.getFieldTypes();
+        return new ObjectNode(true, names, values, types);
     }
 
 }

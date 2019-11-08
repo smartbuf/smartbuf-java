@@ -15,12 +15,25 @@ public final class ObjectNode extends Node {
 
     private final boolean  stable;
     private final String[] keys;
-    private final Object[] nodes;
+    private final Object[] fields;
+    private final byte[]   types;
 
-    public ObjectNode(boolean stable, String[] fields, Object[] nodes) {
+    public ObjectNode(boolean stable, String[] keys, Object[] values) {
         this.stable = stable;
-        this.keys = fields;
-        this.nodes = nodes;
+        this.keys = keys;
+        this.fields = values;
+        this.types = null;
+    }
+
+    public ObjectNode(boolean stable, String[] keys, Object[] values, byte[] types) {
+        this.stable = stable;
+        this.keys = keys;
+        this.fields = values;
+        this.types = types;
+    }
+
+    public boolean isStable() {
+        return stable;
     }
 
     public String[] keys() {
@@ -28,11 +41,11 @@ public final class ObjectNode extends Node {
     }
 
     public Object[] values() {
-        return nodes;
+        return fields;
     }
 
-    public boolean isStable() {
-        return stable;
+    public byte[] types() {
+        return types;
     }
 
     @Override

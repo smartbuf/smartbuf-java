@@ -28,21 +28,23 @@ public final class BeanHelper<T> {
     private static final Pattern RE_GET = Pattern.compile("^get[A-Z].*$");
     private static final Pattern RE_SET = Pattern.compile("^set[A-Z].*$");
 
-    private final Class<T> tClass;
-    public final  Accessor accessor;
+    public final Accessor accessor;
 
-    private final String[]    names;
     private final BeanField[] fields;
+    private final String[]    fieldNames;
+    private final byte[]      fieldTypes;
     private final int         fieldCount;
 
     // initialize BeanMapper, each class should has only one mapper
     private BeanHelper(Class<T> cls) {
-        this.tClass = cls;
         this.fields = findProperties(cls);
         this.fieldCount = fields.length;
-        this.names = new String[fields.length];
+        this.fieldNames = new String[fields.length];
+        this.fieldTypes = new byte[fields.length];
         for (int i = 0, len = fields.length; i < len; i++) {
-            names[i] = fields[i].name;
+            BeanField field = fields[i];
+
+            fieldNames[i] = field.name;
         }
         this.accessor = AccessorBuilder.buildAccessor(cls, fields);
     }
@@ -67,8 +69,8 @@ public final class BeanHelper<T> {
      *
      * @return Field names
      */
-    public String[] getNames() {
-        return names;
+    public String[] getFieldNames() {
+        return fieldNames;
     }
 
     /**
@@ -111,6 +113,9 @@ public final class BeanHelper<T> {
             if (Modifier.isStatic(mod) || Modifier.isTransient(mod)) {
                 continue; // ignore non-public and transient
             }
+            if (field.isAnnotationPresent(Deprecated.class)) {
+                continue; // don't need deprecated field
+            }
             propMap.computeIfAbsent(name, BeanField::new).field = field;
         }
         // collect getter and setter field
@@ -120,13 +125,16 @@ public final class BeanHelper<T> {
             if (Modifier.isStatic(mod) || Modifier.isNative(mod)) {
                 continue;
             }
+            if (method.isAnnotationPresent(Deprecated.class)) {
+                continue; // don't need deprecated method
+            }
             boolean getter = true;
             if (RE_IS.matcher(name).matches() && method.getReturnType() == boolean.class) {
-                name = name.substring(2);
-            } else if (RE_GET.matcher(name).matches()) {
-                name = name.substring(3);
-            } else if (RE_SET.matcher(name).matches()) {
-                name = name.substring(3);
+                name = name.substring(2); // boolean isXXX()
+            } else if (RE_GET.matcher(name).matches() && method.getReturnType() != Void.class && method.getParameterCount() == 0) {
+                name = name.substring(3); // xxx getXXX()
+            } else if (RE_SET.matcher(name).matches() && method.getReturnType() == Void.class && method.getParameterCount() == 1) {
+                name = name.substring(3); // void setXXX(XXX xxx)
                 getter = false;
             } else {
                 continue; // ignore invalid method
@@ -147,8 +155,15 @@ public final class BeanHelper<T> {
             if (prop.field == null) {
                 field = findField(cls, name);
             }
-            if (field != null && Modifier.isTransient(field.getModifiers())) {
-                continue; // don't need transient field
+            if (field != null) {
+                if (Modifier.isTransient(field.getModifiers())) {
+                    continue; // don't need transient field
+                }
+                if (field.isAnnotationPresent(Deprecated.class)) {
+                    continue; // don't need deprecated field
+                }
+            } else if (prop.getter == null || prop.setter == null) {
+                continue; // field must has getter and setter
             }
             properties.add(prop);
         }
@@ -156,7 +171,7 @@ public final class BeanHelper<T> {
     }
 
     // find the specified field from cls, includes superclass
-    private static Field findField(Class cls, String name) {
+    static Field findField(Class cls, String name) {
         if (cls == Object.class) {
             return null;
         }
@@ -167,4 +182,20 @@ public final class BeanHelper<T> {
         }
     }
 
+    // find the specified field from cls, includes superclass
+    static Field findField(Class cls, String name, Class type) {
+        if (cls == Object.class) {
+            return null;
+        }
+        Field field = null;
+        try {
+            field = cls.getDeclaredField(name);
+        } catch (NoSuchFieldException ignored) {
+        }
+        if (field != null && field.getType() == type) {
+            return field;
+        } else {
+            return findField(cls.getSuperclass(), name, type);
+        }
+    }
 }

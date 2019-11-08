@@ -33,15 +33,16 @@ public interface Const {
     byte CONST_TRUE       = 0x02;
     byte CONST_ZERO_ARRAY = 0x03;
 
-    byte TYPE_CONST  = -1;
-    byte TYPE_VARINT = 0;
-    byte TYPE_FLOAT  = 1;
-    byte TYPE_DOUBLE = 2;
-    byte TYPE_STRING = 3;
-    byte TYPE_SYMBOL = 4;
-    byte TYPE_OBJECT = 5;
-    byte TYPE_NARRAY = 6;
-    byte TYPE_ARRAY  = 7;
+    byte TYPE_UNKNOWN = -99;
+    byte TYPE_CONST   = -1;
+    byte TYPE_VARINT  = 0;
+    byte TYPE_FLOAT   = 1;
+    byte TYPE_DOUBLE  = 2;
+    byte TYPE_STRING  = 3;
+    byte TYPE_SYMBOL  = 4;
+    byte TYPE_OBJECT  = 5;
+    byte TYPE_NARRAY  = 6;
+    byte TYPE_ARRAY   = 7;
 
     byte TYPE_NARRAY_BOOL   = 1 << 3 | TYPE_NARRAY;
     byte TYPE_NARRAY_BYTE   = 2 << 3 | TYPE_NARRAY;

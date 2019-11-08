@@ -188,9 +188,7 @@ public final class Output {
                 } else {
                     bodyBuf.writeVarUint(metaPool.registerTmpStruct(node.keys()) << 3 | TYPE_OBJECT);
                 }
-                for (Object value : node.values()) {
-                    this.writeObject(value);
-                }
+                this.writeObjectNode(node);
                 break;
             case TYPE_ARRAY:
                 this.writeArray((Collection<?>) data);
@@ -232,6 +230,41 @@ public final class Output {
                 break;
             default:
                 throw new IllegalArgumentException("invalid type: " + type);
+        }
+    }
+
+    void writeObjectNode(ObjectNode node) throws IOException {
+        Object[] values = node.values();
+        byte[] types = node.types();
+        for (int i = 0, len = values.length; i < len; i++) {
+            Object value = values[i];
+            byte valueType = types == null ? TYPE_UNKNOWN : types[i];
+            switch (valueType) {
+                case TYPE_CONST:
+                case TYPE_VARINT:
+                case TYPE_FLOAT:
+                case TYPE_DOUBLE:
+                case TYPE_STRING:
+                case TYPE_SYMBOL:
+                case TYPE_NARRAY_BOOL:
+                case TYPE_NARRAY_BYTE:
+                case TYPE_NARRAY_SHORT:
+                case TYPE_NARRAY_INT:
+                case TYPE_NARRAY_LONG:
+                case TYPE_NARRAY_FLOAT:
+                case TYPE_NARRAY_DOUBLE:
+                    this.writeData(valueType, value);
+                    break;
+                case TYPE_ARRAY:
+                    if (value instanceof Object[]) {
+                        this.writeData(valueType, Arrays.asList((Object[]) value));
+                    } else {
+                        this.writeData(valueType, value);
+                    }
+                    break;
+                default:
+                    this.writeObject(value);
+            }
         }
     }
 
@@ -397,9 +430,7 @@ public final class Output {
                             bodyBuf.writeVarUint(metaPool.registerTmpStruct(objectNode.keys()));
                         }
                     }
-                    for (Object value : objectNode.values()) {
-                        this.writeObject(value);
-                    }
+                    this.writeObjectNode(objectNode);
                     break;
                 default:
                     this.writeObject(item);

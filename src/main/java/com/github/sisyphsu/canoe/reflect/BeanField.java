@@ -9,15 +9,25 @@ import java.lang.reflect.Method;
  * @author sulin
  * @since 2019-10-29 15:46:00
  */
-final class BeanField {
+public final class BeanField {
 
     String name;
-    Field  field;
-    Method getter;
-    Method setter;
+    Class  type;
+    byte   typeCode;
+
+    Field   field;
+    Method  getter;
+    Method  setter;
+    boolean writable;
+    boolean readable;
 
     public BeanField(String name) {
         this.name = name;
+    }
+
+    public BeanField(String name, Class type) {
+        this.name = name;
+        this.type = type;
     }
 
     public BeanField(Field field, Method getter, Method setter) {

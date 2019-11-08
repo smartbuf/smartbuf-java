@@ -17,7 +17,7 @@ public class BeanHelperTest {
     public void testPojo() {
         BeanHelper<Pojo> helper = BeanHelper.valueOf(Pojo.class);
 
-        String[] names = helper.getNames();
+        String[] names = helper.getFieldNames();
         assert names.length == 5;
         assert Objects.equals(names[0], "code");
         assert Objects.equals(names[1], "date");
@@ -57,7 +57,7 @@ public class BeanHelperTest {
     public void testStruct() {
         BeanHelper<Struct> helper = BeanHelper.valueOf(Struct.class);
 
-        String[] props = helper.getNames();
+        String[] props = helper.getFieldNames();
         assert props.length == 8;
         assert Objects.equals(props[0], "code");
         assert Objects.equals(props[1], "date");
