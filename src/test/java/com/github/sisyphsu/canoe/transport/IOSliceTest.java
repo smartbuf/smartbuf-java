@@ -1,13 +1,18 @@
 package com.github.sisyphsu.canoe.transport;
 
+import com.github.sisyphsu.canoe.Canoe;
+import com.github.sisyphsu.canoe.exception.UnexpectedReadException;
+import com.github.sisyphsu.canoe.node.array.BooleanArrayNode;
+import com.github.sisyphsu.canoe.node.basic.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static com.github.sisyphsu.canoe.transport.IOTest.enableCxt;
 import static com.github.sisyphsu.canoe.transport.IOTest.transIO;
@@ -151,6 +156,101 @@ public class IOSliceTest {
         result.addAll(symbols);
 
         return result;
+    }
+
+    @Test
+    public void testSpecial() throws IOException {
+        List<Object> result = new ArrayList<>();
+
+        // character
+        result.add('a');
+        result.add('b');
+        result.add('c');
+        result.add('d');
+
+        // Enum
+        result.add(Thread.State.RUNNABLE);
+        result.add(Thread.State.BLOCKED);
+
+        // char[]
+        result.add("hello".toCharArray());
+        result.add("world".toCharArray());
+
+        // BooleanNode
+        result.add(BooleanNode.TRUE);
+        result.add(BooleanNode.FALSE);
+        result.add(DoubleNode.valueOf(1.0));
+        result.add(FloatNode.valueOf(1.0f));
+        result.add(VarintNode.valueOf(10000));
+        result.add(StringNode.valueOf("hello world"));
+        result.add(SymbolNode.valueOf("HI"));
+        result.add(new BooleanArrayNode(new boolean[2]));
+
+        // null node
+        result.add(OptionalInt.empty());
+
+        enableCxt = true;
+        Object[] arr = Canoe.CODEC.convert(transIO(result), Object[].class);
+        assert arr.length == result.size();
+
+        enableCxt = false;
+        arr = Canoe.CODEC.convert(transIO(result), Object[].class);
+        assert arr.length == result.size();
+    }
+
+    @Test
+    public void testArrayError() throws IOException {
+        List<Object> list = new ArrayList<>();
+        list.add(true);
+        list.add(true);
+        list.add(false);
+        list.add(false);
+        Output output = new Output(Canoe.CODEC, true);
+
+        byte[] bytes = output.write(list);
+        assert bytes.length == 7;
+
+        Input input = new Input(true);
+        input.read(bytes);
+
+        bytes[5] = 10;
+        try {
+            input.read(bytes);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof UnexpectedReadException;
+        }
+    }
+
+    @Test
+    public void testObject() throws IOException {
+        List<Object> list = new ArrayList<>();
+        list.add(new Bean1(1, "1.1"));
+        list.add(new Bean1(2, "1.2"));
+        list.add(new Bean1(3, "1.3"));
+
+        list.add(new Bean2(1, "2.1"));
+        list.add(new Bean2(2, "2.2"));
+        list.add(new Bean2(3, "2.3"));
+
+        Object[] arr = Canoe.CODEC.convert(transIO(list), Object[].class);
+        assert arr.length == list.size();
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Bean1 {
+        private int    id;
+        private String name1;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Bean2 {
+        private int    id;
+        private String name2;
     }
 
 }

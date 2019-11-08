@@ -36,6 +36,13 @@ public class OutputTest {
         assert output.write(null).length == 2;
         assert output.write(BigInteger.valueOf(1000L)).length > 2;
         assert output.write(new Bean()).length > 2;
+
+        try {
+            output.writeData(Byte.MAX_VALUE, 1);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof IllegalArgumentException;
+        }
     }
 
     @Test

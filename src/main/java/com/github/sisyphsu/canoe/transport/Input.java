@@ -1,8 +1,8 @@
 package com.github.sisyphsu.canoe.transport;
 
-import com.github.sisyphsu.canoe.exception.UnexpectedReadException;
 import com.github.sisyphsu.canoe.exception.InvalidVersionException;
 import com.github.sisyphsu.canoe.exception.MismatchModeException;
+import com.github.sisyphsu.canoe.exception.UnexpectedReadException;
 import com.github.sisyphsu.canoe.exception.UnexpectedSequenceException;
 
 import java.io.IOException;
@@ -114,15 +114,13 @@ public final class Input {
                 return readNativeArray(head);
             case TYPE_ARRAY:
                 return this.readArray(head >>> 3);
-            case TYPE_OBJECT:
+            default:
                 String[] fields = metaPool.findStructByID((int) (head >>> 3));
                 Map<String, Object> map = new HashMap<>();
                 for (String field : fields) {
                     map.put(field, readObject());
                 }
                 return map;
-            default:
-                throw new UnexpectedReadException("run into invalid data flag: " + flag);
         }
     }
 
@@ -177,7 +175,7 @@ public final class Input {
                                 slice[i] = false;
                                 break;
                             default:
-                                throw new IllegalArgumentException("invalid bool[" + b + "] at offset " + i);
+                                throw new UnexpectedReadException("invalid bool[" + b + "] at offset " + i);
                         }
                     }
                     break;

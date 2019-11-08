@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.OptionalInt;
 
 /**
  * @author sulin
@@ -24,6 +25,12 @@ public class IOTest {
 
     static boolean enableCxt;
     static byte[]  bytes;
+
+    @Test
+    public void testOpt() throws IOException {
+        Object obj = transIO(OptionalInt.empty());
+        assert obj == null;
+    }
 
     @Test
     public void testBoolean() throws IOException {

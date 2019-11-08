@@ -97,7 +97,7 @@ public final class Output {
      * Write any object into the buffer, support null.
      */
     void writeObject(Object data) throws IOException {
-        byte type = TYPE_CONST;
+        byte type;
         if (data == null || data instanceof Boolean) {
             type = TYPE_CONST;
         } else if (data instanceof Byte || data instanceof Short || data instanceof Integer || data instanceof Long) {
@@ -145,19 +145,22 @@ public final class Output {
             if (node != null) {
                 data = node.value();
                 type = node.type();
+            } else {
+                data = null;
+                type = TYPE_CONST;
             }
         }
         this.writeData(type, data);
     }
 
     void writeData(byte type, Object data) throws IOException {
+        if (data == null) {
+            bodyBuf.writeVarUint(CONST_NULL);
+            return;
+        }
         switch (type) {
-            case -1:
-                if (data == null) {
-                    bodyBuf.writeVarUint(CONST_NULL);
-                } else {
-                    bodyBuf.writeVarUint(((Boolean) data) ? CONST_TRUE : CONST_FALSE);
-                }
+            case TYPE_CONST:
+                bodyBuf.writeVarUint(((Boolean) data) ? CONST_TRUE : CONST_FALSE);
                 break;
             case TYPE_VARINT:
                 bodyBuf.writeVarUint((dataPool.registerVarint(((Number) data).longValue()) << 3) | TYPE_VARINT);
@@ -260,11 +263,9 @@ public final class Output {
             if (item == null) {
                 itemType = TYPE_SLICE_NULL;
             } else if (pipeline != null && prevCls == itemCls) {
-                // reusing the previous's pipeline
-                node = (Node) pipeline.convert(item, nodeXType);
+                node = (Node) pipeline.convert(item, nodeXType); // reusing the previous's pipeline
             } else if (prevCls == itemCls) {
-                // reusing the previous's type
-                itemType = sliceType;
+                itemType = sliceType; // reusing the previous's type
             } else if (item instanceof Boolean) {
                 itemType = TYPE_SLICE_BOOL;
             } else if (item instanceof Byte) {
@@ -296,38 +297,31 @@ public final class Output {
                 node = (Node) pipeline.convert(item, nodeXType);
             }
             if (node != null) {
+                item = node.value();
                 switch (node.type()) {
                     case TYPE_CONST:
-                        item = node.value();
                         itemType = TYPE_SLICE_BOOL;
                         break;
                     case TYPE_DOUBLE:
-                        item = node.value();
                         itemType = TYPE_SLICE_DOUBLE;
                         break;
                     case TYPE_FLOAT:
-                        item = node.value();
                         itemType = TYPE_SLICE_FLOAT;
                         break;
                     case TYPE_VARINT:
-                        item = node.value();
                         itemType = TYPE_SLICE_LONG;
                         break;
                     case TYPE_STRING:
-                        item = node.value();
                         itemType = TYPE_SLICE_STRING;
                         break;
                     case TYPE_SYMBOL:
-                        item = node.value();
                         itemType = TYPE_SLICE_SYMBOL;
                         break;
                     case TYPE_OBJECT:
-                        item = node;
                         itemKey = ((ObjectNode) node).keys();
                         itemType = TYPE_SLICE_OBJECT;
                         break;
                     default:
-                        item = node.value();
                         itemType = TYPE_SLICE_UNKNOWN;
                 }
             } else if (itemType == -1) {
