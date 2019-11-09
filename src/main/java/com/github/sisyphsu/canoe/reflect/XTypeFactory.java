@@ -1,6 +1,7 @@
 package com.github.sisyphsu.canoe.reflect;
 
 import com.github.sisyphsu.canoe.exception.CircleReferenceException;
+import com.github.sisyphsu.canoe.utils.ReflectUtils;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -207,22 +208,19 @@ public final class XTypeFactory {
             cxt.pureClassFieldMap.put(rawCls, fields);
         }
         cxt.parsing.add(rawCls);
-        for (Field field : rawCls.getDeclaredFields()) {
-            if (Modifier.isStatic(field.getModifiers())) {
-                continue; // ignore static
-            }
+        ReflectUtils.findAllFields(rawCls).forEach(field -> {
             XType fieldType = toXType(cxt, type, field.getGenericType());
             XField<?> xField = new XField<>();
             xField.setName(field.getName());
             xField.setType(fieldType);
             xField.setField(field);
             fields.put(xField.getName(), xField);
-        }
+        });
         cxt.parsing.remove(rawCls);
         type.fields = fields;
     }
 
-    static class Context {
+    private static class Context {
         Type       root;
         Set<Class> parsing = new HashSet<>();
 

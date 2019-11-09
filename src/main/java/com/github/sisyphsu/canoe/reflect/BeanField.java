@@ -13,7 +13,6 @@ public final class BeanField {
 
     String name;
     Class  type;
-    byte   typeCode;
 
     Field  field;
     Method getter;

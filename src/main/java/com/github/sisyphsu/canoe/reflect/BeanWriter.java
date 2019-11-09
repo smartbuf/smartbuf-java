@@ -4,7 +4,7 @@ package com.github.sisyphsu.canoe.reflect;
  * @author sulin
  * @since 2019-11-08 17:52:09
  */
-public abstract class BeanWriter {
+public final class BeanWriter {
 
     static final String NAME = API.class.getName().replace('.', '/');
 
@@ -12,7 +12,7 @@ public abstract class BeanWriter {
     private final BeanField[] fields;
     private final String[]    fieldNames;
 
-    public BeanWriter(API api, BeanField[] fields) {
+    BeanWriter(API api, BeanField[] fields) {
         this.api = api;
         this.fields = fields;
         this.fieldNames = new String[fields.length];

@@ -1,14 +1,15 @@
 package com.github.sisyphsu.canoe.reflect;
 
 import com.github.sisyphsu.canoe.utils.ASMUtils;
+import com.github.sisyphsu.canoe.utils.ReflectUtils;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,6 +19,7 @@ import java.util.regex.Pattern;
  * @author sulin
  * @since 2019-11-08 17:59:03
  */
+@SuppressWarnings("unchecked")
 public final class BeanWriterBuilder {
 
     private static final Map<Class, BeanWriter> WRITER_MAP = new ConcurrentHashMap<>();
@@ -43,59 +45,53 @@ public final class BeanWriterBuilder {
     }
 
     static BeanWriter buildWriter(Class<?> cls) {
-        Map<String, BeanField> propMap = new TreeMap<>();
-        // collect public field
-        for (Field f : cls.getFields()) {
-            String name = f.getName();
-            int mod = f.getModifiers();
-            if (Modifier.isStatic(mod) || Modifier.isTransient(mod) || f.isAnnotationPresent(Deprecated.class)) {
-                continue; // ignore non-public and transient and deprecated
-            }
-            propMap.put(name, new BeanField(name, f.getType()));
-        }
-        // collect valid getter
-        for (Method method : cls.getMethods()) {
-            String name = method.getName();
-            int mod = method.getModifiers();
-            if (Modifier.isAbstract(mod) || Modifier.isStatic(mod) || Modifier.isNative(mod)
-                || method.isAnnotationPresent(Deprecated.class)
-                || method.getParameterCount() != 1
-                || method.getReturnType() != Void.class
+        Map<String, BeanField> fieldMap = new TreeMap<>();
+        // collect all field
+        ReflectUtils.findAllFields(cls).forEach(f -> {
+            BeanField field = new BeanField(f.getName(), f.getType());
+            field.field = f;
+            fieldMap.put(f.getName(), field);
+        });
+        // collect valid setter
+        for (Method m : cls.getMethods()) {
+            String name = m.getName();
+            if (Modifier.isStatic(m.getModifiers()) || m.isAnnotationPresent(Deprecated.class)
+                || m.getParameterCount() != 1
+                || m.getReturnType() != Void.class
+                || m.getReturnType() != void.class
                 || !RE_SET.matcher(name).matches()) {
                 continue;
             }
-            name = name.substring(3); // void setXXX(XXX xxx)
-
-            if (name.charAt(0) >= 'A' && name.charAt(0) <= 'Z') {
-                name = (char) (name.charAt(0) + 32) + name.substring(1);
+            if (name.charAt(3) >= 'A' && name.charAt(3) <= 'Z') {
+                name = (char) (name.charAt(3) + 32) + name.substring(4);
+            } else {
+                name = name.substring(3);
             }
-            BeanField bf = propMap.get(name);
-            if (bf != null && bf.type != method.getParameterTypes()[0]) {
-                continue; // ignore incompatible type
+            BeanField field = fieldMap.get(name);
+            if (field != null && field.type == m.getParameterTypes()[0]) {
+                field.setter = m;
             }
-            if (bf == null) {
-                Field f = ASMUtils.findField(cls, name, method.getParameterTypes()[0]);
-                if (f != null && (Modifier.isTransient(f.getModifiers()) || f.isAnnotationPresent(Deprecated.class))) {
-                    continue; // don't need transient or deprecated field
-                }
-                bf = new BeanField(name, method.getParameterTypes()[0]);
-            }
-            bf.getter = method;
-            propMap.put(name, bf);
         }
-        BeanField[] fields = propMap.values().toArray(new BeanField[0]);
-        Class<? extends BeanWriter> writerCls = buildWriterClass(cls, fields);
+        // clean unwriteable fields
+        for (String name : new ArrayList<>(fieldMap.keySet())) {
+            BeanField bf = fieldMap.get(name);
+            int mod = bf.field.getModifiers();
+            if (Modifier.isPublic(mod) || bf.setter != null) {
+                continue;
+            }
+            fieldMap.remove(name);
+        }
+        // build BeanWriter
         try {
-            BeanWriter writer = writerCls.newInstance();
-//            writer.init(fields);
-            return writer;
+            BeanField[] fields = fieldMap.values().toArray(new BeanField[0]);
+            BeanWriter.API api = buildWriterClass(cls, fields).newInstance();
+            return new BeanWriter(api, fields);
         } catch (Exception e) {
             throw new IllegalArgumentException("build writer for " + cls + " failed.", e);
         }
     }
 
-    @SuppressWarnings("unchecked")
-    static Class<? extends BeanWriter> buildWriterClass(Class<?> cls, BeanField[] fields) {
+    static Class<? extends BeanWriter.API> buildWriterClass(Class<?> cls, BeanField[] fields) {
         String clsName = cls.getName().replace('.', '/');
         String writerClsName = cls.getName() + "$$$Writer";
 
@@ -149,7 +145,7 @@ public final class BeanWriterBuilder {
 
         cw.visitEnd();
 
-        return (Class<? extends BeanWriter>) ASMUtils.loadClass(cw, writerClsName);
+        return (Class<? extends BeanWriter.API>) ASMUtils.loadClass(cw, writerClsName);
     }
 
     /**

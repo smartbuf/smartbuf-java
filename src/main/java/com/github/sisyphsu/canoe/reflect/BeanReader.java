@@ -17,7 +17,7 @@ public class BeanReader {
     final String[]    fieldNames;
     final byte[]      fieldTypes;
 
-    public BeanReader(API api, BeanField[] fields) {
+    BeanReader(API api, BeanField[] fields) {
         this.api = api;
         this.fields = fields;
         this.fieldNames = new String[fields.length];

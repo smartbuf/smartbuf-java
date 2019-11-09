@@ -78,7 +78,7 @@ public class XTypeTest<T> {
     }
 
     @Test
-    public void testToString() throws NoSuchFieldException {
+    public void testToString() {
         XType xType = XTypeUtils.toXType(byte[].class);
         System.out.println(xType);
 

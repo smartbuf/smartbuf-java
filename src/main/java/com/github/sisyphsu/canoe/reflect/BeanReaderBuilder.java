@@ -1,6 +1,7 @@
 package com.github.sisyphsu.canoe.reflect;
 
 import com.github.sisyphsu.canoe.utils.ASMUtils;
+import com.github.sisyphsu.canoe.utils.ReflectUtils;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -21,7 +22,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("unchecked")
 public final class BeanReaderBuilder {
 
-    static final Map<Class, BeanReader> READERS = new ConcurrentHashMap<>();
+    static final Map<Class, BeanReader> READER_MAP = new ConcurrentHashMap<>();
 
     static final Pattern RE_IS  = Pattern.compile("^is[A-Z_$].*$");
     static final Pattern RE_GET = Pattern.compile("^get[A-Z_$].*$");
@@ -36,10 +37,10 @@ public final class BeanReaderBuilder {
      * @return cls's BeanHelper
      */
     public static BeanReader build(Class<?> cls) {
-        BeanReader reader = READERS.get(cls);
+        BeanReader reader = READER_MAP.get(cls);
         if (reader == null) {
             reader = buildReader(cls);
-            READERS.put(cls, reader);
+            READER_MAP.put(cls, reader);
         }
         return reader;
     }
@@ -50,7 +51,7 @@ public final class BeanReaderBuilder {
     static BeanReader buildReader(Class<?> cls) {
         Map<String, BeanField> fieldMap = new TreeMap<>();
         // collect all fields
-        ASMUtils.getAllValidFields(cls).forEach(f -> {
+        ReflectUtils.findAllFields(cls).forEach(f -> {
             BeanField field = new BeanField(f.getName(), f.getType());
             field.field = f;
             fieldMap.put(f.getName(), field);
