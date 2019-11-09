@@ -186,6 +186,9 @@ public final class XTypeFactory {
     @SuppressWarnings("unchecked")
     private synchronized void parseFields(Context cxt, XType<?> type) {
         Class rawCls = type.getRawType();
+        if (rawCls == Object.class || rawCls.isPrimitive() || rawCls.isArray() || rawCls.isEnum()) {
+            return;
+        }
         // If rawCls is a stop-class, return directly
         for (Class<?> stopType : this.stopClasses) {
             if (stopType.isAssignableFrom(type.getRawType())) {
@@ -208,7 +211,8 @@ public final class XTypeFactory {
             cxt.pureClassFieldMap.put(rawCls, fields);
         }
         cxt.parsing.add(rawCls);
-        ReflectUtils.findAllFields(rawCls).forEach(field -> {
+        // collect this->fields
+        ReflectUtils.findValidFields(rawCls).forEach(field -> {
             XType fieldType = toXType(cxt, type, field.getGenericType());
             XField<?> xField = new XField<>();
             xField.setName(field.getName());
@@ -216,6 +220,18 @@ public final class XTypeFactory {
             xField.setField(field);
             fields.put(xField.getName(), xField);
         });
+        // collect super->fields if it exists
+        if (rawCls.getGenericSuperclass() != null) {
+            XType<?> superType = toXType(cxt, null, rawCls.getGenericSuperclass());
+            if (superType.fields != null) {
+                for (Map.Entry<String, XField> entry : superType.fields.entrySet()) {
+                    if (fields.containsKey(entry.getKey())) {
+                        continue;
+                    }
+                    fields.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
         cxt.parsing.remove(rawCls);
         type.fields = fields;
     }

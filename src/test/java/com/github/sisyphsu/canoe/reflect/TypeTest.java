@@ -62,6 +62,13 @@ public class TypeTest {
         }
     }
 
+    @Test
+    public void testSuper() {
+        XType xType = XTypeUtils.toXType(Child.class);
+        assert xType.getField("k") != null;
+        assert xType.getField("v") != null;
+    }
+
     @Data
     public static class Model<X, T> {
         private long                                time;
@@ -83,6 +90,15 @@ public class TypeTest {
         public class Item {
             private T t;
         }
+    }
+
+    public static class Parent<K, V> {
+        private K k;
+        private V v;
+    }
+
+    public static class Child<V> extends Parent<String, V> {
+        private V v;
     }
 
 }

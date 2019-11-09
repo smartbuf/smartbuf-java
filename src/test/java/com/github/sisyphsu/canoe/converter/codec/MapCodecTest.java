@@ -106,6 +106,7 @@ public class MapCodecTest {
         assert codec.toMapEntry(entry, XTypeUtils.toXType(AbstractMap.SimpleImmutableEntry.class)) instanceof AbstractMap.SimpleImmutableEntry;
         try {
             codec.toMapEntry(entry, XTypeUtils.toXType(InvalidEntry.class));
+            assert false;
         } catch (Exception e) {
             assert e instanceof IllegalArgumentException;
         }

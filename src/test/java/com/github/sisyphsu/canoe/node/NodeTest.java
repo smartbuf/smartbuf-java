@@ -28,6 +28,9 @@ public class NodeTest {
         node = FloatNode.valueOf(11.0f);
         assert node.type() == Const.TYPE_FLOAT;
 
+        node = VarintNode.valueOf(1);
+        assert node.type() == Const.TYPE_VARINT;
+
         node = VarintNode.valueOf(1000);
         assert node.type() == Const.TYPE_VARINT;
 

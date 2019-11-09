@@ -501,7 +501,7 @@ public final class Output {
                 case COLLECTION:
                     this.writeData(TYPE_ARRAY, value);
                     break;
-                case UNKNOWN:
+                default:
                     this.writeObject(value);
                     break;
             }

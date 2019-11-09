@@ -51,7 +51,7 @@ public final class BeanReaderBuilder {
     static BeanReader buildReader(Class<?> cls) {
         Map<String, BeanField> fieldMap = new TreeMap<>();
         // collect all fields
-        ReflectUtils.findAllFields(cls).forEach(f -> {
+        ReflectUtils.findAllValidFields(cls).forEach(f -> {
             BeanField field = new BeanField(f.getName(), f.getType());
             field.field = f;
             fieldMap.put(f.getName(), field);

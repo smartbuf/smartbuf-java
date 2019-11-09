@@ -30,6 +30,12 @@ public class IOTest {
     public void testOpt() throws IOException {
         Object obj = transIO(OptionalInt.empty());
         assert obj == null;
+
+        obj = transIO("hello world".toCharArray());
+        assert "hello world".equals(obj);
+
+        obj = transIO('a');
+        assert "a".equals(obj);
     }
 
     @Test

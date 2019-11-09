@@ -3,7 +3,6 @@ package com.github.sisyphsu.canoe.utils;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -15,10 +14,16 @@ public final class ReflectUtils {
     private ReflectUtils() {
     }
 
-    public static List<Field> findAllFields(Class<?> cls) {
-        if (cls == null || cls == Object.class) {
-            return Collections.emptyList();
+    public static List<Field> findAllValidFields(Class<?> cls) {
+        List<Field> fields = new ArrayList<>();
+        while (cls != null && cls != Object.class) {
+            fields.addAll(findValidFields(cls));
+            cls = cls.getSuperclass();
         }
+        return fields;
+    }
+
+    public static List<Field> findValidFields(Class<?> cls) {
         List<Field> fields = new ArrayList<>();
         for (Field f : cls.getDeclaredFields()) {
             int mod = f.getModifiers();
@@ -30,7 +35,6 @@ public final class ReflectUtils {
             }
             fields.add(f);
         }
-        fields.addAll(findAllFields(cls.getSuperclass()));
         return fields;
     }
 

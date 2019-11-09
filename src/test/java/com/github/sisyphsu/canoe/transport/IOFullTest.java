@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -30,11 +32,22 @@ public class IOFullTest {
         assert Objects.equals(bean.node.value(), newBean.node.value());
     }
 
+    @Test
+    public void testMap() throws IOException {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", 1);
+        map.put("name", "hello");
+        IOTest.transIO(map);
+    }
+
     @Data
     public static class Bean {
-        private Character  c;
-        private char[]     chars;
-        private SymbolNode node;
+        private Character    c;
+        private char[]       chars;
+        private SymbolNode   node;
+        private double       double1;
+        private Double       double2;
+        private Thread.State state = Thread.State.BLOCKED;
     }
 
 }
