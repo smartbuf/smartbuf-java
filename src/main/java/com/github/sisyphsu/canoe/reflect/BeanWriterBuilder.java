@@ -24,7 +24,7 @@ public final class BeanWriterBuilder {
 
     private static final Map<Class, BeanWriter> WRITER_MAP = new ConcurrentHashMap<>();
 
-    private static final Pattern RE_SET = Pattern.compile("^set[A-Z].*$");
+    private static final Pattern RE_SET = Pattern.compile("^set[A-Z_$].*$");
 
     private BeanWriterBuilder() {
     }
@@ -56,9 +56,8 @@ public final class BeanWriterBuilder {
         for (Method m : cls.getMethods()) {
             String name = m.getName();
             if (Modifier.isStatic(m.getModifiers()) || m.isAnnotationPresent(Deprecated.class)
+                || (m.getReturnType() != Void.class && m.getReturnType() != void.class)
                 || m.getParameterCount() != 1
-                || m.getReturnType() != Void.class
-                || m.getReturnType() != void.class
                 || !RE_SET.matcher(name).matches()) {
                 continue;
             }
@@ -86,7 +85,7 @@ public final class BeanWriterBuilder {
             BeanField[] fields = fieldMap.values().toArray(new BeanField[0]);
             BeanWriter.API api = buildWriterClass(cls, fields).newInstance();
             return new BeanWriter(api, fields);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new IllegalArgumentException("build writer for " + cls + " failed.", e);
         }
     }
@@ -96,13 +95,13 @@ public final class BeanWriterBuilder {
         String writerClsName = cls.getName() + "$$$Writer";
 
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-        cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, writerClsName.replace('.', '/'), null, BeanWriter.NAME, null);
+        cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, writerClsName.replace('.', '/'), null, "java/lang/Object", new String[]{BeanWriter.API_NAME});
 
         // public T$$$Writer()
         MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null);
         mv.visitCode();
         mv.visitVarInsn(Opcodes.ALOAD, 0);
-        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, BeanWriter.NAME, "<init>", "()V", false);
+        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
         mv.visitInsn(Opcodes.RETURN);
         mv.visitMaxs(0, 0);
         mv.visitEnd();

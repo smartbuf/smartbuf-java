@@ -6,19 +6,18 @@ package com.github.sisyphsu.canoe.reflect;
  */
 public final class BeanWriter {
 
-    static final String NAME = API.class.getName().replace('.', '/');
+    static String API_NAME = API.class.getName().replace('.', '/');
 
     private final API         api;
     private final BeanField[] fields;
-    private final String[]    fieldNames;
 
     BeanWriter(API api, BeanField[] fields) {
         this.api = api;
         this.fields = fields;
-        this.fieldNames = new String[fields.length];
-        for (int i = 0; i < fields.length; i++) {
-            this.fieldNames[i] = fields[i].name;
-        }
+    }
+
+    public BeanField[] getFields() {
+        return fields;
     }
 
     /**

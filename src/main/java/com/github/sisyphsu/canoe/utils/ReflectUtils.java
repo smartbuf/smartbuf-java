@@ -12,6 +12,9 @@ import java.util.List;
  */
 public final class ReflectUtils {
 
+    private ReflectUtils() {
+    }
+
     public static List<Field> findAllFields(Class<?> cls) {
         if (cls == null || cls == Object.class) {
             return Collections.emptyList();
