@@ -244,7 +244,6 @@ public final class Output {
                 case TYPE_VARINT:
                 case TYPE_FLOAT:
                 case TYPE_DOUBLE:
-                case TYPE_STRING:
                 case TYPE_SYMBOL:
                 case TYPE_NARRAY_BOOL:
                 case TYPE_NARRAY_BYTE:
@@ -254,6 +253,13 @@ public final class Output {
                 case TYPE_NARRAY_FLOAT:
                 case TYPE_NARRAY_DOUBLE:
                     this.writeData(valueType, value);
+                    break;
+                case TYPE_STRING:
+                    if (value instanceof char[]) {
+                        this.writeData(valueType, new String((char[]) value));
+                    } else {
+                        this.writeData(valueType, value);
+                    }
                     break;
                 case TYPE_ARRAY:
                     if (value instanceof Object[]) {

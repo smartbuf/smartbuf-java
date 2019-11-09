@@ -10,12 +10,12 @@ import java.util.Collection;
  */
 public class BeanReader {
 
-    static final String API_NAME = API.class.getName().replace('.', '/');
+    static String API_NAME = API.class.getName().replace('.', '/');
 
-    private final API         api;
-    private final BeanField[] fields;
-    private final String[]    fieldNames;
-    private final byte[]      fieldTypes;
+    final API         api;
+    final BeanField[] fields;
+    final String[]    fieldNames;
+    final byte[]      fieldTypes;
 
     public BeanReader(API api, BeanField[] fields) {
         this.api = api;
@@ -58,6 +58,8 @@ public class BeanReader {
                     type = Const.TYPE_NARRAY_FLOAT;
                 } else if (cls == double[].class) {
                     type = Const.TYPE_NARRAY_DOUBLE;
+                } else if (cls == char[].class) {
+                    type = Const.TYPE_STRING;
                 } else {
                     type = Const.TYPE_ARRAY;
                 }

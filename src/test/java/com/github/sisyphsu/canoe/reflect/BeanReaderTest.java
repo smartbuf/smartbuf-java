@@ -11,13 +11,13 @@ import java.util.Objects;
  * @author sulin
  * @since 2019-10-29 21:18:15
  */
-public class BeanHelperTest {
+public class BeanReaderTest {
 
     @Test
     public void testPojo() {
-        BeanHelper<Pojo> helper = BeanHelper.valueOf(Pojo.class);
+        BeanReader reader = BeanReaderBuilder.build(Pojo.class);
 
-        String[] names = helper.getFieldNames();
+        String[] names = reader.getFieldNames();
         assert names.length == 5;
         assert Objects.equals(names[0], "code");
         assert Objects.equals(names[1], "date");
@@ -32,20 +32,7 @@ public class BeanHelperTest {
         pojo.time = System.currentTimeMillis();
         pojo.date = new Date();
 
-        Object[] objects = helper.getValues(pojo);
-        assert Objects.equals(objects[0], pojo.code);
-        assert Objects.equals(objects[1], pojo.date);
-        assert Objects.equals(objects[2], pojo.id);
-        assert Objects.equals(objects[3], pojo.name);
-        assert Objects.equals(objects[4], pojo.time);
-
-        objects[0] = 100000;
-        objects[1] = new Date();
-        objects[2] = 100;
-        objects[3] = "hello world";
-        objects[4] = System.currentTimeMillis() + 1;
-
-        helper.setValues(pojo, objects);
+        Object[] objects = reader.getValues(pojo);
         assert Objects.equals(objects[0], pojo.code);
         assert Objects.equals(objects[1], pojo.date);
         assert Objects.equals(objects[2], pojo.id);
@@ -55,10 +42,10 @@ public class BeanHelperTest {
 
     @Test
     public void testStruct() {
-        BeanHelper<Struct> helper = BeanHelper.valueOf(Struct.class);
+        BeanReader reader = BeanReaderBuilder.build(Struct.class);
 
-        String[] props = helper.getFieldNames();
-        assert props.length == 8;
+        String[] props = reader.getFieldNames();
+        assert props.length == 7;
         assert Objects.equals(props[0], "code");
         assert Objects.equals(props[1], "date");
         assert Objects.equals(props[2], "flags");
@@ -66,7 +53,6 @@ public class BeanHelperTest {
         assert Objects.equals(props[4], "name");
         assert Objects.equals(props[5], "time");
         assert Objects.equals(props[6], "uuu");
-        assert Objects.equals(props[7], "visible");
 
         Struct struct = new Struct();
         struct.id = 10;
@@ -76,27 +62,8 @@ public class BeanHelperTest {
         struct.setDate(new Date());
         struct.flags = BitSet.valueOf(new byte[]{1});
         struct.uuu = 1.0;
-        struct.setVisible(true);
 
-        Object[] objects = helper.getValues(struct);
-        assert Objects.equals(objects[0], struct.getCode());
-        assert Objects.equals(objects[1], struct.getDate());
-        assert Objects.equals(objects[2], struct.flags);
-        assert Objects.equals(objects[3], struct.getId());
-        assert Objects.equals(objects[4], struct.getName());
-        assert Objects.equals(objects[5], struct.getTime());
-        assert Objects.equals(objects[6], struct.uuu);
-
-        objects[0] = 100000;
-        objects[1] = new Date();
-        objects[2] = BitSet.valueOf(new byte[]{1, 2});
-        objects[3] = 100;
-        objects[4] = "hello world";
-        objects[5] = System.currentTimeMillis() + 1;
-        objects[6] = 1000.0;
-        objects[7] = false;
-
-        helper.setValues(struct, objects);
+        Object[] objects = reader.getValues(struct);
         assert Objects.equals(objects[0], struct.getCode());
         assert Objects.equals(objects[1], struct.getDate());
         assert Objects.equals(objects[2], struct.flags);
@@ -108,26 +75,12 @@ public class BeanHelperTest {
 
     @Test
     public void testHuge() {
-        BeanHelper<Huge> helper = BeanHelper.valueOf(Huge.class);
+        BeanReader reader = BeanReaderBuilder.build(Huge.class);
 
         Huge huge = new Huge();
-        Object[] values = helper.getValues(huge);
-        values[100] = System.currentTimeMillis();
-        helper.setValues(huge, values);
 
-        try {
-            helper.setValues(huge, null);
-            assert false;
-        } catch (Exception e) {
-            assert e instanceof IllegalArgumentException;
-        }
-
-        try {
-            helper.setValues(huge, new Object[1]);
-            assert false;
-        } catch (Exception e) {
-            assert e instanceof IllegalArgumentException;
-        }
+        Object[] values = reader.getValues(huge);
+        assert values.length == 136;
     }
 
     @Data

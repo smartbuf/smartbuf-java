@@ -6,32 +6,31 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
-import static com.github.sisyphsu.canoe.reflect.BeanHelper.findField;
-
 /**
  * @author sulin
  * @since 2019-11-08 18:02:42
  */
-public final class BeanReaderUtils {
+@SuppressWarnings("unchecked")
+public final class BeanReaderBuilder {
 
-    private static final Map<Class, BeanReader> READERS = new ConcurrentHashMap<>();
+    static final Map<Class, BeanReader> READERS = new ConcurrentHashMap<>();
 
-    private static final Pattern RE_IS  = Pattern.compile("^is[A-Z_$].*$");
-    private static final Pattern RE_GET = Pattern.compile("^get[A-Z_$].*$");
+    static final Pattern RE_IS  = Pattern.compile("^is[A-Z_$].*$");
+    static final Pattern RE_GET = Pattern.compile("^get[A-Z_$].*$");
 
-    private BeanReaderUtils() {
+    private BeanReaderBuilder() {
     }
 
     /**
-     * Get an reusable {@link BeanHelper} instance of the specified class
+     * Get an reusable {@link BeanReader} instance of the specified class
      *
      * @param cls The specified class
      * @return cls's BeanHelper
@@ -45,30 +44,28 @@ public final class BeanReaderUtils {
         return reader;
     }
 
+    /**
+     * Parse the specified class's readable fields, then generate {@link BeanReader} proxy for them.
+     */
     static BeanReader buildReader(Class<?> cls) {
-        Map<String, BeanField> propMap = new TreeMap<>();
-        // collect public field
-        for (Field f : cls.getFields()) {
-            String name = f.getName();
-            int mod = f.getModifiers();
-            if (Modifier.isStatic(mod) || Modifier.isTransient(mod) || f.isAnnotationPresent(Deprecated.class)) {
-                continue; // ignore non-public and transient and deprecated
-            }
-            BeanField bf = new BeanField(name, f.getType());
-            bf.field = f;
-            propMap.put(name, bf);
-        }
+        Map<String, BeanField> fieldMap = new TreeMap<>();
+        // collect all fields
+        ASMUtils.getAllValidFields(cls).forEach(f -> {
+            BeanField field = new BeanField(f.getName(), f.getType());
+            field.field = f;
+            fieldMap.put(f.getName(), field);
+        });
         // collect valid getter
-        for (Method method : cls.getMethods()) {
-            String name = method.getName();
-            int mod = method.getModifiers();
-            if (Modifier.isAbstract(mod) || Modifier.isStatic(mod) || Modifier.isNative(mod)
-                || method.isAnnotationPresent(Deprecated.class)
-                || method.getParameterCount() > 0
-                || method.getReturnType() == Void.class) {
+        for (Method m : cls.getMethods()) {
+            String name = m.getName();
+            Class<?> retType = m.getReturnType();
+            if (Modifier.isStatic(m.getModifiers()) || m.isAnnotationPresent(Deprecated.class)
+                || m.getParameterCount() > 0
+                || retType == void.class
+                || retType == Void.class) {
                 continue;
             }
-            if (RE_IS.matcher(name).matches() && method.getReturnType() == boolean.class) {
+            if (RE_IS.matcher(name).matches() && retType == boolean.class) {
                 name = name.substring(2); // boolean isXXX()
             } else if (RE_GET.matcher(name).matches()) {
                 name = name.substring(3); // xxx getXXX()
@@ -78,31 +75,33 @@ public final class BeanReaderUtils {
             if (name.charAt(0) >= 'A' && name.charAt(0) <= 'Z') {
                 name = (char) (name.charAt(0) + 32) + name.substring(1);
             }
-            BeanField bf = propMap.get(name);
-            if (bf != null && bf.type != method.getReturnType()) {
-                continue; // ignore incompatible type
+            BeanField field = fieldMap.get(name);
+            if (field != null && field.type == retType) {
+                field.getter = m;
             }
-            if (bf == null) {
-                Field f = findField(cls, name, method.getReturnType());
-                if (f != null && (Modifier.isTransient(f.getModifiers()) || f.isAnnotationPresent(Deprecated.class))) {
-                    continue; // don't need transient or deprecated field
-                }
-                bf = new BeanField(name, method.getReturnType());
-            }
-            bf.getter = method;
-            propMap.put(name, bf);
         }
-        BeanField[] fields = propMap.values().toArray(new BeanField[0]);
-        Class<? extends BeanReader.API> readerCls = buildReaderClass(cls, fields);
+        // clean unreadable fields
+        for (String name : new ArrayList<>(fieldMap.keySet())) {
+            BeanField bf = fieldMap.get(name);
+            int mod = bf.field.getModifiers();
+            if (Modifier.isPublic(mod) || bf.getter != null) {
+                continue;
+            }
+            fieldMap.remove(name);
+        }
+        // build BeanReader
         try {
-            BeanReader.API api = readerCls.newInstance();
+            BeanField[] fields = fieldMap.values().toArray(new BeanField[0]);
+            BeanReader.API api = buildReaderClass(cls, fields).newInstance();
             return new BeanReader(api, fields);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new IllegalArgumentException("build reader for " + cls + " failed.", e);
         }
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * Build reader class for the specified class with fields
+     */
     static Class<? extends BeanReader.API> buildReaderClass(Class<?> cls, BeanField[] fields) {
         String clsName = cls.getName().replace('.', '/');
         String readerClsName = cls.getName() + "$$$Reader";

@@ -14,23 +14,21 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
-import static com.github.sisyphsu.canoe.reflect.BeanHelper.findField;
-
 /**
  * @author sulin
  * @since 2019-11-08 17:59:03
  */
-public final class BeanWriterUtils {
+public final class BeanWriterBuilder {
 
     private static final Map<Class, BeanWriter> WRITER_MAP = new ConcurrentHashMap<>();
 
     private static final Pattern RE_SET = Pattern.compile("^set[A-Z].*$");
 
-    private BeanWriterUtils() {
+    private BeanWriterBuilder() {
     }
 
     /**
-     * Get an reusable {@link BeanHelper} instance of the specified class
+     * Get an reusable  instance of the specified class
      *
      * @param cls The specified class
      * @return cls's BeanHelper
@@ -76,7 +74,7 @@ public final class BeanWriterUtils {
                 continue; // ignore incompatible type
             }
             if (bf == null) {
-                Field f = findField(cls, name, method.getParameterTypes()[0]);
+                Field f = ASMUtils.findField(cls, name, method.getParameterTypes()[0]);
                 if (f != null && (Modifier.isTransient(f.getModifiers()) || f.isAnnotationPresent(Deprecated.class))) {
                     continue; // don't need transient or deprecated field
                 }

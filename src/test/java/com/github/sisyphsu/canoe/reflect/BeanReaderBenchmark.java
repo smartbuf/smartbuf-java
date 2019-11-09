@@ -35,11 +35,11 @@ import java.util.concurrent.TimeUnit;
 @Measurement(iterations = 3, time = 3)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
-public class BeanHelperBenchmark {
+public class BeanReaderBenchmark {
 
-    private static final User     USER     = new User();
-    private static final Method[] GETTERS  = new Method[7];
-    private static final Accessor ACCESSOR = BeanHelper.valueOf(User.class).accessor;
+    private static final User       USER    = new User();
+    private static final Method[]   GETTERS = new Method[7];
+    private static final BeanReader reader  = BeanReaderBuilder.build(User.class);
 
     static {
         try {
@@ -75,13 +75,13 @@ public class BeanHelperBenchmark {
 
     @Benchmark
     public void beanHelper() {
-        Object[] arr = BeanHelper.valueOf(User.class).getValues(USER);
+        Object[] arr = BeanReaderBuilder.build(User.class).getValues(USER);
     }
 
     @Benchmark
     public void accessor() {
         Object[] arr = new Object[GETTERS.length];
-        ACCESSOR.getAll(USER, arr);
+        reader.api.getAll(USER, arr);
     }
 
     @Benchmark

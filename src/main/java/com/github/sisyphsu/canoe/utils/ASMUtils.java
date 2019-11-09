@@ -4,6 +4,12 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * ASMUtils wraps some useful function for bytecode operation
  *
@@ -119,6 +125,42 @@ public final class ASMUtils {
      */
     public static Class<?> loadClass(ClassWriter writer, String clsName) {
         return INSTANCE.loadClass(clsName, writer.toByteArray());
+    }
+
+    // find the specified field from cls, includes superclass
+    public static Field findField(Class cls, String name, Class type) {
+        if (cls == Object.class) {
+            return null;
+        }
+        Field field = null;
+        try {
+            field = cls.getDeclaredField(name);
+        } catch (NoSuchFieldException ignored) {
+        }
+        if (field != null && field.getType() == type) {
+            return field;
+        } else {
+            return findField(cls.getSuperclass(), name, type);
+        }
+    }
+
+    public static List<Field> getAllValidFields(Class<?> cls) {
+        if (cls == Object.class) {
+            return Collections.emptyList();
+        }
+        List<Field> fields = new ArrayList<>();
+        for (Field f : cls.getDeclaredFields()) {
+            int mod = f.getModifiers();
+            if (Modifier.isStatic(mod) || Modifier.isTransient(mod) || f.isAnnotationPresent(Deprecated.class)) {
+                continue; // ignore non-public and transient and deprecated
+            }
+            if (f.getType() == Void.class) {
+                continue;
+            }
+            fields.add(f);
+        }
+        fields.addAll(getAllValidFields(cls.getSuperclass()));
+        return fields;
     }
 
     /**
