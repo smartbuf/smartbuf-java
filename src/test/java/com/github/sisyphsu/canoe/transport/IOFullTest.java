@@ -1,6 +1,6 @@
 package com.github.sisyphsu.canoe.transport;
 
-import com.github.sisyphsu.canoe.Canoe;
+import com.github.sisyphsu.canoe.CodecUtils;
 import com.github.sisyphsu.canoe.node.basic.SymbolNode;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ public class IOFullTest {
         bean.chars = "hello".toCharArray();
         bean.node = SymbolNode.valueOf("HELLO");
         Object result = IOTest.transIO(bean);
-        Bean newBean = Canoe.CODEC.convert(result, Bean.class);
+        Bean newBean = CodecUtils.convert(result, Bean.class);
         assert bean.c == newBean.c;
         assert Arrays.equals(bean.chars, newBean.chars);
         assert Objects.equals(bean.node.value(), newBean.node.value());

@@ -31,8 +31,6 @@ public class MediumTest {
 
     @Test
     public void test() throws Exception {
-
-
         byte[] jsonBytes = MAPPER.writeValueAsBytes(model);
         byte[] pbBytes = model.toUser().toByteArray();
         byte[] packetBytes = CanoePacket.serialize(model);

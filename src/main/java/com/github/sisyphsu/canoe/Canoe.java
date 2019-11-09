@@ -1,8 +1,6 @@
 package com.github.sisyphsu.canoe;
 
-import com.github.sisyphsu.canoe.converter.CodecFactory;
 import com.github.sisyphsu.canoe.exception.CanoeClosedException;
-import com.github.sisyphsu.canoe.node.NodeCodec;
 import com.github.sisyphsu.canoe.reflect.TypeRef;
 import com.github.sisyphsu.canoe.transport.Input;
 import com.github.sisyphsu.canoe.transport.Output;
@@ -19,12 +17,6 @@ import java.io.IOException;
  */
 public final class Canoe {
 
-    public static final CodecFactory CODEC = new CodecFactory();
-
-    static {
-        CODEC.installCodec(NodeCodec.class);
-    }
-
     public Input  input;
     public Output output;
 
@@ -37,7 +29,7 @@ public final class Canoe {
      */
     public Canoe(boolean enableStreamMode) {
         this.input = new Input(enableStreamMode);
-        this.output = new Output(CODEC, enableStreamMode);
+        this.output = new Output(enableStreamMode);
     }
 
     /**
@@ -48,13 +40,12 @@ public final class Canoe {
      * @return Read result
      * @throws IOException if an I/O error occurs.
      */
-    @SuppressWarnings("unchecked")
     public <T> T read(byte[] data, TypeRef<T> tRef) throws IOException {
         if (closed) {
             throw new CanoeClosedException("Canoe is closed");
         }
         Object obj = input.read(data);
-        return (T) CODEC.convert(obj, tRef.getType());
+        return CodecUtils.convert(obj, tRef);
     }
 
     /**
@@ -69,7 +60,7 @@ public final class Canoe {
             throw new CanoeClosedException("Canoe is closed");
         }
         Object obj = input.read(data);
-        return CODEC.convert(obj, tCls);
+        return CodecUtils.convert(obj, tCls);
     }
 
     /**

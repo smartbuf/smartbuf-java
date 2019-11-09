@@ -1,12 +1,9 @@
 package com.github.sisyphsu.canoe.transport;
 
-import com.github.sisyphsu.canoe.converter.CodecFactory;
-import com.github.sisyphsu.canoe.node.NodeCodec;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.RandomUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -22,16 +19,9 @@ import java.util.Date;
  */
 public class OutputTest {
 
-    private CodecFactory factory = CodecFactory.Instance;
-
-    @BeforeEach
-    void setUp() {
-        factory.installCodec(NodeCodec.class);
-    }
-
     @Test
     public void test() throws IOException {
-        Output output = new Output(factory, true);
+        Output output = new Output(true);
 
         assert output.write(null).length == 2;
         assert output.write(BigInteger.valueOf(1000L)).length > 2;

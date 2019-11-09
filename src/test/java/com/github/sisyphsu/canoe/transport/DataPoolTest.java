@@ -1,6 +1,5 @@
 package com.github.sisyphsu.canoe.transport;
 
-import com.github.sisyphsu.canoe.Canoe;
 import com.github.sisyphsu.canoe.exception.InvalidDataException;
 import com.github.sisyphsu.canoe.exception.UnexpectedReadException;
 import com.github.sisyphsu.canoe.node.basic.SymbolNode;
@@ -125,7 +124,7 @@ public class DataPoolTest {
             assert e instanceof InvalidDataException;
         }
 
-        Output output = new Output(Canoe.CODEC, true);
+        Output output = new Output(true);
         byte[] data = output.write(SymbolNode.valueOf("TEST"));
         buf.reset(data);
         buf.readByte(); // ignore head

@@ -1,10 +1,9 @@
 package com.github.sisyphsu.canoe.transport;
 
-import com.github.sisyphsu.canoe.Canoe;
 import com.github.sisyphsu.canoe.Const;
-import com.github.sisyphsu.canoe.exception.UnexpectedReadException;
 import com.github.sisyphsu.canoe.exception.InvalidVersionException;
 import com.github.sisyphsu.canoe.exception.MismatchModeException;
+import com.github.sisyphsu.canoe.exception.UnexpectedReadException;
 import com.github.sisyphsu.canoe.exception.UnexpectedSequenceException;
 import com.github.sisyphsu.canoe.node.basic.BooleanNode;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -228,7 +227,7 @@ public class IOTest {
 
     // exec node -> output -> input -> object
     static Object transIO(Object o) throws IOException {
-        Output output = new Output(Canoe.CODEC, enableCxt);
+        Output output = new Output(enableCxt);
         bytes = output.write(o);
 
         Input input = new Input(enableCxt);

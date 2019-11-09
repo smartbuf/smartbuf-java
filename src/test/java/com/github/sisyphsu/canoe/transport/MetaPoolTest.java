@@ -1,6 +1,5 @@
 package com.github.sisyphsu.canoe.transport;
 
-import com.github.sisyphsu.canoe.Canoe;
 import com.github.sisyphsu.canoe.exception.InvalidStructException;
 import com.github.sisyphsu.canoe.exception.UnexpectedReadException;
 import com.github.sisyphsu.canoe.node.basic.ObjectNode;
@@ -20,13 +19,13 @@ public class MetaPoolTest {
     public void test() {
         OutputMetaPool pool = new OutputMetaPool(16);
         try {
-            pool.registerTmpStruct(null);
+            pool.registerTmpStruct((String[]) null);
             assert false;
         } catch (Exception e) {
             assert e instanceof NullPointerException;
         }
         try {
-            pool.registerCxtStruct(null);
+            pool.registerCxtStruct((String[]) null);
             assert false;
         } catch (Exception e) {
             assert e instanceof NullPointerException;
@@ -153,7 +152,7 @@ public class MetaPoolTest {
             assert e instanceof UnexpectedReadException;
         }
 
-        Output output = new Output(Canoe.CODEC, true);
+        Output output = new Output(true);
         byte[] bytes = output.write(new ObjectNode(true, new String[]{"id", "name"}, new Object[]{1, "hello"}));
 
         buffer.reset(bytes);

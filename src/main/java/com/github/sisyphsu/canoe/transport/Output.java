@@ -1,7 +1,7 @@
 package com.github.sisyphsu.canoe.transport;
 
+import com.github.sisyphsu.canoe.CodecUtils;
 import com.github.sisyphsu.canoe.Type;
-import com.github.sisyphsu.canoe.converter.CodecFactory;
 import com.github.sisyphsu.canoe.converter.ConverterPipeline;
 import com.github.sisyphsu.canoe.node.Node;
 import com.github.sisyphsu.canoe.node.basic.ObjectNode;
@@ -26,9 +26,8 @@ public final class Output {
     public static int SYMBOL_LIMIT = 1 << 16;
     public static int STRUCT_LIMIT = 1 << 16;
 
-    private final boolean      enableStreamMode;
-    private final CodecFactory codecFactory;
-    private final XType<?>     nodeXType;
+    private final boolean  enableStreamMode;
+    private final XType<?> nodeXType;
 
     public final OutputBuffer bodyBuf;
     public final OutputBuffer headBuf;
@@ -41,13 +40,11 @@ public final class Output {
     /**
      * Initialize Output, it is reusable
      *
-     * @param codecFactory     Used for data converting
      * @param enableStreamMode Enable stream-model or not
      */
-    public Output(CodecFactory codecFactory, boolean enableStreamMode) {
-        this.codecFactory = codecFactory;
+    public Output(boolean enableStreamMode) {
         this.enableStreamMode = enableStreamMode;
-        this.nodeXType = this.codecFactory.toXType(Node.class);
+        this.nodeXType = CodecUtils.toXType(Node.class);
         this.bodyBuf = new OutputBuffer(PACKET_LIMIT);
         this.headBuf = new OutputBuffer(PACKET_LIMIT);
         this.dataPool = new OutputDataPool(SYMBOL_LIMIT);
@@ -141,7 +138,7 @@ public final class Output {
             if (data instanceof Node) {
                 node = (Node) data;
             } else {
-                node = codecFactory.convert(data, Node.class);
+                node = CodecUtils.convert(data, Node.class);
             }
             if (node != null) {
                 data = node.value();
@@ -295,7 +292,7 @@ public final class Output {
                     itemType = TYPE_SLICE_UNKNOWN;
                 }
             } else {
-                pipeline = codecFactory.getPipeline(itemCls, Node.class);
+                pipeline = CodecUtils.getPipeline(itemCls, Node.class);
                 node = (Node) pipeline.convert(item, nodeXType);
             }
             if (node != null) {

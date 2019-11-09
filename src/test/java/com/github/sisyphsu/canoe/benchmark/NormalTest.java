@@ -2,8 +2,8 @@ package com.github.sisyphsu.canoe.benchmark;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.sisyphsu.canoe.Canoe;
 import com.github.sisyphsu.canoe.CanoePacket;
+import com.github.sisyphsu.canoe.CodecUtils;
 import com.github.sisyphsu.canoe.node.Node;
 import com.github.sisyphsu.canoe.transport.Output;
 import lombok.AllArgsConstructor;
@@ -36,7 +36,7 @@ public class NormalTest {
     private static ObjectMapper MAPPER = new ObjectMapper();
     private static List<Tag>    tags   = new ArrayList<>();
 
-    static Output output = new Output(Canoe.CODEC, false);
+    static Output output = new Output(false);
 
     static Node node;
 
@@ -44,7 +44,7 @@ public class NormalTest {
         for (int i = 0; i < 16; i++) {
             tags.add(new Tag(i, "Tag" + i));
         }
-        node = Canoe.CODEC.convert(tags, Node.class);
+        node = CodecUtils.convert(tags, Node.class);
     }
 
     @Benchmark

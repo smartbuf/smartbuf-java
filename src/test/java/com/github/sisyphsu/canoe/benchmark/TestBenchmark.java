@@ -1,13 +1,9 @@
 package com.github.sisyphsu.canoe.benchmark;
 
-import com.github.sisyphsu.canoe.Canoe;
-import com.github.sisyphsu.canoe.converter.ConverterPipeline;
-import com.github.sisyphsu.canoe.node.Node;
 import org.apache.commons.lang3.RandomUtils;
 import org.openjdk.jmh.annotations.*;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -21,9 +17,6 @@ import java.util.concurrent.TimeUnit;
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 public class TestBenchmark {
-
-    static ConverterPipeline pipeline = Canoe.CODEC.getPipeline(Date.class, Node.class);
-    static Date              date     = new Date();
 
     static Object[] arr  = new Object[1024];
     static List     list = new ArrayList<>();

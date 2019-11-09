@@ -1,6 +1,6 @@
 package com.github.sisyphsu.canoe.transport;
 
-import com.github.sisyphsu.canoe.Canoe;
+import com.github.sisyphsu.canoe.CodecUtils;
 import com.github.sisyphsu.canoe.exception.UnexpectedReadException;
 import com.github.sisyphsu.canoe.node.array.BooleanArrayNode;
 import com.github.sisyphsu.canoe.node.basic.*;
@@ -12,7 +12,10 @@ import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.OptionalInt;
 
 import static com.github.sisyphsu.canoe.transport.IOTest.enableCxt;
 import static com.github.sisyphsu.canoe.transport.IOTest.transIO;
@@ -190,11 +193,11 @@ public class IOSliceTest {
         result.add(OptionalInt.empty());
 
         enableCxt = true;
-        Object[] arr = Canoe.CODEC.convert(transIO(result), Object[].class);
+        Object[] arr = CodecUtils.convert(transIO(result), Object[].class);
         assert arr.length == result.size();
 
         enableCxt = false;
-        arr = Canoe.CODEC.convert(transIO(result), Object[].class);
+        arr = CodecUtils.convert(transIO(result), Object[].class);
         assert arr.length == result.size();
     }
 
@@ -205,7 +208,7 @@ public class IOSliceTest {
         list.add(true);
         list.add(false);
         list.add(false);
-        Output output = new Output(Canoe.CODEC, true);
+        Output output = new Output(true);
 
         byte[] bytes = output.write(list);
         assert bytes.length == 7;
@@ -233,7 +236,7 @@ public class IOSliceTest {
         list.add(new Bean2(2, "2.2"));
         list.add(new Bean2(3, "2.3"));
 
-        Object[] arr = Canoe.CODEC.convert(transIO(list), Object[].class);
+        Object[] arr = CodecUtils.convert(transIO(list), Object[].class);
         assert arr.length == list.size();
     }
 

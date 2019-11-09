@@ -1,6 +1,6 @@
 package com.github.sisyphsu.canoe.transport;
 
-import com.github.sisyphsu.canoe.Canoe;
+import com.github.sisyphsu.canoe.CodecUtils;
 import com.github.sisyphsu.canoe.node.basic.ObjectNode;
 import com.github.sisyphsu.canoe.node.basic.SymbolNode;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ public class IOExpireTest {
     public void testSymbolExpire() throws IOException {
         Output.SYMBOL_LIMIT = 4;
 
-        Output output = new Output(Canoe.CODEC, true);
+        Output output = new Output(true);
         Input input = new Input(true);
 
         for (int i = 0; i <= Output.SYMBOL_LIMIT + 1; i++) {
@@ -40,7 +40,7 @@ public class IOExpireTest {
     public void testStructExpire() throws IOException {
         Output.STRUCT_LIMIT = 4;
 
-        Output output = new Output(Canoe.CODEC, true);
+        Output output = new Output(true);
         Input input = new Input(true);
 
         for (int i = 0; i <= Output.STRUCT_LIMIT + 1; i++) {
@@ -49,7 +49,7 @@ public class IOExpireTest {
             byte[] data = output.write(node);
             Object obj = input.read(data);
 
-            ObjectNode newNode = Canoe.CODEC.convert(obj, ObjectNode.class);
+            ObjectNode newNode = CodecUtils.convert(obj, ObjectNode.class);
             assert newNode.keys().length == 2;
             assert newNode.values().length == 2;
         }
