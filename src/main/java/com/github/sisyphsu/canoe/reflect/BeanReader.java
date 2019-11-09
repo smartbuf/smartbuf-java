@@ -1,8 +1,6 @@
 package com.github.sisyphsu.canoe.reflect;
 
-import com.github.sisyphsu.canoe.Const;
-
-import java.util.Collection;
+import com.github.sisyphsu.canoe.Type;
 
 /**
  * @author sulin
@@ -15,56 +13,17 @@ public class BeanReader {
     final API         api;
     final BeanField[] fields;
     final String[]    fieldNames;
-    final byte[]      fieldTypes;
+    final Type[]      fieldTypes;
 
     BeanReader(API api, BeanField[] fields) {
         this.api = api;
         this.fields = fields;
         this.fieldNames = new String[fields.length];
-        this.fieldTypes = new byte[fields.length];
+        this.fieldTypes = new Type[fields.length];
         for (int i = 0; i < fields.length; i++) {
             BeanField field = fields[i];
-            this.fieldNames[i] = field.name;
-            byte type = Const.TYPE_UNKNOWN;
-            Class<?> cls = field.type;
-            if (cls == Boolean.class || cls == boolean.class) {
-                type = Const.TYPE_CONST;
-            } else if (cls == Float.class || cls == float.class) {
-                type = Const.TYPE_FLOAT;
-            } else if (cls == Double.class || cls == double.class) {
-                type = Const.TYPE_DOUBLE;
-            } else if (cls == Byte.class || cls == Short.class || cls == Integer.class || cls == Long.class) {
-                type = Const.TYPE_VARINT;
-            } else if (cls == byte.class || cls == short.class || cls == int.class || cls == long.class) {
-                type = Const.TYPE_VARINT;
-            } else if (CharSequence.class.isAssignableFrom(cls)) {
-                type = Const.TYPE_STRING;
-            } else if (Enum.class.isAssignableFrom(cls)) {
-                type = Const.TYPE_SYMBOL;
-            } else if (Collection.class.isAssignableFrom(cls)) {
-                type = Const.TYPE_ARRAY;
-            } else if (cls.isArray()) {
-                if (cls == boolean[].class) {
-                    type = Const.TYPE_NARRAY_BOOL;
-                } else if (cls == byte[].class) {
-                    type = Const.TYPE_NARRAY_BYTE;
-                } else if (cls == short[].class) {
-                    type = Const.TYPE_NARRAY_SHORT;
-                } else if (cls == int[].class) {
-                    type = Const.TYPE_NARRAY_INT;
-                } else if (cls == long[].class) {
-                    type = Const.TYPE_NARRAY_LONG;
-                } else if (cls == float[].class) {
-                    type = Const.TYPE_NARRAY_FLOAT;
-                } else if (cls == double[].class) {
-                    type = Const.TYPE_NARRAY_DOUBLE;
-                } else if (cls == char[].class) {
-                    type = Const.TYPE_STRING;
-                } else {
-                    type = Const.TYPE_ARRAY;
-                }
-            }
-            this.fieldTypes[i] = type;
+            this.fieldNames[i] = field.getName();
+            this.fieldTypes[i] = field.getType();
         }
     }
 
@@ -76,7 +35,7 @@ public class BeanReader {
         return fieldNames;
     }
 
-    public byte[] getFieldTypes() {
+    public Type[] getFieldTypes() {
         return fieldTypes;
     }
 

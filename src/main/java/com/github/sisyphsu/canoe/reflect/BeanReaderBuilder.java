@@ -77,7 +77,7 @@ public final class BeanReaderBuilder {
                 name = (char) (name.charAt(0) + 32) + name.substring(1);
             }
             BeanField field = fieldMap.get(name);
-            if (field != null && field.type == retType) {
+            if (field != null && field.cls == retType) {
                 field.getter = m;
             }
         }

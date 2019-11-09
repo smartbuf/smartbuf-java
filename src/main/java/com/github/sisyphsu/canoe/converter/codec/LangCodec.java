@@ -2,11 +2,10 @@ package com.github.sisyphsu.canoe.converter.codec;
 
 import com.github.sisyphsu.canoe.converter.Codec;
 import com.github.sisyphsu.canoe.converter.Converter;
-import com.github.sisyphsu.canoe.reflect.XField;
-import com.github.sisyphsu.canoe.reflect.XType;
-import net.sf.cglib.beans.BeanMap;
+import com.github.sisyphsu.canoe.reflect.*;
 
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -32,14 +31,46 @@ public final class LangCodec extends Codec {
         } catch (Exception e) {
             throw new IllegalArgumentException("Can't newInstance of " + type.getRawType() + ": ", e);
         }
-        BeanMap bm = BeanMap.create(result);
-        for (Map.Entry<String, XField> entry : type.getFields().entrySet()) {
-            Object data = map.get(entry.getKey());
-            if (data == null) {
+        BeanWriter writer = BeanWriterBuilder.build(type.getRawType());
+        // build values
+        Object[] values = new Object[writer.getFields().length];
+        for (int i = 0, len = writer.getFields().length; i < len; i++) {
+            BeanField field = writer.getFields()[i];
+            Object value = map.get(field.getName());
+            if (value != null) {
+                values[i] = convert(value, type.getField(field.getName()).getType());
                 continue;
             }
-            bm.put(entry.getKey(), convert(data, entry.getValue().getType()));
+            switch (field.getType()) {
+                case Z:
+                    values[i] = false;
+                    break;
+                case B:
+                    values[i] = (byte) 0;
+                    break;
+                case S:
+                    values[i] = (short) 0;
+                    break;
+                case I:
+                    values[i] = 0;
+                    break;
+                case J:
+                    values[i] = (long) 0;
+                    break;
+                case F:
+                    values[i] = (float) 0;
+                    break;
+                case D:
+                    values[i] = (double) 0;
+                    break;
+                case C:
+                    values[i] = (char) 0;
+                    break;
+                default:
+                    values[i] = null;
+            }
         }
+        writer.setValues(result, values);
         return result;
     }
 
@@ -48,7 +79,14 @@ public final class LangCodec extends Codec {
      */
     @Converter(distance = 1 << 24)
     public Map toMap(Object obj) {
-        return BeanMap.create(obj);
+        BeanReader reader = BeanReaderBuilder.build(obj.getClass());
+        Map<String, Object> result = new HashMap<>();
+        String[] names = reader.getFieldNames();
+        Object[] values = reader.getValues(obj);
+        for (int i = 0; i < names.length; i++) {
+            result.put(names[i], values[i]);
+        }
+        return result;
     }
 
     /**

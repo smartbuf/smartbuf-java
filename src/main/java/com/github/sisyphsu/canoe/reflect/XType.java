@@ -111,10 +111,6 @@ public final class XType<T> {
         return fields == null ? null : fields.get(name);
     }
 
-    public Map<String, XField> getFields() {
-        return fields;
-    }
-
     public XType<?> getComponentType() {
         return componentType;
     }

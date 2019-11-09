@@ -1,5 +1,6 @@
 package com.github.sisyphsu.canoe.node;
 
+import com.github.sisyphsu.canoe.Type;
 import com.github.sisyphsu.canoe.converter.Codec;
 import com.github.sisyphsu.canoe.converter.Converter;
 import com.github.sisyphsu.canoe.node.array.*;
@@ -187,9 +188,6 @@ public final class NodeCodec extends Codec {
 
     /**
      * decode ObjectNode to map, expose fields directly.
-     *
-     * @param node ObjectNode
-     * @return Map
      */
     @Converter
     public Map<String, Object> toValue(ObjectNode node) {
@@ -206,9 +204,6 @@ public final class NodeCodec extends Codec {
 
     /**
      * encode map to ObjectNode, pojo should be encoded as map first.
-     *
-     * @param map Map
-     * @return ObjectNode
      */
     @Converter
     public ObjectNode toNode(Map<?, ?> map) {
@@ -242,7 +237,7 @@ public final class NodeCodec extends Codec {
         BeanReader reader = BeanReaderBuilder.build(pojo.getClass());
         String[] names = reader.getFieldNames();
         Object[] values = reader.getValues(pojo);
-        byte[] types = reader.getFieldTypes();
+        Type[] types = reader.getFieldTypes();
         return new ObjectNode(true, names, values, types);
     }
 

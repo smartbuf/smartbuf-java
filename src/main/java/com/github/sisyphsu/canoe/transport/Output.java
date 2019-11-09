@@ -1,5 +1,6 @@
 package com.github.sisyphsu.canoe.transport;
 
+import com.github.sisyphsu.canoe.Type;
 import com.github.sisyphsu.canoe.converter.CodecFactory;
 import com.github.sisyphsu.canoe.converter.ConverterPipeline;
 import com.github.sisyphsu.canoe.node.Node;
@@ -153,14 +154,17 @@ public final class Output {
         this.writeData(type, data);
     }
 
+    /**
+     * Do write data with the specified type
+     */
     void writeData(byte type, Object data) throws IOException {
-        if (data == null) {
-            bodyBuf.writeVarUint(CONST_NULL);
-            return;
-        }
         switch (type) {
             case TYPE_CONST:
-                bodyBuf.writeVarUint(((Boolean) data) ? CONST_TRUE : CONST_FALSE);
+                if (data == null) {
+                    bodyBuf.writeVarUint(CONST_NULL);
+                } else {
+                    bodyBuf.writeVarUint(((Boolean) data) ? CONST_TRUE : CONST_FALSE);
+                }
                 break;
             case TYPE_VARINT:
                 bodyBuf.writeVarUint((dataPool.registerVarint(((Number) data).longValue()) << 3) | TYPE_VARINT);
@@ -230,47 +234,6 @@ public final class Output {
                 break;
             default:
                 throw new IllegalArgumentException("invalid type: " + type);
-        }
-    }
-
-    void writeObjectNode(ObjectNode node) throws IOException {
-        Object[] values = node.values();
-        byte[] types = node.types();
-        for (int i = 0, len = values.length; i < len; i++) {
-            Object value = values[i];
-            byte valueType = types == null ? TYPE_UNKNOWN : types[i];
-            switch (valueType) {
-                case TYPE_CONST:
-                case TYPE_VARINT:
-                case TYPE_FLOAT:
-                case TYPE_DOUBLE:
-                case TYPE_SYMBOL:
-                case TYPE_NARRAY_BOOL:
-                case TYPE_NARRAY_BYTE:
-                case TYPE_NARRAY_SHORT:
-                case TYPE_NARRAY_INT:
-                case TYPE_NARRAY_LONG:
-                case TYPE_NARRAY_FLOAT:
-                case TYPE_NARRAY_DOUBLE:
-                    this.writeData(valueType, value);
-                    break;
-                case TYPE_STRING:
-                    if (value instanceof char[]) {
-                        this.writeData(valueType, new String((char[]) value));
-                    } else {
-                        this.writeData(valueType, value);
-                    }
-                    break;
-                case TYPE_ARRAY:
-                    if (value instanceof Object[]) {
-                        this.writeData(valueType, Arrays.asList((Object[]) value));
-                    } else {
-                        this.writeData(valueType, value);
-                    }
-                    break;
-                default:
-                    this.writeObject(value);
-            }
         }
     }
 
@@ -463,6 +426,86 @@ public final class Output {
             bodyBuf.writeShort((short) (len << 5 | type << 1 | (hasMore ? 0b0000_0001 : 0)));
         }
         bodyBuf.offset = tmp;
+    }
+
+    /**
+     * Write the specified ObjectNode into output buffer
+     */
+    private void writeObjectNode(ObjectNode node) throws IOException {
+        Object[] values = node.values();
+        Type[] types = node.types();
+        for (int i = 0, len = values.length; i < len; i++) {
+            Object value = values[i];
+            if (value == null) {
+                this.writeData(TYPE_CONST, null);
+                continue;
+            }
+            switch (types == null ? Type.UNKNOWN : types[i]) {
+                case Z:
+                case BOOL:
+                    this.writeData(TYPE_CONST, value);
+                    break;
+                case B:
+                case BYTE:
+                case S:
+                case SHORT:
+                case I:
+                case INTEGER:
+                case J:
+                case LONG:
+                    this.writeData(TYPE_VARINT, value);
+                    break;
+                case F:
+                case FLOAT:
+                    this.writeData(TYPE_FLOAT, value);
+                    break;
+                case D:
+                case DOUBLE:
+                    this.writeData(TYPE_DOUBLE, value);
+                    break;
+                case C:
+                case CHAR:
+                case STRING:
+                    this.writeData(TYPE_STRING, value);
+                    break;
+                case ENUM:
+                    this.writeData(TYPE_SYMBOL, ((Enum) value).name());
+                    break;
+                case ARRAY_BOOL:
+                    this.writeData(TYPE_NARRAY_BOOL, value);
+                    break;
+                case ARRAY_BYTE:
+                    this.writeData(TYPE_NARRAY_BYTE, value);
+                    break;
+                case ARRAY_SHORT:
+                    this.writeData(TYPE_NARRAY_SHORT, value);
+                    break;
+                case ARRAY_INT:
+                    this.writeData(TYPE_NARRAY_INT, value);
+                    break;
+                case ARRAY_LONG:
+                    this.writeData(TYPE_NARRAY_LONG, value);
+                    break;
+                case ARRAY_FLOAT:
+                    this.writeData(TYPE_NARRAY_FLOAT, value);
+                    break;
+                case ARRAY_DOUBLE:
+                    this.writeData(TYPE_NARRAY_DOUBLE, value);
+                    break;
+                case ARRAY_CHAR:
+                    this.writeData(TYPE_STRING, new String((char[]) value));
+                    break;
+                case ARRAY:
+                    this.writeData(TYPE_ARRAY, Arrays.asList((Object[]) value));
+                    break;
+                case COLLECTION:
+                    this.writeData(TYPE_ARRAY, value);
+                    break;
+                case UNKNOWN:
+                    this.writeObject(value);
+                    break;
+            }
+        }
     }
 
 }

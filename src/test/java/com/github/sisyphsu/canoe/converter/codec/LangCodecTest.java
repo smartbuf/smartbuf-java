@@ -72,8 +72,8 @@ public class LangCodecTest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Pojo {
-        private long id;
-        private String name;
+        private long        id;
+        private String      name;
         private Set<Double> scores;
     }
 

@@ -1,6 +1,7 @@
 package com.github.sisyphsu.canoe.node.basic;
 
 import com.github.sisyphsu.canoe.Const;
+import com.github.sisyphsu.canoe.Type;
 import com.github.sisyphsu.canoe.node.Node;
 
 /**
@@ -16,7 +17,7 @@ public final class ObjectNode extends Node {
     private final boolean  stable;
     private final String[] keys;
     private final Object[] fields;
-    private final byte[]   types;
+    private final Type[]   types;
 
     public ObjectNode(boolean stable, String[] keys, Object[] values) {
         this.stable = stable;
@@ -25,7 +26,7 @@ public final class ObjectNode extends Node {
         this.types = null;
     }
 
-    public ObjectNode(boolean stable, String[] keys, Object[] values, byte[] types) {
+    public ObjectNode(boolean stable, String[] keys, Object[] values, Type[] types) {
         this.stable = stable;
         this.keys = keys;
         this.fields = values;
@@ -44,7 +45,7 @@ public final class ObjectNode extends Node {
         return fields;
     }
 
-    public byte[] types() {
+    public Type[] types() {
         return types;
     }
 

@@ -67,7 +67,7 @@ public final class BeanWriterBuilder {
                 name = name.substring(3);
             }
             BeanField field = fieldMap.get(name);
-            if (field != null && field.type == m.getParameterTypes()[0]) {
+            if (field != null && field.cls == m.getParameterTypes()[0]) {
                 field.setter = m;
             }
         }
