@@ -6,6 +6,8 @@ import com.github.sisyphsu.smartbuf.node.NodeType;
 import java.util.Collection;
 
 /**
+ * ArrayNode represents unknown data's array
+ *
  * @author sulin
  * @since 2019-11-03 14:54:55
  */

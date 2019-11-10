@@ -3,7 +3,7 @@ package com.github.sisyphsu.smartbuf.exception;
 import java.io.IOException;
 
 /**
- * Exception that indicate Input run into some unexpected data.
+ * UnexpectedReadException indicates Input run into some unexpected data.
  *
  * @author sulin
  * @since 2019-10-22 17:10:07

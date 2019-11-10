@@ -138,6 +138,31 @@ public class DataPoolTest {
         } catch (Exception e) {
             assert e instanceof InvalidDataException;
         }
+
+        try {
+            pool.getFloat(10000);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof InvalidDataException;
+        }
+        try {
+            pool.getDouble(10000);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof InvalidDataException;
+        }
+        try {
+            pool.getVarint(10000);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof InvalidDataException;
+        }
+        try {
+            pool.getString(10000);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof InvalidDataException;
+        }
     }
 
 }

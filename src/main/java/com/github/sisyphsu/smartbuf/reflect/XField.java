@@ -3,7 +3,7 @@ package com.github.sisyphsu.smartbuf.reflect;
 import java.lang.reflect.Field;
 
 /**
- * XField represent a field of class, with clear generic type.
+ * XField represents a field of class, with clear generic type.
  *
  * @author sulin
  * @since 2019-07-15 20:42:17

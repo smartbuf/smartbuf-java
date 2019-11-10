@@ -13,7 +13,7 @@ import static com.github.sisyphsu.smartbuf.transport.Const.*;
  * @author sulin
  * @since 2019-10-14 11:00:08
  */
-public final class InputDataPool {
+final class InputDataPool {
 
     private final Array<Float>  floats  = new Array<>();
     private final Array<Double> doubles = new Array<>();
@@ -75,45 +75,68 @@ public final class InputDataPool {
         }
     }
 
-    public float getFloat(int index) {
+    /**
+     * Find a float data by its unique ID
+     */
+    public float getFloat(int index) throws InvalidDataException {
         if (index == 1) {
             return 0f;
         }
-        return floats.get(index - 2);
+        try {
+            return floats.get(index - 2);
+        } catch (Exception e) {
+            throw new InvalidDataException("invalid float id: " + index);
+        }
     }
 
-    public double getDouble(int index) {
+    /**
+     * Find a double data by its unique ID
+     */
+    public double getDouble(int index) throws InvalidDataException {
         if (index == 1) {
             return 0.0;
         }
-        return doubles.get(index - 2);
+        try {
+            return doubles.get(index - 2);
+        } catch (Exception e) {
+            throw new InvalidDataException("invalid double id: " + index);
+        }
     }
 
-    public long getVarint(int index) {
+    /**
+     * Find a varint data by its unique ID
+     */
+    public long getVarint(int index) throws InvalidDataException {
         if (index == 1) {
             return 0L;
         }
-        return varints.get(index - 2);
+        try {
+            return varints.get(index - 2);
+        } catch (Exception e) {
+            throw new InvalidDataException("invalid varint id: " + index);
+        }
     }
 
     /**
-     * Find the specified string by its unique ID
-     *
-     * @param id String's unique ID
-     * @return String's value
+     * Find an string data by its unique ID
      */
-    public String getString(int id) {
+    public String getString(int id) throws InvalidDataException {
         if (id == 1) {
             return "";
         }
-        return strings.get(id - 2);
+        String str = null;
+        try {
+            str = strings.get(id - 2);
+        } catch (Exception ignored) {
+        }
+        if (str == null) {
+            throw new InvalidDataException("invalid string id: " + id);
+        }
+        return str;
     }
 
     /**
-     * Find the specified symbol by its unique ID
-     *
-     * @param id Symbol's unique ID
-     * @return Symbol's value
+     * Find an symbol data by its unique ID
      */
     public String getSymbol(int id) throws InvalidDataException {
         int dataId = id - 1;
@@ -127,6 +150,9 @@ public final class InputDataPool {
         return symbol;
     }
 
+    /**
+     * reset this pool, but don't clean symbols
+     */
     public void reset() {
         this.floats.clear();
         this.doubles.clear();

@@ -3,7 +3,7 @@ package com.github.sisyphsu.smartbuf.exception;
 import java.io.IOException;
 
 /**
- * Exception that indicate the sequence of input data is unexpected,
+ * UnexpectedSequenceException indicates the sequence of input data is unexpected,
  * Maybe packet-lost occured, in this case, should reset all input&output context.
  *
  * @author sulin

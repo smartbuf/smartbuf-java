@@ -4,6 +4,8 @@ import com.github.sisyphsu.smartbuf.node.Node;
 import com.github.sisyphsu.smartbuf.node.NodeType;
 
 /**
+ * LongArrayNode represents long[]
+ *
  * @author sulin
  * @since 2019-11-03 14:47:09
  */

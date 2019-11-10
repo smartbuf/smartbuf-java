@@ -3,7 +3,7 @@ package com.github.sisyphsu.smartbuf.exception;
 import java.io.IOException;
 
 /**
- * Exception that indicate the `mode` flag didn't match between input and output.
+ * MismatchModeException indicates the `mode` flag didn't match between input and output.
  *
  * @author sulin
  * @since 2019-10-22 16:49:56

@@ -3,7 +3,7 @@ package com.github.sisyphsu.smartbuf.exception;
 import java.io.IOException;
 
 /**
- * OutOfSpaceException represents that the data to write is too big to handle.
+ * OutOfSpaceException indicates that the data to write is too big to handle.
  *
  * @author sulin
  * @since 2019-10-27 15:55:25

@@ -8,6 +8,8 @@ import java.io.IOException;
 import static com.github.sisyphsu.smartbuf.transport.Const.*;
 
 /**
+ * InputMetaPool holds the state of input's metadata, it maintains all temporary and context structs.
+ *
  * @author sulin
  * @since 2019-11-04 17:29:53
  */
@@ -89,10 +91,7 @@ public final class InputMetaPool {
     }
 
     /**
-     * Find the specified struct's fields by its unique id
-     *
-     * @param id Struct's unique ID
-     * @return Struct's fields
+     * Find an struct by its unique id
      */
     public String[] findStructByID(int id) throws InvalidStructException {
         if (id == 0) {
@@ -118,6 +117,9 @@ public final class InputMetaPool {
         return struct;
     }
 
+    /**
+     * Reset this pool, but don't clean context structs
+     */
     public void reset() {
         this.tmpNames.clear();
         this.tmpStructs.clear();

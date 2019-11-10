@@ -3,7 +3,7 @@ package com.github.sisyphsu.smartbuf.exception;
 import java.io.IOException;
 
 /**
- * Exception that indicate the specified data has an invalid version
+ * InvalidVersionException indicates the specified data has an invalid version
  *
  * @author sulin
  * @since 2019-10-22 17:17:44

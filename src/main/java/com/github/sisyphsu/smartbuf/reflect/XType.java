@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * XType represent an clear Java type with raw class and its generic types.
+ * XType represents an clear Java type with raw class and its generic types.
  * <p>
  * There has stop-class concept, which will not be.
  *

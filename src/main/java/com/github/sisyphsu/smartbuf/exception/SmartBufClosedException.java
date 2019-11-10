@@ -3,7 +3,7 @@ package com.github.sisyphsu.smartbuf.exception;
 import java.io.IOException;
 
 /**
- * SmartBufClosedException represents the closed SmartBuf instance are reused.
+ * SmartBufClosedException indicates the closed SmartBuf instance are reused.
  *
  * @author sulin
  * @since 2019-10-28 17:22:11

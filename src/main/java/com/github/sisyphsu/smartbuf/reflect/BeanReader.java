@@ -3,6 +3,8 @@ package com.github.sisyphsu.smartbuf.reflect;
 import com.github.sisyphsu.smartbuf.Type;
 
 /**
+ * BeanReader provides
+ *
  * @author sulin
  * @since 2019-11-08 18:01:40
  */

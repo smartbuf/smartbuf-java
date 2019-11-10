@@ -4,6 +4,8 @@ import com.github.sisyphsu.smartbuf.node.Node;
 import com.github.sisyphsu.smartbuf.node.NodeType;
 
 /**
+ * IntArrayNode represents int[]
+ *
  * @author sulin
  * @since 2019-11-03 14:46:58
  */

@@ -8,8 +8,14 @@ package com.github.sisyphsu.smartbuf.node;
  */
 public abstract class Node {
 
+    /**
+     * Get this Node's value
+     */
     public abstract Object value();
 
+    /**
+     * Get this Node's datatype
+     */
     public abstract NodeType type();
 
 }
