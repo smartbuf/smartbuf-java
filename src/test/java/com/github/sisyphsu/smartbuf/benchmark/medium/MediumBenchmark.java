@@ -1,8 +1,8 @@
 package com.github.sisyphsu.smartbuf.benchmark.medium;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.sisyphsu.smartbuf.CanoePacket;
-import com.github.sisyphsu.smartbuf.CanoeStream;
+import com.github.sisyphsu.smartbuf.SmartPacket;
+import com.github.sisyphsu.smartbuf.SmartStream;
 import org.openjdk.jmh.annotations.*;
 
 import java.util.concurrent.TimeUnit;
@@ -26,7 +26,7 @@ public class MediumBenchmark {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final UserModel    USER   = UserModel.random();
-    private static final CanoeStream  STREAM = new CanoeStream();
+    private static final SmartStream  STREAM = new SmartStream();
 
     @Benchmark
     public void json() throws Exception {
@@ -40,7 +40,7 @@ public class MediumBenchmark {
 
     @Benchmark
     public void packet() throws Exception {
-        CanoePacket.serialize(USER);
+        SmartPacket.serialize(USER);
     }
 
     @Benchmark

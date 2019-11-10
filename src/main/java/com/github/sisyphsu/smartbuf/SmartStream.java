@@ -5,24 +5,24 @@ import com.github.sisyphsu.smartbuf.reflect.TypeRef;
 import java.io.IOException;
 
 /**
- * CanoeStream provides an easy way to use "canoe" protocol in stream-mode,
- * It's similar to {@link CanoePacket}, but support the context concept.
+ * SmartStream provides an easy way to use "smartbuf" protocol in stream-mode,
+ * It's similar to {@link SmartPacket}, but support the context concept.
  * <p>
- * CanoeStream is not thread-safe, you have to use it in single thread and orderly.
+ * SmartStream is not thread-safe, you have to use it in single thread and orderly.
  * Otherwise, it will go into error.
  *
  * @author sulin
  * @since 2019-10-25 14:40:52
  */
-public final class CanoeStream {
+public final class SmartStream {
 
-    public Canoe canoe;
+    public SmartBuf buf;
 
     /**
-     * Initialize CanoeStream
+     * Initialize SmartStream
      */
-    public CanoeStream() {
-        this.canoe = new Canoe(true);
+    public SmartStream() {
+        this.buf = new SmartBuf(true);
     }
 
     /**
@@ -33,7 +33,7 @@ public final class CanoeStream {
      * @throws IOException if an I/O error occurs.
      */
     public byte[] serialize(Object obj) throws IOException {
-        return canoe.write(obj);
+        return buf.write(obj);
     }
 
     /**
@@ -46,7 +46,7 @@ public final class CanoeStream {
      * @throws IOException if an I/O error occurs.
      */
     public <T> T deserialize(byte[] data, Class<T> tClz) throws IOException {
-        return canoe.read(data, tClz);
+        return buf.read(data, tClz);
     }
 
     /**
@@ -60,14 +60,14 @@ public final class CanoeStream {
      * @throws IOException if an I/O error occurs.
      */
     public <T> T deserialize(byte[] data, TypeRef<T> tRef) throws IOException {
-        return canoe.read(data, tRef);
+        return buf.read(data, tRef);
     }
 
     /**
-     * Close this instance, would close the underlying canoe instance.
+     * Close this instance, would close the underlying SmartBuf instance.
      */
     public void close() {
-        canoe.close();
+        buf.close();
     }
 
 }

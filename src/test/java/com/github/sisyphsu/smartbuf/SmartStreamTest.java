@@ -1,6 +1,6 @@
 package com.github.sisyphsu.smartbuf;
 
-import com.github.sisyphsu.smartbuf.exception.CanoeClosedException;
+import com.github.sisyphsu.smartbuf.exception.SmartBufClosedException;
 import com.github.sisyphsu.smartbuf.reflect.TypeRef;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
@@ -14,10 +14,10 @@ import java.util.concurrent.atomic.*;
  * @author sulin
  * @since 2019-10-28 17:16:46
  */
-public class CanoeStreamTest {
+public class SmartStreamTest {
 
     byte[]      data;
-    CanoeStream stream = new CanoeStream();
+    SmartStream stream = new SmartStream();
 
     @Test
     public void testSimple() throws IOException {
@@ -146,7 +146,7 @@ public class CanoeStreamTest {
 
     @Test
     public void testClose() throws IOException {
-        CanoeStream stream = new CanoeStream();
+        SmartStream stream = new SmartStream();
 
         byte[] bytes = stream.serialize(null);
         assert stream.deserialize(bytes, Object.class) == null;
@@ -156,14 +156,14 @@ public class CanoeStreamTest {
             stream.serialize(null);
             assert false;
         } catch (Exception e) {
-            assert e instanceof CanoeClosedException;
+            assert e instanceof SmartBufClosedException;
         }
 
         try {
             stream.deserialize(bytes, Object.class);
             assert false;
         } catch (Exception e) {
-            assert e instanceof CanoeClosedException;
+            assert e instanceof SmartBufClosedException;
         }
 
         try {
@@ -171,7 +171,7 @@ public class CanoeStreamTest {
             });
             assert false;
         } catch (Exception e) {
-            assert e instanceof CanoeClosedException;
+            assert e instanceof SmartBufClosedException;
         }
 
         stream.close();

@@ -5,7 +5,7 @@ import com.github.sisyphsu.smartbuf.reflect.TypeRef;
 import java.io.IOException;
 
 /**
- * CanoePacket provides an easy way to use `canoe` in packet-mode.
+ * SmartPacket provides an easy way to use `smartbuf` in packet-mode.
  * <p>
  * In packet-mode, you can serialize any object into byte[],
  * and deserialize byte[] into the specified object directly,
@@ -21,11 +21,11 @@ import java.io.IOException;
  * @author sulin
  * @since 2019-10-25 17:08:04
  */
-public final class CanoePacket {
+public final class SmartPacket {
 
-    static final ThreadLocal<Canoe> CANOE_LOCAL = new ThreadLocal<>();
+    private static final ThreadLocal<SmartBuf> SMART_BUF_LOCAL = new ThreadLocal<>();
 
-    private CanoePacket() {
+    private SmartPacket() {
     }
 
     /**
@@ -36,8 +36,8 @@ public final class CanoePacket {
      * @throws IOException if an I/O error occurs.
      */
     public static byte[] serialize(Object obj) throws IOException {
-        Canoe canoe = getLocalCanoe();
-        return canoe.write(obj);
+        SmartBuf buf = getLocalBuf();
+        return buf.write(obj);
     }
 
     /**
@@ -50,8 +50,8 @@ public final class CanoePacket {
      * @throws IOException if an I/O error occurs.
      */
     public static <T> T deserialize(byte[] data, Class<T> clz) throws IOException {
-        Canoe canoe = getLocalCanoe();
-        return canoe.read(data, clz);
+        SmartBuf buf = getLocalBuf();
+        return buf.read(data, clz);
     }
 
     /**
@@ -65,18 +65,18 @@ public final class CanoePacket {
      * @throws IOException if an I/O error occurs.
      */
     public static <T> T deserialize(byte[] data, TypeRef<T> ref) throws IOException {
-        Canoe canoe = getLocalCanoe();
-        return canoe.read(data, ref);
+        SmartBuf buf = getLocalBuf();
+        return buf.read(data, ref);
     }
 
-    // fetch the shared canoe in the current thread
-    private static Canoe getLocalCanoe() {
-        Canoe canoe = CANOE_LOCAL.get();
-        if (canoe == null) {
-            canoe = new Canoe(false);
-            CANOE_LOCAL.set(canoe);
+    // fetch the shared SmartBuf in the current thread
+    private static SmartBuf getLocalBuf() {
+        SmartBuf buf = SMART_BUF_LOCAL.get();
+        if (buf == null) {
+            buf = new SmartBuf(false);
+            SMART_BUF_LOCAL.set(buf);
         }
-        return canoe;
+        return buf;
     }
 
 }

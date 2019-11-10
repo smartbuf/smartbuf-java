@@ -30,11 +30,6 @@ public class TestBenchmark {
 
     @Benchmark
     public void test() {
-//        schema.reset(); // 4ns
-//        Canoe.CODEC.toXType(Node.class); // 3ns
-
-//        pipeline.convert(date, Canoe.CODEC.toXType(Node.class)); // 44ns
-//        VarintNode.valueOf(date.getTime()); // 1.3ns
         Class<?> prevCls = null;
         Class<?> currCls = null;
         int i = 0;

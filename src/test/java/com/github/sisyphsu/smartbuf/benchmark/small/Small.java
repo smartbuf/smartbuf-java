@@ -15,7 +15,7 @@ public final class Small {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface UserOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:com.github.sisyphsu.canoe.benchmark.small.User)
+      // @@protoc_insertion_point(interface_extends:com.github.sisyphsu.smartbuf.benchmark.small.User)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -73,11 +73,11 @@ public final class Small {
     long getCreateTime();
   }
   /**
-   * Protobuf type {@code com.github.sisyphsu.canoe.benchmark.small.User}
+   * Protobuf type {@code com.github.sisyphsu.smartbuf.benchmark.small.User}
    */
   public  static final class User extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:com.github.sisyphsu.canoe.benchmark.small.User)
+      // @@protoc_insertion_point(message_implements:com.github.sisyphsu.smartbuf.benchmark.small.User)
       UserOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use User.newBuilder() to construct.
@@ -177,13 +177,13 @@ public final class Small {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return com.github.sisyphsu.smartbuf.benchmark.small.Small.internal_static_com_github_sisyphsu_canoe_benchmark_small_User_descriptor;
+      return com.github.sisyphsu.smartbuf.benchmark.small.Small.internal_static_com_github_sisyphsu_smartbuf_benchmark_small_User_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return com.github.sisyphsu.smartbuf.benchmark.small.Small.internal_static_com_github_sisyphsu_canoe_benchmark_small_User_fieldAccessorTable
+      return com.github.sisyphsu.smartbuf.benchmark.small.Small.internal_static_com_github_sisyphsu_smartbuf_benchmark_small_User_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               com.github.sisyphsu.smartbuf.benchmark.small.Small.User.class, com.github.sisyphsu.smartbuf.benchmark.small.Small.User.Builder.class);
     }
@@ -535,26 +535,26 @@ public final class Small {
       return builder;
     }
     /**
-     * Protobuf type {@code com.github.sisyphsu.canoe.benchmark.small.User}
+     * Protobuf type {@code com.github.sisyphsu.smartbuf.benchmark.small.User}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:com.github.sisyphsu.canoe.benchmark.small.User)
+        // @@protoc_insertion_point(builder_implements:com.github.sisyphsu.smartbuf.benchmark.small.User)
         com.github.sisyphsu.smartbuf.benchmark.small.Small.UserOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return com.github.sisyphsu.smartbuf.benchmark.small.Small.internal_static_com_github_sisyphsu_canoe_benchmark_small_User_descriptor;
+        return com.github.sisyphsu.smartbuf.benchmark.small.Small.internal_static_com_github_sisyphsu_smartbuf_benchmark_small_User_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return com.github.sisyphsu.smartbuf.benchmark.small.Small.internal_static_com_github_sisyphsu_canoe_benchmark_small_User_fieldAccessorTable
+        return com.github.sisyphsu.smartbuf.benchmark.small.Small.internal_static_com_github_sisyphsu_smartbuf_benchmark_small_User_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 com.github.sisyphsu.smartbuf.benchmark.small.Small.User.class, com.github.sisyphsu.smartbuf.benchmark.small.Small.User.Builder.class);
       }
 
-      // Construct using com.github.sisyphsu.canoe.benchmark.small.Small.User.newBuilder()
+      // Construct using com.github.sisyphsu.smartbuf.benchmark.small.Small.User.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -592,7 +592,7 @@ public final class Small {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return com.github.sisyphsu.smartbuf.benchmark.small.Small.internal_static_com_github_sisyphsu_canoe_benchmark_small_User_descriptor;
+        return com.github.sisyphsu.smartbuf.benchmark.small.Small.internal_static_com_github_sisyphsu_smartbuf_benchmark_small_User_descriptor;
       }
 
       @java.lang.Override
@@ -1033,10 +1033,10 @@ public final class Small {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:com.github.sisyphsu.canoe.benchmark.small.User)
+      // @@protoc_insertion_point(builder_scope:com.github.sisyphsu.smartbuf.benchmark.small.User)
     }
 
-    // @@protoc_insertion_point(class_scope:com.github.sisyphsu.canoe.benchmark.small.User)
+    // @@protoc_insertion_point(class_scope:com.github.sisyphsu.smartbuf.benchmark.small.User)
     private static final com.github.sisyphsu.smartbuf.benchmark.small.Small.User DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new com.github.sisyphsu.smartbuf.benchmark.small.Small.User();
@@ -1074,10 +1074,10 @@ public final class Small {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_com_github_sisyphsu_canoe_benchmark_small_User_descriptor;
+    internal_static_com_github_sisyphsu_smartbuf_benchmark_small_User_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_com_github_sisyphsu_canoe_benchmark_small_User_fieldAccessorTable;
+      internal_static_com_github_sisyphsu_smartbuf_benchmark_small_User_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -1087,22 +1087,22 @@ public final class Small {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n$src/test/resources/proto/small.proto\022)" +
-      "com.github.sisyphsu.canoe.benchmark.smal" +
-      "l\"~\n\004User\022\n\n\002id\030\001 \001(\003\022\017\n\007blocked\030\002 \001(\010\022\020" +
-      "\n\010nickname\030\003 \001(\t\022\020\n\010portrait\030\004 \001(\t\022\r\n\005sc" +
-      "ore\030\005 \001(\002\022\022\n\nloginTimes\030\006 \001(\005\022\022\n\ncreateT" +
-      "ime\030\007 \001(\003b\006proto3"
+      "\n$src/test/resources/proto/small.proto\022," +
+      "com.github.sisyphsu.smartbuf.benchmark.s" +
+      "mall\"~\n\004User\022\n\n\002id\030\001 \001(\003\022\017\n\007blocked\030\002 \001(" +
+      "\010\022\020\n\010nickname\030\003 \001(\t\022\020\n\010portrait\030\004 \001(\t\022\r\n" +
+      "\005score\030\005 \001(\002\022\022\n\nloginTimes\030\006 \001(\005\022\022\n\ncrea" +
+      "teTime\030\007 \001(\003b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         });
-    internal_static_com_github_sisyphsu_canoe_benchmark_small_User_descriptor =
+    internal_static_com_github_sisyphsu_smartbuf_benchmark_small_User_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_com_github_sisyphsu_canoe_benchmark_small_User_fieldAccessorTable = new
+    internal_static_com_github_sisyphsu_smartbuf_benchmark_small_User_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_com_github_sisyphsu_canoe_benchmark_small_User_descriptor,
+        internal_static_com_github_sisyphsu_smartbuf_benchmark_small_User_descriptor,
         new java.lang.String[] { "Id", "Blocked", "Nickname", "Portrait", "Score", "LoginTimes", "CreateTime", });
   }
 

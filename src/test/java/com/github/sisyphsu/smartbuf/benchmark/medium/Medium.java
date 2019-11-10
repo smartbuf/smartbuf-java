@@ -15,7 +15,7 @@ public final class Medium {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface UserOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:com.github.sisyphsu.canoe.benchmark.medium.User)
+      // @@protoc_insertion_point(interface_extends:com.github.sisyphsu.smartbuf.benchmark.medium.User)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -127,59 +127,59 @@ public final class Medium {
     long getCreateTime();
 
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
      */
-    java.util.List<com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message>
+    java.util.List<com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message> 
         getMsgsList();
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
      */
     com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message getMsgs(int index);
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
      */
     int getMsgsCount();
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
      */
-    java.util.List<? extends com.github.sisyphsu.smartbuf.benchmark.medium.Medium.MessageOrBuilder>
+    java.util.List<? extends com.github.sisyphsu.smartbuf.benchmark.medium.Medium.MessageOrBuilder> 
         getMsgsOrBuilderList();
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
      */
     com.github.sisyphsu.smartbuf.benchmark.medium.Medium.MessageOrBuilder getMsgsOrBuilder(
         int index);
 
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
      */
-    java.util.List<com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag>
+    java.util.List<com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag> 
         getTagsList();
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
      */
     com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag getTags(int index);
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
      */
     int getTagsCount();
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
      */
-    java.util.List<? extends com.github.sisyphsu.smartbuf.benchmark.medium.Medium.TagOrBuilder>
+    java.util.List<? extends com.github.sisyphsu.smartbuf.benchmark.medium.Medium.TagOrBuilder> 
         getTagsOrBuilderList();
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
      */
     com.github.sisyphsu.smartbuf.benchmark.medium.Medium.TagOrBuilder getTagsOrBuilder(
         int index);
   }
   /**
-   * Protobuf type {@code com.github.sisyphsu.canoe.benchmark.medium.User}
+   * Protobuf type {@code com.github.sisyphsu.smartbuf.benchmark.medium.User}
    */
   public  static final class User extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:com.github.sisyphsu.canoe.benchmark.medium.User)
+      // @@protoc_insertion_point(message_implements:com.github.sisyphsu.smartbuf.benchmark.medium.User)
       UserOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use User.newBuilder() to construct.
@@ -342,13 +342,13 @@ public final class Medium {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_canoe_benchmark_medium_User_descriptor;
+      return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_User_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_canoe_benchmark_medium_User_fieldAccessorTable
+      return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_User_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               com.github.sisyphsu.smartbuf.benchmark.medium.Medium.User.class, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.User.Builder.class);
     }
@@ -613,70 +613,70 @@ public final class Medium {
       return createTime_;
     }
 
-    public static final int                                                              MSGS_FIELD_NUMBER = 20;
+    public static final int MSGS_FIELD_NUMBER = 20;
     private java.util.List<com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message> msgs_;
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
      */
     public java.util.List<com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message> getMsgsList() {
       return msgs_;
     }
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
      */
-    public java.util.List<? extends com.github.sisyphsu.smartbuf.benchmark.medium.Medium.MessageOrBuilder>
+    public java.util.List<? extends com.github.sisyphsu.smartbuf.benchmark.medium.Medium.MessageOrBuilder> 
         getMsgsOrBuilderList() {
       return msgs_;
     }
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
      */
     public int getMsgsCount() {
       return msgs_.size();
     }
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
      */
     public com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message getMsgs(int index) {
       return msgs_.get(index);
     }
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
      */
     public com.github.sisyphsu.smartbuf.benchmark.medium.Medium.MessageOrBuilder getMsgsOrBuilder(
         int index) {
       return msgs_.get(index);
     }
 
-    public static final int                                                          TAGS_FIELD_NUMBER = 21;
+    public static final int TAGS_FIELD_NUMBER = 21;
     private java.util.List<com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag> tags_;
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
      */
     public java.util.List<com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag> getTagsList() {
       return tags_;
     }
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
      */
-    public java.util.List<? extends com.github.sisyphsu.smartbuf.benchmark.medium.Medium.TagOrBuilder>
+    public java.util.List<? extends com.github.sisyphsu.smartbuf.benchmark.medium.Medium.TagOrBuilder> 
         getTagsOrBuilderList() {
       return tags_;
     }
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
      */
     public int getTagsCount() {
       return tags_.size();
     }
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
      */
     public com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag getTags(int index) {
       return tags_.get(index);
     }
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
      */
     public com.github.sisyphsu.smartbuf.benchmark.medium.Medium.TagOrBuilder getTagsOrBuilder(
         int index) {
@@ -998,26 +998,26 @@ public final class Medium {
       return builder;
     }
     /**
-     * Protobuf type {@code com.github.sisyphsu.canoe.benchmark.medium.User}
+     * Protobuf type {@code com.github.sisyphsu.smartbuf.benchmark.medium.User}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:com.github.sisyphsu.canoe.benchmark.medium.User)
+        // @@protoc_insertion_point(builder_implements:com.github.sisyphsu.smartbuf.benchmark.medium.User)
         com.github.sisyphsu.smartbuf.benchmark.medium.Medium.UserOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_canoe_benchmark_medium_User_descriptor;
+        return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_User_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_canoe_benchmark_medium_User_fieldAccessorTable
+        return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_User_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 com.github.sisyphsu.smartbuf.benchmark.medium.Medium.User.class, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.User.Builder.class);
       }
 
-      // Construct using com.github.sisyphsu.canoe.benchmark.medium.Medium.User.newBuilder()
+      // Construct using com.github.sisyphsu.smartbuf.benchmark.medium.Medium.User.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1081,7 +1081,7 @@ public final class Medium {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_canoe_benchmark_medium_User_descriptor;
+        return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_User_descriptor;
       }
 
       @java.lang.Override
@@ -1940,7 +1940,7 @@ public final class Medium {
           com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message.Builder, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.MessageOrBuilder> msgsBuilder_;
 
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
        */
       public java.util.List<com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message> getMsgsList() {
         if (msgsBuilder_ == null) {
@@ -1950,7 +1950,7 @@ public final class Medium {
         }
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
        */
       public int getMsgsCount() {
         if (msgsBuilder_ == null) {
@@ -1960,7 +1960,7 @@ public final class Medium {
         }
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
        */
       public com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message getMsgs(int index) {
         if (msgsBuilder_ == null) {
@@ -1970,7 +1970,7 @@ public final class Medium {
         }
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
        */
       public Builder setMsgs(
           int index, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message value) {
@@ -1987,7 +1987,7 @@ public final class Medium {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
        */
       public Builder setMsgs(
           int index, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message.Builder builderForValue) {
@@ -2001,7 +2001,7 @@ public final class Medium {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
        */
       public Builder addMsgs(com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message value) {
         if (msgsBuilder_ == null) {
@@ -2017,7 +2017,7 @@ public final class Medium {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
        */
       public Builder addMsgs(
           int index, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message value) {
@@ -2034,7 +2034,7 @@ public final class Medium {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
        */
       public Builder addMsgs(
           com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message.Builder builderForValue) {
@@ -2048,7 +2048,7 @@ public final class Medium {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
        */
       public Builder addMsgs(
           int index, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message.Builder builderForValue) {
@@ -2062,7 +2062,7 @@ public final class Medium {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
        */
       public Builder addAllMsgs(
           java.lang.Iterable<? extends com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message> values) {
@@ -2077,7 +2077,7 @@ public final class Medium {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
        */
       public Builder clearMsgs() {
         if (msgsBuilder_ == null) {
@@ -2090,7 +2090,7 @@ public final class Medium {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
        */
       public Builder removeMsgs(int index) {
         if (msgsBuilder_ == null) {
@@ -2103,14 +2103,14 @@ public final class Medium {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
        */
       public com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message.Builder getMsgsBuilder(
           int index) {
         return getMsgsFieldBuilder().getBuilder(index);
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
        */
       public com.github.sisyphsu.smartbuf.benchmark.medium.Medium.MessageOrBuilder getMsgsOrBuilder(
           int index) {
@@ -2120,9 +2120,9 @@ public final class Medium {
         }
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
        */
-      public java.util.List<? extends com.github.sisyphsu.smartbuf.benchmark.medium.Medium.MessageOrBuilder>
+      public java.util.List<? extends com.github.sisyphsu.smartbuf.benchmark.medium.Medium.MessageOrBuilder> 
            getMsgsOrBuilderList() {
         if (msgsBuilder_ != null) {
           return msgsBuilder_.getMessageOrBuilderList();
@@ -2131,14 +2131,14 @@ public final class Medium {
         }
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
        */
       public com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message.Builder addMsgsBuilder() {
         return getMsgsFieldBuilder().addBuilder(
             com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message.getDefaultInstance());
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
        */
       public com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message.Builder addMsgsBuilder(
           int index) {
@@ -2146,14 +2146,14 @@ public final class Medium {
             index, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message.getDefaultInstance());
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Message msgs = 20;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Message msgs = 20;</code>
        */
-      public java.util.List<com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message.Builder>
+      public java.util.List<com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message.Builder> 
            getMsgsBuilderList() {
         return getMsgsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message.Builder, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.MessageOrBuilder>
+          com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message.Builder, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.MessageOrBuilder> 
           getMsgsFieldBuilder() {
         if (msgsBuilder_ == null) {
           msgsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
@@ -2180,7 +2180,7 @@ public final class Medium {
           com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag.Builder, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.TagOrBuilder> tagsBuilder_;
 
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
        */
       public java.util.List<com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag> getTagsList() {
         if (tagsBuilder_ == null) {
@@ -2190,7 +2190,7 @@ public final class Medium {
         }
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
        */
       public int getTagsCount() {
         if (tagsBuilder_ == null) {
@@ -2200,7 +2200,7 @@ public final class Medium {
         }
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
        */
       public com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag getTags(int index) {
         if (tagsBuilder_ == null) {
@@ -2210,7 +2210,7 @@ public final class Medium {
         }
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
        */
       public Builder setTags(
           int index, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag value) {
@@ -2227,7 +2227,7 @@ public final class Medium {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
        */
       public Builder setTags(
           int index, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag.Builder builderForValue) {
@@ -2241,7 +2241,7 @@ public final class Medium {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
        */
       public Builder addTags(com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag value) {
         if (tagsBuilder_ == null) {
@@ -2257,7 +2257,7 @@ public final class Medium {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
        */
       public Builder addTags(
           int index, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag value) {
@@ -2274,7 +2274,7 @@ public final class Medium {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
        */
       public Builder addTags(
           com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag.Builder builderForValue) {
@@ -2288,7 +2288,7 @@ public final class Medium {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
        */
       public Builder addTags(
           int index, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag.Builder builderForValue) {
@@ -2302,7 +2302,7 @@ public final class Medium {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
        */
       public Builder addAllTags(
           java.lang.Iterable<? extends com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag> values) {
@@ -2317,7 +2317,7 @@ public final class Medium {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
        */
       public Builder clearTags() {
         if (tagsBuilder_ == null) {
@@ -2330,7 +2330,7 @@ public final class Medium {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
        */
       public Builder removeTags(int index) {
         if (tagsBuilder_ == null) {
@@ -2343,14 +2343,14 @@ public final class Medium {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
        */
       public com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag.Builder getTagsBuilder(
           int index) {
         return getTagsFieldBuilder().getBuilder(index);
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
        */
       public com.github.sisyphsu.smartbuf.benchmark.medium.Medium.TagOrBuilder getTagsOrBuilder(
           int index) {
@@ -2360,9 +2360,9 @@ public final class Medium {
         }
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
        */
-      public java.util.List<? extends com.github.sisyphsu.smartbuf.benchmark.medium.Medium.TagOrBuilder>
+      public java.util.List<? extends com.github.sisyphsu.smartbuf.benchmark.medium.Medium.TagOrBuilder> 
            getTagsOrBuilderList() {
         if (tagsBuilder_ != null) {
           return tagsBuilder_.getMessageOrBuilderList();
@@ -2371,14 +2371,14 @@ public final class Medium {
         }
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
        */
       public com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag.Builder addTagsBuilder() {
         return getTagsFieldBuilder().addBuilder(
             com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag.getDefaultInstance());
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
        */
       public com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag.Builder addTagsBuilder(
           int index) {
@@ -2386,14 +2386,14 @@ public final class Medium {
             index, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag.getDefaultInstance());
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.benchmark.medium.Tag tags = 21;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.benchmark.medium.Tag tags = 21;</code>
        */
-      public java.util.List<com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag.Builder>
+      public java.util.List<com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag.Builder> 
            getTagsBuilderList() {
         return getTagsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag.Builder, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.TagOrBuilder>
+          com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag.Builder, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.TagOrBuilder> 
           getTagsFieldBuilder() {
         if (tagsBuilder_ == null) {
           tagsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
@@ -2419,10 +2419,10 @@ public final class Medium {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:com.github.sisyphsu.canoe.benchmark.medium.User)
+      // @@protoc_insertion_point(builder_scope:com.github.sisyphsu.smartbuf.benchmark.medium.User)
     }
 
-    // @@protoc_insertion_point(class_scope:com.github.sisyphsu.canoe.benchmark.medium.User)
+    // @@protoc_insertion_point(class_scope:com.github.sisyphsu.smartbuf.benchmark.medium.User)
     private static final com.github.sisyphsu.smartbuf.benchmark.medium.Medium.User DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new com.github.sisyphsu.smartbuf.benchmark.medium.Medium.User();
@@ -2460,7 +2460,7 @@ public final class Medium {
   }
 
   public interface MessageOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:com.github.sisyphsu.canoe.benchmark.medium.Message)
+      // @@protoc_insertion_point(interface_extends:com.github.sisyphsu.smartbuf.benchmark.medium.Message)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -2500,11 +2500,11 @@ public final class Medium {
     long getTimestamp();
   }
   /**
-   * Protobuf type {@code com.github.sisyphsu.canoe.benchmark.medium.Message}
+   * Protobuf type {@code com.github.sisyphsu.smartbuf.benchmark.medium.Message}
    */
   public  static final class Message extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:com.github.sisyphsu.canoe.benchmark.medium.Message)
+      // @@protoc_insertion_point(message_implements:com.github.sisyphsu.smartbuf.benchmark.medium.Message)
       MessageOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use Message.newBuilder() to construct.
@@ -2592,13 +2592,13 @@ public final class Medium {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_canoe_benchmark_medium_Message_descriptor;
+      return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_Message_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_canoe_benchmark_medium_Message_fieldAccessorTable
+      return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_Message_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message.class, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message.Builder.class);
     }
@@ -2882,26 +2882,26 @@ public final class Medium {
       return builder;
     }
     /**
-     * Protobuf type {@code com.github.sisyphsu.canoe.benchmark.medium.Message}
+     * Protobuf type {@code com.github.sisyphsu.smartbuf.benchmark.medium.Message}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:com.github.sisyphsu.canoe.benchmark.medium.Message)
+        // @@protoc_insertion_point(builder_implements:com.github.sisyphsu.smartbuf.benchmark.medium.Message)
         com.github.sisyphsu.smartbuf.benchmark.medium.Medium.MessageOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_canoe_benchmark_medium_Message_descriptor;
+        return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_Message_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_canoe_benchmark_medium_Message_fieldAccessorTable
+        return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_Message_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message.class, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message.Builder.class);
       }
 
-      // Construct using com.github.sisyphsu.canoe.benchmark.medium.Medium.Message.newBuilder()
+      // Construct using com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -2935,7 +2935,7 @@ public final class Medium {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_canoe_benchmark_medium_Message_descriptor;
+        return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_Message_descriptor;
       }
 
       @java.lang.Override
@@ -3261,10 +3261,10 @@ public final class Medium {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:com.github.sisyphsu.canoe.benchmark.medium.Message)
+      // @@protoc_insertion_point(builder_scope:com.github.sisyphsu.smartbuf.benchmark.medium.Message)
     }
 
-    // @@protoc_insertion_point(class_scope:com.github.sisyphsu.canoe.benchmark.medium.Message)
+    // @@protoc_insertion_point(class_scope:com.github.sisyphsu.smartbuf.benchmark.medium.Message)
     private static final com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Message();
@@ -3302,7 +3302,7 @@ public final class Medium {
   }
 
   public interface TagOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:com.github.sisyphsu.canoe.benchmark.medium.Tag)
+      // @@protoc_insertion_point(interface_extends:com.github.sisyphsu.smartbuf.benchmark.medium.Tag)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -3324,11 +3324,11 @@ public final class Medium {
         getNameBytes();
   }
   /**
-   * Protobuf type {@code com.github.sisyphsu.canoe.benchmark.medium.Tag}
+   * Protobuf type {@code com.github.sisyphsu.smartbuf.benchmark.medium.Tag}
    */
   public  static final class Tag extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:com.github.sisyphsu.canoe.benchmark.medium.Tag)
+      // @@protoc_insertion_point(message_implements:com.github.sisyphsu.smartbuf.benchmark.medium.Tag)
       TagOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use Tag.newBuilder() to construct.
@@ -3401,13 +3401,13 @@ public final class Medium {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_canoe_benchmark_medium_Tag_descriptor;
+      return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_Tag_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_canoe_benchmark_medium_Tag_fieldAccessorTable
+      return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_Tag_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag.class, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag.Builder.class);
     }
@@ -3624,26 +3624,26 @@ public final class Medium {
       return builder;
     }
     /**
-     * Protobuf type {@code com.github.sisyphsu.canoe.benchmark.medium.Tag}
+     * Protobuf type {@code com.github.sisyphsu.smartbuf.benchmark.medium.Tag}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:com.github.sisyphsu.canoe.benchmark.medium.Tag)
+        // @@protoc_insertion_point(builder_implements:com.github.sisyphsu.smartbuf.benchmark.medium.Tag)
         com.github.sisyphsu.smartbuf.benchmark.medium.Medium.TagOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_canoe_benchmark_medium_Tag_descriptor;
+        return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_Tag_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_canoe_benchmark_medium_Tag_fieldAccessorTable
+        return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_Tag_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag.class, com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag.Builder.class);
       }
 
-      // Construct using com.github.sisyphsu.canoe.benchmark.medium.Medium.Tag.newBuilder()
+      // Construct using com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -3671,7 +3671,7 @@ public final class Medium {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_canoe_benchmark_medium_Tag_descriptor;
+        return com.github.sisyphsu.smartbuf.benchmark.medium.Medium.internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_Tag_descriptor;
       }
 
       @java.lang.Override
@@ -3895,10 +3895,10 @@ public final class Medium {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:com.github.sisyphsu.canoe.benchmark.medium.Tag)
+      // @@protoc_insertion_point(builder_scope:com.github.sisyphsu.smartbuf.benchmark.medium.Tag)
     }
 
-    // @@protoc_insertion_point(class_scope:com.github.sisyphsu.canoe.benchmark.medium.Tag)
+    // @@protoc_insertion_point(class_scope:com.github.sisyphsu.smartbuf.benchmark.medium.Tag)
     private static final com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new com.github.sisyphsu.smartbuf.benchmark.medium.Medium.Tag();
@@ -3936,20 +3936,20 @@ public final class Medium {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_com_github_sisyphsu_canoe_benchmark_medium_User_descriptor;
+    internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_User_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_com_github_sisyphsu_canoe_benchmark_medium_User_fieldAccessorTable;
+      internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_User_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_com_github_sisyphsu_canoe_benchmark_medium_Message_descriptor;
+    internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_Message_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_com_github_sisyphsu_canoe_benchmark_medium_Message_fieldAccessorTable;
+      internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_Message_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_com_github_sisyphsu_canoe_benchmark_medium_Tag_descriptor;
+    internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_Tag_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_com_github_sisyphsu_canoe_benchmark_medium_Tag_fieldAccessorTable;
+      internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_Tag_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -3960,42 +3960,42 @@ public final class Medium {
   static {
     java.lang.String[] descriptorData = {
       "\n%src/test/resources/proto/medium.proto\022" +
-      "*com.github.sisyphsu.canoe.benchmark.med" +
-      "ium\"\337\002\n\004User\022\n\n\002id\030\001 \001(\003\022\020\n\010nickname\030\002 \001" +
-      "(\t\022\020\n\010portrait\030\003 \001(\t\022\r\n\005score\030\004 \001(\002\022\014\n\004m" +
-      "ail\030\005 \001(\t\022\016\n\006mobile\030\006 \001(\t\022\r\n\005token\030\007 \001(\t" +
-      "\022\014\n\004type\030\010 \001(\005\022\016\n\006source\030\t \001(\005\022\017\n\007blocke" +
-      "d\030\n \001(\010\022\022\n\nloginTimes\030\013 \001(\005\022\022\n\nupdateTim" +
-      "e\030\014 \001(\003\022\022\n\ncreateTime\030\r \001(\003\022A\n\004msgs\030\024 \003(" +
-      "\01323.com.github.sisyphsu.canoe.benchmark." +
-      "medium.Message\022=\n\004tags\030\025 \003(\0132/.com.githu" +
-      "b.sisyphsu.canoe.benchmark.medium.Tag\"O\n" +
-      "\007Message\022\n\n\002id\030\001 \001(\003\022\014\n\004from\030\002 \001(\003\022\n\n\002to" +
-      "\030\003 \001(\003\022\013\n\003msg\030\004 \001(\t\022\021\n\ttimestamp\030\005 \001(\003\"!" +
-      "\n\003Tag\022\014\n\004code\030\001 \001(\005\022\014\n\004name\030\002 \001(\tb\006proto" +
-      "3"
+      "-com.github.sisyphsu.smartbuf.benchmark." +
+      "medium\"\345\002\n\004User\022\n\n\002id\030\001 \001(\003\022\020\n\010nickname\030" +
+      "\002 \001(\t\022\020\n\010portrait\030\003 \001(\t\022\r\n\005score\030\004 \001(\002\022\014" +
+      "\n\004mail\030\005 \001(\t\022\016\n\006mobile\030\006 \001(\t\022\r\n\005token\030\007 " +
+      "\001(\t\022\014\n\004type\030\010 \001(\005\022\016\n\006source\030\t \001(\005\022\017\n\007blo" +
+      "cked\030\n \001(\010\022\022\n\nloginTimes\030\013 \001(\005\022\022\n\nupdate" +
+      "Time\030\014 \001(\003\022\022\n\ncreateTime\030\r \001(\003\022D\n\004msgs\030\024" +
+      " \003(\01326.com.github.sisyphsu.smartbuf.benc" +
+      "hmark.medium.Message\022@\n\004tags\030\025 \003(\01322.com" +
+      ".github.sisyphsu.smartbuf.benchmark.medi" +
+      "um.Tag\"O\n\007Message\022\n\n\002id\030\001 \001(\003\022\014\n\004from\030\002 " +
+      "\001(\003\022\n\n\002to\030\003 \001(\003\022\013\n\003msg\030\004 \001(\t\022\021\n\ttimestam" +
+      "p\030\005 \001(\003\"!\n\003Tag\022\014\n\004code\030\001 \001(\005\022\014\n\004name\030\002 \001" +
+      "(\tb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         });
-    internal_static_com_github_sisyphsu_canoe_benchmark_medium_User_descriptor =
+    internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_User_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_com_github_sisyphsu_canoe_benchmark_medium_User_fieldAccessorTable = new
+    internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_User_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_com_github_sisyphsu_canoe_benchmark_medium_User_descriptor,
+        internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_User_descriptor,
         new java.lang.String[] { "Id", "Nickname", "Portrait", "Score", "Mail", "Mobile", "Token", "Type", "Source", "Blocked", "LoginTimes", "UpdateTime", "CreateTime", "Msgs", "Tags", });
-    internal_static_com_github_sisyphsu_canoe_benchmark_medium_Message_descriptor =
+    internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_Message_descriptor =
       getDescriptor().getMessageTypes().get(1);
-    internal_static_com_github_sisyphsu_canoe_benchmark_medium_Message_fieldAccessorTable = new
+    internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_Message_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_com_github_sisyphsu_canoe_benchmark_medium_Message_descriptor,
+        internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_Message_descriptor,
         new java.lang.String[] { "Id", "From", "To", "Msg", "Timestamp", });
-    internal_static_com_github_sisyphsu_canoe_benchmark_medium_Tag_descriptor =
+    internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_Tag_descriptor =
       getDescriptor().getMessageTypes().get(2);
-    internal_static_com_github_sisyphsu_canoe_benchmark_medium_Tag_fieldAccessorTable = new
+    internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_Tag_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_com_github_sisyphsu_canoe_benchmark_medium_Tag_descriptor,
+        internal_static_com_github_sisyphsu_smartbuf_benchmark_medium_Tag_descriptor,
         new java.lang.String[] { "Code", "Name", });
   }
 

@@ -15,7 +15,7 @@ public final class MessageOuterClass {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface MessageOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:com.github.sisyphsu.canoe.model.Message)
+      // @@protoc_insertion_point(interface_extends:com.github.sisyphsu.smartbuf.model.Message)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -61,35 +61,35 @@ public final class MessageOuterClass {
     long getTimestamp();
 
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
      */
-    java.util.List<com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver>
+    java.util.List<com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver> 
         getReceiversList();
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
      */
     com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver getReceivers(int index);
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
      */
     int getReceiversCount();
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
      */
-    java.util.List<? extends com.github.sisyphsu.smartbuf.model.MessageOuterClass.ReceiverOrBuilder>
+    java.util.List<? extends com.github.sisyphsu.smartbuf.model.MessageOuterClass.ReceiverOrBuilder> 
         getReceiversOrBuilderList();
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
      */
     com.github.sisyphsu.smartbuf.model.MessageOuterClass.ReceiverOrBuilder getReceiversOrBuilder(
         int index);
   }
   /**
-   * Protobuf type {@code com.github.sisyphsu.canoe.model.Message}
+   * Protobuf type {@code com.github.sisyphsu.smartbuf.model.Message}
    */
   public  static final class Message extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:com.github.sisyphsu.canoe.model.Message)
+      // @@protoc_insertion_point(message_implements:com.github.sisyphsu.smartbuf.model.Message)
       MessageOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use Message.newBuilder() to construct.
@@ -196,13 +196,13 @@ public final class MessageOuterClass {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return com.github.sisyphsu.smartbuf.model.MessageOuterClass.internal_static_com_github_sisyphsu_canoe_model_Message_descriptor;
+      return com.github.sisyphsu.smartbuf.model.MessageOuterClass.internal_static_com_github_sisyphsu_smartbuf_model_Message_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return com.github.sisyphsu.smartbuf.model.MessageOuterClass.internal_static_com_github_sisyphsu_canoe_model_Message_fieldAccessorTable
+      return com.github.sisyphsu.smartbuf.model.MessageOuterClass.internal_static_com_github_sisyphsu_smartbuf_model_Message_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               com.github.sisyphsu.smartbuf.model.MessageOuterClass.Message.class, com.github.sisyphsu.smartbuf.model.MessageOuterClass.Message.Builder.class);
     }
@@ -293,35 +293,35 @@ public final class MessageOuterClass {
       return timestamp_;
     }
 
-    public static final int                                                               RECEIVERS_FIELD_NUMBER = 7;
+    public static final int RECEIVERS_FIELD_NUMBER = 7;
     private java.util.List<com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver> receivers_;
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
      */
     public java.util.List<com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver> getReceiversList() {
       return receivers_;
     }
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
      */
-    public java.util.List<? extends com.github.sisyphsu.smartbuf.model.MessageOuterClass.ReceiverOrBuilder>
+    public java.util.List<? extends com.github.sisyphsu.smartbuf.model.MessageOuterClass.ReceiverOrBuilder> 
         getReceiversOrBuilderList() {
       return receivers_;
     }
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
      */
     public int getReceiversCount() {
       return receivers_.size();
     }
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
      */
     public com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver getReceivers(int index) {
       return receivers_.get(index);
     }
     /**
-     * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+     * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
      */
     public com.github.sisyphsu.smartbuf.model.MessageOuterClass.ReceiverOrBuilder getReceiversOrBuilder(
         int index) {
@@ -557,26 +557,26 @@ public final class MessageOuterClass {
       return builder;
     }
     /**
-     * Protobuf type {@code com.github.sisyphsu.canoe.model.Message}
+     * Protobuf type {@code com.github.sisyphsu.smartbuf.model.Message}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:com.github.sisyphsu.canoe.model.Message)
+        // @@protoc_insertion_point(builder_implements:com.github.sisyphsu.smartbuf.model.Message)
         com.github.sisyphsu.smartbuf.model.MessageOuterClass.MessageOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return com.github.sisyphsu.smartbuf.model.MessageOuterClass.internal_static_com_github_sisyphsu_canoe_model_Message_descriptor;
+        return com.github.sisyphsu.smartbuf.model.MessageOuterClass.internal_static_com_github_sisyphsu_smartbuf_model_Message_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return com.github.sisyphsu.smartbuf.model.MessageOuterClass.internal_static_com_github_sisyphsu_canoe_model_Message_fieldAccessorTable
+        return com.github.sisyphsu.smartbuf.model.MessageOuterClass.internal_static_com_github_sisyphsu_smartbuf_model_Message_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 com.github.sisyphsu.smartbuf.model.MessageOuterClass.Message.class, com.github.sisyphsu.smartbuf.model.MessageOuterClass.Message.Builder.class);
       }
 
-      // Construct using com.github.sisyphsu.canoe.model.MessageOuterClass.Message.newBuilder()
+      // Construct using com.github.sisyphsu.smartbuf.model.MessageOuterClass.Message.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -619,7 +619,7 @@ public final class MessageOuterClass {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return com.github.sisyphsu.smartbuf.model.MessageOuterClass.internal_static_com_github_sisyphsu_canoe_model_Message_descriptor;
+        return com.github.sisyphsu.smartbuf.model.MessageOuterClass.internal_static_com_github_sisyphsu_smartbuf_model_Message_descriptor;
       }
 
       @java.lang.Override
@@ -1017,7 +1017,7 @@ public final class MessageOuterClass {
           com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver, com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver.Builder, com.github.sisyphsu.smartbuf.model.MessageOuterClass.ReceiverOrBuilder> receiversBuilder_;
 
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
        */
       public java.util.List<com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver> getReceiversList() {
         if (receiversBuilder_ == null) {
@@ -1027,7 +1027,7 @@ public final class MessageOuterClass {
         }
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
        */
       public int getReceiversCount() {
         if (receiversBuilder_ == null) {
@@ -1037,7 +1037,7 @@ public final class MessageOuterClass {
         }
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
        */
       public com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver getReceivers(int index) {
         if (receiversBuilder_ == null) {
@@ -1047,7 +1047,7 @@ public final class MessageOuterClass {
         }
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
        */
       public Builder setReceivers(
           int index, com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver value) {
@@ -1064,7 +1064,7 @@ public final class MessageOuterClass {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
        */
       public Builder setReceivers(
           int index, com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver.Builder builderForValue) {
@@ -1078,7 +1078,7 @@ public final class MessageOuterClass {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
        */
       public Builder addReceivers(com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver value) {
         if (receiversBuilder_ == null) {
@@ -1094,7 +1094,7 @@ public final class MessageOuterClass {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
        */
       public Builder addReceivers(
           int index, com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver value) {
@@ -1111,7 +1111,7 @@ public final class MessageOuterClass {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
        */
       public Builder addReceivers(
           com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver.Builder builderForValue) {
@@ -1125,7 +1125,7 @@ public final class MessageOuterClass {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
        */
       public Builder addReceivers(
           int index, com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver.Builder builderForValue) {
@@ -1139,7 +1139,7 @@ public final class MessageOuterClass {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
        */
       public Builder addAllReceivers(
           java.lang.Iterable<? extends com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver> values) {
@@ -1154,7 +1154,7 @@ public final class MessageOuterClass {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
        */
       public Builder clearReceivers() {
         if (receiversBuilder_ == null) {
@@ -1167,7 +1167,7 @@ public final class MessageOuterClass {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
        */
       public Builder removeReceivers(int index) {
         if (receiversBuilder_ == null) {
@@ -1180,14 +1180,14 @@ public final class MessageOuterClass {
         return this;
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
        */
       public com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver.Builder getReceiversBuilder(
           int index) {
         return getReceiversFieldBuilder().getBuilder(index);
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
        */
       public com.github.sisyphsu.smartbuf.model.MessageOuterClass.ReceiverOrBuilder getReceiversOrBuilder(
           int index) {
@@ -1197,9 +1197,9 @@ public final class MessageOuterClass {
         }
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
        */
-      public java.util.List<? extends com.github.sisyphsu.smartbuf.model.MessageOuterClass.ReceiverOrBuilder>
+      public java.util.List<? extends com.github.sisyphsu.smartbuf.model.MessageOuterClass.ReceiverOrBuilder> 
            getReceiversOrBuilderList() {
         if (receiversBuilder_ != null) {
           return receiversBuilder_.getMessageOrBuilderList();
@@ -1208,14 +1208,14 @@ public final class MessageOuterClass {
         }
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
        */
       public com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver.Builder addReceiversBuilder() {
         return getReceiversFieldBuilder().addBuilder(
             com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver.getDefaultInstance());
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
        */
       public com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver.Builder addReceiversBuilder(
           int index) {
@@ -1223,14 +1223,14 @@ public final class MessageOuterClass {
             index, com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver.getDefaultInstance());
       }
       /**
-       * <code>repeated .com.github.sisyphsu.canoe.model.Receiver receivers = 7;</code>
+       * <code>repeated .com.github.sisyphsu.smartbuf.model.Receiver receivers = 7;</code>
        */
-      public java.util.List<com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver.Builder>
+      public java.util.List<com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver.Builder> 
            getReceiversBuilderList() {
         return getReceiversFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver, com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver.Builder, com.github.sisyphsu.smartbuf.model.MessageOuterClass.ReceiverOrBuilder>
+          com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver, com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver.Builder, com.github.sisyphsu.smartbuf.model.MessageOuterClass.ReceiverOrBuilder> 
           getReceiversFieldBuilder() {
         if (receiversBuilder_ == null) {
           receiversBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
@@ -1256,10 +1256,10 @@ public final class MessageOuterClass {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:com.github.sisyphsu.canoe.model.Message)
+      // @@protoc_insertion_point(builder_scope:com.github.sisyphsu.smartbuf.model.Message)
     }
 
-    // @@protoc_insertion_point(class_scope:com.github.sisyphsu.canoe.model.Message)
+    // @@protoc_insertion_point(class_scope:com.github.sisyphsu.smartbuf.model.Message)
     private static final com.github.sisyphsu.smartbuf.model.MessageOuterClass.Message DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new com.github.sisyphsu.smartbuf.model.MessageOuterClass.Message();
@@ -1297,7 +1297,7 @@ public final class MessageOuterClass {
   }
 
   public interface ReceiverOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:com.github.sisyphsu.canoe.model.Receiver)
+      // @@protoc_insertion_point(interface_extends:com.github.sisyphsu.smartbuf.model.Receiver)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -1355,11 +1355,11 @@ public final class MessageOuterClass {
     long getUpdateTime();
   }
   /**
-   * Protobuf type {@code com.github.sisyphsu.canoe.model.Receiver}
+   * Protobuf type {@code com.github.sisyphsu.smartbuf.model.Receiver}
    */
   public  static final class Receiver extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:com.github.sisyphsu.canoe.model.Receiver)
+      // @@protoc_insertion_point(message_implements:com.github.sisyphsu.smartbuf.model.Receiver)
       ReceiverOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use Receiver.newBuilder() to construct.
@@ -1459,13 +1459,13 @@ public final class MessageOuterClass {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return com.github.sisyphsu.smartbuf.model.MessageOuterClass.internal_static_com_github_sisyphsu_canoe_model_Receiver_descriptor;
+      return com.github.sisyphsu.smartbuf.model.MessageOuterClass.internal_static_com_github_sisyphsu_smartbuf_model_Receiver_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return com.github.sisyphsu.smartbuf.model.MessageOuterClass.internal_static_com_github_sisyphsu_canoe_model_Receiver_fieldAccessorTable
+      return com.github.sisyphsu.smartbuf.model.MessageOuterClass.internal_static_com_github_sisyphsu_smartbuf_model_Receiver_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver.class, com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver.Builder.class);
     }
@@ -1814,26 +1814,26 @@ public final class MessageOuterClass {
       return builder;
     }
     /**
-     * Protobuf type {@code com.github.sisyphsu.canoe.model.Receiver}
+     * Protobuf type {@code com.github.sisyphsu.smartbuf.model.Receiver}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:com.github.sisyphsu.canoe.model.Receiver)
+        // @@protoc_insertion_point(builder_implements:com.github.sisyphsu.smartbuf.model.Receiver)
         com.github.sisyphsu.smartbuf.model.MessageOuterClass.ReceiverOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return com.github.sisyphsu.smartbuf.model.MessageOuterClass.internal_static_com_github_sisyphsu_canoe_model_Receiver_descriptor;
+        return com.github.sisyphsu.smartbuf.model.MessageOuterClass.internal_static_com_github_sisyphsu_smartbuf_model_Receiver_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return com.github.sisyphsu.smartbuf.model.MessageOuterClass.internal_static_com_github_sisyphsu_canoe_model_Receiver_fieldAccessorTable
+        return com.github.sisyphsu.smartbuf.model.MessageOuterClass.internal_static_com_github_sisyphsu_smartbuf_model_Receiver_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver.class, com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver.Builder.class);
       }
 
-      // Construct using com.github.sisyphsu.canoe.model.MessageOuterClass.Receiver.newBuilder()
+      // Construct using com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1871,7 +1871,7 @@ public final class MessageOuterClass {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return com.github.sisyphsu.smartbuf.model.MessageOuterClass.internal_static_com_github_sisyphsu_canoe_model_Receiver_descriptor;
+        return com.github.sisyphsu.smartbuf.model.MessageOuterClass.internal_static_com_github_sisyphsu_smartbuf_model_Receiver_descriptor;
       }
 
       @java.lang.Override
@@ -2312,10 +2312,10 @@ public final class MessageOuterClass {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:com.github.sisyphsu.canoe.model.Receiver)
+      // @@protoc_insertion_point(builder_scope:com.github.sisyphsu.smartbuf.model.Receiver)
     }
 
-    // @@protoc_insertion_point(class_scope:com.github.sisyphsu.canoe.model.Receiver)
+    // @@protoc_insertion_point(class_scope:com.github.sisyphsu.smartbuf.model.Receiver)
     private static final com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new com.github.sisyphsu.smartbuf.model.MessageOuterClass.Receiver();
@@ -2353,15 +2353,15 @@ public final class MessageOuterClass {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_com_github_sisyphsu_canoe_model_Message_descriptor;
+    internal_static_com_github_sisyphsu_smartbuf_model_Message_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_com_github_sisyphsu_canoe_model_Message_fieldAccessorTable;
+      internal_static_com_github_sisyphsu_smartbuf_model_Message_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_com_github_sisyphsu_canoe_model_Receiver_descriptor;
+    internal_static_com_github_sisyphsu_smartbuf_model_Receiver_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_com_github_sisyphsu_canoe_model_Receiver_fieldAccessorTable;
+      internal_static_com_github_sisyphsu_smartbuf_model_Receiver_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -2372,31 +2372,31 @@ public final class MessageOuterClass {
   static {
     java.lang.String[] descriptorData = {
       "\n&src/test/resources/proto/message.proto" +
-      "\022\037com.github.sisyphsu.canoe.model\"\244\001\n\007Me" +
-      "ssage\022\n\n\002id\030\001 \001(\005\022\016\n\006enable\030\002 \001(\010\022\016\n\006sco" +
-      "re1\030\003 \001(\002\022\016\n\006score2\030\004 \001(\001\022\014\n\004text\030\005 \001(\t\022" +
-      "\021\n\ttimestamp\030\006 \001(\003\022<\n\treceivers\030\007 \003(\0132)." +
-      "com.github.sisyphsu.canoe.model.Receiver" +
-      "\"\206\001\n\010Receiver\022\016\n\006userId\030\001 \001(\005\022\017\n\007iconUrl" +
-      "\030\002 \001(\t\022\016\n\006remark\030\003 \001(\t\022\021\n\tfollowNum\030\004 \001(" +
-      "\005\022\016\n\006fanNum\030\005 \001(\005\022\022\n\ncreateTime\030\006 \001(\003\022\022\n" +
-      "\nupdateTime\030\007 \001(\003b\006proto3"
+      "\022\"com.github.sisyphsu.smartbuf.model\"\247\001\n" +
+      "\007Message\022\n\n\002id\030\001 \001(\005\022\016\n\006enable\030\002 \001(\010\022\016\n\006" +
+      "score1\030\003 \001(\002\022\016\n\006score2\030\004 \001(\001\022\014\n\004text\030\005 \001" +
+      "(\t\022\021\n\ttimestamp\030\006 \001(\003\022?\n\treceivers\030\007 \003(\013" +
+      "2,.com.github.sisyphsu.smartbuf.model.Re" +
+      "ceiver\"\206\001\n\010Receiver\022\016\n\006userId\030\001 \001(\005\022\017\n\007i" +
+      "conUrl\030\002 \001(\t\022\016\n\006remark\030\003 \001(\t\022\021\n\tfollowNu" +
+      "m\030\004 \001(\005\022\016\n\006fanNum\030\005 \001(\005\022\022\n\ncreateTime\030\006 " +
+      "\001(\003\022\022\n\nupdateTime\030\007 \001(\003b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         });
-    internal_static_com_github_sisyphsu_canoe_model_Message_descriptor =
+    internal_static_com_github_sisyphsu_smartbuf_model_Message_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_com_github_sisyphsu_canoe_model_Message_fieldAccessorTable = new
+    internal_static_com_github_sisyphsu_smartbuf_model_Message_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_com_github_sisyphsu_canoe_model_Message_descriptor,
+        internal_static_com_github_sisyphsu_smartbuf_model_Message_descriptor,
         new java.lang.String[] { "Id", "Enable", "Score1", "Score2", "Text", "Timestamp", "Receivers", });
-    internal_static_com_github_sisyphsu_canoe_model_Receiver_descriptor =
+    internal_static_com_github_sisyphsu_smartbuf_model_Receiver_descriptor =
       getDescriptor().getMessageTypes().get(1);
-    internal_static_com_github_sisyphsu_canoe_model_Receiver_fieldAccessorTable = new
+    internal_static_com_github_sisyphsu_smartbuf_model_Receiver_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_com_github_sisyphsu_canoe_model_Receiver_descriptor,
+        internal_static_com_github_sisyphsu_smartbuf_model_Receiver_descriptor,
         new java.lang.String[] { "UserId", "IconUrl", "Remark", "FollowNum", "FanNum", "CreateTime", "UpdateTime", });
   }
 

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package com.github.sisyphsu.canoe.model;
+package com.github.sisyphsu.smartbuf.model;
 
 message Message {
     int32 id = 1;

@@ -2,10 +2,9 @@ package com.github.sisyphsu.smartbuf.benchmark;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.sisyphsu.smartbuf.CanoePacket;
 import com.github.sisyphsu.smartbuf.CodecUtils;
+import com.github.sisyphsu.smartbuf.SmartPacket;
 import com.github.sisyphsu.smartbuf.node.Node;
-import com.github.sisyphsu.smartbuf.transport.Output;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,11 +16,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * TODO Find out why List is so slow...
- * <p>
- * Benchmark         Mode  Cnt     Score    Error  Units
- * NormalTest.canoe  avgt    6  4043.888 ± 55.323  ns/op
- * NormalTest.json   avgt    6  1059.555 ± 72.362  ns/op
+ * Benchmark            Mode  Cnt     Score     Error  Units
+ * NormalTest.json      avgt    6  1313.661 ± 207.883  ns/op
+ * NormalTest.smartbuf  avgt    6  2369.977 ± 163.346  ns/op
  *
  * @author sulin
  * @since 2019-10-31 21:21:49
@@ -35,8 +32,6 @@ public class NormalTest {
 
     private static ObjectMapper MAPPER = new ObjectMapper();
     private static List<Tag>    tags   = new ArrayList<>();
-
-    static Output output = new Output(false);
 
     static Node node;
 
@@ -53,21 +48,8 @@ public class NormalTest {
     }
 
     @Benchmark
-    public void canoe() throws IOException {
-        CanoePacket.serialize(tags);
-    }
-
-    @Benchmark
-    public void other() {
-//        Canoe.CODEC.convert(tags, Node.class); // 1367ns
-
-//        output.testScan(node); // 1027ns
-
-//        arrayNodeCodec.toNode(tags); // 1347ns
-
-//        tags.forEach(t -> Canoe.CODEC.convert(t, Node.class)); // 960ns
-
-//        tags.forEach(t -> beanNodeCodec.toNode(t)); // 750ns
+    public void smartbuf() throws IOException {
+        SmartPacket.serialize(tags);
     }
 
     @Data

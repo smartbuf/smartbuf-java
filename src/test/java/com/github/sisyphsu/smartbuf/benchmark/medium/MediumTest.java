@@ -1,8 +1,8 @@
 package com.github.sisyphsu.smartbuf.benchmark.medium;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.sisyphsu.smartbuf.CanoePacket;
-import com.github.sisyphsu.smartbuf.CanoeStream;
+import com.github.sisyphsu.smartbuf.SmartPacket;
+import com.github.sisyphsu.smartbuf.SmartStream;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -26,14 +26,14 @@ import java.io.IOException;
 public class MediumTest {
 
     static ObjectMapper MAPPER = new ObjectMapper();
-    static CanoeStream  stream = new CanoeStream();
+    static SmartStream  stream = new SmartStream();
     static UserModel    model  = UserModel.random();
 
     @Test
     public void test() throws Exception {
         byte[] jsonBytes = MAPPER.writeValueAsBytes(model);
         byte[] pbBytes = model.toUser().toByteArray();
-        byte[] packetBytes = CanoePacket.serialize(model);
+        byte[] packetBytes = SmartPacket.serialize(model);
         byte[] streamBytes = stream.serialize(model);
 
         System.out.println("json: " + jsonBytes.length);
@@ -45,7 +45,7 @@ public class MediumTest {
 
         jsonBytes = MAPPER.writeValueAsBytes(model);
         pbBytes = model.toUser().toByteArray();
-        packetBytes = CanoePacket.serialize(model);
+        packetBytes = SmartPacket.serialize(model);
         streamBytes = stream.serialize(model);
 
         System.out.println("json: " + jsonBytes.length);

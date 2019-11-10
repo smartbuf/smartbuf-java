@@ -1,8 +1,8 @@
 package com.github.sisyphsu.smartbuf.benchmark.small;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.sisyphsu.smartbuf.CanoePacket;
-import com.github.sisyphsu.smartbuf.CanoeStream;
+import com.github.sisyphsu.smartbuf.SmartPacket;
+import com.github.sisyphsu.smartbuf.SmartStream;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -27,12 +27,12 @@ public class SmallTest {
 
     private static final UserModel USER = UserModel.random();
 
-    private static final CanoeStream STREAM = new CanoeStream();
+    private static final SmartStream STREAM = new SmartStream();
 
     @Test
     public void json() throws Exception {
         byte[] json = OBJECT_MAPPER.writeValueAsBytes(USER);
-        byte[] packet = CanoePacket.serialize(USER);
+        byte[] packet = SmartPacket.serialize(USER);
         byte[] stream = STREAM.serialize(USER);
         byte[] pb = USER.toPB().toByteArray();
 
@@ -44,7 +44,7 @@ public class SmallTest {
         System.out.println();
 
         json = OBJECT_MAPPER.writeValueAsBytes(USER);
-        packet = CanoePacket.serialize(USER);
+        packet = SmartPacket.serialize(USER);
         stream = STREAM.serialize(USER);
         pb = USER.toPB().toByteArray();
 
@@ -56,7 +56,7 @@ public class SmallTest {
         System.out.println();
 
         json = OBJECT_MAPPER.writeValueAsBytes(USER);
-        packet = CanoePacket.serialize(USER);
+        packet = SmartPacket.serialize(USER);
         stream = STREAM.serialize(USER);
         pb = USER.toPB().toByteArray();
 
