@@ -7,13 +7,10 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
 
 /**
  * BeanWriterBuilder helps build {@link BeanWriter} for normal pojos
@@ -25,8 +22,6 @@ import java.util.regex.Pattern;
 public final class BeanWriterBuilder {
 
     private static final Map<Class, BeanWriter> WRITER_MAP = new ConcurrentHashMap<>();
-
-    private static final Pattern RE_SET = Pattern.compile("^set[A-Z_$].*$");
 
     private BeanWriterBuilder() {
     }
@@ -52,39 +47,14 @@ public final class BeanWriterBuilder {
     static BeanWriter buildWriter(Class<?> cls) {
         Map<String, BeanField> fieldMap = new TreeMap<>();
         // collect all field
-        ReflectUtils.findAllValidFields(cls).forEach(f -> {
-            BeanField field = new BeanField(f.getName(), f.getType());
-            field.field = f;
-            fieldMap.put(f.getName(), field);
+        ReflectUtils.findAllValidFields(cls).forEach(field -> {
+            BeanField bf = new BeanField(field.getName(), field.getType());
+            bf.field = field;
+            bf.setter = ReflectUtils.findSetter(cls, field);
+            if (Modifier.isPublic(field.getModifiers()) || bf.setter != null) {
+                fieldMap.put(field.getName(), bf);
+            }
         });
-        // collect valid setter
-        for (Method m : cls.getMethods()) {
-            String name = m.getName();
-            if (Modifier.isStatic(m.getModifiers()) || m.isAnnotationPresent(Deprecated.class)
-                || (m.getReturnType() != Void.class && m.getReturnType() != void.class)
-                || m.getParameterCount() != 1
-                || !RE_SET.matcher(name).matches()) {
-                continue;
-            }
-            if (name.charAt(3) >= 'A' && name.charAt(3) <= 'Z') {
-                name = (char) (name.charAt(3) + 32) + name.substring(4);
-            } else {
-                name = name.substring(3);
-            }
-            BeanField field = fieldMap.get(name);
-            if (field != null && field.cls == m.getParameterTypes()[0]) {
-                field.setter = m;
-            }
-        }
-        // clean unwriteable fields
-        for (String name : new ArrayList<>(fieldMap.keySet())) {
-            BeanField bf = fieldMap.get(name);
-            int mod = bf.field.getModifiers();
-            if (Modifier.isPublic(mod) || bf.setter != null) {
-                continue;
-            }
-            fieldMap.remove(name);
-        }
         // build BeanWriter
         try {
             BeanField[] fields = fieldMap.values().toArray(new BeanField[0]);

@@ -807,10 +807,10 @@ public final class Large {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 id = 1;</code>
+     * <code>int64 id = 1;</code>
      * @return The id.
      */
-    int getId();
+    long getId();
 
     /**
      * <code>string id_str = 2;</code>
@@ -906,34 +906,34 @@ public final class Large {
     boolean getProtect();
 
     /**
-     * <code>int32 followers_count = 10;</code>
+     * <code>int64 followers_count = 10;</code>
      * @return The followersCount.
      */
-    int getFollowersCount();
+    long getFollowersCount();
 
     /**
-     * <code>int32 fast_followers_count = 11;</code>
+     * <code>int64 fast_followers_count = 11;</code>
      * @return The fastFollowersCount.
      */
-    int getFastFollowersCount();
+    long getFastFollowersCount();
 
     /**
-     * <code>int32 normal_followers_count = 12;</code>
+     * <code>int64 normal_followers_count = 12;</code>
      * @return The normalFollowersCount.
      */
-    int getNormalFollowersCount();
+    long getNormalFollowersCount();
 
     /**
-     * <code>int32 friends_count = 13;</code>
+     * <code>int64 friends_count = 13;</code>
      * @return The friendsCount.
      */
-    int getFriendsCount();
+    long getFriendsCount();
 
     /**
-     * <code>int32 listed_count = 14;</code>
+     * <code>int64 listed_count = 14;</code>
      * @return The listedCount.
      */
-    int getListedCount();
+    long getListedCount();
 
     /**
      * <code>string created_at = 15;</code>
@@ -948,10 +948,10 @@ public final class Large {
         getCreatedAtBytes();
 
     /**
-     * <code>int32 favourites_count = 16;</code>
+     * <code>int64 favourites_count = 16;</code>
      * @return The favouritesCount.
      */
-    int getFavouritesCount();
+    long getFavouritesCount();
 
     /**
      * <code>string utc_offset = 17;</code>
@@ -990,16 +990,16 @@ public final class Large {
     boolean getVerified();
 
     /**
-     * <code>int32 statuses_count = 21;</code>
+     * <code>int64 statuses_count = 21;</code>
      * @return The statusesCount.
      */
-    int getStatusesCount();
+    long getStatusesCount();
 
     /**
-     * <code>int32 media_count = 22;</code>
+     * <code>int64 media_count = 22;</code>
      * @return The mediaCount.
      */
-    int getMediaCount();
+    long getMediaCount();
 
     /**
      * <code>string lang = 23;</code>
@@ -1182,21 +1182,21 @@ public final class Large {
     boolean getDefaultProfileImage();
 
     /**
-     * <code>repeated int32 pinned_tweet_ids = 42;</code>
+     * <code>repeated int64 pinned_tweet_ids = 42;</code>
      * @return A list containing the pinnedTweetIds.
      */
-    java.util.List<java.lang.Integer> getPinnedTweetIdsList();
+    java.util.List<java.lang.Long> getPinnedTweetIdsList();
     /**
-     * <code>repeated int32 pinned_tweet_ids = 42;</code>
+     * <code>repeated int64 pinned_tweet_ids = 42;</code>
      * @return The count of pinnedTweetIds.
      */
     int getPinnedTweetIdsCount();
     /**
-     * <code>repeated int32 pinned_tweet_ids = 42;</code>
+     * <code>repeated int64 pinned_tweet_ids = 42;</code>
      * @param index The index of the element to return.
      * @return The pinnedTweetIds at the given index.
      */
-    int getPinnedTweetIds(int index);
+    long getPinnedTweetIds(int index);
 
     /**
      * <code>repeated string pinned_tweet_ids_str = 43;</code>
@@ -1401,7 +1401,7 @@ public final class Large {
       profileSidebarBorderColor_ = "";
       profileSidebarFillColor_ = "";
       profileTextColor_ = "";
-      pinnedTweetIds_ = emptyIntList();
+      pinnedTweetIds_ = emptyLongList();
       pinnedTweetIdsStr_ = com.google.protobuf.LazyStringArrayList.EMPTY;
       advertiserAccountType_ = "";
       advertiserAccountServiceLevels_ = com.google.protobuf.LazyStringArrayList.EMPTY;
@@ -1443,7 +1443,7 @@ public final class Large {
               break;
             case 8: {
 
-              id_ = input.readInt32();
+              id_ = input.readInt64();
               break;
             }
             case 18: {
@@ -1502,27 +1502,27 @@ public final class Large {
             }
             case 80: {
 
-              followersCount_ = input.readInt32();
+              followersCount_ = input.readInt64();
               break;
             }
             case 88: {
 
-              fastFollowersCount_ = input.readInt32();
+              fastFollowersCount_ = input.readInt64();
               break;
             }
             case 96: {
 
-              normalFollowersCount_ = input.readInt32();
+              normalFollowersCount_ = input.readInt64();
               break;
             }
             case 104: {
 
-              friendsCount_ = input.readInt32();
+              friendsCount_ = input.readInt64();
               break;
             }
             case 112: {
 
-              listedCount_ = input.readInt32();
+              listedCount_ = input.readInt64();
               break;
             }
             case 122: {
@@ -1533,7 +1533,7 @@ public final class Large {
             }
             case 128: {
 
-              favouritesCount_ = input.readInt32();
+              favouritesCount_ = input.readInt64();
               break;
             }
             case 138: {
@@ -1560,12 +1560,12 @@ public final class Large {
             }
             case 168: {
 
-              statusesCount_ = input.readInt32();
+              statusesCount_ = input.readInt64();
               break;
             }
             case 176: {
 
-              mediaCount_ = input.readInt32();
+              mediaCount_ = input.readInt64();
               break;
             }
             case 186: {
@@ -1676,21 +1676,21 @@ public final class Large {
             }
             case 336: {
               if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                pinnedTweetIds_ = newIntList();
+                pinnedTweetIds_ = newLongList();
                 mutable_bitField0_ |= 0x00000001;
               }
-              pinnedTweetIds_.addInt(input.readInt32());
+              pinnedTweetIds_.addLong(input.readInt64());
               break;
             }
             case 338: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
               if (!((mutable_bitField0_ & 0x00000001) != 0) && input.getBytesUntilLimit() > 0) {
-                pinnedTweetIds_ = newIntList();
+                pinnedTweetIds_ = newLongList();
                 mutable_bitField0_ |= 0x00000001;
               }
               while (input.getBytesUntilLimit() > 0) {
-                pinnedTweetIds_.addInt(input.readInt32());
+                pinnedTweetIds_.addLong(input.readInt64());
               }
               input.popLimit(limit);
               break;
@@ -1839,12 +1839,12 @@ public final class Large {
     }
 
     public static final int ID_FIELD_NUMBER = 1;
-    private int id_;
+    private long id_;
     /**
-     * <code>int32 id = 1;</code>
+     * <code>int64 id = 1;</code>
      * @return The id.
      */
-    public int getId() {
+    public long getId() {
       return id_;
     }
 
@@ -2098,52 +2098,52 @@ public final class Large {
     }
 
     public static final int FOLLOWERS_COUNT_FIELD_NUMBER = 10;
-    private int followersCount_;
+    private long followersCount_;
     /**
-     * <code>int32 followers_count = 10;</code>
+     * <code>int64 followers_count = 10;</code>
      * @return The followersCount.
      */
-    public int getFollowersCount() {
+    public long getFollowersCount() {
       return followersCount_;
     }
 
     public static final int FAST_FOLLOWERS_COUNT_FIELD_NUMBER = 11;
-    private int fastFollowersCount_;
+    private long fastFollowersCount_;
     /**
-     * <code>int32 fast_followers_count = 11;</code>
+     * <code>int64 fast_followers_count = 11;</code>
      * @return The fastFollowersCount.
      */
-    public int getFastFollowersCount() {
+    public long getFastFollowersCount() {
       return fastFollowersCount_;
     }
 
     public static final int NORMAL_FOLLOWERS_COUNT_FIELD_NUMBER = 12;
-    private int normalFollowersCount_;
+    private long normalFollowersCount_;
     /**
-     * <code>int32 normal_followers_count = 12;</code>
+     * <code>int64 normal_followers_count = 12;</code>
      * @return The normalFollowersCount.
      */
-    public int getNormalFollowersCount() {
+    public long getNormalFollowersCount() {
       return normalFollowersCount_;
     }
 
     public static final int FRIENDS_COUNT_FIELD_NUMBER = 13;
-    private int friendsCount_;
+    private long friendsCount_;
     /**
-     * <code>int32 friends_count = 13;</code>
+     * <code>int64 friends_count = 13;</code>
      * @return The friendsCount.
      */
-    public int getFriendsCount() {
+    public long getFriendsCount() {
       return friendsCount_;
     }
 
     public static final int LISTED_COUNT_FIELD_NUMBER = 14;
-    private int listedCount_;
+    private long listedCount_;
     /**
-     * <code>int32 listed_count = 14;</code>
+     * <code>int64 listed_count = 14;</code>
      * @return The listedCount.
      */
-    public int getListedCount() {
+    public long getListedCount() {
       return listedCount_;
     }
 
@@ -2184,12 +2184,12 @@ public final class Large {
     }
 
     public static final int FAVOURITES_COUNT_FIELD_NUMBER = 16;
-    private int favouritesCount_;
+    private long favouritesCount_;
     /**
-     * <code>int32 favourites_count = 16;</code>
+     * <code>int64 favourites_count = 16;</code>
      * @return The favouritesCount.
      */
-    public int getFavouritesCount() {
+    public long getFavouritesCount() {
       return favouritesCount_;
     }
 
@@ -2286,22 +2286,22 @@ public final class Large {
     }
 
     public static final int STATUSES_COUNT_FIELD_NUMBER = 21;
-    private int statusesCount_;
+    private long statusesCount_;
     /**
-     * <code>int32 statuses_count = 21;</code>
+     * <code>int64 statuses_count = 21;</code>
      * @return The statusesCount.
      */
-    public int getStatusesCount() {
+    public long getStatusesCount() {
       return statusesCount_;
     }
 
     public static final int MEDIA_COUNT_FIELD_NUMBER = 22;
-    private int mediaCount_;
+    private long mediaCount_;
     /**
-     * <code>int32 media_count = 22;</code>
+     * <code>int64 media_count = 22;</code>
      * @return The mediaCount.
      */
-    public int getMediaCount() {
+    public long getMediaCount() {
       return mediaCount_;
     }
 
@@ -2782,29 +2782,29 @@ public final class Large {
     }
 
     public static final int PINNED_TWEET_IDS_FIELD_NUMBER = 42;
-    private com.google.protobuf.Internal.IntList pinnedTweetIds_;
+    private com.google.protobuf.Internal.LongList pinnedTweetIds_;
     /**
-     * <code>repeated int32 pinned_tweet_ids = 42;</code>
+     * <code>repeated int64 pinned_tweet_ids = 42;</code>
      * @return A list containing the pinnedTweetIds.
      */
-    public java.util.List<java.lang.Integer>
+    public java.util.List<java.lang.Long>
         getPinnedTweetIdsList() {
       return pinnedTweetIds_;
     }
     /**
-     * <code>repeated int32 pinned_tweet_ids = 42;</code>
+     * <code>repeated int64 pinned_tweet_ids = 42;</code>
      * @return The count of pinnedTweetIds.
      */
     public int getPinnedTweetIdsCount() {
       return pinnedTweetIds_.size();
     }
     /**
-     * <code>repeated int32 pinned_tweet_ids = 42;</code>
+     * <code>repeated int64 pinned_tweet_ids = 42;</code>
      * @param index The index of the element to return.
      * @return The pinnedTweetIds at the given index.
      */
-    public int getPinnedTweetIds(int index) {
-      return pinnedTweetIds_.getInt(index);
+    public long getPinnedTweetIds(int index) {
+      return pinnedTweetIds_.getLong(index);
     }
     private int pinnedTweetIdsMemoizedSerializedSize = -1;
 
@@ -3157,8 +3157,8 @@ public final class Large {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      if (id_ != 0) {
-        output.writeInt32(1, id_);
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
       }
       if (!getIdStrBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, idStr_);
@@ -3184,26 +3184,26 @@ public final class Large {
       if (protect_ != false) {
         output.writeBool(9, protect_);
       }
-      if (followersCount_ != 0) {
-        output.writeInt32(10, followersCount_);
+      if (followersCount_ != 0L) {
+        output.writeInt64(10, followersCount_);
       }
-      if (fastFollowersCount_ != 0) {
-        output.writeInt32(11, fastFollowersCount_);
+      if (fastFollowersCount_ != 0L) {
+        output.writeInt64(11, fastFollowersCount_);
       }
-      if (normalFollowersCount_ != 0) {
-        output.writeInt32(12, normalFollowersCount_);
+      if (normalFollowersCount_ != 0L) {
+        output.writeInt64(12, normalFollowersCount_);
       }
-      if (friendsCount_ != 0) {
-        output.writeInt32(13, friendsCount_);
+      if (friendsCount_ != 0L) {
+        output.writeInt64(13, friendsCount_);
       }
-      if (listedCount_ != 0) {
-        output.writeInt32(14, listedCount_);
+      if (listedCount_ != 0L) {
+        output.writeInt64(14, listedCount_);
       }
       if (!getCreatedAtBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 15, createdAt_);
       }
-      if (favouritesCount_ != 0) {
-        output.writeInt32(16, favouritesCount_);
+      if (favouritesCount_ != 0L) {
+        output.writeInt64(16, favouritesCount_);
       }
       if (!getUtcOffsetBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 17, utcOffset_);
@@ -3217,11 +3217,11 @@ public final class Large {
       if (verified_ != false) {
         output.writeBool(20, verified_);
       }
-      if (statusesCount_ != 0) {
-        output.writeInt32(21, statusesCount_);
+      if (statusesCount_ != 0L) {
+        output.writeInt64(21, statusesCount_);
       }
-      if (mediaCount_ != 0) {
-        output.writeInt32(22, mediaCount_);
+      if (mediaCount_ != 0L) {
+        output.writeInt64(22, mediaCount_);
       }
       if (!getLangBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 23, lang_);
@@ -3285,7 +3285,7 @@ public final class Large {
         output.writeUInt32NoTag(pinnedTweetIdsMemoizedSerializedSize);
       }
       for (int i = 0; i < pinnedTweetIds_.size(); i++) {
-        output.writeInt32NoTag(pinnedTweetIds_.getInt(i));
+        output.writeInt64NoTag(pinnedTweetIds_.getLong(i));
       }
       for (int i = 0; i < pinnedTweetIdsStr_.size(); i++) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 43, pinnedTweetIdsStr_.getRaw(i));
@@ -3350,9 +3350,9 @@ public final class Large {
       if (size != -1) return size;
 
       size = 0;
-      if (id_ != 0) {
+      if (id_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, id_);
+          .computeInt64Size(1, id_);
       }
       if (!getIdStrBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, idStr_);
@@ -3380,32 +3380,32 @@ public final class Large {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(9, protect_);
       }
-      if (followersCount_ != 0) {
+      if (followersCount_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(10, followersCount_);
+          .computeInt64Size(10, followersCount_);
       }
-      if (fastFollowersCount_ != 0) {
+      if (fastFollowersCount_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(11, fastFollowersCount_);
+          .computeInt64Size(11, fastFollowersCount_);
       }
-      if (normalFollowersCount_ != 0) {
+      if (normalFollowersCount_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(12, normalFollowersCount_);
+          .computeInt64Size(12, normalFollowersCount_);
       }
-      if (friendsCount_ != 0) {
+      if (friendsCount_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(13, friendsCount_);
+          .computeInt64Size(13, friendsCount_);
       }
-      if (listedCount_ != 0) {
+      if (listedCount_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(14, listedCount_);
+          .computeInt64Size(14, listedCount_);
       }
       if (!getCreatedAtBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(15, createdAt_);
       }
-      if (favouritesCount_ != 0) {
+      if (favouritesCount_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(16, favouritesCount_);
+          .computeInt64Size(16, favouritesCount_);
       }
       if (!getUtcOffsetBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(17, utcOffset_);
@@ -3421,13 +3421,13 @@ public final class Large {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(20, verified_);
       }
-      if (statusesCount_ != 0) {
+      if (statusesCount_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(21, statusesCount_);
+          .computeInt64Size(21, statusesCount_);
       }
-      if (mediaCount_ != 0) {
+      if (mediaCount_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(22, mediaCount_);
+          .computeInt64Size(22, mediaCount_);
       }
       if (!getLangBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(23, lang_);
@@ -3498,7 +3498,7 @@ public final class Large {
         int dataSize = 0;
         for (int i = 0; i < pinnedTweetIds_.size(); i++) {
           dataSize += com.google.protobuf.CodedOutputStream
-            .computeInt32SizeNoTag(pinnedTweetIds_.getInt(i));
+            .computeInt64SizeNoTag(pinnedTweetIds_.getLong(i));
         }
         size += dataSize;
         if (!getPinnedTweetIdsList().isEmpty()) {
@@ -3734,7 +3734,8 @@ public final class Large {
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + ID_FIELD_NUMBER;
-      hash = (53 * hash) + getId();
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getId());
       hash = (37 * hash) + ID_STR_FIELD_NUMBER;
       hash = (53 * hash) + getIdStr().hashCode();
       hash = (37 * hash) + NAME_FIELD_NUMBER;
@@ -3755,19 +3756,25 @@ public final class Large {
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
           getProtect());
       hash = (37 * hash) + FOLLOWERS_COUNT_FIELD_NUMBER;
-      hash = (53 * hash) + getFollowersCount();
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getFollowersCount());
       hash = (37 * hash) + FAST_FOLLOWERS_COUNT_FIELD_NUMBER;
-      hash = (53 * hash) + getFastFollowersCount();
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getFastFollowersCount());
       hash = (37 * hash) + NORMAL_FOLLOWERS_COUNT_FIELD_NUMBER;
-      hash = (53 * hash) + getNormalFollowersCount();
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getNormalFollowersCount());
       hash = (37 * hash) + FRIENDS_COUNT_FIELD_NUMBER;
-      hash = (53 * hash) + getFriendsCount();
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getFriendsCount());
       hash = (37 * hash) + LISTED_COUNT_FIELD_NUMBER;
-      hash = (53 * hash) + getListedCount();
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getListedCount());
       hash = (37 * hash) + CREATED_AT_FIELD_NUMBER;
       hash = (53 * hash) + getCreatedAt().hashCode();
       hash = (37 * hash) + FAVOURITES_COUNT_FIELD_NUMBER;
-      hash = (53 * hash) + getFavouritesCount();
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getFavouritesCount());
       hash = (37 * hash) + UTC_OFFSET_FIELD_NUMBER;
       hash = (53 * hash) + getUtcOffset().hashCode();
       hash = (37 * hash) + TIME_ZONE_FIELD_NUMBER;
@@ -3779,9 +3786,11 @@ public final class Large {
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
           getVerified());
       hash = (37 * hash) + STATUSES_COUNT_FIELD_NUMBER;
-      hash = (53 * hash) + getStatusesCount();
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getStatusesCount());
       hash = (37 * hash) + MEDIA_COUNT_FIELD_NUMBER;
-      hash = (53 * hash) + getMediaCount();
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getMediaCount());
       hash = (37 * hash) + LANG_FIELD_NUMBER;
       hash = (53 * hash) + getLang().hashCode();
       hash = (37 * hash) + CONTRIBUTORS_ENABLED_FIELD_NUMBER;
@@ -4017,7 +4026,7 @@ public final class Large {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        id_ = 0;
+        id_ = 0L;
 
         idStr_ = "";
 
@@ -4039,19 +4048,19 @@ public final class Large {
         }
         protect_ = false;
 
-        followersCount_ = 0;
+        followersCount_ = 0L;
 
-        fastFollowersCount_ = 0;
+        fastFollowersCount_ = 0L;
 
-        normalFollowersCount_ = 0;
+        normalFollowersCount_ = 0L;
 
-        friendsCount_ = 0;
+        friendsCount_ = 0L;
 
-        listedCount_ = 0;
+        listedCount_ = 0L;
 
         createdAt_ = "";
 
-        favouritesCount_ = 0;
+        favouritesCount_ = 0L;
 
         utcOffset_ = "";
 
@@ -4061,9 +4070,9 @@ public final class Large {
 
         verified_ = false;
 
-        statusesCount_ = 0;
+        statusesCount_ = 0L;
 
-        mediaCount_ = 0;
+        mediaCount_ = 0L;
 
         lang_ = "";
 
@@ -4103,7 +4112,7 @@ public final class Large {
 
         defaultProfileImage_ = false;
 
-        pinnedTweetIds_ = emptyIntList();
+        pinnedTweetIds_ = emptyLongList();
         bitField0_ = (bitField0_ & ~0x00000001);
         pinnedTweetIdsStr_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -4292,7 +4301,7 @@ public final class Large {
 
       public Builder mergeFrom(com.github.sisyphsu.smartbuf.benchmark.large.Large.Trend other) {
         if (other == com.github.sisyphsu.smartbuf.benchmark.large.Large.Trend.getDefaultInstance()) return this;
-        if (other.getId() != 0) {
+        if (other.getId() != 0L) {
           setId(other.getId());
         }
         if (!other.getIdStr().isEmpty()) {
@@ -4325,26 +4334,26 @@ public final class Large {
         if (other.getProtect() != false) {
           setProtect(other.getProtect());
         }
-        if (other.getFollowersCount() != 0) {
+        if (other.getFollowersCount() != 0L) {
           setFollowersCount(other.getFollowersCount());
         }
-        if (other.getFastFollowersCount() != 0) {
+        if (other.getFastFollowersCount() != 0L) {
           setFastFollowersCount(other.getFastFollowersCount());
         }
-        if (other.getNormalFollowersCount() != 0) {
+        if (other.getNormalFollowersCount() != 0L) {
           setNormalFollowersCount(other.getNormalFollowersCount());
         }
-        if (other.getFriendsCount() != 0) {
+        if (other.getFriendsCount() != 0L) {
           setFriendsCount(other.getFriendsCount());
         }
-        if (other.getListedCount() != 0) {
+        if (other.getListedCount() != 0L) {
           setListedCount(other.getListedCount());
         }
         if (!other.getCreatedAt().isEmpty()) {
           createdAt_ = other.createdAt_;
           onChanged();
         }
-        if (other.getFavouritesCount() != 0) {
+        if (other.getFavouritesCount() != 0L) {
           setFavouritesCount(other.getFavouritesCount());
         }
         if (!other.getUtcOffset().isEmpty()) {
@@ -4361,10 +4370,10 @@ public final class Large {
         if (other.getVerified() != false) {
           setVerified(other.getVerified());
         }
-        if (other.getStatusesCount() != 0) {
+        if (other.getStatusesCount() != 0L) {
           setStatusesCount(other.getStatusesCount());
         }
-        if (other.getMediaCount() != 0) {
+        if (other.getMediaCount() != 0L) {
           setMediaCount(other.getMediaCount());
         }
         if (!other.getLang().isEmpty()) {
@@ -4547,32 +4556,32 @@ public final class Large {
       }
       private int bitField0_;
 
-      private int id_ ;
+      private long id_ ;
       /**
-       * <code>int32 id = 1;</code>
+       * <code>int64 id = 1;</code>
        * @return The id.
        */
-      public int getId() {
+      public long getId() {
         return id_;
       }
       /**
-       * <code>int32 id = 1;</code>
+       * <code>int64 id = 1;</code>
        * @param value The id to set.
        * @return This builder for chaining.
        */
-      public Builder setId(int value) {
+      public Builder setId(long value) {
         
         id_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 id = 1;</code>
+       * <code>int64 id = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearId() {
         
-        id_ = 0;
+        id_ = 0L;
         onChanged();
         return this;
       }
@@ -5182,152 +5191,152 @@ public final class Large {
         return this;
       }
 
-      private int followersCount_ ;
+      private long followersCount_ ;
       /**
-       * <code>int32 followers_count = 10;</code>
+       * <code>int64 followers_count = 10;</code>
        * @return The followersCount.
        */
-      public int getFollowersCount() {
+      public long getFollowersCount() {
         return followersCount_;
       }
       /**
-       * <code>int32 followers_count = 10;</code>
+       * <code>int64 followers_count = 10;</code>
        * @param value The followersCount to set.
        * @return This builder for chaining.
        */
-      public Builder setFollowersCount(int value) {
+      public Builder setFollowersCount(long value) {
         
         followersCount_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 followers_count = 10;</code>
+       * <code>int64 followers_count = 10;</code>
        * @return This builder for chaining.
        */
       public Builder clearFollowersCount() {
         
-        followersCount_ = 0;
+        followersCount_ = 0L;
         onChanged();
         return this;
       }
 
-      private int fastFollowersCount_ ;
+      private long fastFollowersCount_ ;
       /**
-       * <code>int32 fast_followers_count = 11;</code>
+       * <code>int64 fast_followers_count = 11;</code>
        * @return The fastFollowersCount.
        */
-      public int getFastFollowersCount() {
+      public long getFastFollowersCount() {
         return fastFollowersCount_;
       }
       /**
-       * <code>int32 fast_followers_count = 11;</code>
+       * <code>int64 fast_followers_count = 11;</code>
        * @param value The fastFollowersCount to set.
        * @return This builder for chaining.
        */
-      public Builder setFastFollowersCount(int value) {
+      public Builder setFastFollowersCount(long value) {
         
         fastFollowersCount_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 fast_followers_count = 11;</code>
+       * <code>int64 fast_followers_count = 11;</code>
        * @return This builder for chaining.
        */
       public Builder clearFastFollowersCount() {
         
-        fastFollowersCount_ = 0;
+        fastFollowersCount_ = 0L;
         onChanged();
         return this;
       }
 
-      private int normalFollowersCount_ ;
+      private long normalFollowersCount_ ;
       /**
-       * <code>int32 normal_followers_count = 12;</code>
+       * <code>int64 normal_followers_count = 12;</code>
        * @return The normalFollowersCount.
        */
-      public int getNormalFollowersCount() {
+      public long getNormalFollowersCount() {
         return normalFollowersCount_;
       }
       /**
-       * <code>int32 normal_followers_count = 12;</code>
+       * <code>int64 normal_followers_count = 12;</code>
        * @param value The normalFollowersCount to set.
        * @return This builder for chaining.
        */
-      public Builder setNormalFollowersCount(int value) {
+      public Builder setNormalFollowersCount(long value) {
         
         normalFollowersCount_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 normal_followers_count = 12;</code>
+       * <code>int64 normal_followers_count = 12;</code>
        * @return This builder for chaining.
        */
       public Builder clearNormalFollowersCount() {
         
-        normalFollowersCount_ = 0;
+        normalFollowersCount_ = 0L;
         onChanged();
         return this;
       }
 
-      private int friendsCount_ ;
+      private long friendsCount_ ;
       /**
-       * <code>int32 friends_count = 13;</code>
+       * <code>int64 friends_count = 13;</code>
        * @return The friendsCount.
        */
-      public int getFriendsCount() {
+      public long getFriendsCount() {
         return friendsCount_;
       }
       /**
-       * <code>int32 friends_count = 13;</code>
+       * <code>int64 friends_count = 13;</code>
        * @param value The friendsCount to set.
        * @return This builder for chaining.
        */
-      public Builder setFriendsCount(int value) {
+      public Builder setFriendsCount(long value) {
         
         friendsCount_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 friends_count = 13;</code>
+       * <code>int64 friends_count = 13;</code>
        * @return This builder for chaining.
        */
       public Builder clearFriendsCount() {
         
-        friendsCount_ = 0;
+        friendsCount_ = 0L;
         onChanged();
         return this;
       }
 
-      private int listedCount_ ;
+      private long listedCount_ ;
       /**
-       * <code>int32 listed_count = 14;</code>
+       * <code>int64 listed_count = 14;</code>
        * @return The listedCount.
        */
-      public int getListedCount() {
+      public long getListedCount() {
         return listedCount_;
       }
       /**
-       * <code>int32 listed_count = 14;</code>
+       * <code>int64 listed_count = 14;</code>
        * @param value The listedCount to set.
        * @return This builder for chaining.
        */
-      public Builder setListedCount(int value) {
+      public Builder setListedCount(long value) {
         
         listedCount_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 listed_count = 14;</code>
+       * <code>int64 listed_count = 14;</code>
        * @return This builder for chaining.
        */
       public Builder clearListedCount() {
         
-        listedCount_ = 0;
+        listedCount_ = 0L;
         onChanged();
         return this;
       }
@@ -5408,32 +5417,32 @@ public final class Large {
         return this;
       }
 
-      private int favouritesCount_ ;
+      private long favouritesCount_ ;
       /**
-       * <code>int32 favourites_count = 16;</code>
+       * <code>int64 favourites_count = 16;</code>
        * @return The favouritesCount.
        */
-      public int getFavouritesCount() {
+      public long getFavouritesCount() {
         return favouritesCount_;
       }
       /**
-       * <code>int32 favourites_count = 16;</code>
+       * <code>int64 favourites_count = 16;</code>
        * @param value The favouritesCount to set.
        * @return This builder for chaining.
        */
-      public Builder setFavouritesCount(int value) {
+      public Builder setFavouritesCount(long value) {
         
         favouritesCount_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 favourites_count = 16;</code>
+       * <code>int64 favourites_count = 16;</code>
        * @return This builder for chaining.
        */
       public Builder clearFavouritesCount() {
         
-        favouritesCount_ = 0;
+        favouritesCount_ = 0L;
         onChanged();
         return this;
       }
@@ -5650,62 +5659,62 @@ public final class Large {
         return this;
       }
 
-      private int statusesCount_ ;
+      private long statusesCount_ ;
       /**
-       * <code>int32 statuses_count = 21;</code>
+       * <code>int64 statuses_count = 21;</code>
        * @return The statusesCount.
        */
-      public int getStatusesCount() {
+      public long getStatusesCount() {
         return statusesCount_;
       }
       /**
-       * <code>int32 statuses_count = 21;</code>
+       * <code>int64 statuses_count = 21;</code>
        * @param value The statusesCount to set.
        * @return This builder for chaining.
        */
-      public Builder setStatusesCount(int value) {
+      public Builder setStatusesCount(long value) {
         
         statusesCount_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 statuses_count = 21;</code>
+       * <code>int64 statuses_count = 21;</code>
        * @return This builder for chaining.
        */
       public Builder clearStatusesCount() {
         
-        statusesCount_ = 0;
+        statusesCount_ = 0L;
         onChanged();
         return this;
       }
 
-      private int mediaCount_ ;
+      private long mediaCount_ ;
       /**
-       * <code>int32 media_count = 22;</code>
+       * <code>int64 media_count = 22;</code>
        * @return The mediaCount.
        */
-      public int getMediaCount() {
+      public long getMediaCount() {
         return mediaCount_;
       }
       /**
-       * <code>int32 media_count = 22;</code>
+       * <code>int64 media_count = 22;</code>
        * @param value The mediaCount to set.
        * @return This builder for chaining.
        */
-      public Builder setMediaCount(int value) {
+      public Builder setMediaCount(long value) {
         
         mediaCount_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 media_count = 22;</code>
+       * <code>int64 media_count = 22;</code>
        * @return This builder for chaining.
        */
       public Builder clearMediaCount() {
         
-        mediaCount_ = 0;
+        mediaCount_ = 0L;
         onChanged();
         return this;
       }
@@ -6786,7 +6795,7 @@ public final class Large {
         return this;
       }
 
-      private com.google.protobuf.Internal.IntList pinnedTweetIds_ = emptyIntList();
+      private com.google.protobuf.Internal.LongList pinnedTweetIds_ = emptyLongList();
       private void ensurePinnedTweetIdsIsMutable() {
         if (!((bitField0_ & 0x00000001) != 0)) {
           pinnedTweetIds_ = mutableCopy(pinnedTweetIds_);
@@ -6794,60 +6803,60 @@ public final class Large {
          }
       }
       /**
-       * <code>repeated int32 pinned_tweet_ids = 42;</code>
+       * <code>repeated int64 pinned_tweet_ids = 42;</code>
        * @return A list containing the pinnedTweetIds.
        */
-      public java.util.List<java.lang.Integer>
+      public java.util.List<java.lang.Long>
           getPinnedTweetIdsList() {
         return ((bitField0_ & 0x00000001) != 0) ?
                  java.util.Collections.unmodifiableList(pinnedTweetIds_) : pinnedTweetIds_;
       }
       /**
-       * <code>repeated int32 pinned_tweet_ids = 42;</code>
+       * <code>repeated int64 pinned_tweet_ids = 42;</code>
        * @return The count of pinnedTweetIds.
        */
       public int getPinnedTweetIdsCount() {
         return pinnedTweetIds_.size();
       }
       /**
-       * <code>repeated int32 pinned_tweet_ids = 42;</code>
+       * <code>repeated int64 pinned_tweet_ids = 42;</code>
        * @param index The index of the element to return.
        * @return The pinnedTweetIds at the given index.
        */
-      public int getPinnedTweetIds(int index) {
-        return pinnedTweetIds_.getInt(index);
+      public long getPinnedTweetIds(int index) {
+        return pinnedTweetIds_.getLong(index);
       }
       /**
-       * <code>repeated int32 pinned_tweet_ids = 42;</code>
+       * <code>repeated int64 pinned_tweet_ids = 42;</code>
        * @param index The index to set the value at.
        * @param value The pinnedTweetIds to set.
        * @return This builder for chaining.
        */
       public Builder setPinnedTweetIds(
-          int index, int value) {
+          int index, long value) {
         ensurePinnedTweetIdsIsMutable();
-        pinnedTweetIds_.setInt(index, value);
+        pinnedTweetIds_.setLong(index, value);
         onChanged();
         return this;
       }
       /**
-       * <code>repeated int32 pinned_tweet_ids = 42;</code>
+       * <code>repeated int64 pinned_tweet_ids = 42;</code>
        * @param value The pinnedTweetIds to add.
        * @return This builder for chaining.
        */
-      public Builder addPinnedTweetIds(int value) {
+      public Builder addPinnedTweetIds(long value) {
         ensurePinnedTweetIdsIsMutable();
-        pinnedTweetIds_.addInt(value);
+        pinnedTweetIds_.addLong(value);
         onChanged();
         return this;
       }
       /**
-       * <code>repeated int32 pinned_tweet_ids = 42;</code>
+       * <code>repeated int64 pinned_tweet_ids = 42;</code>
        * @param values The pinnedTweetIds to add.
        * @return This builder for chaining.
        */
       public Builder addAllPinnedTweetIds(
-          java.lang.Iterable<? extends java.lang.Integer> values) {
+          java.lang.Iterable<? extends java.lang.Long> values) {
         ensurePinnedTweetIdsIsMutable();
         com.google.protobuf.AbstractMessageLite.Builder.addAll(
             values, pinnedTweetIds_);
@@ -6855,11 +6864,11 @@ public final class Large {
         return this;
       }
       /**
-       * <code>repeated int32 pinned_tweet_ids = 42;</code>
+       * <code>repeated int64 pinned_tweet_ids = 42;</code>
        * @return This builder for chaining.
        */
       public Builder clearPinnedTweetIds() {
-        pinnedTweetIds_ = emptyIntList();
+        pinnedTweetIds_ = emptyLongList();
         bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
@@ -10236,21 +10245,21 @@ public final class Large {
         getDisplayUrlBytes();
 
     /**
-     * <code>repeated int32 indices = 4;</code>
+     * <code>repeated int64 indices = 4;</code>
      * @return A list containing the indices.
      */
-    java.util.List<java.lang.Integer> getIndicesList();
+    java.util.List<java.lang.Long> getIndicesList();
     /**
-     * <code>repeated int32 indices = 4;</code>
+     * <code>repeated int64 indices = 4;</code>
      * @return The count of indices.
      */
     int getIndicesCount();
     /**
-     * <code>repeated int32 indices = 4;</code>
+     * <code>repeated int64 indices = 4;</code>
      * @param index The index of the element to return.
      * @return The indices at the given index.
      */
-    int getIndices(int index);
+    long getIndices(int index);
   }
   /**
    * Protobuf type {@code com.github.sisyphsu.smartbuf.benchmark.large.Url}
@@ -10268,7 +10277,7 @@ public final class Large {
       url_ = "";
       expandedUrl_ = "";
       displayUrl_ = "";
-      indices_ = emptyIntList();
+      indices_ = emptyLongList();
     }
 
     @java.lang.Override
@@ -10322,21 +10331,21 @@ public final class Large {
             }
             case 32: {
               if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                indices_ = newIntList();
+                indices_ = newLongList();
                 mutable_bitField0_ |= 0x00000001;
               }
-              indices_.addInt(input.readInt32());
+              indices_.addLong(input.readInt64());
               break;
             }
             case 34: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
               if (!((mutable_bitField0_ & 0x00000001) != 0) && input.getBytesUntilLimit() > 0) {
-                indices_ = newIntList();
+                indices_ = newLongList();
                 mutable_bitField0_ |= 0x00000001;
               }
               while (input.getBytesUntilLimit() > 0) {
-                indices_.addInt(input.readInt32());
+                indices_.addLong(input.readInt64());
               }
               input.popLimit(limit);
               break;
@@ -10485,29 +10494,29 @@ public final class Large {
     }
 
     public static final int INDICES_FIELD_NUMBER = 4;
-    private com.google.protobuf.Internal.IntList indices_;
+    private com.google.protobuf.Internal.LongList indices_;
     /**
-     * <code>repeated int32 indices = 4;</code>
+     * <code>repeated int64 indices = 4;</code>
      * @return A list containing the indices.
      */
-    public java.util.List<java.lang.Integer>
+    public java.util.List<java.lang.Long>
         getIndicesList() {
       return indices_;
     }
     /**
-     * <code>repeated int32 indices = 4;</code>
+     * <code>repeated int64 indices = 4;</code>
      * @return The count of indices.
      */
     public int getIndicesCount() {
       return indices_.size();
     }
     /**
-     * <code>repeated int32 indices = 4;</code>
+     * <code>repeated int64 indices = 4;</code>
      * @param index The index of the element to return.
      * @return The indices at the given index.
      */
-    public int getIndices(int index) {
-      return indices_.getInt(index);
+    public long getIndices(int index) {
+      return indices_.getLong(index);
     }
     private int indicesMemoizedSerializedSize = -1;
 
@@ -10540,7 +10549,7 @@ public final class Large {
         output.writeUInt32NoTag(indicesMemoizedSerializedSize);
       }
       for (int i = 0; i < indices_.size(); i++) {
-        output.writeInt32NoTag(indices_.getInt(i));
+        output.writeInt64NoTag(indices_.getLong(i));
       }
       unknownFields.writeTo(output);
     }
@@ -10564,7 +10573,7 @@ public final class Large {
         int dataSize = 0;
         for (int i = 0; i < indices_.size(); i++) {
           dataSize += com.google.protobuf.CodedOutputStream
-            .computeInt32SizeNoTag(indices_.getInt(i));
+            .computeInt64SizeNoTag(indices_.getLong(i));
         }
         size += dataSize;
         if (!getIndicesList().isEmpty()) {
@@ -10757,7 +10766,7 @@ public final class Large {
 
         displayUrl_ = "";
 
-        indices_ = emptyIntList();
+        indices_ = emptyLongList();
         bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
@@ -11122,7 +11131,7 @@ public final class Large {
         return this;
       }
 
-      private com.google.protobuf.Internal.IntList indices_ = emptyIntList();
+      private com.google.protobuf.Internal.LongList indices_ = emptyLongList();
       private void ensureIndicesIsMutable() {
         if (!((bitField0_ & 0x00000001) != 0)) {
           indices_ = mutableCopy(indices_);
@@ -11130,60 +11139,60 @@ public final class Large {
          }
       }
       /**
-       * <code>repeated int32 indices = 4;</code>
+       * <code>repeated int64 indices = 4;</code>
        * @return A list containing the indices.
        */
-      public java.util.List<java.lang.Integer>
+      public java.util.List<java.lang.Long>
           getIndicesList() {
         return ((bitField0_ & 0x00000001) != 0) ?
                  java.util.Collections.unmodifiableList(indices_) : indices_;
       }
       /**
-       * <code>repeated int32 indices = 4;</code>
+       * <code>repeated int64 indices = 4;</code>
        * @return The count of indices.
        */
       public int getIndicesCount() {
         return indices_.size();
       }
       /**
-       * <code>repeated int32 indices = 4;</code>
+       * <code>repeated int64 indices = 4;</code>
        * @param index The index of the element to return.
        * @return The indices at the given index.
        */
-      public int getIndices(int index) {
-        return indices_.getInt(index);
+      public long getIndices(int index) {
+        return indices_.getLong(index);
       }
       /**
-       * <code>repeated int32 indices = 4;</code>
+       * <code>repeated int64 indices = 4;</code>
        * @param index The index to set the value at.
        * @param value The indices to set.
        * @return This builder for chaining.
        */
       public Builder setIndices(
-          int index, int value) {
+          int index, long value) {
         ensureIndicesIsMutable();
-        indices_.setInt(index, value);
+        indices_.setLong(index, value);
         onChanged();
         return this;
       }
       /**
-       * <code>repeated int32 indices = 4;</code>
+       * <code>repeated int64 indices = 4;</code>
        * @param value The indices to add.
        * @return This builder for chaining.
        */
-      public Builder addIndices(int value) {
+      public Builder addIndices(long value) {
         ensureIndicesIsMutable();
-        indices_.addInt(value);
+        indices_.addLong(value);
         onChanged();
         return this;
       }
       /**
-       * <code>repeated int32 indices = 4;</code>
+       * <code>repeated int64 indices = 4;</code>
        * @param values The indices to add.
        * @return This builder for chaining.
        */
       public Builder addAllIndices(
-          java.lang.Iterable<? extends java.lang.Integer> values) {
+          java.lang.Iterable<? extends java.lang.Long> values) {
         ensureIndicesIsMutable();
         com.google.protobuf.AbstractMessageLite.Builder.addAll(
             values, indices_);
@@ -11191,11 +11200,11 @@ public final class Large {
         return this;
       }
       /**
-       * <code>repeated int32 indices = 4;</code>
+       * <code>repeated int64 indices = 4;</code>
        * @return This builder for chaining.
        */
       public Builder clearIndices() {
-        indices_ = emptyIntList();
+        indices_ = emptyLongList();
         bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
@@ -11296,19 +11305,19 @@ public final class Large {
       "com.github.sisyphsu.smartbuf.benchmark.l" +
       "arge\"M\n\006Trends\022C\n\006trends\030\001 \003(\01323.com.git" +
       "hub.sisyphsu.smartbuf.benchmark.large.Tr" +
-      "end\"\274\014\n\005Trend\022\n\n\002id\030\001 \001(\005\022\016\n\006id_str\030\002 \001(" +
+      "end\"\274\014\n\005Trend\022\n\n\002id\030\001 \001(\003\022\016\n\006id_str\030\002 \001(" +
       "\t\022\014\n\004name\030\003 \001(\t\022\023\n\013screen_name\030\004 \001(\t\022\020\n\010" +
       "location\030\005 \001(\t\022\023\n\013description\030\006 \001(\t\022\013\n\003u" +
       "rl\030\007 \001(\t\022H\n\010entities\030\010 \001(\01326.com.github." +
       "sisyphsu.smartbuf.benchmark.large.Entiti" +
       "es\022\017\n\007protect\030\t \001(\010\022\027\n\017followers_count\030\n" +
-      " \001(\005\022\034\n\024fast_followers_count\030\013 \001(\005\022\036\n\026no" +
-      "rmal_followers_count\030\014 \001(\005\022\025\n\rfriends_co" +
-      "unt\030\r \001(\005\022\024\n\014listed_count\030\016 \001(\005\022\022\n\ncreat" +
-      "ed_at\030\017 \001(\t\022\030\n\020favourites_count\030\020 \001(\005\022\022\n" +
+      " \001(\003\022\034\n\024fast_followers_count\030\013 \001(\003\022\036\n\026no" +
+      "rmal_followers_count\030\014 \001(\003\022\025\n\rfriends_co" +
+      "unt\030\r \001(\003\022\024\n\014listed_count\030\016 \001(\003\022\022\n\ncreat" +
+      "ed_at\030\017 \001(\t\022\030\n\020favourites_count\030\020 \001(\003\022\022\n" +
       "\nutc_offset\030\021 \001(\t\022\021\n\ttime_zone\030\022 \001(\t\022\023\n\013" +
       "geo_enabled\030\023 \001(\010\022\020\n\010verified\030\024 \001(\010\022\026\n\016s" +
-      "tatuses_count\030\025 \001(\005\022\023\n\013media_count\030\026 \001(\005" +
+      "tatuses_count\030\025 \001(\003\022\023\n\013media_count\030\026 \001(\003" +
       "\022\014\n\004lang\030\027 \001(\t\022\034\n\024contributors_enabled\030\030" +
       " \001(\010\022\025\n\ris_translator\030\031 \001(\010\022\036\n\026is_transl" +
       "ation_enabled\030\032 \001(\010\022 \n\030profile_backgroun" +
@@ -11324,7 +11333,7 @@ public final class Large {
       "e_background_image\030& \001(\010\022\034\n\024has_extended" +
       "_profile\030\' \001(\010\022\027\n\017default_profile\030( \001(\010\022" +
       "\035\n\025default_profile_image\030) \001(\010\022\030\n\020pinned" +
-      "_tweet_ids\030* \003(\005\022\034\n\024pinned_tweet_ids_str" +
+      "_tweet_ids\030* \003(\003\022\034\n\024pinned_tweet_ids_str" +
       "\030+ \003(\t\022\034\n\024has_custom_timelines\030, \001(\010\022\016\n\006" +
       "can_dm\030- \001(\010\022\025\n\rcan_media_tag\030. \001(\010\022\021\n\tf" +
       "ollowing\030/ \001(\010\022\033\n\023follow_request_sent\0300 " +
@@ -11345,7 +11354,7 @@ public final class Large {
       "\"G\n\004Urls\022?\n\004urls\030\001 \003(\01321.com.github.sisy" +
       "phsu.smartbuf.benchmark.large.Url\"N\n\003Url" +
       "\022\013\n\003url\030\001 \001(\t\022\024\n\014expanded_url\030\002 \001(\t\022\023\n\013d" +
-      "isplay_url\030\003 \001(\t\022\017\n\007indices\030\004 \003(\005b\006proto" +
+      "isplay_url\030\003 \001(\t\022\017\n\007indices\030\004 \003(\003b\006proto" +
       "3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor

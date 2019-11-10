@@ -7,7 +7,7 @@ message Trends {
 }
 
 message Trend {
-    int32 id = 1;
+    int64 id = 1;
     string id_str = 2;
     string name = 3;
     string screen_name = 4;
@@ -16,19 +16,19 @@ message Trend {
     string url = 7;
     Entities entities = 8;
     bool protect = 9;
-    int32 followers_count = 10;
-    int32 fast_followers_count = 11;
-    int32 normal_followers_count = 12;
-    int32 friends_count = 13;
-    int32 listed_count = 14;
+    int64 followers_count = 10;
+    int64 fast_followers_count = 11;
+    int64 normal_followers_count = 12;
+    int64 friends_count = 13;
+    int64 listed_count = 14;
     string created_at = 15;
-    int32 favourites_count = 16;
+    int64 favourites_count = 16;
     string utc_offset = 17;
     string time_zone = 18;
     bool geo_enabled = 19;
     bool verified = 20;
-    int32 statuses_count = 21;
-    int32 media_count = 22;
+    int64 statuses_count = 21;
+    int64 media_count = 22;
     string lang = 23;
     bool contributors_enabled = 24;
     bool is_translator = 25;
@@ -48,7 +48,7 @@ message Trend {
     bool has_extended_profile = 39;
     bool default_profile = 40;
     bool default_profile_image = 41;
-    repeated int32 pinned_tweet_ids = 42;
+    repeated int64 pinned_tweet_ids = 42;
     repeated string pinned_tweet_ids_str = 43;
     bool has_custom_timelines = 44;
     bool can_dm = 45;
@@ -86,5 +86,5 @@ message Url {
     string url = 1;
     string expanded_url = 2;
     string display_url = 3;
-    repeated int32 indices = 4;
+    repeated int64 indices = 4;
 }

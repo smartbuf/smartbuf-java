@@ -7,13 +7,10 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
 
 /**
  * BeanReaderBuilder helps build {@link BeanReader} for normal pojos
@@ -25,9 +22,6 @@ import java.util.regex.Pattern;
 public final class BeanReaderBuilder {
 
     static final Map<Class, BeanReader> READER_MAP = new ConcurrentHashMap<>();
-
-    static final Pattern RE_IS  = Pattern.compile("^is[A-Z_$].*$");
-    static final Pattern RE_GET = Pattern.compile("^get[A-Z_$].*$");
 
     private BeanReaderBuilder() {
     }
@@ -53,45 +47,14 @@ public final class BeanReaderBuilder {
     static BeanReader buildReader(Class<?> cls) {
         Map<String, BeanField> fieldMap = new TreeMap<>();
         // collect all fields
-        ReflectUtils.findAllValidFields(cls).forEach(f -> {
-            BeanField field = new BeanField(f.getName(), f.getType());
-            field.field = f;
-            fieldMap.put(f.getName(), field);
+        ReflectUtils.findAllValidFields(cls).forEach(field -> {
+            BeanField bf = new BeanField(field.getName(), field.getType());
+            bf.field = field;
+            bf.getter = ReflectUtils.findGetter(cls, field);
+            if (Modifier.isPublic(field.getModifiers()) || bf.getter != null) {
+                fieldMap.put(field.getName(), bf);
+            }
         });
-        // collect valid getter
-        for (Method m : cls.getMethods()) {
-            String name = m.getName();
-            Class<?> retType = m.getReturnType();
-            if (Modifier.isStatic(m.getModifiers()) || m.isAnnotationPresent(Deprecated.class)
-                || m.getParameterCount() > 0
-                || retType == void.class
-                || retType == Void.class) {
-                continue;
-            }
-            if (RE_IS.matcher(name).matches() && retType == boolean.class) {
-                name = name.substring(2); // boolean isXXX()
-            } else if (RE_GET.matcher(name).matches()) {
-                name = name.substring(3); // xxx getXXX()
-            } else {
-                continue; // ignore invalid getter
-            }
-            if (name.charAt(0) >= 'A' && name.charAt(0) <= 'Z') {
-                name = (char) (name.charAt(0) + 32) + name.substring(1);
-            }
-            BeanField field = fieldMap.get(name);
-            if (field != null && field.cls == retType) {
-                field.getter = m;
-            }
-        }
-        // clean unreadable fields
-        for (String name : new ArrayList<>(fieldMap.keySet())) {
-            BeanField bf = fieldMap.get(name);
-            int mod = bf.field.getModifiers();
-            if (Modifier.isPublic(mod) || bf.getter != null) {
-                continue;
-            }
-            fieldMap.remove(name);
-        }
         // build BeanReader
         try {
             BeanField[] fields = fieldMap.values().toArray(new BeanField[0]);

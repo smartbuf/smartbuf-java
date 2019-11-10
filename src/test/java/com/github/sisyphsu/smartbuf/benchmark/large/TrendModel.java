@@ -12,66 +12,66 @@ import java.util.stream.Collectors;
 @Data
 public class TrendModel {
 
-    public Integer       id;
-    public String        id_str;
-    public String        name;
-    public String        screen_name;
-    public String        location;
-    public String        description;
-    public String        url;
-    public Entities      entities;
-    public Boolean       protect;
-    public Integer       followers_count;
-    public Integer       fast_followers_count;
-    public Integer       normal_followers_count;
-    public Integer       friends_count;
-    public Integer       listed_count;
-    public String        created_at;
-    public Integer       favourites_count;
-    public String        utc_offset;
-    public String        time_zone;
-    public Boolean       geo_enabled;
-    public Boolean       verified;
-    public Integer       statuses_count;
-    public Integer       media_count;
-    public String        lang;
-    public Boolean       contributors_enabled;
-    public Boolean       is_translator;
-    public Boolean       is_translation_enabled;
-    public String        profile_background_color;
-    public String        profile_background_image_url;
-    public String        profile_background_image_url_https;
-    public Boolean       profile_background_tile;
-    public String        profile_image_url;
-    public String        profile_image_url_https;
-    public String        profile_banner_url;
-    public String        profile_link_color;
-    public String        profile_sidebar_border_color;
-    public String        profile_sidebar_fill_color;
-    public String        profile_text_color;
-    public Boolean       profile_use_background_image;
-    public Boolean       has_extended_profile;
-    public Boolean       default_profile;
-    public Boolean       default_profile_image;
-    public List<Integer> pinned_tweet_ids;
-    public List<String>  pinned_tweet_ids_str;
-    public Boolean       has_custom_timelines;
-    public Boolean       can_dm;
-    public Boolean       can_media_tag;
-    public Boolean       following;
-    public Boolean       follow_request_sent;
-    public Boolean       notifications;
-    public Boolean       muting;
-    public Boolean       blocking;
-    public Boolean       blocked_by;
-    public Boolean       want_retweets;
-    public String        advertiser_account_type;
-    public List<String>  advertiser_account_service_levels;
-    public String        profile_interstitial_type;
-    public String        business_profile_state;
-    public String        translator_type;
-    public Boolean       followed_by;
-    public Boolean       require_some_consent;
+    public Long         id;
+    public String       id_str;
+    public String       name;
+    public String       screen_name;
+    public String       location;
+    public String       description;
+    public String       url;
+    public Entities     entities;
+    public Boolean      protect;
+    public Long         followers_count;
+    public Long         fast_followers_count;
+    public Long         normal_followers_count;
+    public Long         friends_count;
+    public Long         listed_count;
+    public String       created_at;
+    public Long         favourites_count;
+    public String       utc_offset;
+    public String       time_zone;
+    public Boolean      geo_enabled;
+    public Boolean      verified;
+    public Long         statuses_count;
+    public Long         media_count;
+    public String       lang;
+    public Boolean      contributors_enabled;
+    public Boolean      is_translator;
+    public Boolean      is_translation_enabled;
+    public String       profile_background_color;
+    public String       profile_background_image_url;
+    public String       profile_background_image_url_https;
+    public Boolean      profile_background_tile;
+    public String       profile_image_url;
+    public String       profile_image_url_https;
+    public String       profile_banner_url;
+    public String       profile_link_color;
+    public String       profile_sidebar_border_color;
+    public String       profile_sidebar_fill_color;
+    public String       profile_text_color;
+    public Boolean      profile_use_background_image;
+    public Boolean      has_extended_profile;
+    public Boolean      default_profile;
+    public Boolean      default_profile_image;
+    public List<Long>   pinned_tweet_ids;
+    public List<String> pinned_tweet_ids_str;
+    public Boolean      has_custom_timelines;
+    public Boolean      can_dm;
+    public Boolean      can_media_tag;
+    public Boolean      following;
+    public Boolean      follow_request_sent;
+    public Boolean      notifications;
+    public Boolean      muting;
+    public Boolean      blocking;
+    public Boolean      blocked_by;
+    public Boolean      want_retweets;
+    public String       advertiser_account_type;
+    public List<String> advertiser_account_service_levels;
+    public String       profile_interstitial_type;
+    public String       business_profile_state;
+    public String       translator_type;
+    public Boolean      followed_by;
+    public Boolean      require_some_consent;
 
     @Data
     public static class Entities {
@@ -103,10 +103,10 @@ public class TrendModel {
 
     @Data
     public static class Url {
-        public String        url;
-        public String        expanded_url;
-        public String        display_url;
-        public List<Integer> indices;
+        public String     url;
+        public String     expanded_url;
+        public String     display_url;
+        public List<Long> indices;
 
         public Large.Url toPB() {
             return Large.Url.newBuilder()
@@ -128,8 +128,8 @@ public class TrendModel {
             .setDescription(description)
             .setUrl(url)
             .setEntities(Large.Entities.newBuilder()
-                .setDescription(entities.description.toPB())
-                .setUrl(entities.url.toPB())
+                .setDescription(entities.description == null ? Large.Description.getDefaultInstance() : entities.description.toPB())
+                .setUrl(entities.url == null ? Large.Urls.getDefaultInstance() : entities.url.toPB())
                 .build())
             .setProtect(protect)
             .setFollowersCount(followers_count)
