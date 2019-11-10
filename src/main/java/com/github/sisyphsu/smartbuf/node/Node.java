@@ -10,6 +10,6 @@ public abstract class Node {
 
     public abstract Object value();
 
-    public abstract byte type();
+    public abstract NodeType type();
 
 }

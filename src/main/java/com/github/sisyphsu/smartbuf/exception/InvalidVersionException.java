@@ -2,7 +2,7 @@ package com.github.sisyphsu.smartbuf.exception;
 
 import java.io.IOException;
 
-import static com.github.sisyphsu.smartbuf.Const.VER;
+import static com.github.sisyphsu.smartbuf.transport.Const.VER;
 
 /**
  * Exception that indicate the specified data has an invalid version

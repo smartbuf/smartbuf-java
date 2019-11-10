@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
-import static com.github.sisyphsu.smartbuf.Const.*;
+import static com.github.sisyphsu.smartbuf.transport.Const.*;
 
 /**
  * Output wraps the logic that scans the source data and serializes the output message into highly compressed data
@@ -142,7 +142,55 @@ public final class Output {
             }
             if (node != null) {
                 data = node.value();
-                type = node.type();
+                switch (node.type()) {
+                    case BOOLEAN:
+                        type = TYPE_CONST;
+                        break;
+                    case VARINT:
+                        type = TYPE_VARINT;
+                        break;
+                    case FLOAT:
+                        type = TYPE_FLOAT;
+                        break;
+                    case DOUBLE:
+                        type = TYPE_DOUBLE;
+                        break;
+                    case STRING:
+                        type = TYPE_STRING;
+                        break;
+                    case SYMBOL:
+                        type = TYPE_SYMBOL;
+                        break;
+                    case ARRAY_BOOLEAN:
+                        type = TYPE_NARRAY_BOOL;
+                        break;
+                    case ARRAY_BYTE:
+                        type = TYPE_NARRAY_BYTE;
+                        break;
+                    case ARRAY_SHORT:
+                        type = TYPE_NARRAY_SHORT;
+                        break;
+                    case ARRAY_INT:
+                        type = TYPE_NARRAY_INT;
+                        break;
+                    case ARRAY_LONG:
+                        type = TYPE_NARRAY_LONG;
+                        break;
+                    case ARRAY_FLOAT:
+                        type = TYPE_NARRAY_FLOAT;
+                        break;
+                    case ARRAY_DOUBLE:
+                        type = TYPE_NARRAY_DOUBLE;
+                        break;
+                    case ARRAY:
+                        type = TYPE_ARRAY;
+                        break;
+                    case OBJECT:
+                        type = TYPE_OBJECT;
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Invalid node: " + node.type());
+                }
             } else {
                 data = null;
                 type = TYPE_CONST;
@@ -298,25 +346,25 @@ public final class Output {
             if (node != null) {
                 item = node.value();
                 switch (node.type()) {
-                    case TYPE_CONST:
+                    case BOOLEAN:
                         itemType = TYPE_SLICE_BOOL;
                         break;
-                    case TYPE_DOUBLE:
+                    case DOUBLE:
                         itemType = TYPE_SLICE_DOUBLE;
                         break;
-                    case TYPE_FLOAT:
+                    case FLOAT:
                         itemType = TYPE_SLICE_FLOAT;
                         break;
-                    case TYPE_VARINT:
+                    case VARINT:
                         itemType = TYPE_SLICE_LONG;
                         break;
-                    case TYPE_STRING:
+                    case STRING:
                         itemType = TYPE_SLICE_STRING;
                         break;
-                    case TYPE_SYMBOL:
+                    case SYMBOL:
                         itemType = TYPE_SLICE_SYMBOL;
                         break;
-                    case TYPE_OBJECT:
+                    case OBJECT:
                         itemKey = ((ObjectNode) node).keys();
                         itemType = TYPE_SLICE_OBJECT;
                         break;
@@ -439,7 +487,7 @@ public final class Output {
             }
             switch (types == null ? Type.UNKNOWN : types[i]) {
                 case Z:
-                case BOOL:
+                case BOOLEAN:
                     this.writeData(TYPE_CONST, value);
                     break;
                 case B:
@@ -465,7 +513,7 @@ public final class Output {
                 case STRING:
                     this.writeData(TYPE_STRING, value);
                     break;
-                case ENUM:
+                case SYMBOL:
                     this.writeData(TYPE_SYMBOL, ((Enum) value).name());
                     break;
                 case ARRAY_BOOL:

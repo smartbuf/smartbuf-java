@@ -2,10 +2,16 @@ package com.github.sisyphsu.smartbuf;
 
 import java.util.Collection;
 
+/**
+ * Redefine some common data types to use switch replacing if/else
+ *
+ * @author sulin
+ * @since 2019-11-10 12:21:55
+ */
 public enum Type {
 
     Z,
-    BOOL,
+    BOOLEAN,
     B,
     BYTE,
     S,
@@ -21,7 +27,7 @@ public enum Type {
     C,
     CHAR,
     STRING,
-    ENUM,
+    SYMBOL,
     ARRAY,
     ARRAY_BOOL,
     ARRAY_BYTE,
@@ -32,13 +38,20 @@ public enum Type {
     ARRAY_DOUBLE,
     ARRAY_CHAR,
     COLLECTION,
+    OBJECT,
     UNKNOWN;
 
+    /**
+     * Get Type instance by the specified class
+     *
+     * @param cls Original class
+     * @return Redefined Type
+     */
     public static Type valueOf(Class<?> cls) {
         if (cls == boolean.class) {
             return Z;
         } else if (cls == Boolean.class) {
-            return BOOL;
+            return BOOLEAN;
         } else if (cls == float.class) {
             return F;
         } else if (cls == Float.class) {
@@ -70,7 +83,7 @@ public enum Type {
         } else if (CharSequence.class.isAssignableFrom(cls)) {
             return STRING;
         } else if (Enum.class.isAssignableFrom(cls)) {
-            return ENUM;
+            return SYMBOL;
         } else if (Collection.class.isAssignableFrom(cls)) {
             return COLLECTION;
         } else if (cls.isArray()) {

@@ -5,7 +5,7 @@ import com.github.sisyphsu.smartbuf.utils.TimeUtils;
 import java.io.IOException;
 import java.util.*;
 
-import static com.github.sisyphsu.smartbuf.Const.*;
+import static com.github.sisyphsu.smartbuf.transport.Const.*;
 
 /**
  * StructPool represents an area holds struct for sharing, which support temporary and context using.

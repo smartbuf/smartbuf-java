@@ -1,8 +1,8 @@
 package com.github.sisyphsu.smartbuf.node.basic;
 
-import com.github.sisyphsu.smartbuf.Const;
 import com.github.sisyphsu.smartbuf.Type;
 import com.github.sisyphsu.smartbuf.node.Node;
+import com.github.sisyphsu.smartbuf.node.NodeType;
 
 /**
  * ObjectNode represents JavaBean or Map.
@@ -55,7 +55,7 @@ public final class ObjectNode extends Node {
     }
 
     @Override
-    public byte type() {
-        return Const.TYPE_OBJECT;
+    public NodeType type() {
+        return NodeType.OBJECT;
     }
 }

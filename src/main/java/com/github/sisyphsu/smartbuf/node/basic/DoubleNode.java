@@ -1,7 +1,7 @@
 package com.github.sisyphsu.smartbuf.node.basic;
 
-import com.github.sisyphsu.smartbuf.Const;
 import com.github.sisyphsu.smartbuf.node.Node;
+import com.github.sisyphsu.smartbuf.node.NodeType;
 
 /**
  * DoubleNode represents double and Double.
@@ -36,7 +36,7 @@ public final class DoubleNode extends Node {
     }
 
     @Override
-    public byte type() {
-        return Const.TYPE_DOUBLE;
+    public NodeType type() {
+        return NodeType.DOUBLE;
     }
 }

@@ -1,20 +1,19 @@
 package com.github.sisyphsu.smartbuf.transport;
 
-import com.github.sisyphsu.smartbuf.Const;
 import com.github.sisyphsu.smartbuf.exception.InvalidVersionException;
 import com.github.sisyphsu.smartbuf.exception.MismatchModeException;
 import com.github.sisyphsu.smartbuf.exception.UnexpectedReadException;
 import com.github.sisyphsu.smartbuf.exception.UnexpectedSequenceException;
-import com.github.sisyphsu.smartbuf.node.basic.BooleanNode;
+import com.github.sisyphsu.smartbuf.node.Node;
+import com.github.sisyphsu.smartbuf.node.NodeType;
+import com.github.sisyphsu.smartbuf.node.array.*;
+import com.github.sisyphsu.smartbuf.node.basic.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.OptionalInt;
+import java.util.*;
 
 /**
  * @author sulin
@@ -222,6 +221,41 @@ public class IOTest {
             assert false;
         } catch (Exception e) {
             assert e instanceof UnexpectedReadException;
+        }
+    }
+
+    @Test
+    public void testNode() throws IOException {
+        assert Objects.equals(true, transIO(BooleanNode.valueOf(true)));
+        assert Objects.equals(Long.MAX_VALUE, transIO(VarintNode.valueOf(Long.MAX_VALUE)));
+        assert Objects.equals(Float.MAX_VALUE, transIO(FloatNode.valueOf(Float.MAX_VALUE)));
+        assert Objects.equals(Double.MAX_VALUE, transIO(DoubleNode.valueOf(Double.MAX_VALUE)));
+        assert Objects.equals("hello", transIO(StringNode.valueOf("hello")));
+        assert Objects.equals("HELLO", transIO(SymbolNode.valueOf("HELLO")));
+        assert Objects.deepEquals(new boolean[1], transIO(new BooleanArrayNode(new boolean[1])));
+        assert Objects.deepEquals(new byte[1], transIO(new ByteArrayNode(new byte[1])));
+        assert Objects.deepEquals(new short[1], transIO(new ShortArrayNode(new short[1])));
+        assert Objects.deepEquals(new int[1], transIO(new IntArrayNode(new int[1])));
+        assert Objects.deepEquals(new long[1], transIO(new LongArrayNode(new long[1])));
+        assert Objects.deepEquals(new float[1], transIO(new FloatArrayNode(new float[1])));
+        assert Objects.deepEquals(new double[1], transIO(new DoubleArrayNode(new double[1])));
+        assert Objects.deepEquals(new Object[1], transIO(new ArrayNode(Collections.singletonList(null))));
+
+        try {
+            transIO(new Node() {
+                @Override
+                public Object value() {
+                    return null;
+                }
+
+                @Override
+                public NodeType type() {
+                    return NodeType.UNKNOWN;
+                }
+            });
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof IllegalArgumentException;
         }
     }
 

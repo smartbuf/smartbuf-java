@@ -1,6 +1,8 @@
 package com.github.sisyphsu.smartbuf.reflect;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -120,7 +122,8 @@ public class BeanWriterBuilderTest {
         }
     }
 
-    @Data
+    @Getter
+    @Setter
     public static class Child extends Parent {
         private boolean enable;
         private String  name;

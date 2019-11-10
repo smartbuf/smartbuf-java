@@ -5,7 +5,7 @@ import com.github.sisyphsu.smartbuf.exception.UnexpectedReadException;
 
 import java.io.IOException;
 
-import static com.github.sisyphsu.smartbuf.Const.*;
+import static com.github.sisyphsu.smartbuf.transport.Const.*;
 
 /**
  * @author sulin

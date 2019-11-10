@@ -1,7 +1,7 @@
 package com.github.sisyphsu.smartbuf.node.basic;
 
-import com.github.sisyphsu.smartbuf.Const;
 import com.github.sisyphsu.smartbuf.node.Node;
+import com.github.sisyphsu.smartbuf.node.NodeType;
 import com.github.sisyphsu.smartbuf.utils.NumberUtils;
 
 /**
@@ -68,7 +68,7 @@ public final class VarintNode extends Node {
     }
 
     @Override
-    public byte type() {
-        return Const.TYPE_VARINT;
+    public NodeType type() {
+        return NodeType.VARINT;
     }
 }

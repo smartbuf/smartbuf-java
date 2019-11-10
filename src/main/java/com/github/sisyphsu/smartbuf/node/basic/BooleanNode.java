@@ -1,7 +1,7 @@
 package com.github.sisyphsu.smartbuf.node.basic;
 
-import com.github.sisyphsu.smartbuf.Const;
 import com.github.sisyphsu.smartbuf.node.Node;
+import com.github.sisyphsu.smartbuf.node.NodeType;
 
 /**
  * BooleanNode represents boolean and Boolean.
@@ -31,8 +31,8 @@ public final class BooleanNode extends Node {
     }
 
     @Override
-    public byte type() {
-        return Const.TYPE_CONST;
+    public NodeType type() {
+        return NodeType.BOOLEAN;
     }
 
 }

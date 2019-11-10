@@ -1,4 +1,4 @@
-package com.github.sisyphsu.smartbuf;
+package com.github.sisyphsu.smartbuf.transport;
 
 /**
  * Constants that shared between input and output

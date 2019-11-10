@@ -5,7 +5,7 @@ import com.github.sisyphsu.smartbuf.utils.TimeUtils;
 import java.io.IOException;
 import java.util.*;
 
-import static com.github.sisyphsu.smartbuf.Const.*;
+import static com.github.sisyphsu.smartbuf.transport.Const.*;
 
 /**
  * DataPool represents an area holds data properties like float/double/varint/string/symbol.

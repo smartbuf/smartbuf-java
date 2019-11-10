@@ -1,7 +1,7 @@
 package com.github.sisyphsu.smartbuf.node.basic;
 
-import com.github.sisyphsu.smartbuf.Const;
 import com.github.sisyphsu.smartbuf.node.Node;
+import com.github.sisyphsu.smartbuf.node.NodeType;
 
 /**
  * SymbolNode represents constant String or Enum etc.
@@ -31,7 +31,7 @@ public final class SymbolNode extends Node {
     }
 
     @Override
-    public byte type() {
-        return Const.TYPE_SYMBOL;
+    public NodeType type() {
+        return NodeType.SYMBOL;
     }
 }

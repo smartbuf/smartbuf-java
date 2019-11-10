@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 public final class SmartStream {
 
-    public SmartBuf buf;
+    public final SmartBuf buf;
 
     /**
      * Initialize SmartStream

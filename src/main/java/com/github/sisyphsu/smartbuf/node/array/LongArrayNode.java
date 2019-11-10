@@ -1,7 +1,7 @@
 package com.github.sisyphsu.smartbuf.node.array;
 
-import com.github.sisyphsu.smartbuf.Const;
 import com.github.sisyphsu.smartbuf.node.Node;
+import com.github.sisyphsu.smartbuf.node.NodeType;
 
 /**
  * @author sulin
@@ -21,7 +21,7 @@ public final class LongArrayNode extends Node {
     }
 
     @Override
-    public byte type() {
-        return Const.TYPE_NARRAY_LONG;
+    public NodeType type() {
+        return NodeType.ARRAY_LONG;
     }
 }

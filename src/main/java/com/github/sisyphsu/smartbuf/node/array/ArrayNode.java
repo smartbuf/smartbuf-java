@@ -1,7 +1,7 @@
 package com.github.sisyphsu.smartbuf.node.array;
 
-import com.github.sisyphsu.smartbuf.Const;
 import com.github.sisyphsu.smartbuf.node.Node;
+import com.github.sisyphsu.smartbuf.node.NodeType;
 
 import java.util.Collection;
 
@@ -23,7 +23,7 @@ public final class ArrayNode extends Node {
     }
 
     @Override
-    public byte type() {
-        return Const.TYPE_ARRAY;
+    public NodeType type() {
+        return NodeType.ARRAY;
     }
 }
