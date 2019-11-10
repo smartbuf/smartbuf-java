@@ -6,7 +6,7 @@ import com.github.sisyphsu.smartbuf.Type;
  * @author sulin
  * @since 2019-11-08 18:01:40
  */
-public class BeanReader {
+public final class BeanReader {
 
     static String API_NAME = API.class.getName().replace('.', '/');
 

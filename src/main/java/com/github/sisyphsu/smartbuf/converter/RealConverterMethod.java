@@ -42,7 +42,7 @@ public final class RealConverterMethod extends ConverterMethod {
             log.debug("ignore varargs method: {}", method);
             return null;
         }
-        if (rtType == void.class) {
+        if (rtType == void.class || rtType == Void.class) {
             log.debug("ignore method by void return: {}", method);
             return null; // ignore void return
         }

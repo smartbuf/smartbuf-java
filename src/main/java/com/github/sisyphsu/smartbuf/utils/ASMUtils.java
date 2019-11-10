@@ -17,6 +17,16 @@ public final class ASMUtils {
     private ASMUtils() {
     }
 
+    public static void addConstructor(ClassWriter cw) {
+        MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null);
+        mv.visitCode();
+        mv.visitVarInsn(Opcodes.ALOAD, 0);
+        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+        mv.visitInsn(Opcodes.RETURN);
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
+    }
+
     /**
      * Add push byte/short/int instruction into stack
      *

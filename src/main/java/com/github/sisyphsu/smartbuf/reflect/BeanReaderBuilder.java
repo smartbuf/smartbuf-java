@@ -93,7 +93,7 @@ public final class BeanReaderBuilder {
         // build BeanReader
         try {
             BeanField[] fields = fieldMap.values().toArray(new BeanField[0]);
-            BeanReader.API api = buildReaderClass(cls, fields).newInstance();
+            BeanReader.API api = buildReaderClass(cls, fields).getConstructor().newInstance();
             return new BeanReader(api, fields);
         } catch (Throwable e) {
             throw new IllegalArgumentException("build reader for " + cls + " failed.", e);
@@ -111,16 +111,10 @@ public final class BeanReaderBuilder {
         cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, readerClsName.replace('.', '/'), null, "java/lang/Object", new String[]{BeanReader.API_NAME});
 
         // public T$$$Reader()
-        MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null);
-        mv.visitCode();
-        mv.visitVarInsn(Opcodes.ALOAD, 0);
-        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
-        mv.visitInsn(Opcodes.RETURN);
-        mv.visitMaxs(0, 0);
-        mv.visitEnd();
+        ASMUtils.addConstructor(cw);
 
         // public void getAll(Object o, Object[] values)
-        mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "getAll", "(Ljava/lang/Object;[Ljava/lang/Object;)V", null, null);
+        MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "getAll", "(Ljava/lang/Object;[Ljava/lang/Object;)V", null, null);
         mv.visitCode();
         mv.visitVarInsn(Opcodes.ALOAD, 1);
         mv.visitTypeInsn(Opcodes.CHECKCAST, clsName);

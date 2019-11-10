@@ -83,7 +83,7 @@ public final class BeanWriterBuilder {
         // build BeanWriter
         try {
             BeanField[] fields = fieldMap.values().toArray(new BeanField[0]);
-            BeanWriter.API api = buildWriterClass(cls, fields).newInstance();
+            BeanWriter.API api = buildWriterClass(cls, fields).getConstructor().newInstance();
             return new BeanWriter(api, fields);
         } catch (Throwable e) {
             throw new IllegalArgumentException("build writer for " + cls + " failed.", e);
@@ -98,16 +98,10 @@ public final class BeanWriterBuilder {
         cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, writerClsName.replace('.', '/'), null, "java/lang/Object", new String[]{BeanWriter.API_NAME});
 
         // public T$$$Writer()
-        MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null);
-        mv.visitCode();
-        mv.visitVarInsn(Opcodes.ALOAD, 0);
-        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
-        mv.visitInsn(Opcodes.RETURN);
-        mv.visitMaxs(0, 0);
-        mv.visitEnd();
+        ASMUtils.addConstructor(cw);
 
         // public void setAll(T t, Object[] values)
-        mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "setAll", "(Ljava/lang/Object;[Ljava/lang/Object;)V", null, null);
+        MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "setAll", "(Ljava/lang/Object;[Ljava/lang/Object;)V", null, null);
         mv.visitCode();
         mv.visitVarInsn(Opcodes.ALOAD, 1);
         mv.visitTypeInsn(Opcodes.CHECKCAST, clsName);

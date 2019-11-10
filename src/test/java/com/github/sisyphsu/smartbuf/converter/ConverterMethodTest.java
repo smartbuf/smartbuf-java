@@ -103,6 +103,11 @@ public class ConverterMethodTest {
             return null;
         }
 
+        @Converter
+        public Void invalid7(String s) {
+            return null;
+        }
+
         @Override
         public void setFactory(CodecFactory factory) {
             super.setFactory(factory);
