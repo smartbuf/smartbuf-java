@@ -2,8 +2,6 @@ package com.github.sisyphsu.smartbuf.exception;
 
 import java.io.IOException;
 
-import static com.github.sisyphsu.smartbuf.transport.Const.VER;
-
 /**
  * Exception that indicate the specified data has an invalid version
  *
@@ -12,8 +10,8 @@ import static com.github.sisyphsu.smartbuf.transport.Const.VER;
  */
 public class InvalidVersionException extends IOException {
 
-    public InvalidVersionException(int ver) {
-        super("Expect " + Integer.toHexString(VER) + ", but received " + Integer.toHexString(ver));
+    public InvalidVersionException(int expectedVer, int ver) {
+        super("Expect " + Integer.toHexString(expectedVer) + ", but received " + Integer.toHexString(ver));
     }
 
 }

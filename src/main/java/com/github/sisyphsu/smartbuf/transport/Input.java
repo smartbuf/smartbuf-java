@@ -57,7 +57,7 @@ public final class Input {
         boolean hasSeq = (head & VER_HAS_SEQ) != 0;
         // valid schema
         if ((head & 0b1111_0000) != VER) {
-            throw new InvalidVersionException(head & 0b1111_0000);
+            throw new InvalidVersionException(VER, head & 0b1111_0000);
         }
         if (stream != this.enableStreamMode) {
             throw new MismatchModeException(stream);

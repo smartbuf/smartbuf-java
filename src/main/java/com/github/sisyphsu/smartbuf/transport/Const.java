@@ -6,7 +6,7 @@ package com.github.sisyphsu.smartbuf.transport;
  * @author sulin
  * @since 2019-10-02 16:42:24
  */
-public interface Const {
+interface Const {
 
     byte VER          = 0b0001_0000;
     byte VER_STREAM   = 0b0000_1000;
