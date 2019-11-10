@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package com.github.sisyphsu.smartbuf.benchmark.large;
+
+message Trends {
+    repeated Trend trends = 1;
+}
+
+message Trend {
+    int32 id = 1;
+    string id_str = 2;
+    string name = 3;
+    string screen_name = 4;
+    string location = 5;
+    string description = 6;
+    string url = 7;
+    Entities entities = 8;
+    bool protect = 9;
+    int32 followers_count = 10;
+    int32 fast_followers_count = 11;
+    int32 normal_followers_count = 12;
+    int32 friends_count = 13;
+    int32 listed_count = 14;
+    string created_at = 15;
+    int32 favourites_count = 16;
+    string utc_offset = 17;
+    string time_zone = 18;
+    bool geo_enabled = 19;
+    bool verified = 20;
+    int32 statuses_count = 21;
+    int32 media_count = 22;
+    string lang = 23;
+    bool contributors_enabled = 24;
+    bool is_translator = 25;
+    bool is_translation_enabled = 26;
+    string profile_background_color = 27;
+    string profile_background_image_url = 28;
+    string profile_background_image_url_https = 29;
+    bool profile_background_tile = 30;
+    string profile_image_url = 31;
+    string profile_image_url_https = 32;
+    string profile_banner_url = 33;
+    string profile_link_color = 34;
+    string profile_sidebar_border_color = 35;
+    string profile_sidebar_fill_color = 36;
+    string profile_text_color = 37;
+    bool profile_use_background_image = 38;
+    bool has_extended_profile = 39;
+    bool default_profile = 40;
+    bool default_profile_image = 41;
+    repeated int32 pinned_tweet_ids = 42;
+    repeated string pinned_tweet_ids_str = 43;
+    bool has_custom_timelines = 44;
+    bool can_dm = 45;
+    bool can_media_tag = 46;
+    bool following = 47;
+    bool follow_request_sent = 48;
+    bool notifications = 49;
+    bool muting = 50;
+    bool blocking = 51;
+    bool blocked_by = 52;
+    bool want_retweets = 53;
+    string advertiser_account_type = 54;
+    repeated string advertiser_account_service_levels = 55;
+    string profile_interstitial_type = 56;
+    string business_profile_state = 57;
+    string translator_type = 58;
+    bool followed_by = 59;
+    bool require_some_consent = 60;
+}
+
+message Entities {
+    Urls url = 1;
+    Description description = 2;
+}
+
+message Description {
+    repeated Url urls = 1;
+}
+
+message Urls {
+    repeated Url urls = 1;
+}
+
+message Url {
+    string url = 1;
+    string expanded_url = 2;
+    string display_url = 3;
+    repeated int32 indices = 4;
+}
