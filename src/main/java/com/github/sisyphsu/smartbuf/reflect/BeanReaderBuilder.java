@@ -16,6 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
+ * BeanReaderBuilder helps build {@link BeanReader} for normal pojos
+ *
  * @author sulin
  * @since 2019-11-08 18:02:42
  */

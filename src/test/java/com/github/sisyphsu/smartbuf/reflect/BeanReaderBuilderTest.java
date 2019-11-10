@@ -39,7 +39,7 @@ public class BeanReaderBuilderTest {
         full.setV(null);
 
         BeanReader reader = BeanReaderBuilder.build(Full.class);
-        assert reader.getFields().length == 24;
+        assert reader.getFieldNames().length == 24;
     }
 
     @Test

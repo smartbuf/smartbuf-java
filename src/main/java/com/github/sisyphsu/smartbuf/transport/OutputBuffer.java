@@ -7,7 +7,7 @@ import com.github.sisyphsu.smartbuf.utils.UTF8Utils;
 import java.io.IOException;
 
 /**
- * Encapsulate all deserialization operations of output side.
+ * Encapsulate all serialize operations of output side.
  *
  * @author sulin
  * @since 2019-11-03 16:44:02

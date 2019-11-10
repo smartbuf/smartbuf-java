@@ -126,6 +126,9 @@ public final class OutputDataPool {
         return symbol.index + 1;
     }
 
+    /**
+     * Check this data-pool need to output or not.
+     */
     public boolean needOutput() {
         byte flags = 0;
         if (floats.size() > 0) flags |= HAS_FLOAT;
@@ -138,10 +141,16 @@ public final class OutputDataPool {
         return flags != 0;
     }
 
+    /**
+     * Check this data-pool need to output sequence or not.
+     */
     public boolean needSequence() {
         return (flags & NEED_SEQ) != 0;
     }
 
+    /**
+     * Write this data-pool into the specified output buffer
+     */
     public void write(OutputBuffer buf) throws IOException {
         byte flags = this.flags;
         int len;

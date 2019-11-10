@@ -3,7 +3,7 @@ package com.github.sisyphsu.smartbuf.reflect;
 import com.github.sisyphsu.smartbuf.Type;
 
 /**
- * BeanReader provides
+ * BeanReader provides {@link #getValues} for normal pojos.
  *
  * @author sulin
  * @since 2019-11-08 18:01:40
@@ -29,14 +29,20 @@ public final class BeanReader {
         }
     }
 
-    public BeanField[] getFields() {
-        return fields;
-    }
-
+    /**
+     * Get all readable field's names of this reader
+     *
+     * @return All readable field's names
+     */
     public String[] getFieldNames() {
         return fieldNames;
     }
 
+    /**
+     * Get all readable field's types of this reader
+     *
+     * @return All readable field's types
+     */
     public Type[] getFieldTypes() {
         return fieldTypes;
     }

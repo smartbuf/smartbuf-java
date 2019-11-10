@@ -1,6 +1,8 @@
 package com.github.sisyphsu.smartbuf.reflect;
 
 /**
+ * BeanWriter provides {@link #setValues} for normal pojos.
+ *
  * @author sulin
  * @since 2019-11-08 17:52:09
  */
@@ -16,6 +18,11 @@ public final class BeanWriter {
         this.fields = fields;
     }
 
+    /**
+     * Get all fields of this reader
+     *
+     * @return All fields
+     */
     public BeanField[] getFields() {
         return fields;
     }

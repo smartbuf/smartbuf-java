@@ -13,7 +13,7 @@ import static com.github.sisyphsu.smartbuf.transport.Const.*;
  * @author sulin
  * @since 2019-10-14 11:00:08
  */
-final class InputDataPool {
+public final class InputDataPool {
 
     private final Array<Float>  floats  = new Array<>();
     private final Array<Double> doubles = new Array<>();

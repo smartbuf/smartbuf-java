@@ -7,6 +7,8 @@ import java.io.EOFException;
 import java.io.IOException;
 
 /**
+ * Encapsulate all deserialize operations of input side.
+ *
  * @author sulin
  * @since 2019-11-04 12:00:24
  */

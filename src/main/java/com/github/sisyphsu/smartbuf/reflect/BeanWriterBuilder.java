@@ -16,6 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
+ * BeanWriterBuilder helps build {@link BeanWriter} for normal pojos
+ *
  * @author sulin
  * @since 2019-11-08 17:59:03
  */
@@ -30,7 +32,7 @@ public final class BeanWriterBuilder {
     }
 
     /**
-     * Get an reusable  instance of the specified class
+     * Get an reusable {@link BeanWriter} instance of the specified class
      *
      * @param cls The specified class
      * @return cls's BeanHelper
@@ -44,6 +46,9 @@ public final class BeanWriterBuilder {
         return writer;
     }
 
+    /**
+     * Parse the specified class's writeable fields, then generate {@link BeanWriter} proxy for them.
+     */
     static BeanWriter buildWriter(Class<?> cls) {
         Map<String, BeanField> fieldMap = new TreeMap<>();
         // collect all field
@@ -90,6 +95,9 @@ public final class BeanWriterBuilder {
         }
     }
 
+    /**
+     * Build writer class for the specified class with fields
+     */
     static Class<? extends BeanWriter.API> buildWriterClass(Class<?> cls, BeanField[] fields) {
         String clsName = cls.getName().replace('.', '/');
         String writerClsName = cls.getName() + "$$$Writer";
