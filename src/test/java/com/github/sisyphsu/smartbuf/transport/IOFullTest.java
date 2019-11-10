@@ -1,6 +1,6 @@
 package com.github.sisyphsu.smartbuf.transport;
 
-import com.github.sisyphsu.smartbuf.CodecUtils;
+import com.github.sisyphsu.smartbuf.utils.CodecUtils;
 import com.github.sisyphsu.smartbuf.node.basic.SymbolNode;
 import lombok.Data;
 import org.junit.jupiter.api.Test;

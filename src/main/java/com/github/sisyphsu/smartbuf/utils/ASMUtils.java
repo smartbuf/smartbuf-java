@@ -17,6 +17,11 @@ public final class ASMUtils {
     private ASMUtils() {
     }
 
+    /**
+     * Add the default constructor for the specified {@link ClassWriter}
+     *
+     * @param cw The specified ClassWriter to add constructor
+     */
     public static void addConstructor(ClassWriter cw) {
         MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null);
         mv.visitCode();

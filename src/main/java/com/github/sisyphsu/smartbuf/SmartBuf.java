@@ -4,6 +4,7 @@ import com.github.sisyphsu.smartbuf.exception.SmartBufClosedException;
 import com.github.sisyphsu.smartbuf.reflect.TypeRef;
 import com.github.sisyphsu.smartbuf.transport.Input;
 import com.github.sisyphsu.smartbuf.transport.Output;
+import com.github.sisyphsu.smartbuf.utils.CodecUtils;
 
 import java.io.IOException;
 

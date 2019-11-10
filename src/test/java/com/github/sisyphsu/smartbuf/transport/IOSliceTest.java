@@ -1,6 +1,6 @@
 package com.github.sisyphsu.smartbuf.transport;
 
-import com.github.sisyphsu.smartbuf.CodecUtils;
+import com.github.sisyphsu.smartbuf.utils.CodecUtils;
 import com.github.sisyphsu.smartbuf.exception.UnexpectedReadException;
 import com.github.sisyphsu.smartbuf.node.array.BooleanArrayNode;
 import com.github.sisyphsu.smartbuf.node.basic.*;

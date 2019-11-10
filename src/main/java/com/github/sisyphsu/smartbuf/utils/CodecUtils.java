@@ -1,4 +1,4 @@
-package com.github.sisyphsu.smartbuf;
+package com.github.sisyphsu.smartbuf.utils;
 
 import com.github.sisyphsu.smartbuf.converter.CodecFactory;
 import com.github.sisyphsu.smartbuf.converter.ConverterPipeline;
@@ -9,6 +9,8 @@ import com.github.sisyphsu.smartbuf.reflect.XType;
 import java.lang.reflect.Type;
 
 /**
+ * CodecUtils wraps an global {@link CodecFactory} and provides some useful features.
+ *
  * @author sulin
  * @since 2019-11-09 20:19:49
  */
@@ -47,11 +49,25 @@ public final class CodecUtils {
         return (T) factory.convert(src, type.getType());
     }
 
+    /**
+     * Convert the specified {@link Type} into {@link XType}
+     *
+     * @param type original type
+     * @return type's XType instance
+     */
     public static XType<?> toXType(Type type) {
         return factory.toXType(type);
     }
 
+    /**
+     * Get a pipeline which could convert srcClass's instance into tgtClass's instance
+     *
+     * @param srcClass Source Class
+     * @param tgtClass Target Class
+     * @return The final pipeline
+     */
     public static ConverterPipeline getPipeline(Class srcClass, Class tgtClass) {
         return factory.getPipeline(srcClass, tgtClass);
     }
+
 }

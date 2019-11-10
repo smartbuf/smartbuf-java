@@ -1,6 +1,6 @@
 package com.github.sisyphsu.smartbuf.transport;
 
-import com.github.sisyphsu.smartbuf.CodecUtils;
+import com.github.sisyphsu.smartbuf.utils.CodecUtils;
 import com.github.sisyphsu.smartbuf.Type;
 import com.github.sisyphsu.smartbuf.converter.ConverterPipeline;
 import com.github.sisyphsu.smartbuf.node.Node;

@@ -150,7 +150,7 @@ public final class BeanWriterBuilder {
     }
 
     /**
-     * Defines getAll for accessor
+     * Convert type to no-primary class if it is primary
      */
     static Class toNonPrimitiveClass(Class<?> type) {
         if (type.isPrimitive()) {

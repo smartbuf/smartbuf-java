@@ -2,7 +2,7 @@ package com.github.sisyphsu.smartbuf.benchmark;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.sisyphsu.smartbuf.CodecUtils;
+import com.github.sisyphsu.smartbuf.utils.CodecUtils;
 import com.github.sisyphsu.smartbuf.SmartPacket;
 import com.github.sisyphsu.smartbuf.node.Node;
 import lombok.AllArgsConstructor;
