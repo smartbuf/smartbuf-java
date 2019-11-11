@@ -5,6 +5,7 @@ import com.github.sisyphsu.smartbuf.utils.NumberUtils;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Encapsulate all deserialize operations of input side.
@@ -80,12 +81,15 @@ public final class InputBuffer {
     }
 
     public String readString() throws IOException {
-        int num = (int) this.readVarUint();
-        byte[] bytes = new byte[num];
-        for (int i = 0; i < num; i++) {
-            bytes[i] = readByte();
+        int len = (int) this.readVarUint();
+        if (len > data.length - offset) {
+            throw new EOFException();
         }
-        return new String(bytes);
+        try {
+            return new String(data, offset, len, StandardCharsets.UTF_8);
+        } finally {
+            this.offset += len;
+        }
     }
 
     public boolean[] readBooleanArray(int len) throws IOException {
@@ -103,11 +107,13 @@ public final class InputBuffer {
     }
 
     public byte[] readByteArray(int len) throws IOException {
-        byte[] result = new byte[len];
-        for (int i = 0; i < len; i++) {
-            result[i] = readByte();
+        if (len > data.length - offset) {
+            throw new EOFException();
         }
-        return result;
+        byte[] bytes = new byte[len];
+        System.arraycopy(data, offset, bytes, 0, len);
+        this.offset += len;
+        return bytes;
     }
 
     public short[] readShortArray(int len) throws IOException {
