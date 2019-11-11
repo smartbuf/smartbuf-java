@@ -9,11 +9,11 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Benchmark                       Mode  Cnt      Score     Error  Units
- * MediumDeserBenchmark.json       avgt    6   6876.528 ± 142.488  ns/op
- * MediumDeserBenchmark.protobuf   avgt    6   2689.570 ±  58.415  ns/op
- * MediumDeserBenchmark.sb_packet  avgt    6  10648.373 ± 114.543  ns/op
- * MediumDeserBenchmark.sb_stream  avgt    6   9510.703 ± 578.108  ns/op
+ * Benchmark                       Mode  Cnt     Score     Error  Units
+ * MediumDeserBenchmark.json       avgt    6  7001.444 ± 151.253  ns/op
+ * MediumDeserBenchmark.protobuf   avgt    6  2683.074 ±  30.624  ns/op
+ * MediumDeserBenchmark.sb_packet  avgt    6  9345.345 ± 462.311  ns/op
+ * MediumDeserBenchmark.sb_stream  avgt    6  8483.792 ± 520.146  ns/op
  *
  * @author sulin
  * @since 2019-11-11 10:53:43

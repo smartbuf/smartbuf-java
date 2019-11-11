@@ -9,11 +9,11 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Benchmark                      Mode  Cnt     Score     Error  Units
- * SmallDeserBenchmark.json       avgt    6   820.684 ± 110.141  ns/op
- * SmallDeserBenchmark.protobuf   avgt    6   144.175 ±   9.912  ns/op
- * SmallDeserBenchmark.sb_packet  avgt    6  1155.737 ±  77.444  ns/op
- * SmallDeserBenchmark.sb_stream  avgt    6   630.544 ±  28.850  ns/op
+ * Benchmark                      Mode  Cnt    Score     Error  Units
+ * SmallDeserBenchmark.json       avgt    6  808.021 ±  22.738  ns/op
+ * SmallDeserBenchmark.protobuf   avgt    6  145.508 ±  16.215  ns/op
+ * SmallDeserBenchmark.sb_packet  avgt    6  883.989 ± 182.102  ns/op
+ * SmallDeserBenchmark.sb_stream  avgt    6  554.401 ±  20.882  ns/op
  *
  * @author sulin
  * @since 2019-11-11 10:38:04
