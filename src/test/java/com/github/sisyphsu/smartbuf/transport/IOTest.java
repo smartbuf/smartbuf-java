@@ -160,8 +160,7 @@ public class IOTest {
 
         result = transIO(new HashMap<>());
         assert bytes.length == 2;
-        assert result instanceof Map;
-        assert ((Map) result).size() == 0;
+        assert result instanceof ObjectNode;
     }
 
     @Test
@@ -199,7 +198,7 @@ public class IOTest {
         }
 
         try {
-            input.readObject();
+            input.readData();
         } catch (Exception e) {
             assert e instanceof UnexpectedReadException;
         }

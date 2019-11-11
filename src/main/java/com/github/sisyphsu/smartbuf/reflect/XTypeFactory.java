@@ -198,7 +198,7 @@ public final class XTypeFactory {
         boolean pure = rawCls.getTypeParameters().length == 0;
         // If rawCls is pure and pre-parsed, use the pre-cached fields directly to avoid infinity loop
         if (pure && cxt.pureClassFieldMap.containsKey(rawCls)) {
-            type.fields = cxt.pureClassFieldMap.get(rawCls);
+            type.fields = cxt.pureClassFieldMap.get(rawCls).values().toArray(new XField[0]);
             return;
         }
         // Precheck to prevent circular reference
@@ -206,7 +206,7 @@ public final class XTypeFactory {
             throw new CircleReferenceException("Circular Reference in: " + rawCls);
         }
         // execute fields parsing
-        Map<String, XField> fields = new HashMap<>();
+        Map<String, XField> fields = new TreeMap<>();
         if (pure) {
             cxt.pureClassFieldMap.put(rawCls, fields);
         }
@@ -224,16 +224,16 @@ public final class XTypeFactory {
         if (rawCls.getGenericSuperclass() != null) {
             XType<?> superType = toXType(cxt, null, rawCls.getGenericSuperclass());
             if (superType.fields != null) {
-                for (Map.Entry<String, XField> entry : superType.fields.entrySet()) {
-                    if (fields.containsKey(entry.getKey())) {
-                        continue;
+                for (XField field : superType.fields) {
+                    if (fields.containsKey(field.getName())) {
+                        continue; // ignore covered
                     }
-                    fields.put(entry.getKey(), entry.getValue());
+                    fields.put(field.getName(), field);
                 }
             }
         }
         cxt.parsing.remove(rawCls);
-        type.fields = fields;
+        type.fields = fields.values().toArray(new XField[0]);
     }
 
     private static class Context {

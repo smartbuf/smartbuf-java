@@ -4,6 +4,7 @@ import com.github.sisyphsu.smartbuf.exception.InvalidVersionException;
 import com.github.sisyphsu.smartbuf.exception.MismatchModeException;
 import com.github.sisyphsu.smartbuf.exception.UnexpectedReadException;
 import com.github.sisyphsu.smartbuf.exception.UnexpectedSequenceException;
+import com.github.sisyphsu.smartbuf.node.basic.ObjectNode;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -80,13 +81,13 @@ public final class Input {
             dataPool.read(buffer);
         }
         // load data
-        return readObject();
+        return readData();
     }
 
     /**
      * Read the next node, it could be normal data, array, or struct.
      */
-    Object readObject() throws IOException {
+    Object readData() throws IOException {
         long head = buffer.readVarUint();
         switch ((int) head) {
             case CONST_NULL:
@@ -115,12 +116,8 @@ public final class Input {
             case TYPE_ARRAY:
                 return this.readArray(head >>> 3);
             default:
-                String[] fields = metaPool.findStructByID((int) (head >>> 3));
-                Map<String, Object> map = new HashMap<>();
-                for (String field : fields) {
-                    map.put(field, readObject());
-                }
-                return map;
+                InputMetaPool.Struct struct = metaPool.findStructByID((int) (head >>> 3));
+                return this.readObject(struct);
         }
     }
 
@@ -225,19 +222,15 @@ public final class Input {
                 case TYPE_SLICE_OBJECT:
                     slice = new Object[size];
                     int structId = (int) buffer.readVarUint();
-                    String[] fieldNames = metaPool.findStructByID(structId);
+                    InputMetaPool.Struct struct = metaPool.findStructByID(structId);
                     for (int i = 0; i < size; i++) {
-                        Map<String, Object> obj = new HashMap<>();
-                        for (String field : fieldNames) {
-                            obj.put(field, readObject());
-                        }
-                        slice[i] = obj;
+                        slice[i] = this.readObject(struct);
                     }
                     break;
                 case TYPE_SLICE_UNKNOWN:
                     slice = new Object[size];
                     for (int i = 0; i < size; i++) {
-                        slice[i] = readObject();
+                        slice[i] = readData();
                     }
                     break;
                 default:
@@ -260,6 +253,26 @@ public final class Input {
             }
         }
         return result;
+    }
+
+    /**
+     * Read an object by the specified fields
+     */
+    Object readObject(InputMetaPool.Struct struct) throws IOException {
+        if (struct.ordered) {
+            int len = struct.fieldNames.length;
+            Object[] values = new Object[len];
+            for (int i = 0; i < len; i++) {
+                values[i] = readData();
+            }
+            return new ObjectNode(true, struct.fieldNames, values);
+        } else {
+            Map<String, Object> map = new HashMap<>();
+            for (String field : struct.fieldNames) {
+                map.put(field, readData());
+            }
+            return map;
+        }
     }
 
 }

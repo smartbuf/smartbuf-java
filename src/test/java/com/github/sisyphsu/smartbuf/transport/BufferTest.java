@@ -5,6 +5,7 @@ import com.github.sisyphsu.smartbuf.exception.UnexpectedReadException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
@@ -102,6 +103,20 @@ public class BufferTest {
             assert false;
         } catch (Exception e) {
             assert e instanceof UnexpectedReadException;
+        }
+
+        try {
+            buffer.reset(new byte[]{0x0F});
+            buffer.readString();
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof EOFException;
+        }
+        try {
+            buffer.readByteArray(1024);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof EOFException;
         }
     }
 

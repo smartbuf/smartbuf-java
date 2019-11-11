@@ -34,41 +34,17 @@ public final class LangCodec extends Codec {
         BeanWriter writer = BeanWriterBuilder.build(type.getRawType());
         // build values
         Object[] values = new Object[writer.getFields().length];
+        XField[] xFields = type.getFields();
+        if (xFields.length != writer.getFields().length) {
+            throw new IllegalArgumentException("unmatched xtype for " + type.getRawType());
+        }
         for (int i = 0, len = writer.getFields().length; i < len; i++) {
             BeanField field = writer.getFields()[i];
             Object value = map.get(field.getName());
-            if (value != null) {
-                values[i] = convert(value, type.getField(field.getName()).getType());
+            if (value == null) {
                 continue;
             }
-            switch (field.getType()) {
-                case Z:
-                    values[i] = false;
-                    break;
-                case B:
-                    values[i] = (byte) 0;
-                    break;
-                case S:
-                    values[i] = (short) 0;
-                    break;
-                case I:
-                    values[i] = 0;
-                    break;
-                case J:
-                    values[i] = (long) 0;
-                    break;
-                case F:
-                    values[i] = (float) 0;
-                    break;
-                case D:
-                    values[i] = (double) 0;
-                    break;
-                case C:
-                    values[i] = (char) 0;
-                    break;
-                default:
-                    values[i] = null;
-            }
+            values[i] = convert(value, xFields[i].getType());
         }
         writer.setValues(result, values);
         return result;

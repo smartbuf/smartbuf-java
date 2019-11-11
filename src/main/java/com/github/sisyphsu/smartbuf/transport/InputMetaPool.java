@@ -15,15 +15,15 @@ import static com.github.sisyphsu.smartbuf.transport.Const.*;
  */
 public final class InputMetaPool {
 
-    private static final String[] EMPTY_STRUCT = new String[0];
+    private static final Struct EMPTY_STRUCT = new Struct(new String[0]);
 
     private final IDAllocator   cxtNameId = new IDAllocator();
     private final Array<String> cxtNames  = new Array<>();
     private final Array<String> tmpNames  = new Array<>();
 
-    private final IDAllocator     cxtStructID = new IDAllocator();
-    private final Array<String[]> cxtStructs  = new Array<>();
-    private final Array<String[]> tmpStructs  = new Array<>();
+    private final IDAllocator   cxtStructID = new IDAllocator();
+    private final Array<Struct> cxtStructs  = new Array<>();
+    private final Array<Struct> tmpStructs  = new Array<>();
 
     /**
      * Read meta info from the specified buffer.
@@ -63,7 +63,7 @@ public final class InputMetaPool {
                         for (int j = 0; j < nameCount; j++) {
                             names[j] = tmpNames.get((int) buf.readVarUint());
                         }
-                        tmpStructs.add(names);
+                        tmpStructs.add(new Struct(names));
                     }
                     break;
                 case FLAG_META_STRUCT_ADDED:
@@ -74,7 +74,7 @@ public final class InputMetaPool {
                             names[j] = cxtNames.get((int) buf.readVarUint());
                         }
                         int structId = cxtStructID.acquire();
-                        cxtStructs.put(structId, names);
+                        cxtStructs.put(structId, new Struct(true, names));
                     }
                     break;
                 case FLAG_META_STRUCT_EXPIRED:
@@ -93,7 +93,7 @@ public final class InputMetaPool {
     /**
      * Find an struct by its unique id
      */
-    public String[] findStructByID(int id) throws InvalidStructException {
+    public Struct findStructByID(int id) throws InvalidStructException {
         if (id == 0) {
             return EMPTY_STRUCT;
         }
@@ -110,7 +110,7 @@ public final class InputMetaPool {
         if (index >= cxtStructs.cap()) {
             throw new InvalidStructException("invalid context struct id: " + id);
         }
-        String[] struct = cxtStructs.get(index);
+        Struct struct = cxtStructs.get(index);
         if (struct == null) {
             throw new InvalidStructException("invalid context struct id: " + id);
         }
@@ -123,6 +123,29 @@ public final class InputMetaPool {
     public void reset() {
         this.tmpNames.clear();
         this.tmpStructs.clear();
+    }
+
+    static class Struct {
+        boolean  ordered;
+        String[] fieldNames;
+
+        public Struct(String[] fieldNames) {
+            boolean ordered = true;
+            String prev = null;
+            for (String str : fieldNames) {
+                if (prev != null && str.compareTo(prev) > 0) {
+                    ordered = false;
+                }
+                prev = str;
+            }
+            this.ordered = ordered;
+            this.fieldNames = fieldNames;
+        }
+
+        public Struct(boolean ordered, String[] fieldNames) {
+            this.ordered = ordered;
+            this.fieldNames = fieldNames;
+        }
     }
 
 }

@@ -14,7 +14,11 @@ public final class ObjectNode extends Node {
 
     public final static ObjectNode EMPTY = new ObjectNode(true, new String[0], new Object[0]);
 
-    private final boolean  stable;
+    /**
+     * Stable object's keys must be ordered
+     */
+    private final boolean stable;
+
     private final String[] keys;
     private final Object[] fields;
     private final Type[]   types;

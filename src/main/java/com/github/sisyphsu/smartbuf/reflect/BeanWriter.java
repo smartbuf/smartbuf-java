@@ -30,14 +30,49 @@ public final class BeanWriter {
     /**
      * Set all values of the specified object' properties
      *
-     * @param t    The specified object to set values
-     * @param vals all values to setup
+     * @param t      The specified object to set values
+     * @param values all values to setup
      */
-    public void setValues(Object t, Object[] vals) {
-        if (vals == null || vals.length != fields.length) {
+    public void setValues(Object t, Object[] values) {
+        if (values == null || values.length != fields.length) {
             throw new IllegalArgumentException("invalid values");
         }
-        api.setAll(t, vals);
+        for (int i = 0, len = fields.length; i < len; i++) {
+            BeanField field = fields[i];
+            Object value = values[i];
+            if (value != null) {
+                continue;
+            }
+            switch (field.getType()) {
+                case Z:
+                    values[i] = false;
+                    break;
+                case B:
+                    values[i] = (byte) 0;
+                    break;
+                case S:
+                    values[i] = (short) 0;
+                    break;
+                case I:
+                    values[i] = 0;
+                    break;
+                case J:
+                    values[i] = (long) 0;
+                    break;
+                case F:
+                    values[i] = (float) 0;
+                    break;
+                case D:
+                    values[i] = (double) 0;
+                    break;
+                case C:
+                    values[i] = (char) 0;
+                    break;
+                default:
+                    values[i] = null;
+            }
+        }
+        api.setAll(t, values);
     }
 
     public interface API {

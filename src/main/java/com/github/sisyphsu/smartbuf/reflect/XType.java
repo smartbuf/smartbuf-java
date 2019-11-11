@@ -1,6 +1,5 @@
 package com.github.sisyphsu.smartbuf.reflect;
 
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -33,7 +32,7 @@ public final class XType<T> {
     /**
      * Fields, only for no-stop-class
      */
-    Map<String, XField> fields;
+    XField[] fields;
 
     protected XType(Class<T> rawType) {
         this.rawType = rawType;
@@ -107,8 +106,20 @@ public final class XType<T> {
         return rawType;
     }
 
+    public XField[] getFields() {
+        return fields;
+    }
+
     public XField<?> getField(String name) {
-        return fields == null ? null : fields.get(name);
+        if (fields == null) {
+            return null;
+        }
+        for (XField field : fields) {
+            if (Objects.equals(field.getName(), name)) {
+                return field;
+            }
+        }
+        return null;
     }
 
     public XType<?> getComponentType() {

@@ -2,6 +2,7 @@ package com.github.sisyphsu.smartbuf.node;
 
 import com.github.sisyphsu.smartbuf.converter.CodecFactory;
 import com.github.sisyphsu.smartbuf.node.basic.*;
+import com.github.sisyphsu.smartbuf.reflect.XTypeUtils;
 import lombok.Data;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -116,7 +117,6 @@ public class NodeCodecTest {
         map.put("score", RandomUtils.nextDouble());
         map.put(System.currentTimeMillis(), RandomUtils.nextDouble());
         ObjectNode node = codec.toNode(map);
-        assert node instanceof ObjectNode;
 
         Map<String, Object> map2 = codec.toValue(node);
         assert map.size() == map2.size();
@@ -131,13 +131,13 @@ public class NodeCodecTest {
     @Test
     public void testBean() {
         Person person = new Person();
-        Node node = codec.toNode(person);
+        ObjectNode node = codec.toNode(person);
 
-        assert node instanceof ObjectNode;
+        Person p1 = (Person) codec.toObject(node, XTypeUtils.toXType(Person.class));
+        assert person.equals(p1);
 
-        Person person1 = CodecFactory.Instance.convert(node, Person.class);
-
-        assert person.equals(person1);
+        Person p2 = CodecFactory.Instance.convert(node, Person.class);
+        assert person.equals(p2);
     }
 
     @Test
