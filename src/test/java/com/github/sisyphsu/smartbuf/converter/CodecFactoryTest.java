@@ -1,9 +1,10 @@
 package com.github.sisyphsu.smartbuf.converter;
 
 import com.github.sisyphsu.smartbuf.converter.codec.LangCodec;
+import com.github.sisyphsu.smartbuf.node.basic.ObjectNode;
 import com.github.sisyphsu.smartbuf.reflect.TypeRef;
+import com.github.sisyphsu.smartbuf.utils.CodecUtils;
 import lombok.Data;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -14,13 +15,6 @@ import java.util.*;
  */
 @SuppressWarnings("ALL")
 public class CodecFactoryTest {
-
-    private CodecFactory factory;
-
-    @BeforeEach
-    void setUp() {
-        factory = CodecFactory.Instance;
-    }
 
     @Test
     public void testInstallCodec() {
@@ -52,20 +46,20 @@ public class CodecFactoryTest {
 
     @Test
     public void getPipeline() {
-        ConverterPipeline pipeline1 = factory.getPipeline(BitSet.class, Byte[].class);
+        ConverterPipeline pipeline1 = CodecUtils.getPipeline(BitSet.class, Byte[].class);
         assert pipeline1.getMethods().size() == 2;
     }
 
     @Test
     public void testNullable() {
         Date date = new Date();
-        Optional<Long> opt = (Optional<Long>) factory.convert(new Date(), new TypeRef<Optional<Long>>() {
-        }.getType());
+        Optional<Long> opt = (Optional<Long>) CodecUtils.convert(new Date(), new TypeRef<Optional<Long>>() {
+        });
 
         assert opt.get() == date.getTime();
 
-        opt = (Optional<Long>) factory.convert(null, new TypeRef<Optional<Long>>() {
-        }.getType());
+        opt = (Optional<Long>) CodecUtils.convert(null, new TypeRef<Optional<Long>>() {
+        });
 
         assert !opt.isPresent();
     }
@@ -73,12 +67,13 @@ public class CodecFactoryTest {
     @Test
     public void testPrimary() {
         int i = 100;
-        long l = factory.convert(i, long.class);
+        long l = CodecUtils.convert(i, long.class);
         assert l == 100L;
     }
 
     @Test
     public void testError() {
+        CodecFactory factory = CodecFactory.Instance;
         try {
             factory.installCodec(IllegalCodec.class);
             assert false;
@@ -90,12 +85,38 @@ public class CodecFactoryTest {
     @Test
     public void testPojo() {
         Pojo pojo = new Pojo();
-        Map map = factory.convert(pojo, Map.class);
-        Pojo pojo1 = factory.convert(map, Pojo.class);
-        Pojo pojo2 = factory.convert(new HashMap<>(), Pojo.class);
 
-        assert pojo.equals(pojo1);
-        assert !pojo.equals(pojo2);
+        Map map = CodecUtils.convert(pojo, Map.class);
+
+        Pojo newPojo = CodecUtils.convert(map, Pojo.class);
+        assert pojo.equals(newPojo);
+
+        newPojo = CodecUtils.convert(new HashMap<>(), Pojo.class);
+        assert pojo.equals(newPojo);
+
+        map.remove("bool1");
+        newPojo = CodecUtils.convert(map, Pojo.class);
+        assert pojo.equals(newPojo);
+
+        ObjectNode node = CodecUtils.convert(map, ObjectNode.class);
+        newPojo = CodecUtils.convert(node, Pojo.class);
+        assert pojo.equals(newPojo);
+
+        map.put("bool3", true);
+        newPojo = CodecUtils.convert(map, Pojo.class);
+        assert pojo.equals(newPojo);
+
+        node = CodecUtils.convert(map, ObjectNode.class);
+        newPojo = CodecUtils.convert(node, Pojo.class);
+        assert pojo.equals(newPojo);
+
+        map.put("zzzzz", "lalala");
+        newPojo = CodecUtils.convert(map, Pojo.class);
+        assert pojo.equals(newPojo);
+
+        node = new ObjectNode(true, new String[]{"id", "name"}, new Object[]{1, "hello"});
+        newPojo = CodecUtils.convert(node, Pojo.class);
+        assert pojo.equals(newPojo);
     }
 
     static class IllegalCodec extends Codec {

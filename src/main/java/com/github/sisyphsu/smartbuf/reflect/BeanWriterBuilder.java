@@ -2,10 +2,7 @@ package com.github.sisyphsu.smartbuf.reflect;
 
 import com.github.sisyphsu.smartbuf.utils.ASMUtils;
 import com.github.sisyphsu.smartbuf.utils.ReflectUtils;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
+import org.objectweb.asm.*;
 
 import java.lang.reflect.Modifier;
 import java.util.Map;
@@ -86,8 +83,15 @@ public final class BeanWriterBuilder {
         mv.visitVarInsn(Opcodes.ASTORE, 3);
         for (int i = 0, len = fields.length; i < len; i++) {
             BeanField prop = fields[i];
-            mv.visitVarInsn(Opcodes.ALOAD, 3); // t
+            // if (values[i]==null) jump
+            Label label = new Label();
             mv.visitVarInsn(Opcodes.ALOAD, 2); // values
+            ASMUtils.addIntInstruction(mv, i);
+            mv.visitInsn(Opcodes.AALOAD);
+            mv.visitJumpInsn(Opcodes.IFNULL, label);
+            // t.setXXX(values[i])
+            mv.visitVarInsn(Opcodes.ALOAD, 3);
+            mv.visitVarInsn(Opcodes.ALOAD, 2);
             ASMUtils.addIntInstruction(mv, i);
             mv.visitInsn(Opcodes.AALOAD);
             if (prop.setter == null) {
@@ -109,6 +113,7 @@ public final class BeanWriterBuilder {
                 }
                 mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, clsName, methodName, "(" + paramDestriptor + ")V", false);
             }
+            mv.visitLabel(label);
         }
         mv.visitInsn(Opcodes.RETURN);
         mv.visitMaxs(0, 0);

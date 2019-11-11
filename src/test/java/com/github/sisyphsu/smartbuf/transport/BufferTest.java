@@ -112,6 +112,39 @@ public class BufferTest {
         } catch (Exception e) {
             assert e instanceof EOFException;
         }
+
+        try {
+            buffer.readShort();
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof EOFException;
+        }
+        try {
+            buffer.readVarUint();
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof EOFException;
+        }
+        try {
+            buffer.readDouble();
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof EOFException;
+        }
+
+        try {
+            buffer.readFloat();
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof EOFException;
+        }
+
+        try {
+            buffer.readBooleanArray(100);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof EOFException;
+        }
         try {
             buffer.readByteArray(1024);
             assert false;

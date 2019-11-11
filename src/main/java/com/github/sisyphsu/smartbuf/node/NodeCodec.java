@@ -1,6 +1,7 @@
 package com.github.sisyphsu.smartbuf.node;
 
 import com.github.sisyphsu.smartbuf.Type;
+import com.github.sisyphsu.smartbuf.converter.BeanInfo;
 import com.github.sisyphsu.smartbuf.converter.Codec;
 import com.github.sisyphsu.smartbuf.converter.Converter;
 import com.github.sisyphsu.smartbuf.node.array.*;
@@ -204,41 +205,37 @@ public final class NodeCodec extends Codec {
     /**
      * convert ObjectNode to specified java bean
      */
-    @Converter(extensible = true, distance = 1 << 24)
-    public Object toObject(ObjectNode node, XType<?> type) {
-        if (!node.isStable()) {
-            return convert(toValue(node), type);
-        }
-        Object result;
-        try {
-            result = type.getRawType().newInstance();
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Can't newInstance of " + type.getRawType() + ": ", e);
-        }
+    @Converter(extensible = true)
+    public BeanInfo toObject(ObjectNode node, XType<?> type) {
         BeanWriter writer = BeanWriterBuilder.build(type.getRawType());
-        // build values
-        XField[] xFields = type.getFields();
-        if (xFields.length != writer.getFields().length) {
-            throw new IllegalArgumentException("unmatched xtype for " + type.getRawType());
-        }
-        int nodeIndex = 0;
-        String[] nodeKeys = node.keys();
-        Object[] nodeValues = node.values();
-        Object[] values = new Object[writer.getFields().length];
-        for (int i = 0, len = writer.getFields().length; i < len; i++) {
-            BeanField field = writer.getFields()[i];
-            String fieldName = field.getName();
-            int compare = -1;
-            while (nodeIndex < nodeValues.length && (compare = fieldName.compareTo(nodeKeys[nodeIndex])) > 0) {
-                nodeIndex++;
+        BeanField[] fields = writer.getFields();
+        Object[] values = new Object[fields.length];
+        if (!node.isStable()) {
+            Map<String, Object> map = toValue(node);
+            for (int i = 0, len = fields.length; i < len; i++) {
+                BeanField field = fields[i];
+                values[i] = map.get(field.getName());
             }
-            if (compare != 0 || nodeValues[nodeIndex] == null) {
-                continue;
+        } else {
+            int nodeIndex = 0;
+            String[] nodeKeys = node.keys();
+            Object[] nodeValues = node.values();
+            for (int i = 0, len = fields.length; i < len; i++) {
+                BeanField field = fields[i];
+                String fieldName = field.getName();
+                int compare = -1;
+                while (nodeIndex < nodeValues.length
+                    && (compare = fieldName.compareTo(nodeKeys[nodeIndex])) > 0) {
+                    nodeIndex++;
+                }
+                if (compare != 0
+                    || nodeValues[nodeIndex] == null) {
+                    continue;
+                }
+                values[i] = nodeValues[nodeIndex];
             }
-            values[i] = convert(nodeValues[nodeIndex], xFields[i].getType());
         }
-        writer.setValues(result, values);
-        return result;
+        return new BeanInfo(writer, values);
     }
 
     /**

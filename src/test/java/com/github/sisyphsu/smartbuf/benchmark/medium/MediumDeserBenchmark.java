@@ -12,10 +12,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Benchmark                       Mode  Cnt     Score     Error  Units
- * MediumDeserBenchmark.json       avgt    6  6955.366 ± 250.031  ns/op
- * MediumDeserBenchmark.protobuf   avgt    6  2635.080 ± 145.650  ns/op
- * MediumDeserBenchmark.sb_packet  avgt    6  8490.638 ± 597.681  ns/op
- * MediumDeserBenchmark.sb_stream  avgt    6  6965.600 ± 166.092  ns/op
+ * MediumDeserBenchmark.json       avgt    6  6839.539 ± 343.974  ns/op
+ * MediumDeserBenchmark.protobuf   avgt    6  2533.685 ±  36.897  ns/op
+ * MediumDeserBenchmark.sb_packet  avgt    6  6356.437 ± 118.194  ns/op
+ * MediumDeserBenchmark.sb_stream  avgt    6  5414.915 ± 101.700  ns/op
  *
  * @author sulin
  * @since 2019-11-11 10:53:43

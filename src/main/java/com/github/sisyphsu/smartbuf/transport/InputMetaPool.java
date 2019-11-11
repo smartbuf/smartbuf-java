@@ -125,7 +125,7 @@ public final class InputMetaPool {
         this.tmpStructs.clear();
     }
 
-    static class Struct {
+    public static class Struct {
         boolean  ordered;
         String[] fieldNames;
 

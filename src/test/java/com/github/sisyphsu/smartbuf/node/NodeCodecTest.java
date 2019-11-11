@@ -1,7 +1,9 @@
 package com.github.sisyphsu.smartbuf.node;
 
+import com.github.sisyphsu.smartbuf.converter.BeanInfo;
 import com.github.sisyphsu.smartbuf.converter.CodecFactory;
 import com.github.sisyphsu.smartbuf.node.basic.*;
+import com.github.sisyphsu.smartbuf.reflect.BeanWriterBuilder;
 import com.github.sisyphsu.smartbuf.reflect.XTypeUtils;
 import lombok.Data;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -133,8 +135,8 @@ public class NodeCodecTest {
         Person person = new Person();
         ObjectNode node = codec.toNode(person);
 
-        Person p1 = (Person) codec.toObject(node, XTypeUtils.toXType(Person.class));
-        assert person.equals(p1);
+        BeanInfo beanInfo = codec.toObject(node, XTypeUtils.toXType(Person.class));
+        assert beanInfo.getWriter() == BeanWriterBuilder.build(Person.class);
 
         Person p2 = CodecFactory.Instance.convert(node, Person.class);
         assert person.equals(p2);
