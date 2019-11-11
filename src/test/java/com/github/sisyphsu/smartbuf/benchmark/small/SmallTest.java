@@ -25,45 +25,43 @@ public class SmallTest {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    private static final UserModel USER = UserModel.random();
+    private static final UserModel user = UserModel.random();
 
     private static final SmartStream STREAM = new SmartStream();
 
     @Test
     public void json() throws Exception {
-        byte[] json = OBJECT_MAPPER.writeValueAsBytes(USER);
-        byte[] packet = SmartPacket.serialize(USER);
-        byte[] stream = STREAM.serialize(USER);
-        byte[] pb = USER.toPB().toByteArray();
+        byte[] json = OBJECT_MAPPER.writeValueAsBytes(user);
+        byte[] pb = user.toPB().toByteArray();
+        byte[] packet = SmartPacket.serialize(user);
+        byte[] stream = STREAM.serialize(user);
 
         System.out.println("json: " + json.length);
+        System.out.println("protobuf: " + pb.length);
         System.out.println("packet: " + packet.length);
         System.out.println("stream: " + stream.length);
-        System.out.println("protobuf: " + pb.length);
+
+        UserModel newUser = STREAM.deserialize(stream, UserModel.class);
+        assert newUser.equals(user);
+        newUser = SmartPacket.deserialize(packet, UserModel.class);
+        assert newUser.equals(user);
 
         System.out.println();
 
-        json = OBJECT_MAPPER.writeValueAsBytes(USER);
-        packet = SmartPacket.serialize(USER);
-        stream = STREAM.serialize(USER);
-        pb = USER.toPB().toByteArray();
+        json = OBJECT_MAPPER.writeValueAsBytes(user);
+        pb = user.toPB().toByteArray();
+        packet = SmartPacket.serialize(user);
+        stream = STREAM.serialize(user);
 
         System.out.println("json: " + json.length);
         System.out.println("protobuf: " + pb.length);
         System.out.println("packet: " + packet.length);
         System.out.println("stream: " + stream.length);
 
-        System.out.println();
-
-        json = OBJECT_MAPPER.writeValueAsBytes(USER);
-        packet = SmartPacket.serialize(USER);
-        stream = STREAM.serialize(USER);
-        pb = USER.toPB().toByteArray();
-
-        System.out.println("json: " + json.length);
-        System.out.println("protobuf: " + pb.length);
-        System.out.println("packet: " + packet.length);
-        System.out.println("stream: " + stream.length);
+        newUser = STREAM.deserialize(stream, UserModel.class);
+        assert newUser.equals(user);
+        newUser = SmartPacket.deserialize(packet, UserModel.class);
+        assert newUser.equals(user);
     }
 
 }

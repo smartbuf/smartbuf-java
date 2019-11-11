@@ -10,11 +10,11 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Benchmark                Mode  Cnt    Score    Error  Units
- * SmallBenchmark.json      avgt    6  721.521 ± 51.067  ns/op
- * SmallBenchmark.packet    avgt    6  599.017 ±  3.766  ns/op
- * SmallBenchmark.protobuf  avgt    6  202.389 ±  3.532  ns/op
- * SmallBenchmark.stream    avgt    6  354.649 ± 16.291  ns/op
+ * Benchmark                      Mode  Cnt    Score    Error  Units
+ * SmallSerialBenchmark.json      avgt    6  755.166 ± 90.536  ns/op
+ * SmallSerialBenchmark.packet    avgt    6  639.533 ± 14.932  ns/op
+ * SmallSerialBenchmark.protobuf  avgt    6  201.249 ± 17.111  ns/op
+ * SmallSerialBenchmark.stream    avgt    6  366.189 ± 20.768  ns/op
  *
  * @author sulin
  * @since 2019-10-28 17:32:33
@@ -24,20 +24,11 @@ import java.util.concurrent.TimeUnit;
 @Measurement(iterations = 3, time = 3)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
-public class SmallBenchmark {
+public class SmallSerialBenchmark {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final UserModel    user          = UserModel.random();
     private static final SmartStream  STREAM        = new SmartStream();
-
-    static {
-        try {
-            STREAM.serialize(user);
-            STREAM.serialize(user);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Benchmark
     public void json() throws JsonProcessingException {
