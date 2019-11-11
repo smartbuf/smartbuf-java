@@ -67,6 +67,7 @@ public class TypeTest {
         XType xType = XTypeUtils.toXType(Child.class);
         assert xType.getField("k") != null;
         assert xType.getField("v") != null;
+        assert xType.getField("xxx") == null;
     }
 
     @Data

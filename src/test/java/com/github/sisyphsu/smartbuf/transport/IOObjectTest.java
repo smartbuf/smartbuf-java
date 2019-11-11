@@ -28,11 +28,11 @@ public class IOObjectTest {
 
         enableCxt = false;
         Object result = transIO(objectNode);
-        assert result instanceof ObjectNode;
+        assert result instanceof HashMap;
 
         enableCxt = true;
         result = transIO(objectNode);
-        assert result instanceof ObjectNode;
+        assert result instanceof HashMap;
 
         Object obj = transIO(new HashMap<>());
         assert obj instanceof ObjectNode;
