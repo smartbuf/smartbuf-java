@@ -21,6 +21,8 @@ public class ConverterMethodTest {
         Object tgt = method.convert(new ArrayList(), null);
         assert tgt != null;
         assert tgt instanceof Collection;
+
+        System.out.println(method);
     }
 
     @Test

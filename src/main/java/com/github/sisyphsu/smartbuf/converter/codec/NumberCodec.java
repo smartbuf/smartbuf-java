@@ -180,7 +180,7 @@ public final class NumberCodec extends Codec {
      * Convert Integer to Character
      */
     @Converter
-    public Character toCharacter(Integer i) {
+    public Character toCharacter(Long i) {
         return (char) i.intValue();
     }
 
@@ -188,8 +188,8 @@ public final class NumberCodec extends Codec {
      * Convert Character to Integer
      */
     @Converter
-    public Integer toInteger(Character c) {
-        return (int) c;
+    public Long toInteger(Character c) {
+        return (long) (int) c;
     }
 
 }

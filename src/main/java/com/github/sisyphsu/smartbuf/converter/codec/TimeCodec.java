@@ -58,7 +58,7 @@ public final class TimeCodec extends Codec {
     /**
      * Convert Date to String
      */
-    @Converter(distance = 500)
+    @Converter(distance = 101)
     public String toString(Date d) {
         return DATE_FORMAT.format(d);
     }
@@ -94,7 +94,7 @@ public final class TimeCodec extends Codec {
     /**
      * Convert Calendar to String
      */
-    @Converter
+    @Converter(distance = 101)
     public String toString(Calendar calendar) {
         return DATE_FORMAT.format(calendar.getTime());
     }
@@ -308,7 +308,7 @@ public final class TimeCodec extends Codec {
     /**
      * Convert LocalDateTime to ZonedDateTime
      */
-    @Converter
+    @Converter(distance = 10)
     public OffsetDateTime toOffsetDateTime(LocalDateTime ldt) {
         return ldt.atOffset(LOCAL_OFFSET);
     }

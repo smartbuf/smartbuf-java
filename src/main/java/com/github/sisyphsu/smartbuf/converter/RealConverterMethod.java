@@ -94,4 +94,9 @@ public final class RealConverterMethod extends ConverterMethod {
     public boolean isHasTypeArg() {
         return hasTypeArg;
     }
+
+    @Override
+    public String toString() {
+        return String.format("[%s]", method.toString());
+    }
 }

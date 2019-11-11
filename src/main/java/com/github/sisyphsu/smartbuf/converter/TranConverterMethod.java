@@ -29,4 +29,8 @@ public final class TranConverterMethod extends ConverterMethod {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return String.format("[%s->%s]", getSrcClass().getName(), getTgtClass().getName());
+    }
 }

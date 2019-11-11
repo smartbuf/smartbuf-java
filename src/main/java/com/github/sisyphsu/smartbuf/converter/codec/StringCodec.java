@@ -48,17 +48,18 @@ public final class StringCodec extends Codec {
     /**
      * Convert String to Character
      */
-    @Converter
+    @Converter(distance = 101)
     public Character toCharacter(String s) {
-        if (s.length() != 1)
-            throw new UnsupportedOperationException("Convert String to Character failed: " + s);
+        if (s.length() != 1) {
+            throw new UnsupportedOperationException("Convert string to char failed, string.length > 0: " + s);
+        }
         return s.charAt(0);
     }
 
     /**
      * Convert Character to String
      */
-    @Converter
+    @Converter(distance = 101)
     public String toString(Character c) {
         return c.toString();
     }

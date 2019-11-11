@@ -181,7 +181,7 @@ public final class NodeCodec extends Codec {
         return SymbolNode.valueOf(e);
     }
 
-    @Converter
+    @Converter(distance = 101)
     public SymbolNode toSymbolNode(String str) {
         return SymbolNode.valueOf(str);
     }

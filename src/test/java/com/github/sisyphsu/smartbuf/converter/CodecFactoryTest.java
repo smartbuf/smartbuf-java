@@ -1,6 +1,7 @@
 package com.github.sisyphsu.smartbuf.converter;
 
 import com.github.sisyphsu.smartbuf.converter.codec.LangCodec;
+import com.github.sisyphsu.smartbuf.exception.NoShortestPipelineException;
 import com.github.sisyphsu.smartbuf.node.basic.ObjectNode;
 import com.github.sisyphsu.smartbuf.reflect.TypeRef;
 import com.github.sisyphsu.smartbuf.utils.CodecUtils;
@@ -142,6 +143,33 @@ public class CodecFactoryTest {
         private Double    double2 = Double.MAX_VALUE;
         private char      char1   = 'a';
         private Character char2   = 'z';
+    }
+
+    @Test
+    public void testConflict() {
+        CodecFactory factory = new CodecFactory();
+        factory.installCodec(ConflictCodec.class);
+
+        try {
+            factory.convert(1L, BitSet.class);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof NoShortestPipelineException;
+        }
+    }
+
+    public static class ConflictCodec extends Codec {
+
+        @Converter
+        public BitSet toBitSet(Short s) {
+            return null;
+        }
+
+        @Converter
+        public BitSet toBitSet(Integer i) {
+            return null;
+        }
+
     }
 
 }

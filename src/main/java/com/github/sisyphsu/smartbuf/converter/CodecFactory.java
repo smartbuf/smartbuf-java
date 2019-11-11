@@ -1,6 +1,7 @@
 package com.github.sisyphsu.smartbuf.converter;
 
 import com.github.sisyphsu.smartbuf.converter.codec.*;
+import com.github.sisyphsu.smartbuf.exception.NoShortestPipelineException;
 import com.github.sisyphsu.smartbuf.reflect.XType;
 import com.github.sisyphsu.smartbuf.reflect.XTypeFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -188,7 +189,17 @@ public final class CodecFactory {
      * @return The shortest path, could be null
      */
     public Path findShortestPath(Class<?> srcClass, Class<?> tgtClass) {
-        return this.findShortestPath(null, srcClass, tgtClass);
+        List<Path> paths = this.findShortestPath(null, srcClass, tgtClass);
+        // find shortest path if exists
+        if (!paths.isEmpty()) {
+            paths.sort(Comparator.comparingInt(o -> o.distance));
+            if (paths.size() > 1 && paths.get(0).distance == paths.get(1).distance) {
+                throw new NoShortestPipelineException(
+                    String.format("Cannot decide the shortest way between %s and %s for [%s->%s]",
+                        paths.get(0), paths.get(1), srcClass.getName(), tgtClass.getName()));
+            }
+        }
+        return paths.isEmpty() ? null : paths.get(0);
     }
 
     /**
@@ -197,10 +208,10 @@ public final class CodecFactory {
      *
      * @param passed Passed router which shouldn't be used again
      */
-    private Path findShortestPath(Map<Class, Integer> passed, Class<?> srcClass, Class<?> tgtClass) {
+    private List<Path> findShortestPath(Map<Class, Integer> passed, Class<?> srcClass, Class<?> tgtClass) {
         if (srcClass == tgtClass) {
             ConverterMethod method = converterMap.get(srcClass, tgtClass);
-            return new Path(0, method);
+            return Collections.singletonList(new Path(0, method));
         }
         passed = passed == null ? new HashMap<>() : new HashMap<>(passed);
         passed.compute(srcClass, (clz, v) -> 1 + (v == null ? 0 : v));
@@ -214,21 +225,17 @@ public final class CodecFactory {
             if (route.getSrcClass() == route.getTgtClass() && passTimes >= 2) {
                 continue; // for self-converted node, allow repass once
             }
-            Path path;
+            List<Path> subPaths;
             if (route.isExtensible() && route.getTgtClass().isAssignableFrom(tgtClass)) {
-                path = this.findShortestPath(passed, tgtClass, tgtClass);
+                subPaths = this.findShortestPath(passed, tgtClass, tgtClass);
             } else {
-                path = this.findShortestPath(passed, route.getTgtClass(), tgtClass);
+                subPaths = this.findShortestPath(passed, route.getTgtClass(), tgtClass);
             }
-            if (path != null) {
-                paths.add(new Path(route, path));
+            for (Path subPath : subPaths) {
+                paths.add(new Path(route, subPath));
             }
         }
-        // find shortest path if exists
-        if (!paths.isEmpty()) {
-            paths.sort(Comparator.comparingInt(o -> o.distance));
-        }
-        return paths.isEmpty() ? null : paths.get(0);
+        return paths;
     }
 
     public ConverterMap getConverterMap() {
@@ -253,6 +260,18 @@ public final class CodecFactory {
             this.distance = route.getDistance() + next.distance;
             this.methods.add(route);
             this.methods.addAll(next.methods);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            for (ConverterMethod method : methods) {
+                if (sb.length() > 0) {
+                    sb.append(" ==> ");
+                }
+                sb.append(method);
+            }
+            return sb.toString();
         }
     }
 

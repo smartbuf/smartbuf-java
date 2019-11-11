@@ -99,11 +99,12 @@ public class LangCodecTest {
         map.put("j", "1000");
         map.put("f", "1.0");
         map.put("d", "10.0");
+        
         Lang l = CodecUtils.convert(map, Lang.class);
-
         assert l.z;
         assert l.b == 1;
         assert l.s == 10;
+
         assert l.i == 100;
         assert l.j == 1000;
         assert l.f == 1.0f;
