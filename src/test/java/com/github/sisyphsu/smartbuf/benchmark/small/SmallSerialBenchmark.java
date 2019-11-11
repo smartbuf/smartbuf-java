@@ -11,10 +11,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Benchmark                       Mode  Cnt    Score    Error  Units
- * SmallSerialBenchmark.json       avgt    6  733.705 ± 17.387  ns/op
- * SmallSerialBenchmark.protobuf   avgt    6  197.968 ±  7.379  ns/op
- * SmallSerialBenchmark.sb_packet  avgt    6  630.900 ± 12.533  ns/op
- * SmallSerialBenchmark.sb_stream  avgt    6  368.521 ±  3.235  ns/op
+ * SmallSerialBenchmark.json       avgt    6  721.444 ± 42.226  ns/op
+ * SmallSerialBenchmark.protobuf   avgt    6  199.673 ±  6.206  ns/op
+ * SmallSerialBenchmark.sb_packet  avgt    6  627.155 ±  9.789  ns/op
+ * SmallSerialBenchmark.sb_stream  avgt    6  363.724 ± 23.070  ns/op
  *
  * @author sulin
  * @since 2019-10-28 17:32:33

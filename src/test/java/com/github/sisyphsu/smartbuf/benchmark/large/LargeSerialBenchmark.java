@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
 
 /**
  * Benchmark                       Mode  Cnt       Score      Error  Units
- * LargeSerialBenchmark.json       avgt    6  131570.638 ± 2561.824  ns/op
- * LargeSerialBenchmark.protobuf   avgt    6   98832.707 ±  845.220  ns/op
- * LargeSerialBenchmark.sb_packet  avgt    6   81680.392 ± 1086.799  ns/op
- * LargeSerialBenchmark.sb_stream  avgt    6   79006.771 ± 1891.546  ns/op
+ * LargeSerialBenchmark.json       avgt    6  122081.963 ± 5072.964  ns/op
+ * LargeSerialBenchmark.protobuf   avgt    6   96844.876 ± 1422.313  ns/op
+ * LargeSerialBenchmark.sb_packet  avgt    6   80364.698 ± 1457.234  ns/op
+ * LargeSerialBenchmark.sb_stream  avgt    6   76172.332 ± 3004.465  ns/op
  *
  * @author sulin
  * @since 2019-11-10 16:12:28

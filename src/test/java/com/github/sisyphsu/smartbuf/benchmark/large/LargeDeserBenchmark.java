@@ -14,10 +14,10 @@ import java.util.stream.Collectors;
 
 /**
  * Benchmark                      Mode  Cnt       Score       Error  Units
- * LargeDeserBenchmark.json       avgt    6  208038.885 ± 14218.638  ns/op
- * LargeDeserBenchmark.protobuf   avgt    6   48913.525 ±   615.531  ns/op
- * LargeDeserBenchmark.sb_packet  avgt    6  127720.509 ±  2677.179  ns/op
- * LargeDeserBenchmark.sb_stream  avgt    6  124366.896 ±  1543.929  ns/op
+ * LargeDeserBenchmark.json       avgt    6  204493.099 ± 14516.472  ns/op
+ * LargeDeserBenchmark.protobuf   avgt    6   48283.187 ±  1613.566  ns/op
+ * LargeDeserBenchmark.sb_packet  avgt    6  101545.126 ±  4309.135  ns/op
+ * LargeDeserBenchmark.sb_stream  avgt    6   97387.743 ±  1440.772  ns/op
  *
  * @author sulin
  * @since 2019-11-11 10:58:07
