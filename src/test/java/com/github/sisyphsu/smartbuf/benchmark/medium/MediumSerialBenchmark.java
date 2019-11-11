@@ -8,11 +8,11 @@ import org.openjdk.jmh.annotations.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Benchmark                 Mode  Cnt     Score    Error  Units
- * MediumBenchmark.json      avgt    6  4326.088 ± 91.941  ns/op
- * MediumBenchmark.packet    avgt    6  4492.260 ± 75.072  ns/op
- * MediumBenchmark.protobuf  avgt    6   802.377 ±  6.276  ns/op
- * MediumBenchmark.stream    avgt    6  3829.154 ± 77.204  ns/op
+ * Benchmark                        Mode  Cnt     Score     Error  Units
+ * MediumSerialBenchmark.json       avgt    6  4346.080 ± 123.714  ns/op
+ * MediumSerialBenchmark.protobuf   avgt    6   793.625 ±  11.015  ns/op
+ * MediumSerialBenchmark.sb_packet  avgt    6  4535.039 ±  74.490  ns/op
+ * MediumSerialBenchmark.sb_stream  avgt    6  3882.344 ±  52.287  ns/op
  *
  * @author sulin
  * @since 2019-10-31 20:40:55
@@ -22,11 +22,11 @@ import java.util.concurrent.TimeUnit;
 @Measurement(iterations = 3, time = 3)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
-public class MediumBenchmark {
+public class MediumSerialBenchmark {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final UserModel    USER   = UserModel.random();
-    private static final SmartStream  STREAM = new SmartStream();
+    static final ObjectMapper MAPPER = new ObjectMapper();
+    static final UserModel    USER   = UserModel.random();
+    static final SmartStream  STREAM = new SmartStream();
 
     @Benchmark
     public void json() throws Exception {
@@ -39,12 +39,12 @@ public class MediumBenchmark {
     }
 
     @Benchmark
-    public void packet() throws Exception {
+    public void sb_packet() throws Exception {
         SmartPacket.serialize(USER);
     }
 
     @Benchmark
-    public void stream() throws Exception {
+    public void sb_stream() throws Exception {
         STREAM.serialize(USER);
     }
 

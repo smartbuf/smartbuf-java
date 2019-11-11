@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sisyphsu.smartbuf.SmartPacket;
 import com.github.sisyphsu.smartbuf.SmartStream;
+import com.github.sisyphsu.smartbuf.reflect.TypeRef;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
@@ -59,6 +60,13 @@ public class LargeTest {
         System.out.println("packet: " + packetBytes.length);
         System.out.println("stream: " + streamBytes.length);
 
+        List<TrendModel> newTrends = SmartPacket.deserialize(packetBytes, new TypeRef<List<TrendModel>>() {
+        });
+        assert newTrends.equals(trends);
+        newTrends = stream.deserialize(streamBytes, new TypeRef<List<TrendModel>>() {
+        });
+        assert newTrends.equals(trends);
+
         System.out.println();
 
         jsonBytes = mapper.writeValueAsBytes(trends);
@@ -70,6 +78,13 @@ public class LargeTest {
         System.out.println("protobuf: " + pbBytes.length);
         System.out.println("packet: " + packetBytes.length);
         System.out.println("stream: " + streamBytes.length);
+
+        newTrends = SmartPacket.deserialize(packetBytes, new TypeRef<List<TrendModel>>() {
+        });
+        assert newTrends.equals(trends);
+        newTrends = stream.deserialize(streamBytes, new TypeRef<List<TrendModel>>() {
+        });
+        assert newTrends.equals(trends);
     }
 
 }

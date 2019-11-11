@@ -1,4 +1,4 @@
-package com.github.sisyphsu.smartbuf.benchmark.small;
+package com.github.sisyphsu.smartbuf.benchmark.medium;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sisyphsu.smartbuf.SmartPacket;
@@ -9,21 +9,21 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Benchmark                      Mode  Cnt     Score     Error  Units
- * SmallDeserBenchmark.json       avgt    6   820.684 ± 110.141  ns/op
- * SmallDeserBenchmark.protobuf   avgt    6   144.175 ±   9.912  ns/op
- * SmallDeserBenchmark.sb_packet  avgt    6  1155.737 ±  77.444  ns/op
- * SmallDeserBenchmark.sb_stream  avgt    6   630.544 ±  28.850  ns/op
+ * Benchmark                       Mode  Cnt      Score     Error  Units
+ * MediumDeserBenchmark.json       avgt    6   6876.528 ± 142.488  ns/op
+ * MediumDeserBenchmark.protobuf   avgt    6   2689.570 ±  58.415  ns/op
+ * MediumDeserBenchmark.sb_packet  avgt    6  10648.373 ± 114.543  ns/op
+ * MediumDeserBenchmark.sb_stream  avgt    6   9510.703 ± 578.108  ns/op
  *
  * @author sulin
- * @since 2019-11-11 10:38:04
+ * @since 2019-11-11 10:53:43
  */
 @Warmup(iterations = 2, time = 2)
 @Fork(2)
 @Measurement(iterations = 3, time = 3)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
-public class SmallDeserBenchmark {
+public class MediumDeserBenchmark {
 
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final UserModel    user   = UserModel.random();
@@ -37,7 +37,7 @@ public class SmallDeserBenchmark {
     static {
         try {
             jsonBytes = mapper.writeValueAsBytes(user);
-            pbBytes = user.toPB().toByteArray();
+            pbBytes = user.toUser().toByteArray();
             packetBytes = SmartPacket.serialize(user);
             streamBytes = stream.serialize(user);
 
@@ -45,7 +45,7 @@ public class SmallDeserBenchmark {
             stream.deserialize(streamBytes, UserModel.class);
 
             jsonBytes = mapper.writeValueAsBytes(user);
-            pbBytes = user.toPB().toByteArray();
+            pbBytes = user.toUser().toByteArray();
             packetBytes = SmartPacket.serialize(user);
             streamBytes = stream.serialize(user);
         } catch (IOException e) {
@@ -60,7 +60,7 @@ public class SmallDeserBenchmark {
 
     @Benchmark
     public void protobuf() throws Exception {
-        Small.User.parseFrom(pbBytes);
+        Medium.User.parseFrom(pbBytes);
     }
 
     @Benchmark

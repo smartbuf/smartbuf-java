@@ -10,11 +10,11 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Benchmark                      Mode  Cnt    Score    Error  Units
- * SmallSerialBenchmark.json      avgt    6  755.166 ± 90.536  ns/op
- * SmallSerialBenchmark.packet    avgt    6  639.533 ± 14.932  ns/op
- * SmallSerialBenchmark.protobuf  avgt    6  201.249 ± 17.111  ns/op
- * SmallSerialBenchmark.stream    avgt    6  366.189 ± 20.768  ns/op
+ * Benchmark                       Mode  Cnt    Score    Error  Units
+ * SmallSerialBenchmark.json       avgt    6  733.705 ± 17.387  ns/op
+ * SmallSerialBenchmark.protobuf   avgt    6  197.968 ±  7.379  ns/op
+ * SmallSerialBenchmark.sb_packet  avgt    6  630.900 ± 12.533  ns/op
+ * SmallSerialBenchmark.sb_stream  avgt    6  368.521 ±  3.235  ns/op
  *
  * @author sulin
  * @since 2019-10-28 17:32:33
@@ -36,18 +36,18 @@ public class SmallSerialBenchmark {
     }
 
     @Benchmark
-    public void packet() throws IOException {
+    public void protobuf() {
+        user.toPB().toByteArray();
+    }
+
+    @Benchmark
+    public void sb_packet() throws IOException {
         SmartPacket.serialize(user);
     }
 
     @Benchmark
-    public void stream() throws IOException {
+    public void sb_stream() throws IOException {
         STREAM.serialize(user);
-    }
-
-    @Benchmark
-    public void protobuf() {
-        user.toPB().toByteArray();
     }
 
 }

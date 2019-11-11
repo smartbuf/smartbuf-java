@@ -10,11 +10,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * Benchmark                Mode  Cnt       Score       Error  Units
- * LargeBenchmark.json      avgt    6  147872.403 ± 15552.341  ns/op
- * LargeBenchmark.protobuf  avgt    6  115657.352 ±  2803.250  ns/op
- * LargeBenchmark.packet    avgt    6   90870.999 ±   788.830  ns/op
- * LargeBenchmark.stream    avgt    6   88805.906 ±  1576.276  ns/op
+ * Benchmark                       Mode  Cnt       Score      Error  Units
+ * LargeSerialBenchmark.json       avgt    6  131570.638 ± 2561.824  ns/op
+ * LargeSerialBenchmark.protobuf   avgt    6   98832.707 ±  845.220  ns/op
+ * LargeSerialBenchmark.sb_packet  avgt    6   81680.392 ± 1086.799  ns/op
+ * LargeSerialBenchmark.sb_stream  avgt    6   79006.771 ± 1891.546  ns/op
  *
  * @author sulin
  * @since 2019-11-10 16:12:28
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Measurement(iterations = 3, time = 3)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
-public class LargeBenchmark {
+public class LargeSerialBenchmark {
 
     static final ObjectMapper     mapper = new ObjectMapper();
     static final List<TrendModel> trends = LargeTest.trends;
@@ -41,12 +41,12 @@ public class LargeBenchmark {
     }
 
     @Benchmark
-    public void packet() throws Exception {
+    public void sb_packet() throws Exception {
         SmartPacket.serialize(trends);
     }
 
     @Benchmark
-    public void stream() throws Exception {
+    public void sb_stream() throws Exception {
         stream.serialize(trends);
     }
 
