@@ -69,6 +69,12 @@ public class MetaPoolTest {
         assert struct1.hashCode() == struct2.hashCode();
 
         assert !struct1.equals(new Object());
+
+        InputMetaPool.Struct struct3 = new InputMetaPool.Struct(new String[]{"id", "name"});
+        assert struct3.ordered;
+
+        InputMetaPool.Struct struct4 = new InputMetaPool.Struct(new String[]{"userId", "name"});
+        assert !struct4.ordered;
     }
 
     @Test

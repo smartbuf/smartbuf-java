@@ -13,11 +13,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * Benchmark                      Mode  Cnt       Score      Error  Units
- * LargeDeserBenchmark.json       avgt    6  206401.343 ± 4612.550  ns/op
- * LargeDeserBenchmark.protobuf   avgt    6   49447.311 ±  735.007  ns/op
- * LargeDeserBenchmark.sb_packet  avgt    6  161005.349 ± 3780.622  ns/op
- * LargeDeserBenchmark.sb_stream  avgt    6  160100.422 ± 3531.129  ns/op
+ * Benchmark                      Mode  Cnt       Score       Error  Units
+ * LargeDeserBenchmark.json       avgt    6  208038.885 ± 14218.638  ns/op
+ * LargeDeserBenchmark.protobuf   avgt    6   48913.525 ±   615.531  ns/op
+ * LargeDeserBenchmark.sb_packet  avgt    6  127720.509 ±  2677.179  ns/op
+ * LargeDeserBenchmark.sb_stream  avgt    6  124366.896 ±  1543.929  ns/op
  *
  * @author sulin
  * @since 2019-11-11 10:58:07

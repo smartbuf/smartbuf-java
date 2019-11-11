@@ -133,7 +133,7 @@ public final class InputMetaPool {
             boolean ordered = true;
             String prev = null;
             for (String str : fieldNames) {
-                if (prev != null && str.compareTo(prev) > 0) {
+                if (prev != null && str.compareTo(prev) < 0) {
                     ordered = false;
                 }
                 prev = str;

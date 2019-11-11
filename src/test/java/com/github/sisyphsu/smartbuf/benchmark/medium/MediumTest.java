@@ -3,6 +3,8 @@ package com.github.sisyphsu.smartbuf.benchmark.medium;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sisyphsu.smartbuf.SmartPacket;
 import com.github.sisyphsu.smartbuf.SmartStream;
+import com.github.sisyphsu.smartbuf.transport.Input;
+import com.github.sisyphsu.smartbuf.utils.CodecUtils;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -58,6 +60,9 @@ public class MediumTest {
         assert newUser.equals(model);
         newUser = SmartPacket.deserialize(packetBytes, UserModel.class);
         assert newUser.equals(model);
+
+        Input input = new Input(false);
+        CodecUtils.convert(input.read(packetBytes), UserModel.class);
     }
 
 }

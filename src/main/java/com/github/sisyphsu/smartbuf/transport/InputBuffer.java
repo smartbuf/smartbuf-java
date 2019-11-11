@@ -34,9 +34,13 @@ public final class InputBuffer {
     }
 
     public short readShort() throws IOException {
-        byte high = readByte();
-        byte low = readByte();
-        return (short) ((high << 8) | (low & 0xFF));
+        try {
+            byte high = data[offset++];
+            byte low = data[offset++];
+            return (short) ((high << 8) | (low & 0xFF));
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new EOFException();
+        }
     }
 
     public long readVarInt() throws IOException {
@@ -47,15 +51,19 @@ public final class InputBuffer {
     public long readVarUint() throws IOException {
         long l = 0;
         byte b;
-        for (int i = 0; ; i++) {
-            b = readByte();
-            l |= ((long) (b & 0x7F)) << (i * 7);
-            if ((b & 0x80) == 0) {
-                break;
+        try {
+            for (int i = 0; ; i++) {
+                b = data[offset++];
+                l |= ((long) (b & 0x7F)) << (i * 7);
+                if ((b & 0x80) == 0) {
+                    break;
+                }
+                if (i == 10) {
+                    throw new UnexpectedReadException("hit invalid varint at " + offset);
+                }
             }
-            if (i == 10) {
-                throw new UnexpectedReadException("hit invalid varint at " + offset);
-            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new EOFException();
         }
         return l;
     }
@@ -63,9 +71,13 @@ public final class InputBuffer {
     public float readFloat() throws IOException {
         int bits = 0;
         int b;
-        for (int i = 0; i < 4; i++) {
-            b = readByte() & 0xFF;
-            bits |= b << (8 * i);
+        try {
+            for (int i = 0; i < 4; i++) {
+                b = data[offset++] & 0xFF;
+                bits |= b << (8 * i);
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new EOFException();
         }
         return NumberUtils.bitsToFloat(bits);
     }
@@ -73,9 +85,13 @@ public final class InputBuffer {
     public double readDouble() throws IOException {
         long bits = 0;
         long b;
-        for (int i = 0; i < 8; i++) {
-            b = readByte() & 0xFF;
-            bits |= b << (8 * i);
+        try {
+            for (int i = 0; i < 8; i++) {
+                b = data[offset++] & 0xFF;
+                bits |= b << (8 * i);
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new EOFException();
         }
         return NumberUtils.bitsToDouble(bits);
     }
@@ -94,14 +110,18 @@ public final class InputBuffer {
 
     public boolean[] readBooleanArray(int len) throws IOException {
         boolean[] result = new boolean[len];
-        for (int i = 0; i < len; i += 8) {
-            byte b = readByte();
-            for (int j = 0; j < 8; j++) {
-                if (i + j >= len) {
-                    break;
+        try {
+            for (int i = 0; i < len; i += 8) {
+                byte b = data[offset++];
+                for (int j = 0; j < 8; j++) {
+                    if (i + j >= len) {
+                        break;
+                    }
+                    result[i + j] = (b & (1 << j)) > 0;
                 }
-                result[i + j] = (b & (1 << j)) > 0;
             }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new EOFException();
         }
         return result;
     }
@@ -119,9 +139,7 @@ public final class InputBuffer {
     public short[] readShortArray(int len) throws IOException {
         short[] result = new short[len];
         for (int i = 0; i < len; i++) {
-            byte high = readByte();
-            byte low = readByte();
-            result[i] = (short) ((high << 8) | (low & 0xFF));
+            result[i] = this.readShort();
         }
         return result;
     }
