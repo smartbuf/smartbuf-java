@@ -56,7 +56,7 @@ public final class ConverterMap {
      * Get all ConverterMethods from srcClass
      */
     @SuppressWarnings("unchecked")
-    public synchronized Collection<ConverterMethod> get(Class srcClass) {
+    synchronized Collection<ConverterMethod> get(Class srcClass) {
         Map<Class, ConverterMethod> tgtMap = methodMap.get(srcClass);
         if (tgtMap == null) {
             return Collections.EMPTY_LIST;
@@ -67,7 +67,7 @@ public final class ConverterMap {
     /**
      * Get the ConverterMethod from srcClass to tgtClass
      */
-    public synchronized ConverterMethod get(Class srcClass, Class tgtClass) {
+    synchronized ConverterMethod get(Class srcClass, Class tgtClass) {
         Map<Class, ConverterMethod> tgtMap = methodMap.get(srcClass);
         if (tgtMap == null) {
             return null;
@@ -78,7 +78,7 @@ public final class ConverterMap {
     /**
      * Check the specified class, if it's new, flush CastConverter for it.
      */
-    public void flushCastConverter(Class<?> cls) {
+    void flushCastConverter(Class<?> cls) {
         if (!classes.add(cls)) {
             return;
         }
@@ -104,7 +104,7 @@ public final class ConverterMap {
      * Print this ConverterMap to dot chart, which can used by OmniGraffle or diagrams.
      * https://github.com/francoislaberge/diagrams/#flowchart
      */
-    public synchronized String printDot() {
+    synchronized String printDot() {
         // prepare nodes
         Map<Class, String> nodeMap = new HashMap<>();
         for (Class clz : classes) {

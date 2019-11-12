@@ -16,9 +16,6 @@ import java.lang.ref.WeakReference;
  */
 public final class ReferenceCodec extends Codec {
 
-    /**
-     * Convert Any Object to Reference
-     */
     @Converter(extensible = true)
     public Reference toReference(Object obj, XType type) {
         XType<?> paramType = type.getParameterizedType();
@@ -39,9 +36,6 @@ public final class ReferenceCodec extends Codec {
         throw new IllegalArgumentException("Unsupport Reference: " + refClass);
     }
 
-    /**
-     * Convert Reference to Object
-     */
     @Converter(extensible = true)
     public Object toObject(Reference<?> ref, XType<?> type) {
         Object obj = ref.get();

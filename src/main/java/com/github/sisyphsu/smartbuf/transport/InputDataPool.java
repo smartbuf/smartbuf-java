@@ -25,6 +25,9 @@ public final class InputDataPool {
 
     /**
      * Execute synchronization for schema and metadata of context
+     *
+     * @param buf Input buffer to read
+     * @throws IOException any io exception
      */
     public void read(InputBuffer buf) throws IOException {
         boolean hasMore = true;
@@ -77,6 +80,10 @@ public final class InputDataPool {
 
     /**
      * Find a float data by its unique ID
+     *
+     * @param index Data index of float value
+     * @return float value
+     * @throws InvalidDataException If the specified index is invalid
      */
     public float getFloat(int index) throws InvalidDataException {
         if (index == 1) {
@@ -91,6 +98,10 @@ public final class InputDataPool {
 
     /**
      * Find a double data by its unique ID
+     *
+     * @param index Data index of double value
+     * @return double value
+     * @throws InvalidDataException If the specified index is invalid
      */
     public double getDouble(int index) throws InvalidDataException {
         if (index == 1) {
@@ -105,6 +116,10 @@ public final class InputDataPool {
 
     /**
      * Find a varint data by its unique ID
+     *
+     * @param index Data index of varint value
+     * @return varint value
+     * @throws InvalidDataException If the specified index is invalid
      */
     public long getVarint(int index) throws InvalidDataException {
         if (index == 1) {
@@ -119,6 +134,10 @@ public final class InputDataPool {
 
     /**
      * Find an string data by its unique ID
+     *
+     * @param id Data index of string value
+     * @return string value
+     * @throws InvalidDataException If the specified id is invalid
      */
     public String getString(int id) throws InvalidDataException {
         if (id == 1) {
@@ -137,6 +156,10 @@ public final class InputDataPool {
 
     /**
      * Find an symbol data by its unique ID
+     *
+     * @param id Data index of symbol value
+     * @return symbol value
+     * @throws InvalidDataException If the specified id is invalid
      */
     public String getSymbol(int id) throws InvalidDataException {
         int dataId = id - 1;

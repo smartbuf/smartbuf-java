@@ -20,6 +20,8 @@ public final class InputBuffer {
 
     /**
      * Reset this buffer, fo reusing
+     *
+     * @param data New data to switch
      */
     public void reset(byte[] data) {
         this.data = data;

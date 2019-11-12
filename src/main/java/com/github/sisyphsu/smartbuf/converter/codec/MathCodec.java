@@ -14,33 +14,21 @@ import java.math.BigInteger;
  */
 public final class MathCodec extends Codec {
 
-    /**
-     * Convert String to BigDecimal
-     */
     @Converter
     public BigDecimal toBigDecimal(String s) {
         return new BigDecimal(s);
     }
 
-    /**
-     * Convert BigDecimal to String
-     */
     @Converter
     public String toString(BigDecimal bd) {
         return bd.toPlainString();
     }
 
-    /**
-     * Convert String to BigInteger
-     */
     @Converter
     public BigInteger toBigInteger(String s) {
         return new BigInteger(s);
     }
 
-    /**
-     * Convert BigInteger to String
-     */
     @Converter
     public String toString(BigInteger bi) {
         return bi.toString();

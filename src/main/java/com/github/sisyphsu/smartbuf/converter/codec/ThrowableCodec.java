@@ -27,9 +27,6 @@ public final class ThrowableCodec extends Codec {
     public static final String E_CAUSE  = "cause";
     public static final String E_STACKS = "stacks";
 
-    /**
-     * Convert Map to StackTraceElement
-     */
     @Converter
     public StackTraceElement toStackTraceElement(Map map) {
         String declarer = convert(map.get(F_DECLARER), String.class);
@@ -42,9 +39,6 @@ public final class ThrowableCodec extends Codec {
         return new StackTraceElement(declarer, method, file, line);
     }
 
-    /**
-     * Convert StackTraceElement to Map
-     */
     @Converter
     public Map toMap(StackTraceElement element) {
         Map<String, Object> result = new HashMap<>();
@@ -55,9 +49,6 @@ public final class ThrowableCodec extends Codec {
         return result;
     }
 
-    /**
-     * Convert Throwable to Map
-     */
     @Converter
     public Map toMap(Throwable t) {
         Map<String, Object> result = new HashMap<>();
@@ -68,9 +59,6 @@ public final class ThrowableCodec extends Codec {
         return result;
     }
 
-    /**
-     * Convert Map to Throwable
-     */
     @Converter
     public Throwable toThrowable(Map map, XType type) {
         String eType = convert(map.get(E_TYPE), String.class);

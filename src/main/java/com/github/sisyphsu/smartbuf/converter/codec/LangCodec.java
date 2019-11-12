@@ -18,7 +18,7 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public final class LangCodec extends Codec {
 
-    /**
+    /*
      * Convert Map to BeanValues, BeanValues will be used to build Bean
      */
     @Converter(extensible = true)
@@ -33,7 +33,7 @@ public final class LangCodec extends Codec {
         return new BeanInfo(writer, values);
     }
 
-    /**
+    /*
      * Build Object by specified BeanValues info
      */
     @Converter(extensible = true, distance = 1 << 20)
@@ -121,9 +121,6 @@ public final class LangCodec extends Codec {
         return result;
     }
 
-    /**
-     * Convert Object to Map, use cglib directly
-     */
     @Converter(distance = 1 << 24)
     public Map toMap(Object obj) {
         BeanReader reader = BeanReaderBuilder.build(obj.getClass());
@@ -136,49 +133,31 @@ public final class LangCodec extends Codec {
         return result;
     }
 
-    /**
-     * Convert String to Enum
-     */
     @Converter(extensible = true)
     public Enum toEnum(String name, XType type) {
         return Enum.valueOf(type.getRawType(), name);
     }
 
-    /**
-     * Convert Enum to String
-     */
     @Converter
     public String toString(Enum e) {
         return e.name();
     }
 
-    /**
-     * Convert String to Class
-     */
     @Converter
     public Class toClass(String name) throws ClassNotFoundException {
         return Class.forName(name);
     }
 
-    /**
-     * Convert Class to String
-     */
     @Converter
     public String toString(Class cls) {
         return cls.getName();
     }
 
-    /**
-     * Convert String to SimpleDateFormat
-     */
     @Converter
     public SimpleDateFormat toSimpleDateFormat(String s) {
         return new SimpleDateFormat(s);
     }
 
-    /**
-     * Convert SimpleDateFormat to String
-     */
     @Converter
     public String toString(SimpleDateFormat format) {
         return format.toPattern();

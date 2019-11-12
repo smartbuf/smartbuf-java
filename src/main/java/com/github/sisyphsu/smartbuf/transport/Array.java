@@ -18,6 +18,7 @@ public final class Array<T> {
      * Add new object into the final offset of this List
      *
      * @param val New object of T
+     * @return New item's offset
      */
     public int add(T val) {
         int pos = this.size;
@@ -58,6 +59,8 @@ public final class Array<T> {
 
     /**
      * Return real size of this array
+     *
+     * @return real size of this array
      */
     public int size() {
         return size;
@@ -65,6 +68,8 @@ public final class Array<T> {
 
     /**
      * Return capacity of this array
+     *
+     * @return capacity of this array
      */
     public int cap() {
         return data == null ? 0 : data.length;

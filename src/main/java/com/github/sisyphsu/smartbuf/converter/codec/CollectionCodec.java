@@ -16,25 +16,16 @@ import java.util.concurrent.*;
 @SuppressWarnings("unchecked")
 public final class CollectionCodec extends Codec {
 
-    /**
-     * Convert Object[] to Collection
-     */
     @Converter
     public Collection toCollection(Object[] arr) {
         return Arrays.asList(arr);
     }
 
-    /**
-     * Convert Collection to Iterable
-     */
     @Converter
     public Iterable toIterable(Collection collection) {
         return collection;
     }
 
-    /**
-     * Converter Iterable to Collection
-     */
     @Converter
     public Collection toCollection(Iterable it) {
         List<Object> list = new ArrayList<>();
@@ -42,18 +33,11 @@ public final class CollectionCodec extends Codec {
         return list;
     }
 
-    /**
-     * Convert Collection to Iterator
-     * Collection is compatible with Iterator, CollectionCodec will handle generic type.
-     */
     @Converter
     public Iterator toIterator(Collection coll) {
         return coll.iterator();
     }
 
-    /**
-     * Convert Iterator to List as default collection
-     */
     @Converter
     public Collection toCollection(Iterator it) {
         List<Object> list = new ArrayList<>();
@@ -63,17 +47,11 @@ public final class CollectionCodec extends Codec {
         return list;
     }
 
-    /**
-     * Convert Collection to Enumeration
-     */
     @Converter
     public Enumeration toEnumeration(Collection<?> coll) {
         return Collections.enumeration(coll);
     }
 
-    /**
-     * Convert Enumeration to List
-     */
     @Converter
     public Collection toCollection(Enumeration e) {
         List<Object> result = new ArrayList<>();
@@ -83,9 +61,6 @@ public final class CollectionCodec extends Codec {
         return result;
     }
 
-    /**
-     * Convert Any Collection to Collection, support GenericType convert.
-     */
     @Converter(extensible = true)
     public Collection toCollection(Collection src, XType<?> type) {
         // filter empty collection
@@ -123,6 +98,7 @@ public final class CollectionCodec extends Codec {
      * @param clz      Collection Type
      * @param itemType Element Type, for EnumSet
      * @param size     Initialize siz
+     * @param <T>      Collection's subclass
      * @return Collection
      */
     @SuppressWarnings("unchecked")

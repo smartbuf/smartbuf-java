@@ -29,6 +29,7 @@ public final class InputMetaPool {
      * Read meta info from the specified buffer.
      *
      * @param buf The specified input buffer
+     * @throws IOException any io exception
      */
     public void read(InputBuffer buf) throws IOException {
         boolean hasMore = true;
@@ -98,6 +99,10 @@ public final class InputMetaPool {
 
     /**
      * Find an struct by its unique id
+     *
+     * @param id struct's unique id
+     * @return struct info
+     * @throws InvalidStructException if id is invalid
      */
     public Struct findStructByID(int id) throws InvalidStructException {
         if (id == 0) {

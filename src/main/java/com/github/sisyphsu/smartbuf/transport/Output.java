@@ -53,6 +53,10 @@ public final class Output {
 
     /**
      * Output this schema into the specified writer with the specified sequence
+     *
+     * @param o the object to serialize
+     * @return Serialization result
+     * @throws IOException if any io exception happens
      */
     public byte[] write(Object o) throws IOException {
         this.bodyBuf.reset();

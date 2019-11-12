@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Codec for `java.awt` package, support Point & Dimension & Rectangle & Font & Color & etc.
+ * Codec for `java.awt` package, support Point/Dimension/Rectangle/Font/Color/etc.
  *
  * @author sulin
  * @since 2019-07-25 14:28:03
@@ -17,17 +17,14 @@ import java.util.Map;
 @SuppressWarnings({"MagicConstant"})
 public final class AwtCodec extends Codec {
 
-    private final String FONT_NAME = "name";
-    private final String FONT_STYLE = "style";
-    private final String FONT_SIZE = "size";
-    private final String POINT_X = "x";
-    private final String POINT_Y = "y";
-    private final String DIMENSION_WIDTH = "width";
+    private final String FONT_NAME        = "name";
+    private final String FONT_STYLE       = "style";
+    private final String FONT_SIZE        = "size";
+    private final String POINT_X          = "x";
+    private final String POINT_Y          = "y";
+    private final String DIMENSION_WIDTH  = "width";
     private final String DIMENSION_HEIGHT = "height";
 
-    /**
-     * Convert Map to Font
-     */
     @Converter
     public Font toFont(Map map) {
         String name = convert(map.get(FONT_NAME), String.class);
@@ -42,9 +39,6 @@ public final class AwtCodec extends Codec {
         return new Font(name, style, size);
     }
 
-    /**
-     * Convert Font to Map
-     */
     @Converter
     public Map toMap(Font font) {
         Map<String, Object> map = new LinkedHashMap<>();
@@ -55,7 +49,7 @@ public final class AwtCodec extends Codec {
         return map;
     }
 
-    /**
+    /*
      * Convert Color to String, like #00112233
      */
     @Converter
@@ -63,7 +57,7 @@ public final class AwtCodec extends Codec {
         return String.format("#%02x%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
     }
 
-    /**
+    /*
      * Convert String to Color, support like #001122 or #00112233
      */
     @Converter
@@ -75,9 +69,6 @@ public final class AwtCodec extends Codec {
         return new Color((value >> 16) & 0xFF, (value >> 8) & 0xFF, value & 0xFF);
     }
 
-    /**
-     * Convert Point to Map
-     */
     @Converter
     public Map toMap(Point point) {
         Map<String, Integer> map = new HashMap<>();
@@ -86,9 +77,6 @@ public final class AwtCodec extends Codec {
         return map;
     }
 
-    /**
-     * Convert Map to Point
-     */
     @Converter
     public Point toPoint(Map map) {
         Integer x = convert(map.get(POINT_X), Integer.class);
@@ -96,9 +84,6 @@ public final class AwtCodec extends Codec {
         return new Point(x, y);
     }
 
-    /**
-     * Convert Dimension to Map
-     */
     @Converter
     public Map toMap(Dimension dimension) {
         Map<String, Integer> map = new HashMap<>();
@@ -107,9 +92,6 @@ public final class AwtCodec extends Codec {
         return map;
     }
 
-    /**
-     * Convert Map to Dimension
-     */
     @Converter
     public Dimension toDimension(Map map) {
         Integer width = convert(map.get(DIMENSION_WIDTH), Integer.class);
@@ -117,9 +99,6 @@ public final class AwtCodec extends Codec {
         return new Dimension(width, height);
     }
 
-    /**
-     * Convert Rectangle to Map
-     */
     @Converter
     public Map toMap(Rectangle rect) {
         Map<String, Integer> map = new HashMap<>();
@@ -130,9 +109,6 @@ public final class AwtCodec extends Codec {
         return map;
     }
 
-    /**
-     * Convert Map to Rectangle
-     */
     @Converter
     public Rectangle toRectangle(Map map) {
         Integer x = convert(map.get(POINT_X), Integer.class);

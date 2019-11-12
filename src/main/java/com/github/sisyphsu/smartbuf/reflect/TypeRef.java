@@ -34,6 +34,8 @@ public abstract class TypeRef<T> {
 
     /**
      * Gets underlying {@code Type} instance.
+     *
+     * @return The underlying java type
      */
     public Type getType() {
         return type;

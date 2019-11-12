@@ -18,7 +18,7 @@ import java.util.jar.Attributes;
 @SuppressWarnings("unchecked")
 public final class MapCodec extends Codec {
 
-    /**
+    /*
      * Convert Map to Map with the specified generic type
      */
     @Converter(extensible = true)
@@ -56,7 +56,7 @@ public final class MapCodec extends Codec {
         return result;
     }
 
-    /**
+    /*
      * Convert Map.Entry to Map, dont handle generic type
      */
     @Converter
@@ -66,7 +66,7 @@ public final class MapCodec extends Codec {
         return map;
     }
 
-    /**
+    /*
      * Convert Map to Map.Entry, dont handle generic type
      */
     @Converter
@@ -79,7 +79,7 @@ public final class MapCodec extends Codec {
         return map.entrySet().iterator().next();
     }
 
-    /**
+    /*
      * Convert Map.Entry to Map.Entry with the specified generic type
      */
     @Converter(extensible = true)

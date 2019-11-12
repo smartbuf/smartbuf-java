@@ -139,7 +139,7 @@ public final class OutputMetaPool {
         return struct.id;
     }
 
-    public boolean needOutput() {
+    boolean needOutput() {
         byte status = 0;
         if (tmpNames.size() > 0) status |= HAS_NAME_TMP;
         if (cxtNameAdded.size() > 0) status |= HAS_NAME_ADDED;
@@ -152,14 +152,14 @@ public final class OutputMetaPool {
         return status > 0;
     }
 
-    public boolean needSequence() {
+    boolean needSequence() {
         return (status & NEED_SEQ) > 0;
     }
 
     /**
      * Write this MetaPool into the specified output buffer.
      */
-    public void write(OutputBuffer buf) throws IOException {
+    void write(OutputBuffer buf) throws IOException {
         int len;
         byte status = this.status;
         if ((status & HAS_NAME_TMP) > 0) {
@@ -232,7 +232,7 @@ public final class OutputMetaPool {
     /**
      * Reset this struct pool, and execute struct-expire automatically
      */
-    public void reset() {
+    void reset() {
         this.tmpNames.clear();
         this.tmpNameIndex.clear();
         this.cxtNameAdded.clear();

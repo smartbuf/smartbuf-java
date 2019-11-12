@@ -16,33 +16,21 @@ import java.nio.charset.Charset;
  */
 public final class IOCodec extends Codec {
 
-    /**
-     * Convert String to Charset
-     */
     @Converter
     public Charset toCharset(String s) {
         return Charset.forName(s);
     }
 
-    /**
-     * Convert Charset to String
-     */
     @Converter
     public String toString(Charset c) {
         return c.name();
     }
 
-    /**
-     * Convert File to String, toString directly
-     */
     @Converter
     public String toString(File file) {
         return file.toString();
     }
 
-    /**
-     * Convert InputStream to byte[]
-     */
     @Converter
     public byte[] toByteArray(InputStream is) throws IOException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -53,9 +41,6 @@ public final class IOCodec extends Codec {
         return output.toByteArray();
     }
 
-    /**
-     * Convert byte[] to InputStream
-     */
     @Converter
     public InputStream toInputStream(byte[] bytes, XType type) {
         Class<?> clz = type.getRawType();
@@ -71,9 +56,6 @@ public final class IOCodec extends Codec {
         throw new UnsupportedOperationException("unsupported type: " + clz);
     }
 
-    /**
-     * Convert Readable to char[] as String
-     */
     @Converter
     public String toString(Readable reader) throws IOException {
         StringBuilder sb = new StringBuilder();
@@ -88,9 +70,6 @@ public final class IOCodec extends Codec {
         return sb.toString();
     }
 
-    /**
-     * Convert String to Readable, support StringReader and its parent.
-     */
     @Converter
     public Readable toReadable(String s, XType type) {
         Class<?> clz = type.getRawType();

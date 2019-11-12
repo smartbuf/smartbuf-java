@@ -42,6 +42,7 @@ public final class CodecUtils {
      *
      * @param src  Source data
      * @param type Target type
+     * @param <T>  Target's real type
      * @return instance of the specified type
      */
     @SuppressWarnings("ALL")

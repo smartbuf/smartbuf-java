@@ -36,6 +36,7 @@ public final class SmartBuf {
     /**
      * Read the next object and convert it into the specified type.
      *
+     * @param data The data to deserialize
      * @param tRef The specified type, support generic type
      * @param <T>  Generic Type
      * @return Read result
@@ -52,7 +53,9 @@ public final class SmartBuf {
     /**
      * Read the next object and convert it into the specified class.
      *
+     * @param data The data to deserialize
      * @param tCls The specified class
+     * @param <T>  Generic Type
      * @return Read result
      * @throws IOException if an I/O error occurs.
      */
@@ -68,6 +71,7 @@ public final class SmartBuf {
      * Write the specified object into
      *
      * @param obj The specified object
+     * @return Serialization result
      * @throws IOException if an I/O error occurs.
      */
     public byte[] write(Object obj) throws IOException {

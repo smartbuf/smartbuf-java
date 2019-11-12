@@ -186,7 +186,7 @@ public final class NodeCodec extends Codec {
         return SymbolNode.valueOf(str);
     }
 
-    /**
+    /*
      * decode ObjectNode to map, expose fields directly.
      */
     @Converter
@@ -202,7 +202,7 @@ public final class NodeCodec extends Codec {
         return result;
     }
 
-    /**
+    /*
      * convert ObjectNode to specified java bean
      */
     @Converter(extensible = true)
@@ -238,7 +238,7 @@ public final class NodeCodec extends Codec {
         return new BeanInfo(writer, values);
     }
 
-    /**
+    /*
      * encode map to ObjectNode, pojo should be encoded as map first.
      */
     @Converter
@@ -265,7 +265,7 @@ public final class NodeCodec extends Codec {
         return new ObjectNode(false, keys, values);
     }
 
-    /**
+    /*
      * Convert POJO to ObjectNode, for better performance
      */
     @Converter(distance = 1 << 16)

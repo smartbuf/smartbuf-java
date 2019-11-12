@@ -43,6 +43,7 @@ public final class Input {
     /**
      * Read the next Object from the underlying buffer.
      *
+     * @param data The data to read
      * @return The next object
      * @throws IOException If any io-error happens
      */

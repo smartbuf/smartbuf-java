@@ -14,33 +14,21 @@ import java.util.concurrent.atomic.*;
  */
 public final class AtomicCodec extends Codec {
 
-    /**
-     * Convert Boolean to AtomicBoolean
-     */
     @Converter
     public AtomicBoolean toAtomicBoolean(Boolean b) {
         return new AtomicBoolean(b);
     }
 
-    /**
-     * Convert AtomicBoolean to Boolean
-     */
     @Converter
     public Boolean toBoolean(AtomicBoolean ab) {
         return ab.get();
     }
 
-    /**
-     * Convert int[] to AtomicIntegerArray
-     */
     @Converter
     public AtomicIntegerArray toAtomicIntegerArray(int[] arr) {
         return new AtomicIntegerArray(arr);
     }
 
-    /**
-     * Convert AtomicIntegerArray to int[]
-     */
     @Converter
     public int[] toIntegerArray(AtomicIntegerArray aia) {
         int[] result = new int[aia.length()];
@@ -50,33 +38,21 @@ public final class AtomicCodec extends Codec {
         return result;
     }
 
-    /**
-     * Convert Integer to AtomicInteger
-     */
     @Converter
     public AtomicInteger toAtomicInteger(Integer i) {
         return new AtomicInteger(i);
     }
 
-    /**
-     * Convert AtomicInteger to Integer
-     */
     @Converter
     public Integer toInteger(AtomicInteger ai) {
         return ai.get();
     }
 
-    /**
-     * Convert long[] to AtomicLongArray
-     */
     @Converter
     public AtomicLongArray toAtomicLongArray(long[] arr) {
         return new AtomicLongArray(arr);
     }
 
-    /**
-     * Convert AtomicLongArray to long[]
-     */
     @Converter
     public long[] toLongArray(AtomicLongArray ala) {
         long[] result = new long[ala.length()];
@@ -86,25 +62,16 @@ public final class AtomicCodec extends Codec {
         return result;
     }
 
-    /**
-     * Convert Long to AtomicLong
-     */
     @Converter
     public AtomicLong toAtomicLong(Long l) {
         return new AtomicLong(l);
     }
 
-    /**
-     * Convert AtomicLong to Long
-     */
     @Converter
     public Long toLong(AtomicLong al) {
         return al.get();
     }
 
-    /**
-     * Convert everything to AtomicReference
-     */
     @Converter
     public AtomicReference<?> toAtomicReference(Object obj, XType type) {
         XType<?> refType = type.getParameterizedType();
@@ -114,18 +81,12 @@ public final class AtomicCodec extends Codec {
         return new AtomicReference<>(convert(obj, refType));
     }
 
-    /**
-     * Convert AtomicReference to Object
-     */
     @Converter(extensible = true)
     public Object toObject(AtomicReference ref, XType type) {
         Object data = ref.get();
         return convert(data, type);
     }
 
-    /**
-     * Convert Double into DoubleAdder
-     */
     @Converter
     public DoubleAdder toDoubleAdder(Double d) {
         DoubleAdder addr = new DoubleAdder();
@@ -133,17 +94,11 @@ public final class AtomicCodec extends Codec {
         return addr;
     }
 
-    /**
-     * Convert DoubleAdder to Double
-     */
     @Converter
     public Double toDouble(DoubleAdder adder) {
         return adder.doubleValue();
     }
 
-    /**
-     * Convert Long to LongAdder
-     */
     @Converter
     public LongAdder toLongAdder(Long l) {
         LongAdder adder = new LongAdder();
@@ -151,9 +106,6 @@ public final class AtomicCodec extends Codec {
         return adder;
     }
 
-    /**
-     * Convert LongAdder to Long
-     */
     @Converter
     public Long toLong(LongAdder adder) {
         return adder.longValue();

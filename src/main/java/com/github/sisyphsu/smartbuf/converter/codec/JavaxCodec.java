@@ -14,9 +14,6 @@ import java.util.Calendar;
  */
 public final class JavaxCodec extends Codec {
 
-    /**
-     * Convert XMLGregorianCalendar to Calendar
-     */
     @Converter
     public Calendar toCalendar(XMLGregorianCalendar calendar) {
         return calendar.toGregorianCalendar();

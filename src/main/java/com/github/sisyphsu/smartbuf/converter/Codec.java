@@ -25,6 +25,9 @@ public abstract class Codec {
 
     /**
      * Proxy of {@link CodecFactory#toXType(Type)}
+     *
+     * @param type The original java type
+     * @return The parsed xtype, which contains generic info
      */
     protected final XType<?> toXType(Type type) {
         return factory.toXType(type);
@@ -32,6 +35,10 @@ public abstract class Codec {
 
     /**
      * Proxy of {@link CodecFactory#doConvert(Object, XType)}
+     *
+     * @param src     The source object, could be null
+     * @param tgtType The target type
+     * @return New object which is instance of tgtType
      */
     protected final Object convert(Object src, XType tgtType) {
         return factory.doConvert(src, tgtType);
@@ -39,6 +46,11 @@ public abstract class Codec {
 
     /**
      * Proxy of {@link CodecFactory#doConvert(Object, XType)}
+     *
+     * @param src The source object, could be null
+     * @param clz The target java class
+     * @param <T> clz's template type
+     * @return new object which is instance of clz
      */
     @SuppressWarnings("unchecked")
     protected final <T> T convert(Object src, Class<T> clz) {

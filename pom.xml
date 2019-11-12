@@ -7,7 +7,7 @@
     <groupId>com.github.sisyphsu</groupId>
     <artifactId>smartbuf</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.2</version>
+    <version>0.0.1</version>
 
     <name>smartbuf</name>
     <url>https://github.com/sisyphsu/smartbuf</url>

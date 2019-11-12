@@ -129,7 +129,7 @@ public final class OutputDataPool {
     /**
      * Check this data-pool need to output or not.
      */
-    public boolean needOutput() {
+    boolean needOutput() {
         byte flags = 0;
         if (floats.size() > 0) flags |= HAS_FLOAT;
         if (doubles.size() > 0) flags |= HAS_DOUBLE;
@@ -144,14 +144,14 @@ public final class OutputDataPool {
     /**
      * Check this data-pool need to output sequence or not.
      */
-    public boolean needSequence() {
+    boolean needSequence() {
         return (flags & NEED_SEQ) != 0;
     }
 
     /**
      * Write this data-pool into the specified output buffer
      */
-    public void write(OutputBuffer buf) throws IOException {
+    void write(OutputBuffer buf) throws IOException {
         byte flags = this.flags;
         int len;
         if ((flags & HAS_FLOAT) != 0) {
@@ -206,7 +206,7 @@ public final class OutputDataPool {
     /**
      * Reset this data pool, execute context data's expiring automatically
      */
-    public void reset() {
+    void reset() {
         this.floats.clear();
         this.floatIndex.clear();
         this.doubles.clear();
