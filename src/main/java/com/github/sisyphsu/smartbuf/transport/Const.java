@@ -14,12 +14,13 @@ interface Const {
     byte VER_HAS_META = 0b0000_0010;
     byte VER_HAS_SEQ  = 0b0000_0001;
 
-    byte FLAG_META_NAME_TMP       = 1 << 1;
-    byte FLAG_META_NAME_ADDED     = 2 << 1;
-    byte FLAG_META_NAME_EXPIRED   = 3 << 1;
-    byte FLAG_META_STRUCT_TMP     = 4 << 1;
-    byte FLAG_META_STRUCT_ADDED   = 5 << 1;
-    byte FLAG_META_STRUCT_EXPIRED = 6 << 1;
+    byte FLAG_META_NAME_TMP        = 1 << 1;
+    byte FLAG_META_NAME_ADDED      = 2 << 1;
+    byte FLAG_META_NAME_EXPIRED    = 3 << 1;
+    byte FLAG_META_STRUCT_TMP      = 4 << 1;
+    byte FLAG_META_STRUCT_ADDED    = 5 << 1;
+    byte FLAG_META_STRUCT_EXPIRED  = 6 << 1;
+    byte FLAG_META_STRUCT_REFERRED = 7 << 1;
 
     byte FLAG_DATA_FLOAT          = 1 << 1;
     byte FLAG_DATA_DOUBLE         = 2 << 1;

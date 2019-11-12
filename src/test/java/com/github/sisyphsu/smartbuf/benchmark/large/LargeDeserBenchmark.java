@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * @since 2019-11-11 10:58:07
  */
 @Warmup(iterations = 2, time = 2)
-@Fork(2)
+@Fork(3)
 @Measurement(iterations = 3, time = 3)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)

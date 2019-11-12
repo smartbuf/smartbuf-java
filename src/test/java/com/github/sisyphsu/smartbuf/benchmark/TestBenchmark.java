@@ -1,12 +1,9 @@
 package com.github.sisyphsu.smartbuf.benchmark;
 
-import com.github.sisyphsu.smartbuf.transport.InputMetaPool;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.openjdk.jmh.annotations.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -52,22 +49,6 @@ public class TestBenchmark {
         cls.isEnum();
         cls.isArray();
         cls.getName();
-    }
-
-    static String[] strings  = new String[100];
-    static String[] strings2 = new String[100];
-
-    static {
-        for (int i = 0; i < strings.length; i++) {
-            strings[i] = RandomStringUtils.randomAlphanumeric(12);
-            strings2[i] = strings[i];
-        }
-    }
-
-    @Benchmark
-    public void testOrdered() {
-//        new InputMetaPool.Struct(strings); // 34ns
-//        Arrays.equals(strings, strings2); // 83ns
     }
 
 }

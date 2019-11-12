@@ -8,15 +8,15 @@ import com.github.sisyphsu.smartbuf.utils.CodecUtils;
 import org.junit.jupiter.api.Test;
 
 /**
- * json: 1875
+ * json: 1876
  * protobuf: 973
- * packet: 1015
- * stream: 1016
- * <p>
- * json: 1875
+ * packet: 1012
+ * stream: 1020
+ *
+ * json: 1876
  * protobuf: 973
- * packet: 1015
- * stream: 847
+ * packet: 1012
+ * stream: 851
  *
  * @author sulin
  * @since 2019-10-31 20:32:32

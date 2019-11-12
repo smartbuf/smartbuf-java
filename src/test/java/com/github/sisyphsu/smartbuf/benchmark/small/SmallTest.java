@@ -6,17 +6,15 @@ import com.github.sisyphsu.smartbuf.SmartStream;
 import org.junit.jupiter.api.Test;
 
 /**
- * First time:
- * json: 171
- * protobuf: 67
- * packet: 138
- * stream: 139
+ * json: 172
+ * protobuf: 65
+ * packet: 139
+ * stream: 143
  * <p>
- * Following:
- * json: 171
- * protobuf: 67
- * packet: 138
- * stream: 71
+ * json: 172
+ * protobuf: 65
+ * packet: 139
+ * stream: 75
  *
  * @author sulin
  * @since 2019-10-28 18:27:56

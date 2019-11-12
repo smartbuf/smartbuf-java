@@ -17,12 +17,13 @@ import static com.github.sisyphsu.smartbuf.transport.Const.*;
  */
 public final class OutputMetaPool {
 
-    private static final byte HAS_NAME_TMP       = 1;
-    private static final byte HAS_NAME_ADDED     = 1 << 1;
-    private static final byte HAS_NAME_EXPIRED   = 1 << 2;
-    private static final byte HAS_STRUCT_TMP     = 1 << 3;
-    private static final byte HAS_STRUCT_ADDED   = 1 << 4;
-    private static final byte HAS_STRUCT_EXPIRED = 1 << 5;
+    private static final byte HAS_NAME_TMP        = 1;
+    private static final byte HAS_NAME_ADDED      = 1 << 1;
+    private static final byte HAS_NAME_EXPIRED    = 1 << 2;
+    private static final byte HAS_STRUCT_TMP      = 1 << 3;
+    private static final byte HAS_STRUCT_ADDED    = 1 << 4;
+    private static final byte HAS_STRUCT_EXPIRED  = 1 << 5;
+    private static final byte HAS_STRUCT_REFERRED = 1 << 6;
 
     private static final byte NEED_SEQ = HAS_NAME_ADDED | HAS_NAME_EXPIRED | HAS_STRUCT_ADDED | HAS_STRUCT_EXPIRED;
 
@@ -41,11 +42,12 @@ public final class OutputMetaPool {
     final Array<Integer>    cxtNameExpired = new Array<>();
     final Map<String, Name> cxtNameIndex   = new HashMap<>();
 
-    final IDAllocator        cxtStructIdAlloc = new IDAllocator();
-    final Array<Struct>      cxtStructs       = new Array<>();
-    final Array<Struct>      cxtStructAdded   = new Array<>();
-    final Array<Integer>     cxtStructExpired = new Array<>();
-    final Map<Names, Struct> cxtStructIndex   = new HashMap<>();
+    final IDAllocator        cxtStructIdAlloc  = new IDAllocator();
+    final Array<Struct>      cxtStructs        = new Array<>();
+    final Array<Struct>      cxtStructAdded    = new Array<>();
+    final Array<Integer>     cxtStructExpired  = new Array<>();
+    final Array<Struct>      cxtStructReferred = new Array<>();
+    final Map<Names, Struct> cxtStructIndex    = new HashMap<>();
 
     private byte status;
 
@@ -86,9 +88,10 @@ public final class OutputMetaPool {
             }
             struct = new Struct(names, nameIds);
             struct.index = tmpStructs.add(struct);
+            struct.id = (struct.index + 1) << 1; // identify temporary struct by suffixed 0
             tmpStructIndex.put(struct, struct);
         }
-        return (struct.index + 1) << 1; // identify temporary struct by suffixed 0
+        return struct.id;
     }
 
     /**
@@ -123,12 +126,17 @@ public final class OutputMetaPool {
             }
             struct = new Struct(names, nameIds);
             struct.index = cxtStructIdAlloc.acquire();
+            struct.id = ((struct.index + 1) << 1) | 1; // identify context struct by suffixed 1
             this.cxtStructs.put(struct.index, struct);
             this.cxtStructAdded.add(struct);
             this.cxtStructIndex.put(struct, struct);
         }
         struct.lastTime = (int) TimeUtils.fastUpTime();
-        return ((struct.index + 1) << 1) | 1; // identify context struct by suffixed 1
+        if (!struct.refered) {
+            struct.refered = true;
+            this.cxtStructReferred.add(struct);
+        }
+        return struct.id;
     }
 
     public boolean needOutput() {
@@ -139,6 +147,7 @@ public final class OutputMetaPool {
         if (tmpStructs.size() > 0) status |= HAS_STRUCT_TMP;
         if (cxtStructAdded.size() > 0) status |= HAS_STRUCT_ADDED;
         if (cxtStructExpired.size() > 0) status |= HAS_STRUCT_EXPIRED;
+        if (cxtStructReferred.size() > 0) status |= HAS_STRUCT_REFERRED;
         this.status = status;
         return status > 0;
     }
@@ -199,13 +208,23 @@ public final class OutputMetaPool {
         }
         if ((status & HAS_STRUCT_ADDED) > 0) {
             len = cxtStructAdded.size();
-            buf.writeVarUint((len << 4) | FLAG_META_STRUCT_ADDED);
+            status ^= HAS_STRUCT_ADDED;
+            buf.writeVarUint((len << 4) | FLAG_META_STRUCT_ADDED | 1); // must has HAS_STRUCT_REFERRED suffixed
             for (int i = 0; i < len; i++) {
                 int[] nameIds = cxtStructAdded.get(i).nameIds;
                 buf.writeVarUint(nameIds.length);
                 for (int nameId : nameIds) {
                     buf.writeVarUint(nameId);
                 }
+            }
+        }
+        if ((status & HAS_STRUCT_REFERRED) > 0) {
+            len = cxtStructReferred.size();
+            buf.writeVarUint((len << 4) | FLAG_META_STRUCT_REFERRED);
+            for (int i = 0; i < len; i++) {
+                Struct struct = cxtStructReferred.get(i);
+                buf.writeVarUint(struct.index);
+                buf.writeVarUint(struct.names.length);
             }
         }
     }
@@ -223,6 +242,11 @@ public final class OutputMetaPool {
         this.tmpStructIndex.clear();
         this.cxtStructAdded.clear();
         this.cxtStructExpired.clear();
+        this.cxtStructReferred.clear();
+
+        for (Struct struct : cxtStructIndex.values()) {
+            struct.refered = false;
+        }
 
         // execute automatically expire for context-struct
         int expireCount = cxtStructIndex.size() - cxtStructLimit;
@@ -286,9 +310,11 @@ public final class OutputMetaPool {
      * Struct model for inner usage
      */
     static class Struct extends Names {
-        int   index;
-        int   lastTime;
-        int[] nameIds;
+        int     id;
+        int     index;
+        int     lastTime;
+        int[]   nameIds;
+        boolean refered;
 
         public Struct(String[] names, int[] nameIds) {
             this.names = names;

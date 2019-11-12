@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @since 2019-10-28 17:32:33
  */
 @Warmup(iterations = 2, time = 2)
-@Fork(2)
+@Fork(3)
 @Measurement(iterations = 3, time = 3)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)

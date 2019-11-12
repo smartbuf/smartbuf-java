@@ -84,6 +84,12 @@ public final class InputMetaPool {
                         cxtStructs.put(structId, null);
                     }
                     break;
+                case FLAG_META_STRUCT_REFERRED:
+                    for (int i = 0; i < size; i++) {
+                        buf.readVarUint(); // ignored context struct index
+                        buf.readVarUint(); // ignored context struct size
+                    }
+                    break;
                 default:
                     throw new UnexpectedReadException("invalid meta flag: " + flag);
             }

@@ -151,7 +151,7 @@ public class MetaPoolTest {
         InputMetaPool pool = new InputMetaPool();
 
         try {
-            buffer.reset(new byte[]{0b01111111});
+            buffer.reset(new byte[]{0x00});
             pool.read(buffer);
             assert false;
         } catch (Exception e) {

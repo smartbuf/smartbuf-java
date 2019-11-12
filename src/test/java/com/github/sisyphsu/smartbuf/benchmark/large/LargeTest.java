@@ -18,12 +18,12 @@ import java.util.stream.Collectors;
  * json: 64850
  * protobuf: 23755
  * packet: 20950
- * stream: 20951
+ * stream: 20960
  * <p>
  * json: 64850
  * protobuf: 23755
  * packet: 20950
- * stream: 19845
+ * stream: 19854
  *
  * @author sulin
  * @since 2019-11-10 15:45:57
