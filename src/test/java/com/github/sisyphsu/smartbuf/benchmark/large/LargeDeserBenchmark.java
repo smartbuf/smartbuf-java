@@ -1,23 +1,25 @@
 package com.github.sisyphsu.smartbuf.benchmark.large;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.ByteBufferInput;
+import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sisyphsu.smartbuf.SmartPacket;
 import com.github.sisyphsu.smartbuf.SmartStream;
-import com.github.sisyphsu.smartbuf.reflect.TypeRef;
+import org.msgpack.MessagePack;
 import org.openjdk.jmh.annotations.*;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * Benchmark                      Mode  Cnt       Score       Error  Units
- * LargeDeserBenchmark.json       avgt    6  204493.099 ± 14516.472  ns/op
- * LargeDeserBenchmark.protobuf   avgt    6   48283.187 ±  1613.566  ns/op
- * LargeDeserBenchmark.sb_packet  avgt    6  101545.126 ±  4309.135  ns/op
- * LargeDeserBenchmark.sb_stream  avgt    6   97387.743 ±  1440.772  ns/op
+ * LargeDeserBenchmark.json       avgt    9  215988.530 ± 14369.676  ns/op
+ * LargeDeserBenchmark.kryo       avgt    9  144229.596 ±  8665.693  ns/op
+ * LargeDeserBenchmark.msgpack    avgt    9   91418.850 ±  2470.538  ns/op
+ * LargeDeserBenchmark.protobuf   avgt    9   49573.240 ±   483.989  ns/op
+ * LargeDeserBenchmark.sb_packet  avgt    9  105982.178 ±  6484.683  ns/op
+ * LargeDeserBenchmark.sb_stream  avgt    9   98243.964 ±  2018.606  ns/op
  *
  * @author sulin
  * @since 2019-11-11 10:58:07
@@ -29,30 +31,39 @@ import java.util.stream.Collectors;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 public class LargeDeserBenchmark {
 
-    static final ObjectMapper     mapper = new ObjectMapper();
-    static final List<TrendModel> trends = LargeTest.trends;
-    static final SmartStream      stream = new SmartStream();
+    static final LargeTest.TrendsModel trends = LargeTest.trendsModel;
+
+    static final ObjectMapper MAPPER  = new ObjectMapper();
+    static final SmartStream  STREAM  = new SmartStream();
+    static final MessagePack  MSGPACK = new MessagePack();
+    static final Kryo         KRYO    = new Kryo();
 
     static byte[] jsonBytes;
+    static byte[] kryoBytes;
+    static byte[] msgpackBytes;
     static byte[] pbBytes;
     static byte[] packetBytes;
     static byte[] streamBytes;
 
     static {
+        ByteBufferOutput kryoOutput = new ByteBufferOutput(1 << 20);
+
         try {
-            jsonBytes = mapper.writeValueAsBytes(trends);
-            pbBytes = Large.Trends.newBuilder().addAllTrends(trends.stream().map(TrendModel::toPB).collect(Collectors.toList())).build().toByteArray();
+            KRYO.writeObject(kryoOutput, trends);
+            kryoBytes = kryoOutput.toBytes();
+            jsonBytes = MAPPER.writeValueAsBytes(trends);
+            msgpackBytes = MSGPACK.write(trends);
+            pbBytes = trends.toPB().toByteArray();
             packetBytes = SmartPacket.serialize(trends);
-            streamBytes = stream.serialize(trends);
+            streamBytes = STREAM.serialize(trends);
 
             // smartbuf's stream-mode need warm up to avoid sequence error
-            stream.deserialize(streamBytes, new TypeRef<List<TrendModel>>() {
-            });
+            STREAM.deserialize(streamBytes, LargeTest.TrendsModel.class);
 
-            jsonBytes = mapper.writeValueAsBytes(trends);
-            pbBytes = Large.Trends.newBuilder().addAllTrends(trends.stream().map(TrendModel::toPB).collect(Collectors.toList())).build().toByteArray();
+            jsonBytes = MAPPER.writeValueAsBytes(trends);
+            pbBytes = trends.toPB().toByteArray();
             packetBytes = SmartPacket.serialize(trends);
-            streamBytes = stream.serialize(trends);
+            streamBytes = STREAM.serialize(trends);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -60,8 +71,17 @@ public class LargeDeserBenchmark {
 
     @Benchmark
     public void json() throws Exception {
-        mapper.readValue(jsonBytes, new TypeReference<List<TrendModel>>() {
-        });
+        MAPPER.readValue(jsonBytes, LargeTest.TrendsModel.class);
+    }
+
+    @Benchmark
+    public void kryo() {
+        KRYO.readObject(new ByteBufferInput(kryoBytes), LargeTest.TrendsModel.class);
+    }
+
+    @Benchmark
+    public void msgpack() throws IOException {
+        MSGPACK.read(msgpackBytes, LargeTest.TrendsModel.class);
     }
 
     @Benchmark
@@ -71,14 +91,12 @@ public class LargeDeserBenchmark {
 
     @Benchmark
     public void sb_packet() throws Exception {
-        SmartPacket.deserialize(packetBytes, new TypeRef<List<TrendModel>>() {
-        });
+        SmartPacket.deserialize(packetBytes, LargeTest.TrendsModel.class);
     }
 
     @Benchmark
     public void sb_stream() throws Exception {
-        stream.deserialize(streamBytes, new TypeRef<List<TrendModel>>() {
-        });
+        STREAM.deserialize(streamBytes, LargeTest.TrendsModel.class);
     }
 
 }

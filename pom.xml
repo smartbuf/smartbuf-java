@@ -96,6 +96,19 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.msgpack</groupId>
+            <artifactId>msgpack</artifactId>
+            <version>0.6.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>4.0.2</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- test framework -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

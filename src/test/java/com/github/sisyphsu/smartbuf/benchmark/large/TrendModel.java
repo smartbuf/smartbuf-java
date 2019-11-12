@@ -1,6 +1,7 @@
 package com.github.sisyphsu.smartbuf.benchmark.large;
 
 import lombok.Data;
+import org.msgpack.annotation.Message;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
  * @since 2019-11-10 15:28:14
  */
 @Data
+@Message
 public class TrendModel {
 
     public Long         id;
@@ -74,12 +76,14 @@ public class TrendModel {
     public Boolean      require_some_consent;
 
     @Data
+    @Message
     public static class Entities {
         public Urls        url;
         public Description description;
     }
 
     @Data
+    @Message
     public static class Description {
         public List<Url> urls;
 
@@ -91,6 +95,7 @@ public class TrendModel {
     }
 
     @Data
+    @Message
     public static class Urls {
         public List<Url> urls;
 
@@ -102,6 +107,7 @@ public class TrendModel {
     }
 
     @Data
+    @Message
     public static class Url {
         public String     url;
         public String     expanded_url;

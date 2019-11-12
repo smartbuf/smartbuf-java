@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
+import org.msgpack.annotation.Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.UUID;
  * @since 2019-10-31 19:58:41
  */
 @Data
+@Message
 public class UserModel {
 
     private long    id;
@@ -105,6 +107,7 @@ public class UserModel {
     }
 
     @Data
+    @org.msgpack.annotation.Message
     public static class Message {
         private Long   id;
         private Long   from;
@@ -116,6 +119,7 @@ public class UserModel {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
+    @org.msgpack.annotation.Message
     public static class Tag {
         private int    code;
         private String name;

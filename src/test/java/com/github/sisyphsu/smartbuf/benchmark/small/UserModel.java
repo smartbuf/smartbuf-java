@@ -3,6 +3,7 @@ package com.github.sisyphsu.smartbuf.benchmark.small;
 import lombok.Data;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
+import org.msgpack.annotation.Message;
 
 /**
  * Simple bean for test
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.RandomUtils;
  * @since 2019-10-28 17:27:09
  */
 @Data
+@Message
 public class UserModel {
 
     private long    id;

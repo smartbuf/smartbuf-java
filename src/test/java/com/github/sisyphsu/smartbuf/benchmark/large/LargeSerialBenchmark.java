@@ -1,20 +1,24 @@
 package com.github.sisyphsu.smartbuf.benchmark.large;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sisyphsu.smartbuf.SmartPacket;
 import com.github.sisyphsu.smartbuf.SmartStream;
+import org.msgpack.MessagePack;
 import org.openjdk.jmh.annotations.*;
 
-import java.util.List;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * Benchmark                       Mode  Cnt       Score      Error  Units
- * LargeSerialBenchmark.json       avgt    6  122081.963 ± 5072.964  ns/op
- * LargeSerialBenchmark.protobuf   avgt    6   96844.876 ± 1422.313  ns/op
- * LargeSerialBenchmark.sb_packet  avgt    6   80364.698 ± 1457.234  ns/op
- * LargeSerialBenchmark.sb_stream  avgt    6   76172.332 ± 3004.465  ns/op
+ * LargeSerialBenchmark.json       avgt    9  126749.482 ± 3173.811  ns/op
+ * LargeSerialBenchmark.kryo       avgt    9  134176.479 ± 1208.534  ns/op
+ * LargeSerialBenchmark.msgpack    avgt    9   70548.730 ± 3072.337  ns/op
+ * LargeSerialBenchmark.protobuf   avgt    9   97395.157 ± 1056.336  ns/op
+ * LargeSerialBenchmark.sb_packet  avgt    9   81460.734 ± 1396.504  ns/op
+ * LargeSerialBenchmark.sb_stream  avgt    9   77611.622 ±  430.881  ns/op
  *
  * @author sulin
  * @since 2019-11-10 16:12:28
@@ -26,18 +30,35 @@ import java.util.stream.Collectors;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 public class LargeSerialBenchmark {
 
-    static final ObjectMapper     mapper = new ObjectMapper();
-    static final List<TrendModel> trends = LargeTest.trends;
-    static final SmartStream      stream = new SmartStream();
+    static final LargeTest.TrendsModel trends = LargeTest.trendsModel;
+
+    static final ObjectMapper MAPPER  = new ObjectMapper();
+    static final SmartStream  STREAM  = new SmartStream();
+    static final MessagePack  MSGPACK = new MessagePack();
+    static final Kryo         KRYO    = new Kryo();
+
+    static ByteBufferOutput kryoOutput = new ByteBufferOutput(1 << 20);
 
     @Benchmark
     public void json() throws Exception {
-        mapper.writeValueAsBytes(trends);
+        MAPPER.writeValueAsBytes(trends);
+    }
+
+    @Benchmark
+    public void kryo() {
+        KRYO.writeObject(kryoOutput, trends);
+        kryoOutput.toBytes();
+        kryoOutput.clear();
+    }
+
+    @Benchmark
+    public void msgpack() throws IOException {
+        MSGPACK.write(trends);
     }
 
     @Benchmark
     public void protobuf() {
-        Large.Trends.newBuilder().addAllTrends(trends.stream().map(TrendModel::toPB).collect(Collectors.toList())).build().toByteArray();
+        trends.toPB().toByteArray();
     }
 
     @Benchmark
@@ -47,7 +68,7 @@ public class LargeSerialBenchmark {
 
     @Benchmark
     public void sb_stream() throws Exception {
-        stream.serialize(trends);
+        STREAM.serialize(trends);
     }
 
 }
