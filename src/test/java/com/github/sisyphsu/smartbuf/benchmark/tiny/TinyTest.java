@@ -1,6 +1,12 @@
 package com.github.sisyphsu.smartbuf.benchmark.tiny;
 
+import com.github.sisyphsu.smartbuf.SmartStream;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 /**
  * ProtoBuf: [8, -23, 7, 26, 5, 104, 101, 108, 108, 111, 56, -112, 78]
@@ -25,6 +31,33 @@ public class TinyTest {
         System.out.println(bytesToHex(user.getName().getBytes()));
 
         System.out.println("ProtoBuf: " + bytesToHex(user.toByteArray()));
+    }
+
+    @Test
+    public void testSB() throws IOException {
+        UserModel user = new UserModel(1001, "hello", 10000L);
+        SmartStream stream = new SmartStream();
+
+        byte[] streamData = stream.serialize(user);
+        System.out.println(bytesToHex(streamData));
+
+        streamData = stream.serialize(user);
+        System.out.println(bytesToHex(streamData));
+
+        System.out.println(bytesToHex("hello".getBytes()));
+        System.out.println(bytesToHex("id".getBytes()));
+        System.out.println(bytesToHex("name".getBytes()));
+        System.out.println(bytesToHex("time".getBytes()));
+
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserModel {
+        private int    id;
+        private String name;
+        private long   time;
     }
 
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
