@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package com.github.sisyphsu.smartbuf.benchmark.small;
+package com.github.smartbuf.benchmark.small;
 
 message User {
     int64 id = 1;
