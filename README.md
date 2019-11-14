@@ -172,7 +172,7 @@ public class UserModel {
 }
 ```
 
-![small](./img/small.png)
+![small](./doc/img/small.png)
 
 ## `Medium` Object
 
@@ -212,13 +212,13 @@ public class UserModel {
 }
 ```
 
-![medium](./img/medium.png)
+![medium](./doc/img/medium.png)
 
 ## `Large` Object
 
 TODO 
 
-![large](./img/large.png)
+![large](./doc/img/large.png)
 
 # Advantages and disadvantages
 
