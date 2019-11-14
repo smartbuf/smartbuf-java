@@ -4,13 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.sisyphsu</groupId>
+    <groupId>com.github.smartbuf</groupId>
     <artifactId>smartbuf</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.1</version>
+    <version>0.1.0</version>
 
     <name>smartbuf</name>
-    <url>https://github.com/sisyphsu/smartbuf</url>
+    <url>https://github.com/smartbuf/smartbuf-java</url>
     <description>
         SmartBuf, is a cross-language serialization and deserialization framework, and it has
         high performance and compression ratio like protobuf, high compatibility and scalability like json.
@@ -157,13 +157,13 @@
 
     <issueManagement>
         <system>Github Issue</system>
-        <url>https://github.com/sisyphsu/smartbuf/issues</url>
+        <url>https://github.com/smartbuf/smartbuf-java/issues</url>
     </issueManagement>
 
     <licenses>
         <license>
             <name>Apache-2.0 License</name>
-            <url>https://github.com/sisyphsu/smartbuf/blob/master/LICENSE</url>
+            <url>https://github.com/smartbuf/smartbuf-java/blob/master/LICENSE</url>
         </license>
     </licenses>
 
@@ -175,9 +175,9 @@
     </developers>
 
     <scm>
-        <url>git@github.com:sisyphsu/smartbuf.git</url>
-        <connection>scm:git@github.com:sisyphsu/smartbuf.git</connection>
-        <developerConnection>scm:git@github.com:sisyphsu/smartbuf.git</developerConnection>
+        <url>git@github.com:smartbuf/smartbuf-java.git</url>
+        <connection>scm:git@github.com:smartbuf/smartbuf-java.git</connection>
+        <developerConnection>scm:git@github.com:smartbuf/smartbuf-java.git</developerConnection>
     </scm>
 
     <build>

@@ -1,5 +1,8 @@
 # SmartBuf
 
+[![Travis CI](https://travis-ci.org/smartbuf/smartbuf-java.svg?branch=master)](https://travis-ci.org/smartbuf/smartbuf-java)
+[![codecov](https://codecov.io/gh/smartbuf/smartbuf-java/branch/master/graph/badge.svg)](https://codecov.io/gh/smartbuf/smartbuf-java)
+
 `smartbuf` is a cross-language serialization and deserialization framework, 
 which has high performance and compression ratio like protobuf, high compatibility and scalability like json.
 
@@ -11,8 +14,8 @@ By now, `smartbuf` only support java language, you can install it by this maven 
 
 ```xml
 <dependency>
-  <groupId>com.github.sisyphsu</groupId>
+  <groupId>com.github.smartbuf</groupId>
   <artifactId>smartbuf</artifactId>
-  <version>0.0.1</version>
+  <version>0.1.0</version>
 </dependency>
 ```
