@@ -30,7 +30,9 @@ public class JodaCodecTest {
         Instant instant = Instant.now();
         System.out.println(instant);
         System.out.println(codec.toInstant(instant));
-        assert instant.equals(codec.toInstant(codec.toInstant(instant)));
+        Instant newInstant = codec.toInstant(codec.toInstant(instant));
+        System.out.println(newInstant);
+        assert instant.toEpochMilli() == newInstant.toEpochMilli();
 
         // Duration
         Duration duration = Duration.ofMillis(System.currentTimeMillis());

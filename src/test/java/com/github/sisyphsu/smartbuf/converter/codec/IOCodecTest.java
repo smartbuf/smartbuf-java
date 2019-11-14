@@ -44,7 +44,9 @@ public class IOCodecTest {
 
         try {
             codec.toInputStream(bytes, XTypeUtils.toXType(FileInputStream.class));
+            assert false;
         } catch (Exception e) {
+            System.out.println(e.getClass());
             assert e instanceof UnsupportedOperationException;
         }
     }

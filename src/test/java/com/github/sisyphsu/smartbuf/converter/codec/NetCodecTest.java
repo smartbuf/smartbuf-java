@@ -36,7 +36,7 @@ public class NetCodecTest {
         Inet4Address inet4Address = (Inet4Address) Inet4Address.getByName("www.bing.com");
         assert inet4Address.equals(codec.toInetAddress(codec.toString(inet4Address)));
 
-        Inet6Address inet6Address = (Inet6Address) Inet6Address.getByName("www.neu6.edu.cn");
+        Inet6Address inet6Address = (Inet6Address) Inet6Address.getByName("2400:3200:1600::152");
         assert inet6Address.equals(codec.toInetAddress(codec.toString(inet6Address)));
 
         // auto split hostname by /

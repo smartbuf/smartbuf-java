@@ -66,7 +66,10 @@ public class ThrowableCodecTest {
         Exception exception = new Exception();
 
         StackTraceElement element = exception.getStackTrace()[0];
-        assert element.equals(codec.toStackTraceElement(codec.toMap(element)));
+        StackTraceElement newElement = codec.toStackTraceElement(codec.toMap(element));
+        System.out.println(element);
+        System.out.println(newElement);
+        assert element.equals(newElement);
         Map elementMap = codec.toMap(element);
         elementMap.remove("line");
         assert codec.toStackTraceElement(elementMap).getLineNumber() == -1;
