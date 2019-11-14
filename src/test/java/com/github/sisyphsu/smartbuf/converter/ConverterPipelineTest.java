@@ -13,7 +13,7 @@ import java.util.*;
  */
 public class ConverterPipelineTest {
 
-    private CodecFactory factory;
+    private CodecFactory factory = new CodecFactory();
 
     @BeforeEach
     void setUp() {
@@ -38,7 +38,7 @@ public class ConverterPipelineTest {
 
     @Test
     public void test() throws Exception {
-        ConverterPipeline pipeline = CodecFactory.Instance.getPipeline(Long.class, Optional.class);
+        ConverterPipeline pipeline = factory.getPipeline(Long.class, Optional.class);
 
         List<RealConverterMethod> methods = new ArrayList<>();
         for (ConverterMethod method : pipeline.getMethods()) {
@@ -62,19 +62,20 @@ public class ConverterPipelineTest {
     public void disableAsm() {
         ConverterPipeline.ENABLE_ASM = false;
 
-        Collection collection = CodecFactory.Instance.convert(new int[]{1, 2, 3}, Collection.class);
+        Collection collection = factory.convert(new int[]{1, 2, 3}, Collection.class);
         assert collection.size() == 3;
 
-        assert CodecFactory.Instance.convert(OptionalInt.empty(), BitSet.class) == null;
+        assert factory.convert(OptionalInt.empty(), BitSet.class) == null;
 
         ConverterPipeline.ENABLE_ASM = true;
     }
 
     @Test
     public void testPrimaryArg() {
-        CodecFactory.Instance.installCodec(PrimaryArgCodec.class);
+        CodecFactory factory = new CodecFactory();
+        factory.installCodec(PrimaryArgCodec.class);
 
-        OptionalInt opt = CodecFactory.Instance.convert(100, OptionalInt.class);
+        OptionalInt opt = factory.convert(100, OptionalInt.class);
         assert opt.getAsInt() == 101;
     }
 

@@ -90,7 +90,7 @@ public class JodaCodecTest {
         TimeZone newZone = codec.toTimeZone(codec.toDateTimeZone(zone));
         System.out.println(zone);
         System.out.println(newZone);
-        assert zone.equals(codec.toTimeZone(codec.toDateTimeZone(zone)));
+        assert zone.getID().equals(newZone.getID());
     }
 
 }
