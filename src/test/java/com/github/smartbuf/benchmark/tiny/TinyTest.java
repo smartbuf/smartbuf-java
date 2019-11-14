@@ -1,5 +1,6 @@
 package com.github.smartbuf.benchmark.tiny;
 
+import com.github.smartbuf.SmartPacket;
 import com.github.smartbuf.SmartStream;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,10 +40,18 @@ public class TinyTest {
         SmartStream stream = new SmartStream();
 
         byte[] streamData = stream.serialize(user);
+
+        UserModel newUser = stream.deserialize(streamData, UserModel.class);
+        assert user.equals(newUser);
+
         System.out.println(bytesToHex(streamData));
 
         streamData = stream.serialize(user);
         System.out.println(bytesToHex(streamData));
+
+//        byte[] bytes = SmartPacket.serialize(user);
+//        UserModel newUser = SmartPacket.deserialize(bytes, UserModel.class);
+//        assert user.equals(newUser);
 
         System.out.println(bytesToHex("hello".getBytes()));
         System.out.println(bytesToHex("id".getBytes()));

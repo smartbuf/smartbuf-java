@@ -1,4 +1,4 @@
-# smartbuf
+# SmartBuf
 
 `smartbuf`是一种新颖、高效、智能、易用的跨语言序列化框架，它既拥有不亚于`protobuf`的高性能，也拥有与`json`相仿的通用性、可扩展性、可调试性等。
 
@@ -71,7 +71,7 @@
 
 为加深大家对分区序列化的理解，也为了更清晰地展示`smartbuf`序列化的最终效果，本章节通过一个简单的对象演示上文所述的分区编码的细节。
 
-以下为一个简单的`User`模型数据结构：
+这是一个简单的`User`模型数据结构：
 
 ```proto
 message User {
@@ -100,29 +100,196 @@ message User {
 这个特点对于数据可读性、可调试性都有很大的帮助，你可以通过网络抓包的方式，
 直接查看`smartbuf`的编码数据报文，这一点对于`protobuf`等是很难做到的。
 
-## 优势与劣势
+# 优势与劣势
 
-分区序列化的优势与劣势都是显而易见的
+从上面这个例子中，我们可以直观的看到，`smartbuf`最大限度地将`schema`信息保留在序列化结果中，
+这就导致它面对小数据集时，尤其是`100B`左右的测试性小对象时，难以发挥设计上的优势，这个特点在后续性能测试中就会提现出来。
 
-# Usage
+但是对于正常的数据对象，比如`2K`至`20K`这样常用的系统数据而言，`smartbuf`架构上的优势便提现出来了，
+对于数组类的较大的数据对象而言，`smartbuf`的空间利用率将明显超出`protobuf`。
 
-By now, `smartbuf` only support java language, you can install it by this maven dependency:
+使用`smartbuf`不需要预定义任何类似`*.proto`的`IDL`，它可以直接将普通的`POJO`编码为`byte[]`，整个过程与常用的`json`序列化工具非常相似。
+
+总而言之，使用`smartbuf`可能带来以下益处：
+
+## 数据传输效率更高
+
+相比于`json`，它可以降低30%~70%的网络资源消耗。
+
+相比于`protobuf`，它也可以降低10%左右的网络资源消耗。
+
+这对于互联网产品而言，尤其是网络环境可能不太好的移动互联网，它可以一定程度地提高接口响应速度、降低设备耗电量、提高系统吞吐率等。
+
+## 提高开发调试灵活性
+
+相比于`protobuf`，使用`smartbuf`不再需要手动维护`IDL`，这对于快速迭代的早中期产品而言非常重要。
+
+还有一点不容忽视的就是`IDL`对产品的影响，比如我亲身接触到的一个使用`protobuf`的`Android`应用，
+伴随着快速迭代而频繁修改`proto`，该产品上线一年之后，由`proto`编译而成的`jar`包甚至达到了惊人的`3.8MB`，而整个`APP`才不到`12MB`。
+
+# 使用方式
+
+到目前为止，`smartbuf`支持`java`语言，马上会增加它对`javascript`、`golang`等语言的支持。
+
+你可以在`maven`工程中通过下面这个坐标引入`smartbuf`的依赖：
 
 ```xml
 <dependency>
-  <groupId>com.github.sisyphsu</groupId>
+  <groupId>com.github.smartbuf</groupId>
   <artifactId>smartbuf</artifactId>
-  <version>0.0.1</version>
+  <version>0.1.0</version>
 </dependency>
 ```
 
-## 对比`packet`与`stream`模式
+如前文所言，`smartbuf`支持`packet`与`stream`两种模式，它们分别封装在`SmartPacket`与`SmartStream`中，具体使用方式如下文所述。
+
+## [`SmartPacket`](https://github.com/smartbuf/smartbuf-java/blob/master/src/main/java/com/github/smartbuf/SmartPacket.java)
+
+`SmartPacket`封装了`smartbuf`对`packet`的支持，它本身作为一个静态工具类，无需初始化即可直接使用：
+
+```java
+UserModel user = new UserModel(1001, "hello", 10000L);
+byte[] bytes = SmartPacket.serialize(user); // serialize or encode
+UserModel newUser = SmartPacket.deserialize(bytes, UserModel.class); // deserialize or decode
+assert user.equals(newUser); 
+```
+
+这种模式下的`smartbuf`与`json`非常相似，序列化的`bytes`本身包含了完整的`schema`信息，唯一的不同之处就是它拥有更高的性能、更高的压缩率。
+
+底层`smartbuf`的输入输出实现上都不是线程安全的，因此`SmartPacket`内部通过`ThreadLocal`封装了一个可重复使用的实例，你可以直接查阅源代码了解这些细节。
+
+## [`SmartStream`](https://github.com/smartbuf/smartbuf-java/blob/master/src/main/java/com/github/smartbuf/SmartStream.java)
+
+`SmartStream`封装了`smartbuf`对`stream`的支持，使用它之前，你需要手动构造新的实例：
+
+```java
+final SmartStream stream = new SmartStream();
+UserModel user = new UserModel(1001, "hello", 10000L);
+byte[] bytes = stream.serialize(user); // serialize or encode 
+UserModel newUser = stream.deserialize(bytes, UserModel.class);  // deserialize or decode
+assert user.equals(newUser);
+```
+
+这种模式下，`smartbuf`强依赖于上下文状态，输出端(即序列化)针对相同的`schema`信息只会输出一次，
+输入端(即反序列化)需要缓存接收到的`schema`信息并维护起来，以备后续复用。
+
+切记，`SmartStream`不是线程安全的，你需要为每一个`Context`上下文或`Socket`长连接单独构造一个`SmartStream`实例，并确保每个数据报文都经由它来处理。
+
+不连续的数据报文可能导致上下文`schema`混乱，为避免出现这个情况，`smartbuf`内部对`stream`模式的报文会按需附加`sequence`进行强校验。
+
+## 对比`packet`与`stream`
 
 `packet`模式的序列化压缩率相对低一些，它需要为每个数据报文附加完整的元数据信息，比较适合用于类似api请求这种无上下文的场景。
 
 `stream`模式的序列化压缩率更高，多数场景下比`protobuf`更高一些，它需要传输数据的两端保持上下文状态，比较适合用于类似长连接多路复用的场景。
 
-## `packet`与`stream`
-
 # 性能测试
 
+本章节主要针对各种数据场景进行比较完备的性能基准测试，数据量级包括`small`, `medium`, `large`三种，对比测试包括:
+
++ `json`: 测试中采用的技术方案为`jackson`，它也是`java`语言中`json`序列化性能最好的库。
++ `kryo`: 这种序列化技术仅支持`java`，把它加入测试，仅用于横向对比。
++ `msgpack`: 它是一个类似于`json`又有所提高的序列化技术，但是实际测试中表现较差，仅用于观测参考。
++ `protobuf`: 下面的性能测试中，它是`smartbuf`的重要挑战对象。
+
+性能测试采用了`JMH`技术，它可以很好地处理`warmup`，也支持非常准确地统计各种性能指标。测试环境如下：
+
+ + JDK 1.8.0_191
+ + MacBook Pro (15-inch, 2018)
+
+具体测试代码在[`test`源代码](https://github.com/smartbuf/smartbuf-java/tree/master/src/test/java/com/github/smartbuf/benchmark)中
+，你可以`checkout`下来本地运行观测效果。
+
+## `Small`对象
+
+首先测试的对象是一个很小的`User`实例，它不是任何生产环境中实际使用的数据模型，仅用于展示`smartbuf`在极小对象序列化上的表现，其具体模型如下：
+
+```java
+public class UserModel {
+    private long    id;
+    private Boolean blocked;
+    private String  nickname;
+    private String  portrait;
+    private float   score;
+    private int     loginTimes;
+    private long    createTime;
+}
+```
+
+下面是各种序列化技术在性能测试过程中的具体表现：
+
+![small](./img/small.png)
+
+由于特殊的分区序列化策略，在处理小对象时`smartbuf`的表现不如`protobuf`，但比之于`json`则有明显的优势。
+
+## `Medium`对象
+
+接下来测试的对象是我们生产环境数据结构中提取的一个片段，其具体模型如下：
+
+```java
+public class UserModel {
+    private long    id;
+    private String  nickname;
+    private String  portrait;
+    private float   score;
+    private String  mail;
+    private String  mobile;
+    private String  token;
+    private Integer type;
+    private Integer source;
+    private Boolean blocked;
+    private int     loginTimes;
+    private long    updateTime;
+    private long    createTime;
+    
+    private List<Message> msgs;
+    private List<Tag>     tags;
+
+    public static class Message {
+        private Long   id;
+        private Long   from;
+        private Long   to;
+        private String msg;
+        private Long   timestamp;
+    }
+
+    public static class Tag {
+        private int    code;
+        private String name;
+    }
+}
+```
+
+测试准备的数据中为`msgs`与`tags`分别随机分配了若干个小对象，最终各个序列化框架的表现如下：
+
+![medium](./img/medium.png)
+
+可以看到这个数据量级的序列化过程中，采用`stream`模式的`smartbuf`明显超过了`protobuf`，
+但是由于`protobuf`预编译的加持，其编码解码速度上仍然有明显的优势。
+
+## `Large`对象
+
+前面`small`与`medium`都不是任何产品生产环境中真实使用的数据，为测试其在真实生产环境中的表现，本环节特意摘取了一个著名`APP`进行测试。
+
+测试数据取自`Twitter`网页版首页侧边栏中**全球趋势**接口，它大概是使用频率最大的若干个接口之一，我已经将它整理为[json配置文件](https://github.com/smartbuf/smartbuf-java/blob/master/src/test/resources/large.json)。
+其对应的java模型过于庞大，可以参见于源代码[TrendModel](https://github.com/smartbuf/smartbuf-java/blob/master/src/test/java/com/github/smartbuf/benchmark/large/TrendModel.java)。
+
+针对这份测试数据，各个序列化框架的表现如下：
+
+![large](./img/large.png)
+
+可以看到超过`64KB`的全球趋势数据，通过`smartbuf`编码只需要不到`20KB`，即便是`packet`模式也明显优于`protobuf`。
+
+而编码性能也是`smartbuf`最佳，但是反序列化性能仍然是`protobuf`大幅度领先。
+
+# 说明
+
+欢迎任何形式的技术讨论、问题反馈、协助开发等。
+
+`smartbuf`这是一个新颖的技术，目前仅在小范围内有所应用。
+但它的每一行代码、每一个逻辑都经过了充足的测试，可能`100%`的测试覆盖率仍然不足以涵盖实际产品引用中的全部场景，
+如果你在实际应用过程中遇到问题，我们将全力以赴协助排忧解难。
+
+# License
+
+Apache-2.0
