@@ -244,8 +244,8 @@ public class UserModel {
 
 前面`small`与`medium`都不是任何产品生产环境中真实使用的数据，为测试其在真实生产环境中的表现，本环节特意摘取了一个著名`APP`进行测试。
 
-测试数据取自`Twitter`网页版首页侧边栏中**全球趋势**接口，它大概是使用频率最大的若干个接口之一，我已经将它整理为[json配置文件](https://github.com/smartbuf/smartbuf-java/blob/master/src/test/resources/large.json)。
-其对应的java模型过于庞大，可以参见于源代码[TrendModel](https://github.com/smartbuf/smartbuf-java/blob/master/src/test/java/com/github/smartbuf/benchmark/large/TrendModel.java)。
+测试数据取自`Twitter`网页版首页侧边栏中**全球趋势**接口，它大概是使用频率最大的若干个接口之一，我已经将它整理为[`json`配置文件](https://github.com/smartbuf/smartbuf-java/blob/master/src/test/resources/large.json)。
+其对应的`java`模型过于庞大，可以参见于源代码[`TrendModel`](https://github.com/smartbuf/smartbuf-java/blob/master/src/test/java/com/github/smartbuf/benchmark/large/TrendModel.java)。
 
 针对这份测试数据，各个序列化框架的表现如下：
 
@@ -258,9 +258,9 @@ public class UserModel {
 # 优势与劣势
 
 从上面这个例子中，我们可以直观的看到，`smartbuf`最大限度地将`schema`信息保留在序列化结果中，
-这就导致它面对小数据集时，尤其是`100B`左右的测试性小对象时，难以发挥设计上的优势，这个特点在后续性能测试中就会提现出来。
+这就导致它面对小数据集时，尤其是`100B`左右的测试性小对象时，难以发挥设计上的优势。
 
-但是对于正常的数据对象，比如`2K`至`20K`这样常用的系统数据而言，`smartbuf`架构上的优势便提现出来了，
+但是对于正常的数据对象，比如`2K`至`20K`这样常用的系统数据而言，`smartbuf`算法设计上的优势便可以充分体现，
 对于数组类的较大的数据对象而言，`smartbuf`的空间利用率将明显超出`protobuf`。
 
 使用`smartbuf`不需要预定义任何类似`*.proto`的`IDL`，它可以直接将普通的`POJO`编码为`byte[]`，整个过程与常用的`json`序列化工具非常相似。
