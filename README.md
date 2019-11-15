@@ -1,5 +1,7 @@
 # SmartBuf [![Travis CI](https://travis-ci.org/smartbuf/smartbuf-java.svg?branch=master)](https://travis-ci.org/smartbuf/smartbuf-java) [![codecov](https://codecov.io/gh/smartbuf/smartbuf-java/branch/master/graph/badge.svg)](https://codecov.io/gh/smartbuf/smartbuf-java)
 
+[中文文档](./doc/index_zh.md)
+
 `smartbuf` is a cross-language serialization and deserialization framework, 
 which has high performance and compression ratio like `protobuf`, and has high compatibility and scalability like `json`.
 
@@ -9,14 +11,14 @@ This feature makes `smartbuf` have better scalability, compatibility and univers
 
 In order to improve the efficiency of compression and transmission, `smartbuf` uses **Partition Serialization** strategy.
 It will split object into multiple different parts, and use different method to encode them. 
-About the details, please check the following **Partition Serialization** section. 
+About the details, please refer to the following **Partition Serialization** section. 
 
 Because of the well-designed **Partition Serialization** strategy, `smartbuf` provides higher compression ratio and performance.
 In my benchmarks, it even could be better than `protobuf`.
-For more details, please check the following **Benchmark** section.
+For more details, please refer to the following **Benchmark** section.
 
 `smartbuf` also provides two different modes named `packet` and `stream` for different scenes.
-For more details, please check the following **Usage** section.
+For more details, please refer to the following **Usage** section.
 
 # Partition Serialization
 
@@ -74,7 +76,7 @@ The above rules are mainly for ordinary `object`, and for array there has a spec
 
 `smartbuf` has a very clever algorithm for the processing of arrays, which can improve the coding space utilization.
 
-## Example
+## Partition Example
 
 For better understanding of Partition Serialization, 
 this section demonstrates the details of the partition encoding described above with a simple object.
@@ -115,7 +117,9 @@ which is very difficult for `protobuf`.
 
 # Usage
 
-By now, `smartbuf` only support java language, you can install it by this maven dependency:
+By now, `smartbuf` only support `java` language, we are working on its support for `javascript`, `golang`, etc.
+
+You can install `smartbuf` by this maven dependency:
 
 ```xml
 <dependency>
@@ -125,9 +129,13 @@ By now, `smartbuf` only support java language, you can install it by this maven 
 </dependency>
 ```
 
-TODO
+As mentioned above, `smartbuf` supports two modes: `packet` and `stream`, 
+which are wrapped in `SmartPacket` and `SmartStream` respectively, the following is their usages.
 
 ## [`SmartPacket`](https://github.com/smartbuf/smartbuf-java/blob/master/src/main/java/com/github/smartbuf/SmartPacket.java)
+
+`SmartPacket` encapsulates `smartbuf` support for `packet` mode, it's a static utility class, 
+which could be used directly without initialization.  
 
 ```java
 UserModel user = new UserModel(1001, "hello", 10000L);
@@ -136,9 +144,16 @@ UserModel newUser = SmartPacket.deserialize(bytes, UserModel.class); // deserial
 assert user.equals(newUser); 
 ```
 
-TODO 
+In `packet` mode, `smartbuf` is very similar with `json`, encoded bytecodes contains the whole `schema` information. 
+The only difference is that `smartbuf` has much higher performance and higher compression ratio.
+
+The underlying `encode` and `decode` implementation of `smartbuf` are not thread-safe, 
+so `SmartPacket` internally encapsulates a reusable instance via `ThreadLocal`, 
+For more details, please refer to its source code.   
 
 ## [`SmartStream`](https://github.com/smartbuf/smartbuf-java/blob/master/src/main/java/com/github/smartbuf/SmartStream.java)
+
+`SmartStream` encapsulates the `stream` mode support for `smartbuf`. Before using it, you should construct a new instance manually:
 
 ```java
 final SmartStream stream = new SmartStream();
@@ -148,17 +163,50 @@ UserModel newUser = stream.deserialize(bytes, UserModel.class);  // deserialize 
 assert user.equals(newUser);
 ```
 
-TODO
+In `stream` mode, the context status is very important for `smartbuf`.
+The `serialize` will only encode `schema` once, and the `deserialize` will keep the received `schema` for context reusing. 
+
+Remember, `SmartStream` isn't thread-safe, you need to construct a seperate instance for each session `context` or `socket` connection,
+and ensure that each bytecode packet is processed through it orderly.  
+
+Discontinuous packet my cause context `schema` confusion. 
+To avoid this situation, `serialize` will attach an small sequence number into `stream` packets, 
+and `deserialize` will check the `sequence`'s continuity as need.   
 
 ## Comparison of `packet` and `stream`
 
-TODO
+The `packet` mode has a relatively low serialization compression ratio. 
+It needs to attach complete metadata information to each data message, 
+which is more suitable for a contextless scenario like api request.
+
+The `stream` mode has a higher serialization compression ratio. In most scenarios, it is higher than `protobuf`. 
+It needs to maintain the context state at both ends of the data transmission, 
+which is more suitable for scenarios like long-connection multiplexing.
 
 # Benchmark
 
+This section is mainly for a comprehensive performance benchmark test for various data scenarios. 
+The data magnitude includes `small`, `medium`, `large`, and the comparison tests include:
+
++ `json`: The technical solution used in the test is `jackson`, which is also the best library for `json` serialization performance in the `java` language.
++ `kryo`: It only supports `java`, including it into the test is only for horizontal comparison.
++ `msgpack`: It's similar to `json`, but it performs poorly in actual tests and only for observational references.
++ `protobuf`: In the following performance test, it is an important challenge for `smartbuf`.
+
+The performance test uses `JMH` technology, which handles `warmup` well, 
+and also supports very accurate statistics of various performance indicators. 
+The test environment is as follows:
+
+ + JDK 1.8.0_191
+ + MacBook Pro (15-inch, 2018)
+
+The source code of this benchmark is [`test`](https://github.com/smartbuf/smartbuf-java/tree/master/src/test/java/com/github/smartbuf/benchmark).
+You could `checkout` it and run it locally.
+ 
 ## `Small` Object
 
-TODO
+The first object to be tested is a small `User` instance, which is not the actual data model used in any production environment. 
+It is only used to demonstrate the performance of `smartbuf` on minimal object serialization. The specific model is as follows:
 
 ```java
 public class UserModel {
@@ -172,11 +220,18 @@ public class UserModel {
 }
 ```
 
+The benchmark result is as follows:
+
 ![small](./doc/img/small.png)
+
+Due to the special partition serialization strategy, 
+`smartbuf` does not perform as well as `protobuf` when dealing with small objects, 
+but it has obvious advantages over `json`.
 
 ## `Medium` Object
 
-TODO
+The next object to be tested is a fragment extracted from our production environment data structure. 
+The specific model is as follows:
 
 ```java
 public class UserModel {
@@ -212,17 +267,82 @@ public class UserModel {
 }
 ```
 
+In the test preparation data, several small objects are randomly allocated for `msgs` and `tags` respectively, 
+and finally the performance of each serialization framework is as follows:
+
 ![medium](./doc/img/medium.png)
+
+It can be seen that during the serialization process of this data magnitude, 
+`smartbuf` using `stream` mode exceeds `protobuf`, however, due to the pre-compilation of `protobuf`, 
+its encoding and decoding performance still has obvious advantages.
 
 ## `Large` Object
 
-TODO 
+The previous `small` and `medium` are not the actual data used in any production environment. 
+In order to test its performance in the real production environment, this section deliberately took a famous `APP` for testing.
+
+The test data is taken from the `Twitter` web version of the home page sidebar **global trend**, 
+which is probably one of the most frequently used interfaces, 
+i have organized it into [`json`](https://github.com/smartbuf/smartbuf-java/blob/master/src/test/resources/large.json).
+The corresponding `java` model is too large, you can see the source code 
+[`TrendModel`](https://github.com/smartbuf/smartbuf-java/blob/master/src/test/java/com/github/smartbuf/benchmark/large/TrendModel.java).
+
+For this test data, the performance of each serialization framework is as follows:
 
 ![large](./doc/img/large.png)
 
+As we can see, the over `64KB` of global trend data, only need `20KB` for `smartbuf` encoding, 
+even the `packet` mode is significantly better than `protobuf`.
+
+The encoding performance is also the best of `smartbuf`, but `protobuf` still has a big lead in decoding performance.
+
 # Advantages and disadvantages
 
-TODO
+From the above examples and tests, 
+we can intuitively see that `smartbuf` keeps the `schema` information in the serialization result.
+This makes it difficult to take advantage of design when it comes to small data sets, 
+especially for test small objects around `100B`.
+
+But for normal data objects, such as the common system data such as `2K`, `20K`, even bigger,
+the advantages of the `smartbuf` algorithm design can be fully reflected.
+For larger data objects of the array class, the space utilization of `smartbuf` will significantly exceed `protobuf`.
+
+Using `smartbuf` does not need to predefine any `IDL` like `*.proto`, 
+it can directly encode the ordinary `POJO` as `byte[]`. 
+The whole process is very similar to the commonly used `json` serialization tool.
+
+All in all, using `smartbuf` may bring the following benefits:
+
+## More efficient data transfer
+
+Compared to `json`, it can reduce network resource consumption by even 70%.
+
+Compared to `protobuf`, it can also reduce network resource consumption by over 10%.
+
+For Internet products, especially the mobile Internet that network isn't stable,
+it can improve the interface response speed, reduce the power consumption of the device, and improve the system throughput.
+
+## Improve development and debugging flexibility
+
+Compared to `protobuf`, using `smartbuf` no longer requires manual maintenance of `IDL`, 
+which is very important for fast iterations of early productions.
+
+Another point that can't be ignored is the impact of `IDL` on the product.
+For example, I participated a `Android` application that uses `protobuf`,
+with the rapid iteration, the `proto` was frequently modified. 
+After the product went online one year later, the `jar` package compiled by `proto` even reached an amazing `3.8MB`, 
+but the whole `APP` was less than 12MB.
+
+# Description
+
+Any form of technical discussion, problem feedback, assistance in development, etc. are welcome.
+
+`smartbuf` is a novel technology that is currently only available in a small range.
+But every line of code and every logic has been thoroughly tested, 
+and the test coverage of `100%` may not be enough to cover all the scenarios in the actual product reference.
+
+If you encounter any problems during the actual using, please submit the `issue` feedback in time, 
+we will check the repair as soon as possible.
 
 # License
 
