@@ -342,7 +342,7 @@ But every line of code and every logic has been thoroughly tested,
 and the test coverage of `100%` may not be enough to cover all the scenarios in the actual product reference.
 
 If you encounter any problems during the actual using, please submit the `issue` feedback in time, 
-we will check the repair as soon as possible.
+we will respond as soon as possible.
 
 # License
 
