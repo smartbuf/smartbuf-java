@@ -344,6 +344,8 @@ and the test coverage of `100%` may not be enough to cover all the scenarios in 
 If you encounter any problems during the actual using, please submit the `issue` feedback in time, 
 we will respond as soon as possible.
 
+Let us know if you like it, it could encourage us keep working~~
+
 # License
 
 Apache-2.0
