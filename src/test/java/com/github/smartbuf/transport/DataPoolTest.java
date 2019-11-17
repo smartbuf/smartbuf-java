@@ -107,7 +107,7 @@ public class DataPoolTest {
     public void testInputError() throws IOException {
         InputDataPool pool = new InputDataPool();
 
-        InputBuffer buf = new InputBuffer();
+        InputReader buf = new InputReader();
         buf.reset(new byte[]{(byte) 0b01111111, (byte) 0b01111111});
 
         try {

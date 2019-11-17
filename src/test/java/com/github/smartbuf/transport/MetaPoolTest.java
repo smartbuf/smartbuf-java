@@ -147,7 +147,7 @@ public class MetaPoolTest {
 
     @Test
     public void testError() throws IOException {
-        InputBuffer buffer = new InputBuffer();
+        InputReader buffer = new InputReader();
         InputMetaPool pool = new InputMetaPool();
 
         try {

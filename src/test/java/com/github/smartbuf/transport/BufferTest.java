@@ -31,7 +31,7 @@ public class BufferTest {
             buffer.writeString(str);
         }
 
-        InputBuffer inputBuffer = new InputBuffer();
+        InputReader inputBuffer = new InputReader();
         inputBuffer.reset(buffer.data);
 
         for (String str : strs) {
@@ -47,7 +47,7 @@ public class BufferTest {
         buffer.writeVarUint(Long.MAX_VALUE);
         buffer.writeShort(Short.MAX_VALUE);
 
-        InputBuffer inputBuffer = new InputBuffer();
+        InputReader inputBuffer = new InputReader();
         inputBuffer.reset(buffer.data);
 
         assert Short.MIN_VALUE == inputBuffer.readShort();
@@ -69,7 +69,7 @@ public class BufferTest {
     @Test
     public void testString2() throws IOException {
         OutputBuffer output = new OutputBuffer(1 << 30);
-        InputBuffer input = new InputBuffer();
+        InputReader input = new InputReader();
 
         output.writeString(RandomStringUtils.randomNumeric(40));
         output.writeString(RandomStringUtils.randomNumeric(5460));
@@ -92,7 +92,7 @@ public class BufferTest {
 
     @Test
     public void testBuffer() {
-        InputBuffer buffer = new InputBuffer();
+        InputReader buffer = new InputReader();
 
         byte[] bytes = new byte[1024];
         Arrays.fill(bytes, (byte) 0xFF);

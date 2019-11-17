@@ -7,6 +7,7 @@ import com.github.smartbuf.exception.UnexpectedSequenceException;
 import com.github.smartbuf.node.basic.ObjectNode;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +25,7 @@ public final class Input {
     private long sequence;
 
     private final boolean     enableStreamMode;
-    private final InputBuffer buffer = new InputBuffer();
+    private final InputReader buffer = new InputReader();
 
     private final InputDataPool dataPool = new InputDataPool();
     private final InputMetaPool metaPool = new InputMetaPool();
@@ -36,6 +37,17 @@ public final class Input {
      */
     public Input(boolean enableStreamMode) {
         this.enableStreamMode = enableStreamMode;
+    }
+
+    /**
+     * Read an object from the specified InputStream
+     *
+     * @param inputStream InputStream
+     * @return The next object
+     * @throws IOException If any io-error happens
+     */
+    public Object read(InputStream inputStream) throws IOException {
+        return null;
     }
 
     /**

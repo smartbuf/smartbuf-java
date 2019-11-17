@@ -1,13 +1,14 @@
 package com.github.smartbuf.transport;
 
-import com.github.smartbuf.utils.CodecUtils;
 import com.github.smartbuf.Type;
 import com.github.smartbuf.converter.ConverterPipeline;
 import com.github.smartbuf.node.Node;
 import com.github.smartbuf.node.basic.ObjectNode;
 import com.github.smartbuf.reflect.XType;
+import com.github.smartbuf.utils.CodecUtils;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -57,6 +58,21 @@ public final class Output {
      * @throws IOException if any io exception happens
      */
     public byte[] write(Object o) throws IOException {
+        this.writeBuffer(o);
+        // build result
+        byte[] result = new byte[bodyBuf.offset + headBuf.offset];
+        System.arraycopy(headBuf.data, 0, result, 0, headBuf.offset);
+        System.arraycopy(bodyBuf.data, 0, result, headBuf.offset, bodyBuf.offset);
+        return result;
+    }
+
+    public void write(Object o, OutputStream outputStream) throws IOException {
+        this.writeBuffer(o);
+        outputStream.write(headBuf.data, 0, headBuf.offset);
+        outputStream.write(bodyBuf.data, 0, bodyBuf.offset);
+    }
+
+    void writeBuffer(Object o) throws IOException {
         this.bodyBuf.reset();
         this.headBuf.reset();
         this.dataPool.reset();
@@ -86,11 +102,6 @@ public final class Output {
         if (hasData) {
             dataPool.write(headBuf);
         }
-        // build result
-        byte[] result = new byte[bodyBuf.offset + headBuf.offset];
-        System.arraycopy(headBuf.data, 0, result, 0, headBuf.offset);
-        System.arraycopy(bodyBuf.data, 0, result, headBuf.offset, bodyBuf.offset);
-        return result;
     }
 
     /**

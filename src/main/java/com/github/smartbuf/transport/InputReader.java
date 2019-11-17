@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
  * @author sulin
  * @since 2019-11-04 12:00:24
  */
-public final class InputBuffer {
+public final class InputReader {
 
     private byte[] data;
     private int    offset;
