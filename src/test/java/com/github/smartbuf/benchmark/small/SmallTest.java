@@ -4,10 +4,18 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.smartbuf.SmartBuf;
 import com.github.smartbuf.SmartPacket;
 import com.github.smartbuf.SmartStream;
+import com.github.smartbuf.exception.SmartBufClosedException;
+import com.github.smartbuf.reflect.TypeRef;
 import org.junit.jupiter.api.Test;
 import org.msgpack.MessagePack;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
 
 /**
  * json: 172
@@ -90,6 +98,52 @@ public class SmallTest {
         assert newUser.equals(model);
         newUser = SmartPacket.deserialize(packet, UserModel.class);
         assert newUser.equals(model);
+    }
+
+    @Test
+    public void testIOStream() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+        SmartBuf buf = new SmartBuf(true);
+        buf.write(model, bos);
+        buf.write(model, bos);
+        buf.write(model, bos);
+
+        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+
+        UserModel newUser = buf.read(bis, UserModel.class);
+        assert newUser.equals(model);
+
+        newUser = buf.read(bis, UserModel.class);
+        assert newUser.equals(model);
+
+        newUser = buf.read(bis, new TypeRef<UserModel>() {
+        });
+        assert newUser.equals(model);
+
+        try {
+            buf.readObject(bis);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof EOFException;
+        }
+
+        buf.close();
+
+        try {
+            buf.read(bis, new TypeRef<UserModel>() {
+            });
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof SmartBufClosedException;
+        }
+
+        try {
+            buf.write(model, bos);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof SmartBufClosedException;
+        }
     }
 
 }

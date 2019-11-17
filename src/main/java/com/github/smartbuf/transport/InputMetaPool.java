@@ -29,7 +29,7 @@ public final class InputMetaPool {
      * @param buf The specified input buffer
      * @throws IOException any io exception
      */
-    public void read(InputReader buf) throws IOException {
+    public void read(InputBuffer buf) throws IOException {
         boolean hasMore = true;
         while (hasMore) {
             long head = buf.readVarUint();

@@ -24,8 +24,7 @@ public final class Input {
 
     private long sequence;
 
-    private final boolean     enableStreamMode;
-    private final InputReader buffer = new InputReader();
+    private final boolean enableStreamMode;
 
     private final InputDataPool dataPool = new InputDataPool();
     private final InputMetaPool metaPool = new InputMetaPool();
@@ -42,12 +41,13 @@ public final class Input {
     /**
      * Read an object from the specified InputStream
      *
-     * @param inputStream InputStream
+     * @param inputStream The input stream to read bytes
      * @return The next object
      * @throws IOException If any io-error happens
      */
     public Object read(InputStream inputStream) throws IOException {
-        return null;
+        InputBuffer buffer = InputBuffer.valueOf(inputStream);
+        return readBuffer(buffer);
     }
 
     /**
@@ -58,7 +58,14 @@ public final class Input {
      * @throws IOException If any io-error happens
      */
     public Object read(byte[] data) throws IOException {
-        buffer.reset(data);
+        InputBuffer buffer = InputBuffer.valueOf(data);
+        return readBuffer(buffer);
+    }
+
+    /**
+     * Read an object from the specified InputBuffer
+     */
+    Object readBuffer(InputBuffer buffer) throws IOException {
         dataPool.reset();
         metaPool.reset();
 
@@ -92,13 +99,13 @@ public final class Input {
             dataPool.read(buffer);
         }
         // load data
-        return readData();
+        return readData(buffer);
     }
 
     /**
      * Read the next node, it could be normal data, array, or struct.
      */
-    Object readData() throws IOException {
+    Object readData(InputBuffer buffer) throws IOException {
         long head = buffer.readVarUint();
         switch ((int) head) {
             case Const.CONST_NULL:
@@ -123,19 +130,19 @@ public final class Input {
             case Const.TYPE_SYMBOL:
                 return dataPool.getSymbol((int) (head >>> 3));
             case Const.TYPE_NARRAY:
-                return readNativeArray(head);
+                return readNativeArray(buffer, head);
             case Const.TYPE_ARRAY:
-                return this.readArray(head >>> 3);
+                return this.readArray(buffer, head >>> 3);
             default:
                 InputMetaPool.Struct struct = metaPool.findStructByID((int) (head >>> 3));
-                return this.readObject(struct);
+                return this.readObject(buffer, struct);
         }
     }
 
     /**
      * Read an native array, like byte[] int[]
      */
-    Object readNativeArray(long head) throws IOException {
+    Object readNativeArray(InputBuffer buffer, long head) throws IOException {
         byte type = (byte) (head & 0b0011_1111);
         int size = (int) (head >>> 6);
         switch (type) {
@@ -161,7 +168,7 @@ public final class Input {
     /**
      * Read an array by the specified head info
      */
-    Object readArray(long head) throws IOException {
+    Object readArray(InputBuffer buffer, long head) throws IOException {
         List<Object[]> slices = new ArrayList<>(1);
         int totalSize = 0;
         while (true) {
@@ -235,13 +242,13 @@ public final class Input {
                     int structId = (int) buffer.readVarUint();
                     InputMetaPool.Struct struct = metaPool.findStructByID(structId);
                     for (int i = 0; i < size; i++) {
-                        slice[i] = this.readObject(struct);
+                        slice[i] = this.readObject(buffer, struct);
                     }
                     break;
                 case Const.TYPE_SLICE_UNKNOWN:
                     slice = new Object[size];
                     for (int i = 0; i < size; i++) {
-                        slice[i] = readData();
+                        slice[i] = readData(buffer);
                     }
                     break;
                 default:
@@ -269,21 +276,20 @@ public final class Input {
     /**
      * Read an object by the specified fields
      */
-    Object readObject(InputMetaPool.Struct struct) throws IOException {
+    Object readObject(InputBuffer buffer, InputMetaPool.Struct struct) throws IOException {
         if (struct.ordered) {
             int len = struct.fieldNames.length;
             Object[] values = new Object[len];
             for (int i = 0; i < len; i++) {
-                values[i] = readData();
+                values[i] = readData(buffer);
             }
             return new ObjectNode(true, struct.fieldNames, values);
         } else {
             Map<String, Object> map = new HashMap<>();
             for (String field : struct.fieldNames) {
-                map.put(field, readData());
+                map.put(field, readData(buffer));
             }
             return map;
         }
     }
-
 }

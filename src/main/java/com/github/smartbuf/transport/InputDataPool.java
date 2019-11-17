@@ -27,7 +27,7 @@ public final class InputDataPool {
      * @param buf Input buffer to read
      * @throws IOException any io exception
      */
-    public void read(InputReader buf) throws IOException {
+    public void read(InputBuffer buf) throws IOException {
         boolean hasMore = true;
         byte flag;
         while (hasMore) {

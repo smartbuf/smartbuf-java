@@ -107,8 +107,7 @@ public class DataPoolTest {
     public void testInputError() throws IOException {
         InputDataPool pool = new InputDataPool();
 
-        InputReader buf = new InputReader();
-        buf.reset(new byte[]{(byte) 0b01111111, (byte) 0b01111111});
+        InputBuffer buf = InputBuffer.valueOf(new byte[]{(byte) 0b01111111, (byte) 0b01111111});
 
         try {
             pool.read(buf);
@@ -126,7 +125,7 @@ public class DataPoolTest {
 
         Output output = new Output(true);
         byte[] data = output.write(SymbolNode.valueOf("TEST"));
-        buf.reset(data);
+        buf = InputBuffer.valueOf(data);
         buf.readByte(); // ignore head
         buf.readByte(); // ignore seq
         pool.read(buf);

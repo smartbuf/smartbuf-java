@@ -51,7 +51,7 @@ public final class Output {
     }
 
     /**
-     * Output this schema into the specified writer with the specified sequence
+     * Write the specified object into the specified writer with the specified sequence
      *
      * @param o the object to serialize
      * @return Serialization result
@@ -59,19 +59,29 @@ public final class Output {
      */
     public byte[] write(Object o) throws IOException {
         this.writeBuffer(o);
-        // build result
+        // copy into byte[]
         byte[] result = new byte[bodyBuf.offset + headBuf.offset];
         System.arraycopy(headBuf.data, 0, result, 0, headBuf.offset);
         System.arraycopy(bodyBuf.data, 0, result, headBuf.offset, bodyBuf.offset);
         return result;
     }
 
+    /**
+     * Write the specified object into the specified {@link OutputStream} in smartbuf encoding.
+     *
+     * @param o            The object to encode or serialize
+     * @param outputStream The stream to wrier into
+     * @throws IOException if any io exception happens
+     */
     public void write(Object o, OutputStream outputStream) throws IOException {
         this.writeBuffer(o);
         outputStream.write(headBuf.data, 0, headBuf.offset);
         outputStream.write(bodyBuf.data, 0, bodyBuf.offset);
     }
 
+    /**
+     * Write the specified object into internal buffers.
+     */
     void writeBuffer(Object o) throws IOException {
         this.bodyBuf.reset();
         this.headBuf.reset();
@@ -565,5 +575,4 @@ public final class Output {
             }
         }
     }
-
 }
