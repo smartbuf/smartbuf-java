@@ -5,6 +5,7 @@ import com.github.smartbuf.utils.NumberUtils;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -13,36 +14,22 @@ import java.nio.charset.StandardCharsets;
  * @author sulin
  * @since 2019-11-04 12:00:24
  */
-public final class InputBuffer {
+public abstract class InputBuffer {
 
-    private byte[] data;
-    private int    offset;
-
-    /**
-     * Reset this buffer, fo reusing
-     *
-     * @param data New data to switch
-     */
-    public void reset(byte[] data) {
-        this.data = data;
-        this.offset = 0;
+    public static InputBuffer valueOf(byte[] bytes) {
+        return new InputPacketReader(bytes);
     }
 
-    public byte readByte() throws IOException {
-        if (offset >= data.length) {
-            throw new EOFException();
-        }
-        return data[offset++];
+    public static InputBuffer valueOf(InputStream is) {
+        return new InputStreamReader(is);
     }
+
+    public abstract byte readByte() throws IOException;
 
     public short readShort() throws IOException {
-        try {
-            byte high = data[offset++];
-            byte low = data[offset++];
-            return (short) ((high << 8) | (low & 0xFF));
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new EOFException();
-        }
+        byte high = readByte();
+        byte low = readByte();
+        return (short) ((high << 8) | (low & 0xFF));
     }
 
     public long readVarInt() throws IOException {
@@ -52,20 +39,15 @@ public final class InputBuffer {
 
     public long readVarUint() throws IOException {
         long l = 0;
-        byte b;
-        try {
-            for (int i = 0; ; i++) {
-                b = data[offset++];
-                l |= ((long) (b & 0x7F)) << (i * 7);
-                if ((b & 0x80) == 0) {
-                    break;
-                }
-                if (i == 10) {
-                    throw new UnexpectedReadException("hit invalid varint at " + offset);
-                }
+        for (int i = 0; ; i++) {
+            byte b = readByte();
+            l |= ((long) (b & 0x7F)) << (i * 7);
+            if ((b & 0x80) == 0) {
+                break;
             }
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new EOFException();
+            if (i == 10) {
+                throw new UnexpectedReadException("hit invalid varint");
+            }
         }
         return l;
     }
@@ -73,13 +55,9 @@ public final class InputBuffer {
     public float readFloat() throws IOException {
         int bits = 0;
         int b;
-        try {
-            for (int i = 0; i < 4; i++) {
-                b = data[offset++] & 0xFF;
-                bits |= b << (8 * i);
-            }
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new EOFException();
+        for (int i = 0; i < 4; i++) {
+            b = readByte() & 0xFF;
+            bits |= b << (8 * i);
         }
         return NumberUtils.bitsToFloat(bits);
     }
@@ -87,54 +65,38 @@ public final class InputBuffer {
     public double readDouble() throws IOException {
         long bits = 0;
         long b;
-        try {
-            for (int i = 0; i < 8; i++) {
-                b = data[offset++] & 0xFF;
-                bits |= b << (8 * i);
-            }
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new EOFException();
+        for (int i = 0; i < 8; i++) {
+            b = readByte() & 0xFF;
+            bits |= b << (8 * i);
         }
         return NumberUtils.bitsToDouble(bits);
     }
 
     public String readString() throws IOException {
         int len = (int) this.readVarUint();
-        if (len > data.length - offset) {
-            throw new EOFException();
-        }
-        try {
-            return new String(data, offset, len, StandardCharsets.UTF_8);
-        } finally {
-            this.offset += len;
-        }
+        byte[] bytes = this.readByteArray(len);
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 
     public boolean[] readBooleanArray(int len) throws IOException {
         boolean[] result = new boolean[len];
-        try {
-            for (int i = 0; i < len; i += 8) {
-                byte b = data[offset++];
-                for (int j = 0; j < 8; j++) {
-                    if (i + j >= len) {
-                        break;
-                    }
-                    result[i + j] = (b & (1 << j)) > 0;
+        for (int i = 0; i < len; i += 8) {
+            byte b = readByte();
+            for (int j = 0; j < 8; j++) {
+                if (i + j >= len) {
+                    break;
                 }
+                result[i + j] = (b & (1 << j)) > 0;
             }
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new EOFException();
         }
         return result;
     }
 
     public byte[] readByteArray(int len) throws IOException {
-        if (len > data.length - offset) {
-            throw new EOFException();
-        }
         byte[] bytes = new byte[len];
-        System.arraycopy(data, offset, bytes, 0, len);
-        this.offset += len;
+        for (int i = 0; i < len; i++) {
+            bytes[i] = readByte();
+        }
         return bytes;
     }
 
@@ -176,6 +138,68 @@ public final class InputBuffer {
             result[i] = readDouble();
         }
         return result;
+    }
+
+    /**
+     * InputReader implementation for byte[]
+     */
+    private static class InputPacketReader extends InputBuffer {
+        private byte[] data;
+        private int    offset;
+
+        public InputPacketReader(byte[] data) {
+            this.data = data;
+            this.offset = 0;
+        }
+
+        public byte readByte() throws IOException {
+            if (offset >= data.length) {
+                throw new EOFException();
+            }
+            return data[offset++];
+        }
+
+        public String readString() throws IOException {
+            int len = (int) this.readVarUint();
+            if (len > data.length - offset) {
+                throw new EOFException();
+            }
+            try {
+                return new String(data, offset, len, StandardCharsets.UTF_8);
+            } finally {
+                this.offset += len;
+            }
+        }
+
+        public byte[] readByteArray(int len) throws IOException {
+            if (len > data.length - offset) {
+                throw new EOFException();
+            }
+            byte[] bytes = new byte[len];
+            System.arraycopy(data, offset, bytes, 0, len);
+            this.offset += len;
+            return bytes;
+        }
+    }
+
+    /**
+     * InputReader implementation for {@link InputStream}
+     */
+    private static class InputStreamReader extends InputBuffer {
+        private InputStream is;
+
+        public InputStreamReader(InputStream is) {
+            this.is = is;
+        }
+
+        @Override
+        public byte readByte() throws IOException {
+            int i = is.read();
+            if (i == -1) {
+                throw new EOFException();
+            }
+            return (byte) (i & 0xFF);
+        }
     }
 
 }

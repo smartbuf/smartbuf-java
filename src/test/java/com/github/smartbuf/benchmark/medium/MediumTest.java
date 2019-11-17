@@ -4,12 +4,18 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.smartbuf.SmartBuf;
 import com.github.smartbuf.SmartPacket;
 import com.github.smartbuf.SmartStream;
 import com.github.smartbuf.transport.Input;
 import com.github.smartbuf.utils.CodecUtils;
 import org.junit.jupiter.api.Test;
 import org.msgpack.MessagePack;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
 
 /**
  * json: 1875
@@ -101,6 +107,34 @@ public class MediumTest {
 
         Input input = new Input(false);
         CodecUtils.convert(input.read(packetBytes), UserModel.class);
+    }
+
+    @Test
+    public void testIOStream() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+        SmartBuf buf = new SmartBuf(true);
+        buf.write(model, bos);
+        buf.write(model, bos);
+        buf.write(model, bos);
+
+        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+
+        UserModel newUser = buf.read(bis, UserModel.class);
+        assert newUser.equals(model);
+
+        newUser = buf.read(bis, UserModel.class);
+        assert newUser.equals(model);
+
+        newUser = buf.read(bis, UserModel.class);
+        assert newUser.equals(model);
+
+        try {
+            buf.readObject(bis);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof EOFException;
+        }
     }
 
 }

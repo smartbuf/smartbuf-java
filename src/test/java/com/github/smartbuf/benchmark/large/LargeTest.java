@@ -5,6 +5,7 @@ import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.smartbuf.SmartBuf;
 import com.github.smartbuf.SmartPacket;
 import com.github.smartbuf.SmartStream;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.msgpack.MessagePack;
 import org.msgpack.annotation.Message;
 
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -123,6 +124,34 @@ public class LargeTest {
         assert newTrends.equals(trendsModel);
         newTrends = KRYO.readObject(new ByteBufferInput(kryoBytes), TrendsModel.class);
         assert newTrends.equals(trendsModel);
+    }
+
+    @Test
+    public void testIOStream() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+        SmartBuf buf = new SmartBuf(true);
+        buf.write(trendsModel, bos);
+        buf.write(trendsModel, bos);
+        buf.write(trendsModel, bos);
+
+        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+
+        TrendsModel newTrends = buf.read(bis, TrendsModel.class);
+        assert newTrends.equals(trendsModel);
+
+        newTrends = buf.read(bis, TrendsModel.class);
+        assert newTrends.equals(trendsModel);
+
+        newTrends = buf.read(bis, TrendsModel.class);
+        assert newTrends.equals(trendsModel);
+
+        try {
+            buf.readObject(bis);
+            assert false;
+        } catch (Exception e) {
+            assert e instanceof EOFException;
+        }
     }
 
     @Data

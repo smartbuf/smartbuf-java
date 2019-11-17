@@ -31,8 +31,7 @@ public class BufferTest {
             buffer.writeString(str);
         }
 
-        InputBuffer inputBuffer = new InputBuffer();
-        inputBuffer.reset(buffer.data);
+        InputBuffer inputBuffer = InputBuffer.valueOf(buffer.data);
 
         for (String str : strs) {
             String strInput = inputBuffer.readString();
@@ -47,8 +46,7 @@ public class BufferTest {
         buffer.writeVarUint(Long.MAX_VALUE);
         buffer.writeShort(Short.MAX_VALUE);
 
-        InputBuffer inputBuffer = new InputBuffer();
-        inputBuffer.reset(buffer.data);
+        InputBuffer inputBuffer = InputBuffer.valueOf(buffer.data);
 
         assert Short.MIN_VALUE == inputBuffer.readShort();
         assert Long.MAX_VALUE == inputBuffer.readVarUint();
@@ -69,7 +67,6 @@ public class BufferTest {
     @Test
     public void testString2() throws IOException {
         OutputBuffer output = new OutputBuffer(1 << 30);
-        InputBuffer input = new InputBuffer();
 
         output.writeString(RandomStringUtils.randomNumeric(40));
         output.writeString(RandomStringUtils.randomNumeric(5460));
@@ -82,7 +79,7 @@ public class BufferTest {
         }
         output.writeString(sb.toString());
 
-        input.reset(output.data);
+        InputBuffer input = InputBuffer.valueOf(output.data);
 
         assert input.readString().length() == 40;
         assert input.readString().length() == 5460;
@@ -92,11 +89,11 @@ public class BufferTest {
 
     @Test
     public void testBuffer() {
-        InputBuffer buffer = new InputBuffer();
 
         byte[] bytes = new byte[1024];
         Arrays.fill(bytes, (byte) 0xFF);
-        buffer.reset(bytes);
+
+        InputBuffer buffer = InputBuffer.valueOf(bytes);
 
         try {
             buffer.readVarInt();
@@ -106,7 +103,7 @@ public class BufferTest {
         }
 
         try {
-            buffer.reset(new byte[]{0x0F});
+            buffer = InputBuffer.valueOf(new byte[]{0x0F});
             buffer.readString();
             assert false;
         } catch (Exception e) {

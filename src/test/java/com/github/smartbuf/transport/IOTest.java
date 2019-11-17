@@ -197,26 +197,28 @@ public class IOTest {
             assert e instanceof InvalidVersionException;
         }
 
+        InputBuffer buffer = InputBuffer.valueOf(new byte[1024]);
+
         try {
-            input.readData();
+            input.readData(buffer);
         } catch (Exception e) {
             assert e instanceof UnexpectedReadException;
         }
 
         try {
-            input.readArray(0b1111_1111L);
+            input.readArray(buffer, 0b1111_1111L);
             assert false;
         } catch (Exception e) {
             assert e instanceof UnexpectedReadException;
         }
         try {
-            input.readArray(0b1111_1111L);
+            input.readArray(buffer, 0b1111_1111L);
             assert false;
         } catch (Exception e) {
             assert e instanceof UnexpectedReadException;
         }
         try {
-            input.readNativeArray(0xFFL);
+            input.readNativeArray(buffer, 0xFFL);
             assert false;
         } catch (Exception e) {
             assert e instanceof UnexpectedReadException;

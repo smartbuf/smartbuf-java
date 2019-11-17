@@ -147,11 +147,10 @@ public class MetaPoolTest {
 
     @Test
     public void testError() throws IOException {
-        InputBuffer buffer = new InputBuffer();
         InputMetaPool pool = new InputMetaPool();
 
+        InputBuffer buffer = InputBuffer.valueOf(new byte[]{0x00});
         try {
-            buffer.reset(new byte[]{0x00});
             pool.read(buffer);
             assert false;
         } catch (Exception e) {
@@ -161,7 +160,7 @@ public class MetaPoolTest {
         Output output = new Output(true);
         byte[] bytes = output.write(new ObjectNode(true, new String[]{"id", "name"}, new Object[]{1, "hello"}));
 
-        buffer.reset(bytes);
+        buffer = InputBuffer.valueOf(bytes);
         buffer.readByte();
         buffer.readByte();
         pool.read(buffer);

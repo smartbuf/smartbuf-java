@@ -110,7 +110,7 @@ message User {
 <dependency>
   <groupId>com.github.smartbuf</groupId>
   <artifactId>smartbuf</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
 </dependency>
 ```
 
