@@ -1,5 +1,6 @@
 package com.github.smartbuf.utils;
 
+import com.github.smartbuf.converter.Codec;
 import com.github.smartbuf.converter.CodecFactory;
 import com.github.smartbuf.converter.ConverterPipeline;
 import com.github.smartbuf.node.NodeCodec;
@@ -23,6 +24,15 @@ public final class CodecUtils {
     }
 
     private CodecUtils() {
+    }
+
+    /**
+     * Install new {@link Codec} into the default CodecFactory
+     *
+     * @param codec The new codec implementation
+     */
+    public static void installCodec(Codec codec) {
+        factory.installCodec(codec);
     }
 
     /**

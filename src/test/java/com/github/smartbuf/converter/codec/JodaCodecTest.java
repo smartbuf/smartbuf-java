@@ -1,6 +1,7 @@
 package com.github.smartbuf.converter.codec;
 
 import com.github.smartbuf.converter.CodecFactory;
+import com.github.smartbuf.utils.CodecUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.Period;
@@ -22,6 +23,8 @@ public class JodaCodecTest {
     @BeforeEach
     void setUp() {
         codec.setFactory(CodecFactory.Instance);
+
+        CodecUtils.installCodec(codec);
     }
 
     @Test

@@ -40,7 +40,6 @@ public final class CodecFactory {
         this.installCodec(CollectionCodec.class);
         this.installCodec(IOCodec.class);
         this.installCodec(JavaxCodec.class);
-        this.installCodec(JodaCodec.class);
         this.installCodec(LangCodec.class);
         this.installCodec(MapCodec.class);
         this.installCodec(MathCodec.class);
