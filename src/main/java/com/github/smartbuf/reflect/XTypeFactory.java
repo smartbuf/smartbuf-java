@@ -57,6 +57,9 @@ public final class XTypeFactory {
      * @param type  Target which need be resolved
      */
     private XType<?> toXType(Context cxt, XType<?> owner, Type type) {
+        if (cxt.typeMap.containsKey(type)) {
+            return cxt.typeMap.get(type); // support circular reference
+        }
         XType<?> xType;
         if (type instanceof ParameterizedType) {
             xType = convertParameterizedType(cxt, owner, (ParameterizedType) type);
@@ -77,7 +80,7 @@ public final class XTypeFactory {
     /**
      * Convert ParameterizedType to XType
      */
-    private XType<?> convertParameterizedType(Context cxt, XType<?> owner, ParameterizedType type) {
+    private XType<?> convertParameterizedType(Context cxt, XType<?> owner, final ParameterizedType type) {
         if (!(type.getRawType() instanceof Class)) {
             throw new IllegalArgumentException("Cant parse rawType from " + type); // no way
         }
@@ -88,8 +91,8 @@ public final class XTypeFactory {
         if (argTypes.length != variables.length) {
             throw new IllegalStateException("Cant parse ParameterizedType " + type); // no way
         }
-        String[] names = new String[variables.length];
-        XType<?>[] types = new XType[variables.length];
+        String[] paramTypeNames = new String[variables.length];
+        XType<?>[] paramTypes = new XType[variables.length];
         for (int i = 0; i < argTypes.length; i++) {
             TypeVariable var = variables[i];
             // XType from class declared, like `class Bean<T extends Number>{}`
@@ -103,21 +106,25 @@ public final class XTypeFactory {
             } else {
                 finalXType = argXType;
             }
-            names[i] = var.getName();
-            types[i] = finalXType;
+            paramTypeNames[i] = var.getName();
+            paramTypes[i] = finalXType;
         }
-        XType<?> result = new XType<>(rawType, names, types);
-        parseFields(cxt, result);
+        XType<?> result = new XType<>(type, rawType, paramTypeNames, paramTypes);
+
+        cxt.typeMap.put(type, result);
+        this.parseFields(cxt, result);
         return result;
     }
 
     /**
      * Convert GenericArrayType to XType
      */
-    private XType<?> convertGenericArrayType(Context cxt, XType<?> owner, GenericArrayType type) {
+    private XType<?> convertGenericArrayType(Context cxt, XType<?> owner, final GenericArrayType type) {
         Class<?> rawClass = Object[].class;
-        XType<?> xType = toXType(cxt, owner, type.getGenericComponentType());
-        XType<?> result = new XType<>(rawClass, xType);
+        XType<?> componentXType = toXType(cxt, owner, type.getGenericComponentType());
+        XType<?> result = new XType<>(type, rawClass, componentXType);
+
+        cxt.typeMap.put(type, result);
         parseFields(cxt, result);
         return result;
     }
@@ -159,23 +166,25 @@ public final class XTypeFactory {
     /**
      * Convert Class to XType
      */
-    private <T> XType<T> convertClass(Context cxt, Class<T> cls) {
+    private <T> XType<T> convertClass(Context cxt, final Class<T> cls) {
         XType<T> result;
         TypeVariable[] vars = cls.getTypeParameters();
         if (vars.length > 0) {
             // Class supports generic type, but caller didn't use it, like `List l`
-            String[] names = new String[vars.length];
-            XType<?>[] types = new XType[vars.length];
+            String[] paramTypeNames = new String[vars.length];
+            XType<?>[] paramTypes = new XType[vars.length];
             for (int i = 0; i < vars.length; i++) {
                 TypeVariable var = vars[i];
-                names[i] = var.getName();
-                types[i] = convertTypeVariable(cxt, null, var);// no owner
+                paramTypeNames[i] = var.getName();
+                paramTypes[i] = convertTypeVariable(cxt, null, var);// no owner
             }
-            result = new XType<>(cls, names, types);
+            result = new XType<>(cls, cls, paramTypeNames, paramTypes);
         } else {
             // Class dont support generic type
-            result = new XType<>(cls);
+            result = new XType<>(cls, cls);
         }
+
+        cxt.typeMap.put(cls, result);
         parseFields(cxt, result);
         return result;
     }
@@ -184,7 +193,7 @@ public final class XTypeFactory {
      * Parse fields of XType and fill them
      */
     @SuppressWarnings("unchecked")
-    private synchronized void parseFields(Context cxt, XType<?> type) {
+    private void parseFields(Context cxt, XType<?> type) {
         Class rawCls = type.getRawType();
         if (rawCls == Object.class || rawCls.isPrimitive() || rawCls.isArray() || rawCls.isEnum()) {
             return;
@@ -195,23 +204,13 @@ public final class XTypeFactory {
                 return;
             }
         }
-        boolean pure = rawCls.getTypeParameters().length == 0;
-        // If rawCls is pure and pre-parsed, use the pre-cached fields directly to avoid infinity loop
-        if (pure && cxt.pureClassFieldMap.containsKey(rawCls)) {
-            type.fields = cxt.pureClassFieldMap.get(rawCls).values().toArray(new XField[0]);
-            return;
-        }
         // Precheck to prevent circular reference
         if (cxt.parsing.contains(rawCls)) {
             throw new CircleReferenceException("Circular Reference in: " + rawCls);
         }
+        cxt.parsing.add(rawCls);
         // execute fields parsing
         Map<String, XField> fields = new TreeMap<>();
-        if (pure) {
-            cxt.pureClassFieldMap.put(rawCls, fields);
-        }
-        cxt.parsing.add(rawCls);
-        // collect this->fields
         ReflectUtils.findValidFields(rawCls).forEach(field -> {
             XType fieldType = toXType(cxt, type, field.getGenericType());
             XField<?> xField = new XField<>();
@@ -236,11 +235,13 @@ public final class XTypeFactory {
         type.fields = fields.values().toArray(new XField[0]);
     }
 
-    private static class Context {
-        Type       root;
-        Set<Class> parsing = new HashSet<>();
-
-        Map<Class, Map<String, XField>> pureClassFieldMap = new HashMap<>();
+    /**
+     * Context is responsible for recording type-convert status
+     */
+    static class Context {
+        Type             root;
+        Set<Class>       parsing = new HashSet<>();
+        Map<Type, XType> typeMap = new HashMap<>();
 
         Context(Type root) {
             this.root = root;

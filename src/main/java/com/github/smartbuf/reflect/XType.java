@@ -1,5 +1,6 @@
 package com.github.smartbuf.reflect;
 
+import java.lang.reflect.Type;
 import java.util.Objects;
 
 /**
@@ -13,9 +14,14 @@ import java.util.Objects;
 public final class XType<T> {
 
     /**
-     * Basic Object Type
+     * The original java type
      */
-    Class<T>   rawType;
+    final Type     type;
+    /**
+     * The original java class
+     */
+    final Class<T> rawType;
+    
     /**
      * Component type for Object[], support GenericArrayType
      */
@@ -34,19 +40,22 @@ public final class XType<T> {
      */
     XField[] fields;
 
-    protected XType(Class<T> rawType) {
+    protected XType(Type type, Class<T> rawType) {
+        this.type = type;
         this.rawType = rawType;
     }
 
-    protected XType(Class<T> rawType, XType<?> componentType) {
+    protected XType(Type type, Class<T> rawType, XType<?> componentType) {
+        this.type = type;
         this.rawType = rawType;
         this.componentType = componentType;
     }
 
-    protected XType(Class<T> rawType, String[] parameteriedNames, XType<?>[] parameteriedTypes) {
+    protected XType(Type type, Class<T> rawType, String[] parameteriedNames, XType<?>[] parameteriedTypes) {
         if (parameteriedNames.length != parameteriedTypes.length) {
             throw new IllegalArgumentException();
         }
+        this.type = type;
         this.rawType = rawType;
         this.parameteriedNames = parameteriedNames;
         this.parameteriedTypes = parameteriedTypes;

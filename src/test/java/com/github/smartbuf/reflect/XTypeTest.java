@@ -1,5 +1,6 @@
 package com.github.smartbuf.reflect;
 
+import lombok.Data;
 import org.junit.jupiter.api.Test;
 
 import java.lang.ref.Reference;
@@ -19,14 +20,14 @@ public class XTypeTest<T> {
     @Test
     public void test() {
         try {
-            new XType<>(Long.class, null, null);
+            new XType<>(Long.class, Long.class, null, null);
             assert false;
         } catch (Exception e) {
             assert e instanceof NullPointerException;
         }
 
         try {
-            new XType<>(Long.class, new String[1], new XType[2]);
+            new XType<>(Long.class, Long.class, new String[1], new XType[2]);
             assert false;
         } catch (Exception e) {
             assert e instanceof IllegalArgumentException;
@@ -117,6 +118,22 @@ public class XTypeTest<T> {
 
     public static class Boom<T> {
         private T[] ts;
+    }
+
+    @Test
+    public void testUserModel() {
+        XType xType = XTypeUtils.toXType(UserModel.class);
+        assert xType.fields.length == 3;
+
+        XType subType = xType.getField("friends").getType().getParameterizedType();
+        assert subType.fields.length == 3;
+    }
+
+    @Data
+    public static class UserModel {
+        private int             id;
+        private String          name;
+        private List<UserModel> friends;
     }
 
 }
