@@ -55,9 +55,21 @@ public final class CodecUtils {
      * @param <T>  Target's real type
      * @return instance of the specified type
      */
-    @SuppressWarnings("ALL")
     public static <T> T convert(Object src, TypeRef<T> type) {
-        return (T) factory.convert(src, type.getType());
+        return convert(src, type.getType());
+    }
+
+    /**
+     * Convert the specified object to the specified type
+     *
+     * @param src  Source data
+     * @param type Target type, suport generic type
+     * @param <T>  Target's real type
+     * @return instance of the specified type
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T convert(Object src, Type type) {
+        return (T) factory.convert(src, type);
     }
 
     /**

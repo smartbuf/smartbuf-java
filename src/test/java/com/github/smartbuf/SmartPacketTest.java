@@ -4,9 +4,12 @@ import com.github.smartbuf.reflect.TypeRef;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.*;
 
 /**
@@ -115,6 +118,9 @@ public class SmartPacketTest {
         AtomicReference<String> stringRef = new AtomicReference<>("hello world");
         data = SmartPacket.serialize(stringRef);
         AtomicReference<String> stringRef2 = SmartPacket.deserialize(data, new TypeRef<AtomicReference<String>>() {
+        }.getType());
+        assert Objects.equals(stringRef.get(), stringRef2.get());
+        stringRef2 = SmartPacket.deserialize(data, new TypeRef<AtomicReference<String>>() {
         });
         assert Objects.equals(stringRef.get(), stringRef2.get());
 
@@ -127,6 +133,21 @@ public class SmartPacketTest {
         longAdder.add(RandomUtils.nextLong());
         data = SmartPacket.serialize(longAdder);
         assert longAdder.longValue() == SmartPacket.deserialize(data, LongAdder.class).longValue();
+    }
+
+    @Test
+    public void testStream() throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        SmartPacket.serialize("hello", outputStream);
+        SmartPacket.serialize("world", outputStream);
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+        String str1 = SmartPacket.deserialize(inputStream, String.class);
+        Optional<String> str2 = SmartPacket.deserialize(inputStream, new TypeRef<Optional<String>>() {
+        });
+
+        assert str1.equals("hello");
+        assert str2.get().equals("world");
     }
 
     @Test
