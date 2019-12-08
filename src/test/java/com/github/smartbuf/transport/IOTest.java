@@ -218,7 +218,7 @@ public class IOTest {
             assert e instanceof UnexpectedReadException;
         }
         try {
-            input.readNativeArray(buffer, 0xFFL);
+            input.readNativeArray(buffer, 0b1100_0000L);
             assert false;
         } catch (Exception e) {
             assert e instanceof UnexpectedReadException;
