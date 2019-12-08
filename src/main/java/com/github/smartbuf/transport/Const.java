@@ -41,8 +41,8 @@ interface Const {
     byte TYPE_STRING = 3;
     byte TYPE_SYMBOL = 4;
     byte TYPE_OBJECT = 5;
-    byte TYPE_NARRAY = 6;
-    byte TYPE_ARRAY  = 7;
+    byte TYPE_ARRAY  = 6;
+    byte TYPE_NARRAY = 7;
 
     byte TYPE_NARRAY_BOOL   = 1 << 3 | TYPE_NARRAY;
     byte TYPE_NARRAY_BYTE   = 2 << 3 | TYPE_NARRAY;
